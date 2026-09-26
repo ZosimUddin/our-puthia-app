@@ -17,7 +17,9 @@ export const AdminRoute: React.FC<{ children?: React.ReactNode }> = ({ children 
   const isAuthorized = user && (
     userProfile?.role === 'super_admin' || 
     userProfile?.role === 'admin' || 
-    user.email === 'mdzosimuddin47@gmail.com'
+    user.email === 'mdzosimuddin31@gmail.com' ||
+    user.email === 'mdzosimuddin47@gmail.com' ||
+    user.email === 'josimuddinadds@gmail.com'
   );
 
   if (isAuthorized) {

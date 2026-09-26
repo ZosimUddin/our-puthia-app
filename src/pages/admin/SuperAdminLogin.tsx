@@ -18,7 +18,8 @@ export const SuperAdminLogin: React.FC = () => {
 
   // If already logged in as super admin, automatically activate session and redirect to dashboard
   useEffect(() => {
-    const isSuperAdmin = user && (userProfile?.role === "super_admin" || user.email === "mdzosimuddin47@gmail.com");
+    const isMasterEmail = user?.email === "mdzosimuddin31@gmail.com" || user?.email === "mdzosimuddin47@gmail.com" || user?.email === "josimuddinadds@gmail.com";
+    const isSuperAdmin = user && (userProfile?.role === "super_admin" || isMasterEmail);
     if (isSuperAdmin) {
       sessionStorage.setItem("super_admin_session_active", "true");
       setSuccess("স্বাগতম! সুপার অ্যাডমিন ড্যাশবোর্ডে নিয়ে যাওয়া হচ্ছে...");

@@ -55,7 +55,8 @@ const AdminLayout: React.FC = () => {
   // Determine effective role
   const effectiveRole: 'super_admin' | 'admin' | 'editor' | 'moderator' = useMemo(() => {
     const r = (userProfile?.role as string) || '';
-    if (r === 'super_admin' || user?.email === 'mdzosimuddin47@gmail.com') return 'super_admin';
+    const isMaster = user?.email === 'mdzosimuddin31@gmail.com' || user?.email === 'mdzosimuddin47@gmail.com' || user?.email === 'josimuddinadds@gmail.com';
+    if (r === 'super_admin' || isMaster) return 'super_admin';
     if (r === 'admin') return 'admin';
     if (r === 'editor') return 'editor';
     if (r === 'moderator') return 'moderator';

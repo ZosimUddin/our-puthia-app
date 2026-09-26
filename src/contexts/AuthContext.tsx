@@ -153,7 +153,8 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
         }
         
         // TEMPORARY: Bootstrap Super Admin role
-        if (user.email === 'mdzosimuddin47@gmail.com' && data.role !== 'super_admin') {
+        const isMasterAdminEmail = user.email === 'mdzosimuddin31@gmail.com' || user.email === 'mdzosimuddin47@gmail.com' || user.email === 'josimuddinadds@gmail.com';
+        if (isMasterAdminEmail && data.role !== 'super_admin') {
             try { await updateDoc(userRef, { role: 'super_admin' }); } catch {}
             data.role = 'super_admin';
         }
@@ -164,6 +165,8 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
         const derivedPhone = user.phoneNumber || 
           (user.email && /^01\d{9}@puthiadiary\.com$/.test(user.email) ? user.email.split('@')[0] : '') ||
           (typeof localStorage !== 'undefined' ? localStorage.getItem('auth_registered_phone') || '' : '');
+
+        const isMasterAdminEmail = user.email === 'mdzosimuddin31@gmail.com' || user.email === 'mdzosimuddin47@gmail.com' || user.email === 'josimuddinadds@gmail.com';
 
         // Create initial profile if it doesn't exist
         const initialProfile: UserProfile = {
@@ -180,7 +183,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
           bloodGroup: "O+",
           isBloodDonor: false,
           stars: 20, // 20 starter stars for joining!
-          role: user.email === 'mdzosimuddin47@gmail.com' ? 'super_admin' : 'user',
+          role: isMasterAdminEmail ? 'super_admin' : 'user',
           badges: ["সচেতন নাগরিক"], // Starter badge
           createdAt: new Date().toISOString(),
           accountVerifiedAwarded: true

@@ -787,6 +787,9 @@ const MainAppContent = () => {
 
                 <Route path="/super-admin" element={<SuperAdminRoute><AdminLayout /></SuperAdminRoute>}>
                   <Route index element={<SuperAdminDashboard />} />
+                  <Route path="realtime-users" element={<RealtimeUserPresencePage />} />
+                  <Route path="active-users" element={<RealtimeUserPresencePage />} />
+                  <Route path="presence" element={<RealtimeUserPresencePage />} />
                 </Route>
 
                 <Route path="/moderator" element={<ModeratorRoute><AdminLayout /></ModeratorRoute>}>

@@ -12,7 +12,12 @@ export const SuperAdminRoute: React.FC<{ children?: React.ReactNode }> = ({ chil
     );
   }
 
-  const isSuperAdmin = user && (userProfile?.role === "super_admin" || user.email === "mdzosimuddin47@gmail.com");
+  const isSuperAdmin = user && (
+    userProfile?.role === "super_admin" || 
+    user.email === "mdzosimuddin31@gmail.com" || 
+    user.email === "mdzosimuddin47@gmail.com" ||
+    user.email === "josimuddinadds@gmail.com"
+  );
   const isSessionActive = sessionStorage.getItem("super_admin_session_active") === "true";
 
   if (isSuperAdmin && isSessionActive) {
