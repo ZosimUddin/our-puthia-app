@@ -164,6 +164,8 @@ const AdminMonetizationDashboard = lazyWithRetry(() => import("./components/mone
 const ReferralDashboard = lazyWithRetry(() => import("./components/referral/ReferralDashboard").then(m => ({ default: m.ReferralDashboard })));
 import { SuspiciousLoginBanner } from "./components/common/SuspiciousLoginBanner";
 import { UserAccountSecurityCenter } from "./components/common/UserAccountSecurityCenter";
+import { GlobalPresenceTracker } from "./components/common/GlobalPresenceTracker";
+const RealtimeUserPresencePage = lazyWithRetry(() => import("./pages/admin/RealtimeUserPresencePage"));
 
 // Placeholder for other pages - in a real app these would be separate files
 const EducationCareerHub = lazyWithRetry(() => import("./components/EducationCareerHub"));
@@ -355,6 +357,7 @@ const MainAppContent = () => {
         <Toaster position="top-center" richColors />
         <ScrollProgressBar />
         <AnalyticsTracker />
+        <GlobalPresenceTracker />
         <AutoReturnTimer />
         <ErrorBoundary>
           <OfflineManager>
@@ -712,6 +715,9 @@ const MainAppContent = () => {
                 {/* Admin Routes */}
                 <Route path="/admin" element={<AdminRoute><AdminLayout /></AdminRoute>}>
                   <Route index element={<AdminDashboard />} />
+                  <Route path="realtime-users" element={<RealtimeUserPresencePage />} />
+                  <Route path="active-users" element={<RealtimeUserPresencePage />} />
+                  <Route path="presence" element={<RealtimeUserPresencePage />} />
                   <Route path="moderation" element={<AddaModerationCenter />} />
                   <Route path="reports-hub" element={<AddaModerationCenter />} />
                   <Route path="trust-safety" element={<AdminTrustSafetyHub />} />

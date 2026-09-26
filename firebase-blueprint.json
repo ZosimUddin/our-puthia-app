@@ -1787,9 +1787,43 @@
         "updatedAt": { "type": "string", "format": "date-time" }
       },
       "required": ["id", "text", "isActive", "order"]
+    },
+    "UserPresence": {
+      "title": "Real-time User Online Presence",
+      "description": "Live active user session tracking with heartbeat timestamp, route, device, location and role data",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string", "description": "Session ID or UID" },
+        "userId": { "type": "string", "description": "Auth UID if logged in or guest" },
+        "userName": { "type": "string", "description": "Display name" },
+        "userEmail": { "type": "string", "description": "User email address" },
+        "userAvatar": { "type": "string", "description": "Profile picture URL" },
+        "role": { "type": "string", "description": "User role (super_admin, admin, moderator, editor, user, guest)" },
+        "currentPath": { "type": "string", "description": "Active URL pathname (e.g. /news, /admin)" },
+        "pageTitle": { "type": "string", "description": "Title of the page currently browsed" },
+        "deviceType": { "type": "string", "description": "mobile, tablet, or desktop" },
+        "browser": { "type": "string", "description": "Browser name" },
+        "os": { "type": "string", "description": "Operating system" },
+        "location": { "type": "string", "description": "Approx location or union name" },
+        "status": { "type": "string", "enum": ["online", "idle", "away", "disconnected"] },
+        "lastSeenAt": { "type": "string", "format": "date-time", "description": "ISO timestamp of last heartbeat" },
+        "startedAt": { "type": "string", "format": "date-time", "description": "Session start timestamp" },
+        "durationSeconds": { "type": "number", "description": "Total duration in seconds" },
+        "isRegistered": { "type": "boolean", "description": "Whether visitor is logged in" },
+        "isKicked": { "type": "boolean", "description": "Whether admin kicked the session" },
+        "kickReason": { "type": "string", "description": "Admin kick reason if applicable" },
+        "broadcastAlert": { "type": "string", "description": "Live flash notice sent to session" }
+      },
+      "required": ["id", "status", "lastSeenAt", "currentPath"]
     }
   },
   "firestore": {
+    "/user_presences/{presenceId}": {
+      "schema": {
+        "$ref": "#/entities/UserPresence"
+      },
+      "description": "Real-time user online presence, heartbeat and session telemetry tracking"
+    },
     "/notice_items/{noticeId}": {
       "schema": {
         "$ref": "#/entities/NoticeItem"

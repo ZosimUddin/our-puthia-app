@@ -127,6 +127,20 @@ const AdminLayout: React.FC = () => {
           roles: ['super_admin', 'admin', 'editor', 'moderator']
         },
         { 
+          name: '🟢 রিয়েল-টাইম ইউজার ট্র্যাকিং', 
+          href: '/admin/realtime-users', 
+          icon: Activity, 
+          roles: ['super_admin', 'admin', 'moderator'],
+          badge: 'Live',
+          badgeColor: 'bg-emerald-500 text-white animate-pulse',
+          subItems: [
+            { name: 'লাইভ অনলাইন মনিটর', href: '/admin/realtime-users?tab=live', icon: Activity },
+            { name: 'রিয়েল-টাইম পেজ ট্রাফিক', href: '/admin/realtime-users?tab=pages', icon: Flame },
+            { name: 'ডিভাইস ও ব্রাউজার স্ট্যাটস', href: '/admin/realtime-users?tab=devices', icon: Smartphone },
+            { name: 'ইউনিয়ন ও এরিয়া ম্যাপ', href: '/admin/realtime-users?tab=locations', icon: MapPin },
+          ]
+        },
+        { 
           name: 'নোটিফিকেশন সিস্টেম', 
           href: '/admin/notifications', 
           icon: Bell, 

@@ -1113,6 +1113,15 @@ service cloud.firestore {
     }
 
     // ==========================================
+    // 7.7. REAL-TIME USER PRESENCE & LIVE MONITORING
+    // ==========================================
+    match /user_presences/{presenceId} {
+      allow read: if isModerator() || (isSignedIn() && resource.data.userId == request.auth.uid) || true;
+      allow create, update: if true;
+      allow delete: if isAdmin() || (isSignedIn() && resource.data.userId == request.auth.uid);
+    }
+
+    // ==========================================
     // 8. FALLBACK DEFAULT RULE
     // ==========================================
     match /{document=**} {
