@@ -22,6 +22,7 @@ import {
 } from "firebase/firestore";
 import { db, handleFirestoreError, OperationType } from "../../firebase";
 import { AuditLogEntry, logAuditActivity } from "../../services/auditLogger";
+import { subscribeToActivePresences } from "../../services/presenceService";
 import SuperAdminAuditLogViewer from "./SuperAdminAuditLogViewer";
 import LiveDataSeeder from "./LiveDataSeeder";
 import toast from "react-hot-toast";
@@ -388,6 +389,22 @@ const initialComplianceModules = [
     }
   },
   {
+    id: "realtime_users",
+    name: "রিয়েল-টাইম ইউজার ট্র্যাকিং ও প্রেজেন্স",
+    collection: "user_presences",
+    icon: Activity,
+    path: "/admin/realtime-users",
+    steps: {
+      1: { completed: true, notes: "Firestore /user_presences কালেকশন, সেশন মেটাডাটা ও হার্টবিট ইনডেক্স সেট।" },
+      2: { completed: true, notes: "২৫-সেকেন্ড ইন্টারভ্যাল হার্টবিট, ডিভাইস ডিটেকশন ও রিয়েল-টাইম আইডল টাইমার সক্রিয়।" },
+      3: { completed: true, notes: "লাইভ অ্যাক্টিভ ইউজার সাবস্ক্রিপশন, পেজ ট্র্যাকিং এবং জিও লোকেশন এপিআই।" },
+      4: { completed: true, notes: "সুপার অ্যাডমিন ড্যাশবোর্ড থেকে তাৎক্ষণিক লাইভ ব্রডকাস্ট এলার্ট এবং ফোর্স সেশন কিক সক্রিয়।" },
+      5: { completed: true, notes: "ইউজার প্রেজেন্স মনিটরিং ও কন্ট্রোল কেবল সুপার অ্যাডমিন ও অনুমোদিত রোলে সীমাবদ্ধ।" },
+      6: { completed: true, notes: "সকল ক্লায়েন্ট পেজের সাথে গ্লোবাল প্রেজেন্স ট্র্যাকার হুক লাইভ কানেক্টেড।" },
+      7: { completed: true, notes: "ডিসকানেক্টেড ইউজার ফিল্টারিং ও স্বয়ংক্রিয় ক্লিনাপ পারফর্মেন্স টেস্ট সম্পন্ন।" },
+    }
+  },
+  {
     id: "reports",
     name: "নাগরিক অভিযোগ ও ট্রাস্ট সেন্টার",
     collection: "reports",
@@ -506,6 +523,7 @@ export const SuperAdminDashboard: React.FC = () => {
 
   // Core Vital Statistics
   const [stats, setStats] = useState({
+    onlineUsersCount: 0,
     totalUsers: 0,
     rolesCount: { admin: 0, editor: 0, moderator: 0, super_admin: 1 },
     coreServices63: 63,
@@ -721,6 +739,12 @@ export const SuperAdminDashboard: React.FC = () => {
       updateAggregatedMetrics();
     }, (err) => console.warn("Citizen news sub error", err));
     unsubs.push(unsubCitizenNews);
+
+    // 11. Live Online Presences
+    const unsubPresence = subscribeToActivePresences((_, summary) => {
+      setStats((prev) => ({ ...prev, onlineUsersCount: summary.totalOnline }));
+    });
+    unsubs.push(unsubPresence);
 
     return () => {
       unsubs.forEach((fn) => fn());
@@ -1062,7 +1086,26 @@ export const SuperAdminDashboard: React.FC = () => {
             </div>
           </div>
 
-          <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-3.5">
+          <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-3.5">
+            {/* 0. রিয়েল-টাইম অনলাইন ইউজার (Live) */}
+            <div 
+              onClick={() => navigate("/admin/realtime-users")}
+              className="bg-gradient-to-br from-emerald-900 to-teal-950 p-4 rounded-2xl border border-emerald-500/40 shadow-sm hover:shadow-lg hover:border-emerald-400 transition-all cursor-pointer group text-white relative overflow-hidden"
+            >
+              <div className="flex items-center justify-between mb-2">
+                <span className="text-xs font-bold text-emerald-200">লাইভ অনলাইন</span>
+                <span className="relative flex h-2.5 w-2.5">
+                  <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75"></span>
+                  <span className="relative inline-flex rounded-full h-2.5 w-2.5 bg-emerald-400"></span>
+                </span>
+              </div>
+              <p className="text-2xl font-black text-emerald-300">{stats.onlineUsersCount} জন</p>
+              <div className="mt-1 flex items-center gap-1 text-[11px] text-emerald-400 font-bold group-hover:underline">
+                <span>লাইভ ট্র্যাকার</span>
+                <ArrowRight size={11} />
+              </div>
+            </div>
+
             {/* 1. মোট User */}
             <div 
               onClick={() => navigate("/admin/users")}

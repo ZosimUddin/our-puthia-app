@@ -345,6 +345,7 @@ const AdminLayout: React.FC = () => {
           icon: Users, 
           roles: ['super_admin'],
           subItems: [
+            { name: '🟢 রিয়েল-টাইম সক্রিয় ইউজার (Live)', href: '/admin/realtime-users', icon: Activity },
             { name: 'নিবন্ধিত সকল নাগরিক', href: '/admin/users?role=all', icon: Users },
             { name: 'ভেরিফাইড নাগরিক ডিরেক্টরি', href: '/admin/users?role=verified', icon: UserCheck },
             { name: 'ব্লকড ও ব্যানড আইডি', href: '/admin/users?role=banned', icon: UserX },
