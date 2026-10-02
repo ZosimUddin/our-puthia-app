@@ -453,35 +453,81 @@ const PublicProfilePage: React.FC = () => {
     if (!userId) return;
     setLoading(true);
 
-    const userRef = doc(db, "users", userId);
+    const actualId = userId === 'me' && user ? user.uid : userId;
+    const userRef = doc(db, "users", actualId);
+    
     const unsubscribe = onSnapshot(
       userRef,
       (snap) => {
         if (snap.exists()) {
           setTargetUserProfile({ uid: snap.id, ...snap.data() } as any);
+          setLoading(false);
         } else {
-          // Fallback search by username
-          getDocs(query(collection(db, "users"), where("username", "==", userId.toLowerCase().trim()), limit(1)))
-            .then((qSnap) => {
-              if (!qSnap.empty) {
-                const uDoc = qSnap.docs[0];
-                setTargetUserProfile({ uid: uDoc.id, ...uDoc.data() } as any);
-              } else {
+          // Fallback if this is the currently logged-in user
+          if (user && (actualId === user.uid)) {
+            const fallbackObj = {
+              uid: user.uid,
+              name: currentUserProfile?.name || user.displayName || 'সম্মানিত নাগরিক',
+              phone: currentUserProfile?.phone || '',
+              village: currentUserProfile?.village || '',
+              union: currentUserProfile?.union || 'বানেশ্বর',
+              address: currentUserProfile?.address || '',
+              gender: currentUserProfile?.gender || 'পুরুষ',
+              bloodGroup: currentUserProfile?.bloodGroup || 'O+',
+              stars: currentUserProfile?.stars || 20,
+              role: currentUserProfile?.role || 'user',
+              badges: currentUserProfile?.badges || ["সচেতন নাগরিক"],
+              createdAt: currentUserProfile?.createdAt || new Date().toISOString()
+            };
+            setTargetUserProfile(fallbackObj);
+            setLoading(false);
+            // Auto-repair/save the missing user profile doc in Firestore
+            setDoc(doc(db, "users", user.uid), fallbackObj, { merge: true }).catch(() => {});
+          } else {
+            // Fallback search by username
+            getDocs(query(collection(db, "users"), where("username", "==", actualId.toLowerCase().trim()), limit(1)))
+              .then((qSnap) => {
+                if (!qSnap.empty) {
+                  const uDoc = qSnap.docs[0];
+                  setTargetUserProfile({ uid: uDoc.id, ...uDoc.data() } as any);
+                } else {
+                  setTargetUserProfile(null);
+                }
+                setLoading(false);
+              })
+              .catch(() => {
                 setTargetUserProfile(null);
-              }
-            })
-            .catch(() => setTargetUserProfile(null));
+                setLoading(false);
+              });
+          }
         }
-        setLoading(false);
       },
       (error) => {
         console.warn("Error loading user profile:", error);
+        if (user && (actualId === user.uid)) {
+          setTargetUserProfile({
+            uid: user.uid,
+            name: currentUserProfile?.name || user.displayName || 'সম্মানিত নাগরিক',
+            phone: currentUserProfile?.phone || '',
+            village: currentUserProfile?.village || '',
+            union: currentUserProfile?.union || 'বানেশ্বর',
+            address: currentUserProfile?.address || '',
+            gender: currentUserProfile?.gender || 'পুরুষ',
+            bloodGroup: currentUserProfile?.bloodGroup || 'O+',
+            stars: currentUserProfile?.stars || 20,
+            role: currentUserProfile?.role || 'user',
+            badges: currentUserProfile?.badges || ["সচেতন নাগরিক"],
+            createdAt: currentUserProfile?.createdAt || new Date().toISOString()
+          });
+        } else {
+          setTargetUserProfile(null);
+        }
         setLoading(false);
       }
     );
 
     return () => unsubscribe();
-  }, [userId]);
+  }, [userId, user, currentUserProfile]);
 
   // Load user businesses if any
   useEffect(() => {
