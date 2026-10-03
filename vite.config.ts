@@ -88,28 +88,7 @@ export default defineConfig(() => {
       cssMinify: true,
       target: 'es2020',
       sourcemap: false,
-      chunkSizeWarningLimit: 1500,
-      rollupOptions: {
-        output: {
-          manualChunks(id) {
-            if (id.includes('node_modules')) {
-              if (id.includes('firebase')) {
-                return 'firebase-vendor';
-              }
-              if (id.includes('motion')) {
-                return 'motion-vendor';
-              }
-              if (id.includes('lucide-react')) {
-                return 'icons-vendor';
-              }
-              if (id.includes('react-router') || id.includes('@remix-run')) {
-                return 'router-vendor';
-              }
-              return 'vendor';
-            }
-          }
-        }
-      }
+      chunkSizeWarningLimit: 2000,
     },
     define: {
       'process.env.GOOGLE_MAPS_PLATFORM_KEY': JSON.stringify(process.env.GOOGLE_MAPS_PLATFORM_KEY || '')
