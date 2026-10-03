@@ -1,0 +1,211 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+
+    // ==========================================
+    // HELPER & RBAC FUNCTIONS
+    // ==========================================
+    function isSignedIn() { 
+      return request.auth != null; 
+    }
+    
+    function isSuperAdmin() { 
+      return isSignedIn() && (
+        request.auth.token.email in [
+          'mdzosimuddin31@gmail.com',
+          'mdzosimuddin47@gmail.com',
+          'josimuddinadds@gmail.com'
+        ] ||
+        (exists(/databases/$(database)/documents/users/$(request.auth.uid)) && 
+         get(/databases/$(database)/documents/users/$(request.auth.uid)).data.get('role', 'user') == 'super_admin')
+      );
+    }
+
+    function isAdmin() { 
+      return isSignedIn() && (
+        isSuperAdmin() || 
+        (exists(/databases/$(database)/documents/users/$(request.auth.uid)) && 
+         get(/databases/$(database)/documents/users/$(request.auth.uid)).data.get('role', 'user') in ['super_admin', 'admin'])
+      );
+    }
+
+    function isModerator() { 
+      return isSignedIn() && (
+        isAdmin() || 
+        (exists(/databases/$(database)/documents/users/$(request.auth.uid)) && 
+         get(/databases/$(database)/documents/users/$(request.auth.uid)).data.get('role', 'user') in ['super_admin', 'admin', 'moderator'])
+      );
+    }
+
+    function isEditor() { 
+      return isSignedIn() && (
+        isAdmin() || 
+        (exists(/databases/$(database)/documents/users/$(request.auth.uid)) && 
+         get(/databases/$(database)/documents/users/$(request.auth.uid)).data.get('role', 'user') in ['super_admin', 'admin', 'editor'])
+      );
+    }
+
+    function isDocOwner() {
+      return isSignedIn() && resource != null && (
+        resource.data.get('userId', '') == request.auth.uid ||
+        resource.data.get('authorId', '') == request.auth.uid ||
+        resource.data.get('ownerId', '') == request.auth.uid ||
+        resource.data.get('uid', '') == request.auth.uid ||
+        resource.data.get('uploaderId', '') == request.auth.uid ||
+        resource.data.get('createdBy', '') == request.auth.uid
+      );
+    }
+
+    // ==========================================
+    // 1. USERS & SYSTEM
+    // ==========================================
+    match /users/{userId} {
+      allow read: if true;
+      allow create: if isSignedIn();
+      allow update: if isSuperAdmin() || (isSignedIn() && request.auth.uid == userId);
+      allow delete: if isSuperAdmin();
+    }
+
+    match /user_permissions/{uid} {
+      allow read: if isSignedIn() && (request.auth.uid == uid || isSuperAdmin());
+      allow write: if isSuperAdmin();
+    }
+
+    match /site_settings/{document=**} {
+      allow read: if true;
+      allow write: if isSuperAdmin();
+    }
+
+    match /audit_logs/{logId} {
+      allow read: if isAdmin();
+      allow write: if true;
+    }
+
+    match /admin_audit_logs/{logId} {
+      allow read: if isModerator();
+      allow create: if true;
+      allow update, delete: if isSuperAdmin();
+    }
+
+    match /user_activities/{id} {
+      allow read: if true;
+      allow create: if true;
+      allow update, delete: if isModerator() || isDocOwner();
+    }
+
+    // ==========================================
+    // 2. SOCIAL & COMMUNITY (Adda, Timeline, Posts, Comments, Likes)
+    // ==========================================
+    match /discussions/{id} {
+      allow read, create: if true;
+      allow update: if isModerator() || isDocOwner() ||
+        request.resource.data.diff(resource.data).affectedKeys().hasOnly(['likes', 'likesCount', 'reactionsCount', 'commentsCount', 'sharesCount', 'reactions', 'likedBy', 'views', 'updatedAt']);
+      allow delete: if isModerator() || isDocOwner();
+    }
+
+    match /posts/{id} {
+      allow read, create: if true;
+      allow update, delete: if isModerator() || isDocOwner();
+    }
+
+    match /user_posts/{id} {
+      allow read, create: if true;
+      allow update, delete: if isModerator() || isDocOwner();
+    }
+
+    match /comments/{id} {
+      allow read, create: if true;
+      allow update, delete: if isModerator() || isDocOwner();
+    }
+
+    match /discussion_comments/{id} {
+      allow read, create: if true;
+      allow update, delete: if isModerator() || isDocOwner() || (request.resource.data.diff(resource.data).affectedKeys().hasOnly(["reactions", "likes", "likedBy", "repliesCount", "reported", "hidden", "isEdited", "editedAt", "text"]));
+    }
+
+    match /likes/{likeId} {
+      allow read, write: if true;
+    }
+
+    match /post_reactions/{id} {
+      allow read, write: if true;
+    }
+
+    match /comment_reactions/{id} {
+      allow read, write: if true;
+    }
+
+    match /bookmarks/{id} {
+      allow read: if isSignedIn() && (resource == null || resource.data.uid == request.auth.uid);
+      allow create: if isSignedIn();
+      allow update, delete: if isSignedIn() && (resource == null || resource.data.uid == request.auth.uid);
+    }
+
+    // ==========================================
+    // 3. MEDIA, STORIES & REELS
+    // ==========================================
+    match /adda_media_library/{id} {
+      allow read: if true;
+      allow create, update: if isSignedIn();
+      allow delete: if isModerator() || isDocOwner();
+    }
+
+    match /gallery/{document=**} { 
+      allow read: if true; 
+      allow write: if isEditor(); 
+    }
+
+    match /stories/{storyId} {
+      allow read, create: if true;
+      allow update, delete: if isModerator() || isDocOwner();
+    }
+    
+    match /reels/{reelId} {
+      allow read, create: if true;
+      allow update, delete: if isModerator() || isDocOwner();
+    }
+
+    // ==========================================
+    // 4. NOTIFICATIONS, CHAT & FRIENDS
+    // ==========================================
+    match /notifications/{id} {
+      allow read, write: if true;
+    }
+
+    match /chat/{chatId} {
+      allow read, write: if true;
+    }
+
+    match /messages/{messageId} {
+      allow read, write: if true;
+    }
+
+    match /friend_requests/{requestId} {
+      allow read, write: if true;
+    }
+
+    match /friendships/{friendshipId} {
+      allow read, write: if true;
+    }
+
+    // ==========================================
+    // 5. MASTER SERVICE DIRECTORIES (Doctors, Hospitals, Emergency, Blood, Jobs, etc.)
+    // ==========================================
+    match /{collection}/{id} {
+      allow read: if true;
+      allow create: if true;
+      allow update: if isModerator() || isDocOwner();
+      allow delete: if isAdmin() || isDocOwner();
+    }
+
+    // ==========================================
+    // 6. DEFAULT FALLBACK
+    // ==========================================
+    match /{document=**} {
+      allow read: if true;
+      allow write: if isAdmin();
+    }
+  }
+}
+
+
