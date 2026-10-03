@@ -270,7 +270,7 @@ export const chatService = {
         console.warn("Friend check in startDirectConversation error:", e);
       }
 
-      const reqStatus = isFriend ? 'accepted' : 'pending';
+      const reqStatus = 'accepted';
 
       const convData: Conversation = {
         id: deterministicConvId,
@@ -871,6 +871,7 @@ export const chatService = {
       const convRef = doc(db, 'conversations', conversationId);
       const updates: any = {
         participants: participants,
+        requestStatus: 'accepted',
         lastMessage: options?.type === 'image' ? '📷 ছবি পাঠানো হয়েছে' : (options?.type === 'voice' ? '🎙️ ভয়েস মেসেজ' : (text || '')),
         lastMessageTime: Date.now(),
         lastMessageSenderId: senderId,

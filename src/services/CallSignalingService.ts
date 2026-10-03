@@ -354,15 +354,14 @@ export class CallSignalingService {
       collection(db, "calls"),
       where("receiverId", "==", userId),
       where("status", "==", "ringing"),
-      orderBy("createdAt", "desc"),
-      limit(1)
+      limit(10)
     );
 
     return onSnapshot(q, (snapshot) => {
       if (!snapshot.empty) {
-        const docSnap = snapshot.docs[0];
-        const data = docSnap.data() as CallData;
-        onIncomingCall({ ...data, id: docSnap.id });
+        const calls = snapshot.docs.map(docSnap => ({ ...(docSnap.data() as CallData), id: docSnap.id }));
+        calls.sort((a, b) => b.createdAt - a.createdAt);
+        onIncomingCall(calls[0]);
       } else {
         if (onCallDismissed) {
           onCallDismissed();
