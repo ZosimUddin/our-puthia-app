@@ -20,6 +20,8 @@ import {
 import { Reel, ReelComment, ReelAudio, ReelReactionType, ReelRulesConfig, ReelAnalyticsData } from '../types';
 import { INITIAL_AUDIO_TRACKS, DEFAULT_REEL_RULES } from '../data/reelAudioData';
 
+import { cleanUndefined } from '../utils/firestoreUtils';
+
 const FALLBACK_REELS: Reel[] = [
   {
     id: 'fallback_reel_1',
@@ -159,7 +161,7 @@ export const reelService = {
     const path = 'reels';
     try {
       const newDocRef = doc(collection(db, path));
-      const fullReel: Reel = {
+      const fullReel = cleanUndefined({
         ...reelData,
         id: newDocRef.id,
         viewsCount: 0,
@@ -175,7 +177,7 @@ export const reelService = {
         updatedAt: Date.now(),
         watchTimeTotal: 0,
         completionCount: 0
-      };
+      });
 
       await setDoc(newDocRef, fullReel);
       return newDocRef.id;

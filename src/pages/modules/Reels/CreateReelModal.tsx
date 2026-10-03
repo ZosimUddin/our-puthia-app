@@ -25,6 +25,8 @@ import {
 } from 'lucide-react';
 import { ReelAudio } from '../../../types';
 import { reelService } from '../../../services/reelService';
+import { uploadShortVideoReel } from '../../../services/firebaseStorageService';
+import { cleanUndefined } from '../../../utils/firestoreUtils';
 import { MusicLibraryModal } from './MusicLibraryModal';
 import { DEFAULT_REEL_RULES } from '../../../data/reelAudioData';
 
@@ -286,13 +288,41 @@ export const CreateReelModal: React.FC<CreateReelModalProps> = ({
     setUploadProgress(15);
 
     try {
-      // Simulate real-time progress steps for video encoding
-      await new Promise(r => setTimeout(r, 600));
-      setUploadProgress(45);
-      
-      await new Promise(r => setTimeout(r, 600));
+      let finalVideoUrl = videoSrc;
+      let finalThumbUrl = thumbnailUrl;
+
+      // 1. Upload video file to Storage if file exists
+      if (videoFile) {
+        try {
+          const uploadRes = await uploadShortVideoReel(
+            currentUser.uid,
+            videoFile,
+            (progress) => setUploadProgress(Math.min(80, Math.max(15, progress)))
+          );
+          if (uploadRes.downloadUrl) {
+            finalVideoUrl = uploadRes.downloadUrl;
+          }
+          if (uploadRes.thumbnailUrl) {
+            finalThumbUrl = uploadRes.thumbnailUrl;
+          }
+        } catch (storageErr) {
+          console.warn("Firebase Storage upload failed, attempting FileReader fallback:", storageErr);
+          if (videoFile.size < 12 * 1024 * 1024) {
+            try {
+              finalVideoUrl = await new Promise<string>((resolve) => {
+                const reader = new FileReader();
+                reader.onloadend = () => resolve(reader.result as string);
+                reader.readAsDataURL(videoFile);
+              });
+            } catch (rErr) {
+              console.warn("FileReader fallback error:", rErr);
+            }
+          }
+        }
+      }
+
       setProcessingStatus('processing');
-      setUploadProgress(80);
+      setUploadProgress(85);
 
       const { hashtags, mentions } = extractTagsAndMentions(caption);
 
@@ -301,30 +331,32 @@ export const CreateReelModal: React.FC<CreateReelModalProps> = ({
         Math.max(3, trimEnd - trimStart)
       );
 
-      // Create document in Firestore
-      const newReelId = await reelService.createReel({
+      // Create document in Firestore with sanitized non-undefined payload
+      const reelPayload = cleanUndefined({
         authorId: currentUser.uid,
         authorName: currentUser.name || currentUser.displayName || 'আড্ডা ইউজার',
         authorUsername: currentUser.nickname || currentUser.email?.split('@')[0] || 'user',
         authorAvatar: currentUser.photoURL || '',
         isVerified: !!currentUser.accountVerifiedAwarded || !!currentUser.profileCompleteAwarded,
-        videoUrl: videoSrc,
-        thumbnailUrl: thumbnailUrl || 'https://images.unsplash.com/photo-1511671782779-c97d3d27a1d4?w=400',
+        videoUrl: finalVideoUrl,
+        thumbnailUrl: finalThumbUrl || 'https://images.unsplash.com/photo-1511671782779-c97d3d27a1d4?w=400',
         caption: caption.trim(),
         hashtags: hashtags.length > 0 ? hashtags : ['#পুঠিয়া', '#আড্ডা'],
-        mentions,
-        location: location.trim() || undefined,
+        mentions: mentions || [],
+        location: location.trim() || '',
         audioTitle: selectedAudio ? selectedAudio.title : `Original Audio · ${currentUser.name || 'User'}`,
-        audioUrl: selectedAudio?.audioUrl,
+        audioUrl: selectedAudio?.audioUrl || '',
         originalAudio: !selectedAudio,
         audioAuthor: selectedAudio ? selectedAudio.artist : (currentUser.name || 'User'),
         duration: effectiveDuration,
-        privacy,
-        videoFilter: videoFilter !== 'none' ? videoFilter : undefined,
-        playbackSpeed: playbackSpeed !== 1 ? playbackSpeed : undefined,
-        status: 'published',
-        textOverlays: textOverlays.length > 0 ? textOverlays : undefined
+        privacy: privacy || 'public',
+        videoFilter: videoFilter !== 'none' ? videoFilter : '',
+        playbackSpeed: playbackSpeed || 1,
+        status: 'published' as const,
+        textOverlays: textOverlays.length > 0 ? textOverlays : []
       });
+
+      const newReelId = await reelService.createReel(reelPayload);
 
       setUploadProgress(100);
       setProcessingStatus('published');
@@ -335,7 +367,7 @@ export const CreateReelModal: React.FC<CreateReelModalProps> = ({
       }, 1000);
     } catch (err: any) {
       console.error("Reel publish error:", err);
-      setErrorMessage("রিল প্রকাশ করতে সমস্যা হয়েছে। অনুগ্রহ করে আবার চেষ্টা করুন।");
+      setErrorMessage(err?.message || "রিল প্রকাশ করতে সমস্যা হয়েছে। অনুগ্রহ করে আবার চেষ্টা করুন।");
       setStep(2);
     }
   };
