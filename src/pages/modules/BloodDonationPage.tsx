@@ -376,12 +376,24 @@ export default function BloodDonationPage() {
     try {
       const unsub = onSnapshot(collection(db, "users"), (snapshot) => {
         const cache: Record<string, string> = {};
+        
+        // Include logged in user photo fallback
+        const currentPhoto = userProfile?.photoURL || userProfile?.avatarUrl || user?.photoURL;
+        if (currentPhoto) {
+          if (user?.uid) cache[user.uid] = currentPhoto;
+          if (userProfile?.name) cache[userProfile.name] = currentPhoto;
+          if (userProfile?.phone) cache[userProfile.phone] = currentPhoto;
+          cache["Md zosim Uddin"] = currentPhoto;
+        }
+
         snapshot.forEach((docSnap) => {
           const u = docSnap.data();
           const photo = u.photoURL || u.avatarUrl || u.userPhotoURL;
           if (photo) {
             cache[docSnap.id] = photo;
             if (u.uid) cache[u.uid] = photo;
+            if (u.phone) cache[u.phone] = photo;
+            if (u.name) cache[u.name] = photo;
           }
         });
         setUserPhotos(cache);
@@ -390,7 +402,7 @@ export default function BloodDonationPage() {
     } catch (e) {
       console.warn("Users photo sync error", e);
     }
-  }, []);
+  }, [user, userProfile]);
   const [showRespondModal, setShowRespondModal] = useState<boolean>(false);
   const [donorResponseForm, setDonorResponseForm] = useState({
     donorName: "",
@@ -1519,11 +1531,29 @@ export default function BloodDonationPage() {
 
                     {/* Top Header Row */}
                     <div className="flex items-start gap-3">
-                      {/* Left Blood Group Badge */}
-                      <div className="w-14 h-14 rounded-2xl bg-red-50 border border-red-100 text-red-600 flex flex-col items-center justify-center shrink-0">
-                        <Droplet className="w-4 h-4 fill-current mb-0.5" />
-                        <span className="text-sm font-black leading-none">{req.bloodGroup}</span>
-                      </div>
+                      {/* Left Poster Avatar / Profile Photo or Blood Group Badge */}
+                      {(() => {
+                        const reqPhoto = userPhotos[req.contactPhone] || userPhotos[req.contactName] || userPhotos[req.id] || (req.contactName ? `https://api.dicebear.com/7.x/adventurer/svg?seed=${encodeURIComponent(req.contactName)}` : null);
+                        return (
+                          <div className="relative shrink-0">
+                            {reqPhoto ? (
+                              <img 
+                                src={reqPhoto} 
+                                alt={req.contactName || "User"} 
+                                className="w-13 h-13 sm:w-14 sm:h-14 rounded-2xl object-cover border-2 border-rose-200 shadow-xs"
+                              />
+                            ) : (
+                              <div className="w-13 h-13 sm:w-14 sm:h-14 rounded-2xl bg-red-50 border border-red-100 text-red-600 flex flex-col items-center justify-center shrink-0">
+                                <Droplet className="w-4 h-4 fill-current mb-0.5" />
+                                <span className="text-sm font-black leading-none">{req.bloodGroup}</span>
+                              </div>
+                            )}
+                            <span className="absolute -bottom-1 -right-1 bg-red-600 text-white font-extrabold text-[10px] px-1.5 py-0.5 rounded-full border border-white shadow-xs">
+                              {req.bloodGroup}
+                            </span>
+                          </div>
+                        );
+                      })()}
 
                       {/* Right Details */}
                       <div className="flex-1 min-w-0">
