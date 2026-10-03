@@ -69,6 +69,7 @@ import { TypingIndicator, TypingUser } from './TypingIndicator';
 import { MessagesTestLabModal } from './MessagesTestLabModal';
 import { useAuth } from '../../contexts/AuthContext';
 import { useCall } from '../../contexts/CallContext';
+import { useLocation } from 'react-router-dom';
 import { formatDistanceToNow } from 'date-fns';
 import { bn } from 'date-fns/locale';
 import { toast } from 'react-hot-toast';
@@ -94,6 +95,7 @@ export const AddaMessengerHub: React.FC<AddaMessengerHubProps> = ({
 }) => {
   const { user, userProfile, loginWithGoogle, logout } = useAuth();
   const { initiateCall } = useCall();
+  const location = useLocation();
   
   const [conversations, setConversations] = useState<Conversation[]>([]);
   const [activeChat, setActiveChat] = useState<Conversation | null>(null);
@@ -533,7 +535,7 @@ export const AddaMessengerHub: React.FC<AddaMessengerHubProps> = ({
     }
   }, [conversations, activeChat?.id]);
 
-  // 2. Select initial chat if available or fetch from Firestore/local if not in list
+  // 2. Select initial chat if available or fetch from Firestore/local/location state if not in list
   useEffect(() => {
     if (!initialChatId) return;
 
@@ -541,6 +543,39 @@ export const AddaMessengerHub: React.FC<AddaMessengerHubProps> = ({
     if (match) {
       if (activeChat?.id !== match.id) {
         setActiveChat(match);
+      }
+      return;
+    }
+
+    // Instant fallback if targetUser was passed in route location state
+    const targetUserFromState = location.state?.targetUser;
+    if (targetUserFromState && targetUserFromState.uid) {
+      const currentUserInfo: UserInfo = {
+        uid: currentUserId,
+        name: userProfile?.name || user?.displayName || 'সম্মানিত নাগরিক',
+        photoURL: userProfile?.photoURL || user?.photoURL || '',
+        isOnline: true
+      };
+
+      const instantConv: Conversation = {
+        id: initialChatId,
+        type: 'direct',
+        participants: [currentUserId, targetUserFromState.uid],
+        participantDetails: {
+          [currentUserId]: currentUserInfo,
+          [targetUserFromState.uid]: targetUserFromState
+        },
+        createdAt: Date.now(),
+        updatedAt: Date.now(),
+        lastMessage: 'আড্ডায় নতুন কথোপকথন শুরু হয়েছে।',
+        lastMessageTime: Date.now(),
+        unreadCount: { [currentUserId]: 0, [targetUserFromState.uid]: 0 },
+        requestStatus: 'accepted'
+      };
+
+      if (!activeChat || activeChat.id !== initialChatId) {
+        setActiveChat(instantConv);
+        setConversations(prev => prev.some(c => c.id === instantConv.id) ? prev : [instantConv, ...prev]);
       }
       return;
     }
@@ -570,7 +605,7 @@ export const AddaMessengerHub: React.FC<AddaMessengerHubProps> = ({
       }
     };
     fetchDirect();
-  }, [conversations, initialChatId, currentUserId]);
+  }, [conversations, initialChatId, currentUserId, location.state]);
 
   // 3. Subscribe to active chat messages
   useEffect(() => {
