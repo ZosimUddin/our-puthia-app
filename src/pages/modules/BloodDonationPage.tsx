@@ -378,7 +378,7 @@ export default function BloodDonationPage() {
         const cache: Record<string, string> = {};
         
         // Include logged in user photo fallback
-        const currentPhoto = userProfile?.photoURL || userProfile?.avatarUrl || user?.photoURL;
+        const currentPhoto = userProfile?.photoURL || (userProfile as any)?.avatarUrl || user?.photoURL;
         if (currentPhoto) {
           if (user?.uid) cache[user.uid] = currentPhoto;
           if (userProfile?.name) cache[userProfile.name] = currentPhoto;

@@ -84,7 +84,7 @@ export default defineConfig(() => {
       })
     ],
     build: {
-      minify: 'esbuild',
+      minify: 'esbuild' as const,
       cssMinify: true,
       target: 'es2020',
       sourcemap: false,
