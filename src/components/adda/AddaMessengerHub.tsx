@@ -617,8 +617,9 @@ export const AddaMessengerHub: React.FC<AddaMessengerHubProps> = ({
     const isPendingRequestForUs = activeChat.requestStatus === 'pending' && activeChat.requestedBy !== currentUserId;
 
     if (!isPendingRequestForUs) {
-      // Mark as read
+      // Mark as read & auto-sync any pending/failed messages
       chatService.markAsRead(activeChat.id, currentUserId);
+      chatService.syncFailedMessages(currentUserId);
       setConversations(prev => prev.map(c => c.id === activeChat.id ? {
         ...c,
         unreadCount: { ...c.unreadCount, [currentUserId]: 0 }
