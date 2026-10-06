@@ -64,22 +64,10 @@ const DEFAULT_SUBTITLES: Record<string, string> = {
 export function Sidebar({ isOpen, onClose, onNavigate, activeItem }: SidebarProps) {
   const { user, userProfile, logout } = useAuth();
   const navigate = useNavigate();
-  
-  let unreadCount = 0;
-  try {
-    const notifContext = useNotifications();
-    unreadCount = notifContext?.unreadCount || 0;
-  } catch {
-    unreadCount = 0;
-  }
-
-  let currentPath = '';
-  try {
-    const location = useLocation();
-    currentPath = location?.pathname || '';
-  } catch {
-    currentPath = typeof window !== 'undefined' ? window.location.pathname : '';
-  }
+  const location = useLocation();
+  const notifContext = useNotifications();
+  const unreadCount = notifContext?.unreadCount || 0;
+  const currentPath = location.pathname;
 
   const [drawerItems, setDrawerItems] = useState<CitizenDrawerMenuItem[]>(() => {
     return SiteContentService.getDrawerItems();
