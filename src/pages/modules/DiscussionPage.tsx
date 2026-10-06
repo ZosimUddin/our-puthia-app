@@ -1155,7 +1155,7 @@ export default function DiscussionPage() {
                           <span>অনুভব করছেন: <strong>{post.feeling}</strong></span>
                         </div>
                       )}
-                      <div className="text-slate-900 dark:text-slate-100 text-[15.5px] sm:text-[16.5px] whitespace-pre-wrap leading-relaxed font-normal select-text">
+                      <div className="text-[#050505] text-[15.5px] sm:text-[16.5px] whitespace-pre-wrap leading-relaxed font-normal select-text">
                         {(() => {
                           const shouldTruncate = post.content && post.content.length > 200;
                           const isExpanded = expandedPosts[post.id];

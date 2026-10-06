@@ -1443,7 +1443,7 @@ const PublicProfilePage: React.FC = () => {
               }`}
             >
               {targetUserProfile.bio ? (
-                <p className="font-normal text-[15px] sm:text-[16px] text-slate-900 dark:text-slate-100 leading-relaxed whitespace-pre-wrap select-text">
+                <p className="font-normal text-[15px] sm:text-[16px] text-[#050505] leading-relaxed whitespace-pre-wrap select-text">
                   {targetUserProfile.bio}
                 </p>
               ) : (
@@ -1770,7 +1770,7 @@ const PublicProfilePage: React.FC = () => {
                           </div>
                         ) : (
                           <div className="px-3.5 sm:px-4 pb-2">
-                            <p className="text-[15.5px] sm:text-[16.5px] text-slate-900 dark:text-slate-100 font-normal leading-relaxed whitespace-pre-wrap select-text">
+                            <p className="text-[15.5px] sm:text-[16.5px] text-[#050505] font-normal leading-relaxed whitespace-pre-wrap select-text">
                               {renderFormattedPostContent(post.content)}
                             </p>
                           </div>
