@@ -1438,14 +1438,16 @@ const PublicProfilePage: React.FC = () => {
           <div className="px-4.5 pt-2.5 pb-1">
             <div 
               onClick={isOwnProfile ? handleEditBioClick : undefined}
-              className={`text-slate-700 dark:text-slate-300 text-xs sm:text-sm leading-relaxed max-w-lg ${
-                isOwnProfile ? 'cursor-pointer hover:bg-slate-100/80 dark:hover:bg-slate-800/80 rounded-xl p-2.5 transition border border-dashed border-slate-200 dark:border-slate-700' : ''
+              className={`rounded-2xl p-3.5 sm:p-4 bg-white dark:bg-slate-900 border border-slate-200/90 dark:border-slate-800 shadow-2xs max-w-xl transition ${
+                isOwnProfile ? 'cursor-pointer hover:border-emerald-300 dark:hover:border-emerald-600/50' : ''
               }`}
             >
               {targetUserProfile.bio ? (
-                <p className="font-medium whitespace-pre-wrap text-slate-800 dark:text-slate-200">{targetUserProfile.bio}</p>
+                <p className="font-normal text-[15px] sm:text-[16px] text-slate-900 dark:text-slate-100 leading-relaxed whitespace-pre-wrap select-text">
+                  {targetUserProfile.bio}
+                </p>
               ) : (
-                isOwnProfile && <p className="text-xs text-emerald-600 dark:text-emerald-400 font-bold flex items-center gap-1.5">✏️ আপনার বায়ো (Bio) যুক্ত করতে এখানে ট্যাপ করুন...</p>
+                isOwnProfile && <p className="text-xs sm:text-sm text-emerald-600 dark:text-emerald-400 font-bold flex items-center gap-1.5">✏️ আপনার বায়ো (Bio) যুক্ত করতে এখানে ট্যাপ করুন...</p>
               )}
             </div>
           </div>
@@ -1768,7 +1770,7 @@ const PublicProfilePage: React.FC = () => {
                           </div>
                         ) : (
                           <div className="px-3.5 sm:px-4 pb-2">
-                            <p className="text-[13.5px] sm:text-[14px] text-slate-800 font-normal leading-relaxed whitespace-pre-wrap">
+                            <p className="text-[15.5px] sm:text-[16.5px] text-slate-900 dark:text-slate-100 font-normal leading-relaxed whitespace-pre-wrap select-text">
                               {renderFormattedPostContent(post.content)}
                             </p>
                           </div>
