@@ -321,17 +321,27 @@ export async function uploadMediaFile(
   let thumbnailBlob: Blob | null = null;
 
   if (isVideo) {
-    const meta = await getVideoMetadata(file);
-    durationSeconds = meta.duration;
-    videoWidth = meta.width;
-    videoHeight = meta.height;
-
-    // Check short video limit if category is reels or stories
-    if (options.category === 'reels' && durationSeconds > MAX_SHORT_VIDEO_DURATION_SECONDS) {
-      throw new Error(`শর্ট ভিডিও/রিল সর্বোচ্চ ${MAX_SHORT_VIDEO_DURATION_SECONDS} সেকেন্ডের হতে পারবে (আপনার ভিডিও: ${durationSeconds} সে.)`);
+    try {
+      const [metaResult, thumbResult] = await Promise.allSettled([
+        getVideoMetadata(file),
+        generateVideoThumbnail(file)
+      ]);
+      if (metaResult.status === 'fulfilled') {
+        durationSeconds = metaResult.value.duration;
+        videoWidth = metaResult.value.width;
+        videoHeight = metaResult.value.height;
+      }
+      if (thumbResult.status === 'fulfilled') {
+        thumbnailBlob = thumbResult.value;
+      }
+    } catch {
+      // Safe fallback
+      durationSeconds = 15;
     }
 
-    thumbnailBlob = await generateVideoThumbnail(file);
+    if (durationSeconds && options.category === 'reels' && durationSeconds > 180) {
+      throw new Error(`শর্ট ভিডিও/রিল সর্বোচ্চ ৩ মিনিটের হতে পারবে (আপনার ভিডিও: ${durationSeconds} সে.)`);
+    }
   }
 
   // 3. Compress image if requested and is image
@@ -534,7 +544,7 @@ export async function uploadPostMedia(
 export async function uploadShortVideoReel(
   userId: string, 
   file: File, 
-  onProgress?: (percent: number) => void
+  onProgress?: (percent: number, bytesTransferred?: number, totalBytes?: number) => void
 ): Promise<UploadResult> {
   if (!file.type.startsWith('video/')) {
     throw new Error('শুধুমাত্র ভিডিও ফাইল আপলোড করা যাবে।');
@@ -546,7 +556,7 @@ export async function uploadShortVideoReel(
     subFolder: 'clips',
     maxSizeMB: 50,
     allowedTypes: ['video/mp4', 'video/webm', 'video/quicktime'],
-    onProgress: (percent) => onProgress && onProgress(percent)
+    onProgress: (percent, bytesTransferred, totalBytes) => onProgress && onProgress(percent, bytesTransferred, totalBytes)
   });
 }
 

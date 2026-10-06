@@ -93,6 +93,8 @@ export const CreateReelModal: React.FC<CreateReelModalProps> = ({
 
   // Processing & Error
   const [uploadProgress, setUploadProgress] = useState(0);
+  const [uploadedBytes, setUploadedBytes] = useState(0);
+  const [totalBytes, setTotalBytes] = useState(0);
   const [processingStatus, setProcessingStatus] = useState<'uploading' | 'processing' | 'published'>('uploading');
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
 
@@ -121,6 +123,8 @@ export const CreateReelModal: React.FC<CreateReelModalProps> = ({
     setVideoFilter('none');
     setPlaybackSpeed(1);
     setUploadProgress(0);
+    setUploadedBytes(0);
+    setTotalBytes(0);
     setErrorMessage(null);
   };
 
@@ -281,42 +285,37 @@ export const CreateReelModal: React.FC<CreateReelModalProps> = ({
   };
 
   // Submit and Publish Reel
-  const handlePublishReel = async () => {
+  const handlePublishReel = async (forceImmediate = false) => {
     if (!currentUser || !videoSrc) return;
     setStep(3);
     setProcessingStatus('uploading');
-    setUploadProgress(15);
+    setUploadProgress(10);
+    setUploadedBytes(0);
+    const initialFileSize = videoFile?.size || 0;
+    setTotalBytes(initialFileSize);
     setErrorMessage(null);
-
-    // Simulated smooth progress interval for reliable UI feedback
-    const progressInterval = setInterval(() => {
-      setUploadProgress(prev => {
-        if (prev < 80) return prev + 4;
-        if (prev < 92) return prev + 2;
-        if (prev < 98) return prev + 1;
-        return prev;
-      });
-    }, 250);
 
     try {
       let finalVideoUrl = videoSrc;
       let finalThumbUrl = thumbnailUrl;
 
-      // 1. Upload video file to Storage if file exists with 18-second timeout guard
-      if (videoFile) {
+      // 1. Upload video file to Storage if file exists with 35-second timeout guard
+      if (videoFile && !forceImmediate) {
         try {
           const uploadPromise = uploadShortVideoReel(
             currentUser.uid,
             videoFile,
-            (progress) => {
-              const mapped = Math.round(15 + (progress * 0.70));
-              setUploadProgress(prev => Math.max(prev, mapped));
+            (progress, transferred, total) => {
+              const mapped = Math.min(88, Math.max(10, Math.round(progress * 0.88)));
+              setUploadProgress(mapped);
+              if (transferred) setUploadedBytes(transferred);
+              if (total) setTotalBytes(total);
             }
           );
 
-          // If slow connection takes over 18s, automatically use local video url fallback
+          // 35s timeout guard for mobile connections
           const timeoutPromise = new Promise<null>((resolve) => {
-            setTimeout(() => resolve(null), 18000);
+            setTimeout(() => resolve(null), 35000);
           });
 
           const uploadRes = await Promise.race([uploadPromise, timeoutPromise]);
@@ -373,7 +372,6 @@ export const CreateReelModal: React.FC<CreateReelModalProps> = ({
 
       const newReelId = await reelService.createReel(reelPayload);
 
-      clearInterval(progressInterval);
       setUploadProgress(100);
       setProcessingStatus('published');
 
@@ -382,7 +380,6 @@ export const CreateReelModal: React.FC<CreateReelModalProps> = ({
         onClose();
       }, 600);
     } catch (err: any) {
-      clearInterval(progressInterval);
       console.error("Reel publish error:", err);
       setErrorMessage(err?.message || "রিল প্রকাশ করতে সমস্যা হয়েছে। অনুগ্রহ করে আবার চেষ্টা করুন।");
     }
@@ -797,7 +794,7 @@ export const CreateReelModal: React.FC<CreateReelModalProps> = ({
                 </button>
                 <button
                   type="button"
-                  onClick={handlePublishReel}
+                  onClick={() => handlePublishReel()}
                   className="flex-1 py-3 bg-emerald-600 hover:bg-emerald-500 text-white rounded-2xl text-xs font-black transition-all cursor-pointer border-0 shadow-lg shadow-emerald-600/30 flex items-center justify-center gap-2"
                 >
                   <Sparkles size={16} />
@@ -827,7 +824,7 @@ export const CreateReelModal: React.FC<CreateReelModalProps> = ({
                   </button>
                   <button
                     type="button"
-                    onClick={handlePublishReel}
+                    onClick={() => handlePublishReel()}
                     className="px-5 py-2.5 bg-emerald-600 hover:bg-emerald-500 text-white rounded-xl text-xs font-black shadow-lg cursor-pointer"
                   >
                     পুনরায় চেষ্টা করুন
@@ -845,13 +842,21 @@ export const CreateReelModal: React.FC<CreateReelModalProps> = ({
 
                 <div>
                   <h4 className="font-black text-lg text-white">
-                    {uploadProgress < 45 && 'ভিডিও ফাইল প্রস্তুত ও যাচাই করা হচ্ছে...'}
-                    {uploadProgress >= 45 && uploadProgress < 85 && 'ক্লাউড সার্ভারে ভিডিও আপলোড হচ্ছে...'}
-                    {uploadProgress >= 85 && uploadProgress < 96 && 'থাম্বনেইল ও সাউন্ড অপ্টিমাইজেশন চলছে...'}
-                    {uploadProgress >= 96 && '🎉 সফলভাবে আড্ডায় প্রকাশিত হয়েছে!'}
+                    {uploadProgress < 90 && 'ক্লাউড সার্ভারে ভিডিও আপলোড হচ্ছে...'}
+                    {uploadProgress >= 90 && uploadProgress < 100 && 'থাম্বনেইল ও আড্ডা ফিড প্রস্তুত হচ্ছে...'}
+                    {uploadProgress === 100 && '🎉 সফলভাবে আড্ডায় প্রকাশিত হয়েছে!'}
                   </h4>
+
+                  {totalBytes > 0 && uploadProgress < 95 && (
+                    <p className="text-xs font-bold text-emerald-400 mt-1">
+                      {uploadedBytes > 0 
+                        ? `${(uploadedBytes / (1024 * 1024)).toFixed(1)} MB / ${(totalBytes / (1024 * 1024)).toFixed(1)} MB (${uploadProgress}%)` 
+                        : `মোট সাইজ: ${(totalBytes / (1024 * 1024)).toFixed(1)} MB`}
+                    </p>
+                  )}
+
                   <p className="text-xs text-slate-400 mt-1">
-                    {uploadProgress < 96
+                    {uploadProgress < 100
                       ? 'অনুগ্রহ করে অপেক্ষা করুন, আপনার রিল শর্ট ভিডিওটি আড্ডায় যুক্ত হচ্ছে'
                       : 'প্রকাশনা সম্পন্ন হয়েছে, ফিডে নিয়ে যাওয়া হচ্ছে...'}
                   </p>
@@ -864,13 +869,13 @@ export const CreateReelModal: React.FC<CreateReelModalProps> = ({
                   />
                 </div>
 
-                {uploadProgress >= 75 && uploadProgress < 96 && (
+                {uploadProgress >= 15 && uploadProgress < 100 && (
                   <button
                     type="button"
-                    onClick={handlePublishReel}
-                    className="text-xs font-bold text-emerald-400/80 hover:text-emerald-300 transition-colors pt-2 underline underline-offset-4 cursor-pointer"
+                    onClick={() => handlePublishReel(true)}
+                    className="py-2 px-4 bg-white/10 hover:bg-emerald-600/40 text-emerald-300 rounded-xl text-xs font-bold transition-all border border-emerald-500/30 cursor-pointer active:scale-95 mt-2 flex items-center justify-center gap-1.5 mx-auto"
                   >
-                    বিলম্ব হচ্ছে? সরাসরি ফিডে প্রকাশ করুন ➔
+                    <span>⚡ দেরি না করে সরাসরি প্রকাশ করুন</span>
                   </button>
                 )}
               </>
