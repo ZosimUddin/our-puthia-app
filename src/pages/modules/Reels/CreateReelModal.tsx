@@ -527,7 +527,7 @@ export const CreateReelModal: React.FC<CreateReelModalProps> = ({
                   loop
                   muted={false}
                   style={{ filter: FILTER_OPTIONS.find(f => f.id === videoFilter)?.css || 'none' }}
-                  className="w-full h-full object-cover"
+                  className="w-full h-full object-contain bg-black"
                   onClick={() => {
                     if (previewVideoRef.current) {
                       if (isPlaying) previewVideoRef.current.pause();

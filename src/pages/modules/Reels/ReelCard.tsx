@@ -12,7 +12,9 @@ import {
   UserCheck, 
   Heart,
   ChevronDown,
-  Sparkles
+  Sparkles,
+  Maximize2,
+  Minimize2
 } from 'lucide-react';
 import { Reel, ReelReactionType } from '../../../types';
 import { ReelActionBar } from './ReelActionBar';
@@ -73,6 +75,7 @@ export const ReelCard: React.FC<ReelCardProps> = ({
   const [progress, setProgress] = useState<number>(0);
   const [duration, setDuration] = useState<number>(reel.duration || 15);
   const [currentTime, setCurrentTime] = useState<number>(0);
+  const [videoFit, setVideoFit] = useState<'contain' | 'cover'>('contain');
 
   const lastTapRef = useRef<number>(0);
   const watchTimerRef = useRef<number>(0);
@@ -195,7 +198,15 @@ export const ReelCard: React.FC<ReelCardProps> = ({
 
   return (
     <div className="relative w-full h-full bg-black flex items-center justify-center select-none overflow-hidden group">
-      {/* 1. Main Vertical Video */}
+      {/* Ambient Blurred Video Background for Wide/Non-standard aspect ratio videos */}
+      {reel.thumbnailUrl && (
+        <div 
+          className="absolute inset-0 bg-cover bg-center blur-2xl opacity-40 scale-125 pointer-events-none transition-all duration-300"
+          style={{ backgroundImage: `url(${reel.thumbnailUrl})` }}
+        />
+      )}
+
+      {/* 1. Main Video with Smart Non-Zooming Fit */}
       <video
         ref={videoRef}
         src={reel.videoUrl}
@@ -213,8 +224,23 @@ export const ReelCard: React.FC<ReelCardProps> = ({
         }}
         onClick={handleVideoClick}
         style={{ filter: getFilterStyle(reel.videoFilter) }}
-        className="w-full h-full object-cover cursor-pointer"
+        className={`relative z-10 w-full h-full cursor-pointer transition-all duration-300 ${
+          videoFit === 'cover' ? 'object-cover' : 'object-contain'
+        }`}
       />
+
+      {/* Fit/Fill Toggle Button (Top Right) */}
+      <button
+        type="button"
+        onClick={(e) => {
+          e.stopPropagation();
+          setVideoFit(prev => prev === 'contain' ? 'cover' : 'contain');
+        }}
+        className="absolute top-16 right-4 z-40 p-2.5 rounded-full bg-black/60 hover:bg-black/80 backdrop-blur-md text-white border border-white/20 transition-all cursor-pointer shadow-lg active:scale-95"
+        title={videoFit === 'contain' ? 'পুরো স্ক্রিন জুম করুন (Fill)' : 'আসল মাপে দেখুন (Fit)'}
+      >
+        {videoFit === 'contain' ? <Maximize2 size={18} /> : <Minimize2 size={18} />}
+      </button>
 
       {/* 2. Double Tap Animated Heart */}
       {showDoubleTapHeart && (
