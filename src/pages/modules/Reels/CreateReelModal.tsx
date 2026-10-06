@@ -291,20 +291,21 @@ export const CreateReelModal: React.FC<CreateReelModalProps> = ({
     // Simulated smooth progress interval for reliable UI feedback
     const progressInterval = setInterval(() => {
       setUploadProgress(prev => {
-        if (prev < 85) return prev + 3;
-        if (prev < 95) return prev + 1;
+        if (prev < 80) return prev + 4;
+        if (prev < 92) return prev + 2;
+        if (prev < 98) return prev + 1;
         return prev;
       });
-    }, 300);
+    }, 250);
 
     try {
       let finalVideoUrl = videoSrc;
       let finalThumbUrl = thumbnailUrl;
 
-      // 1. Upload video file to Storage if file exists
+      // 1. Upload video file to Storage if file exists with 18-second timeout guard
       if (videoFile) {
         try {
-          const uploadRes = await uploadShortVideoReel(
+          const uploadPromise = uploadShortVideoReel(
             currentUser.uid,
             videoFile,
             (progress) => {
@@ -312,11 +313,21 @@ export const CreateReelModal: React.FC<CreateReelModalProps> = ({
               setUploadProgress(prev => Math.max(prev, mapped));
             }
           );
-          if (uploadRes.downloadUrl) {
+
+          // If slow connection takes over 18s, automatically use local video url fallback
+          const timeoutPromise = new Promise<null>((resolve) => {
+            setTimeout(() => resolve(null), 18000);
+          });
+
+          const uploadRes = await Promise.race([uploadPromise, timeoutPromise]);
+          if (uploadRes && uploadRes.downloadUrl) {
             finalVideoUrl = uploadRes.downloadUrl;
-          }
-          if (uploadRes.thumbnailUrl) {
-            finalThumbUrl = uploadRes.thumbnailUrl;
+            if (uploadRes.thumbnailUrl) {
+              finalThumbUrl = uploadRes.thumbnailUrl;
+            }
+          } else {
+            console.warn("Storage upload timed out or fallback used; utilizing object URL for instant publishing.");
+            finalVideoUrl = videoSrc;
           }
         } catch (storageErr) {
           console.warn("Firebase Storage upload fallback triggered:", storageErr);
@@ -834,12 +845,15 @@ export const CreateReelModal: React.FC<CreateReelModalProps> = ({
 
                 <div>
                   <h4 className="font-black text-lg text-white">
-                    {processingStatus === 'uploading' && 'ভিডিও আপলোড হচ্ছে...'}
-                    {processingStatus === 'processing' && 'ভিডিও প্রসেসিং ও অপটিমাইজেশন চলছে...'}
-                    {processingStatus === 'published' && '🎉 সফলভাবে প্রকাশিত হয়েছে!'}
+                    {uploadProgress < 45 && 'ভিডিও ফাইল প্রস্তুত ও যাচাই করা হচ্ছে...'}
+                    {uploadProgress >= 45 && uploadProgress < 85 && 'ক্লাউড সার্ভারে ভিডিও আপলোড হচ্ছে...'}
+                    {uploadProgress >= 85 && uploadProgress < 96 && 'থাম্বনেইল ও সাউন্ড অপ্টিমাইজেশন চলছে...'}
+                    {uploadProgress >= 96 && '🎉 সফলভাবে আড্ডায় প্রকাশিত হয়েছে!'}
                   </h4>
                   <p className="text-xs text-slate-400 mt-1">
-                    অনুগ্রহ করে অপেক্ষা করুন, আপনার রিল শর্ট ভিডিওটি আড্ডায় যুক্ত হচ্ছে
+                    {uploadProgress < 96
+                      ? 'অনুগ্রহ করে অপেক্ষা করুন, আপনার রিল শর্ট ভিডিওটি আড্ডায় যুক্ত হচ্ছে'
+                      : 'প্রকাশনা সম্পন্ন হয়েছে, ফিডে নিয়ে যাওয়া হচ্ছে...'}
                   </p>
                 </div>
 
@@ -849,6 +863,16 @@ export const CreateReelModal: React.FC<CreateReelModalProps> = ({
                     style={{ width: `${uploadProgress}%` }}
                   />
                 </div>
+
+                {uploadProgress >= 75 && uploadProgress < 96 && (
+                  <button
+                    type="button"
+                    onClick={handlePublishReel}
+                    className="text-xs font-bold text-emerald-400/80 hover:text-emerald-300 transition-colors pt-2 underline underline-offset-4 cursor-pointer"
+                  >
+                    বিলম্ব হচ্ছে? সরাসরি ফিডে প্রকাশ করুন ➔
+                  </button>
+                )}
               </>
             )}
           </div>

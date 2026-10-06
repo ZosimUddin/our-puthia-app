@@ -7,6 +7,7 @@
 
 import { 
   ref, 
+  uploadBytes,
   uploadBytesResumable, 
   getDownloadURL, 
   deleteObject, 
@@ -371,9 +372,19 @@ export async function uploadMediaFile(
   });
 
   return new Promise<UploadResult>((resolve, reject) => {
+    let isSettled = false;
+    const uploadTimeoutTimer = setTimeout(() => {
+      if (!isSettled) {
+        isSettled = true;
+        try { uploadTask.cancel(); } catch (_) {}
+        reject(new Error('স্টোরেজ আপলোড সময়সীমা অতিক্রম করেছে (Timeout)'));
+      }
+    }, 30000); // 30s timeout guard
+
     uploadTask.on(
       'state_changed',
       (snapshot) => {
+        if (isSettled) return;
         const progress = snapshot.totalBytes > 0 
           ? (snapshot.bytesTransferred / snapshot.totalBytes) * 100 
           : 0;
@@ -382,10 +393,15 @@ export async function uploadMediaFile(
         }
       },
       (error) => {
+        if (isSettled) return;
+        isSettled = true;
+        clearTimeout(uploadTimeoutTimer);
         console.error('Firebase Storage upload error:', error);
         reject(new Error(`আপলোড ব্যর্থ হয়েছে: ${error.message}`));
       },
       async () => {
+        if (isSettled) return;
+        clearTimeout(uploadTimeoutTimer);
         try {
           const downloadUrl = await getDownloadURL(uploadTask.snapshot.ref);
           let thumbnailUrl: string | undefined;
@@ -395,13 +411,14 @@ export async function uploadMediaFile(
             try {
               const thumbPath = `${options.category}/${options.ownerId}${sub}/thumbs/${timestamp}_thumb.jpg`;
               const thumbRef = ref(storage, thumbPath);
-              await uploadBytesResumable(thumbRef, thumbnailBlob, { contentType: 'image/jpeg' });
+              await uploadBytes(thumbRef, thumbnailBlob, { contentType: 'image/jpeg' });
               thumbnailUrl = await getDownloadURL(thumbRef);
             } catch (thumbErr) {
               console.warn('Video thumbnail upload skipped:', thumbErr);
             }
           }
 
+          isSettled = true;
           resolve({
             downloadUrl,
             storagePath,
@@ -415,7 +432,10 @@ export async function uploadMediaFile(
             height: videoHeight
           });
         } catch (err: any) {
-          reject(new Error(`ডাউনলোড লিংক তৈরি ব্যর্থ: ${err?.message || err}`));
+          if (!isSettled) {
+            isSettled = true;
+            reject(new Error(`ডাউনলোড লিংক তৈরি ব্যর্থ: ${err?.message || err}`));
+          }
         }
       }
     );
