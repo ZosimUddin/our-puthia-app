@@ -23,6 +23,7 @@ import { db } from "../../firebase";
 import { UserProfile, useAuth } from "../../contexts/AuthContext";
 import { Reel } from "../../types";
 import { useSocial } from "../../hooks/useSocial";
+import { PostReactionsModal } from "../../components/adda/PostReactionsModal";
 import { 
   ArrowLeft, 
   MapPin, 
@@ -180,6 +181,7 @@ const PublicProfilePage: React.FC = () => {
   const [socialModalUsers, setSocialModalUsers] = useState<any[]>([]);
   const [socialModalLoading, setSocialModalLoading] = useState(false);
   const [socialSearchQuery, setSocialSearchQuery] = useState("");
+  const [activeReactionsPost, setActiveReactionsPost] = useState<any | null>(null);
 
   useEffect(() => {
     const handleClickOutside = (e: MouseEvent) => {
@@ -1802,9 +1804,16 @@ const PublicProfilePage: React.FC = () => {
                           <div className="px-3.5 sm:px-4 py-1.5 flex items-center justify-between text-xs text-slate-500 mx-2 border-b border-slate-100 mb-1">
                             <div className="flex items-center gap-1.5">
                               {post.likesCount > 0 && (
-                                <div className="flex items-center gap-1.5">
+                                <div 
+                                  onClick={(e) => {
+                                    e.stopPropagation();
+                                    setActiveReactionsPost(post);
+                                  }}
+                                  className="flex items-center gap-1.5 cursor-pointer hover:opacity-85 active:scale-95 transition-all p-0.5 rounded-lg select-none"
+                                  title="কে কে লাইক দিয়েছেন দেখুন"
+                                >
                                   {renderPostReactionIcons(post)}
-                                  <span className="font-bold text-slate-700">{post.likesCount}</span>
+                                  <span className="font-bold text-slate-700 hover:underline">{post.likesCount}</span>
                                 </div>
                               )}
                             </div>
@@ -3568,6 +3577,17 @@ const PublicProfilePage: React.FC = () => {
             </button>
           </div>
         </div>
+      )}
+
+      {/* Facebook Style Who Reacted Modal */}
+      {activeReactionsPost && (
+        <PostReactionsModal
+          isOpen={!!activeReactionsPost}
+          onClose={() => setActiveReactionsPost(null)}
+          postId={activeReactionsPost.id}
+          postReactionsMap={activeReactionsPost.reactions}
+          totalCount={activeReactionsPost.likesCount}
+        />
       )}
     </div>
   );

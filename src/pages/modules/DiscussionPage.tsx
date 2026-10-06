@@ -35,6 +35,7 @@ import { useNavigate } from "react-router-dom";
 import { useAuth } from "../../contexts/AuthContext";
 import { db } from "../../firebase";
 import { notificationService } from "../../services/notificationService";
+import { PostReactionsModal } from "../../components/adda/PostReactionsModal";
 import { 
   collection, 
   addDoc, 
@@ -133,6 +134,7 @@ export default function DiscussionPage() {
 
   // Post 3-Dots Menu
   const [activeMenuPostId, setActiveMenuPostId] = useState<string | null>(null);
+  const [activeReactionsPost, setActiveReactionsPost] = useState<Post | null>(null);
 
   // Edit Post Modal
   const [editingPost, setEditingPost] = useState<Post | null>(null);
@@ -1255,9 +1257,16 @@ export default function DiscussionPage() {
                     <div className="px-3 sm:px-4 py-1.5 flex items-center justify-between text-xs text-slate-500 mx-2 border-b border-slate-100/60 mb-1">
                       <div className="flex items-center gap-1.5">
                         {post.likesCount > 0 && (
-                          <div className="flex items-center gap-1.5">
+                          <div 
+                            onClick={(e) => {
+                              e.stopPropagation();
+                              setActiveReactionsPost(post);
+                            }}
+                            className="flex items-center gap-1.5 cursor-pointer hover:opacity-85 active:scale-95 transition-all p-0.5 rounded-lg select-none"
+                            title="কে কে লাইক দিয়েছেন দেখুন"
+                          >
                             {renderPostReactionIcons(post)}
-                            <span className="font-bold text-slate-700 dark:text-slate-200">{post.likesCount}</span>
+                            <span className="font-bold text-slate-700 dark:text-slate-200 hover:underline">{post.likesCount}</span>
                           </div>
                         )}
                       </div>
@@ -1960,6 +1969,17 @@ export default function DiscussionPage() {
         <AuthModal
           isOpen={showAuthModal}
           onClose={() => setShowAuthModal(false)}
+        />
+      )}
+
+      {/* Facebook Style Who Reacted Modal */}
+      {activeReactionsPost && (
+        <PostReactionsModal
+          isOpen={!!activeReactionsPost}
+          onClose={() => setActiveReactionsPost(null)}
+          postId={activeReactionsPost.id}
+          postReactionsMap={activeReactionsPost.reactions}
+          totalCount={activeReactionsPost.likesCount}
         />
       )}
     </div>
