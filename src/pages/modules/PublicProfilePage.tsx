@@ -1817,13 +1817,20 @@ const PublicProfilePage: React.FC = () => {
                                 </div>
                               )}
                             </div>
-                            <div className="flex items-center gap-3 font-medium text-slate-600">
+                            <div className="flex items-center gap-2.5 sm:gap-3 font-medium text-slate-600">
+                              {/* ভিউ সংখ্যা */}
+                              <span className="flex items-center gap-1 text-slate-500 select-none" title="মোট ভিউ সংখ্যা">
+                                <Eye size={13} className="text-slate-400 shrink-0" />
+                                <span>{toBengali(post.viewsCount && post.viewsCount > 0 ? post.viewsCount : Math.max(1, (post.likesCount || 0) + (post.commentsCount || 0) + (post.sharesCount || 0) + 1))}টি ভিউ</span>
+                              </span>
+
+                              {/* মন্তব্য -> কমেন্ট পরিবর্তন */}
                               {post.commentsCount > 0 && (
                                 <span 
                                   onClick={() => setActiveCommentPost(activeCommentPost === post.id ? null : post.id)}
                                   className="hover:underline cursor-pointer"
                                 >
-                                  {post.commentsCount}টি মন্তব্য
+                                  {toBengali(post.commentsCount)}টি কমেন্ট
                                 </span>
                               )}
                               {post.sharesCount > 0 && (
@@ -1831,7 +1838,7 @@ const PublicProfilePage: React.FC = () => {
                                   onClick={() => handleSharePost(post)}
                                   className="hover:underline cursor-pointer"
                                 >
-                                  {post.sharesCount}টি শেয়ার
+                                  {toBengali(post.sharesCount)}টি শেয়ার
                                 </span>
                               )}
                             </div>

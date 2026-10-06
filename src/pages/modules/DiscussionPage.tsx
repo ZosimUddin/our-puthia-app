@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef } from "react";
+import React, { useState, useEffect, useRef, useCallback } from "react";
 import { motion, AnimatePresence } from "motion/react";
 import { 
   MessageSquare, 
@@ -18,6 +18,7 @@ import {
   Link as LinkIcon,
   Edit3,
   Trash2,
+  Eye,
   EyeOff,
   Check,
   X,
@@ -76,6 +77,11 @@ import { cleanUndefined } from "../../utils/firestoreUtils";
 import { formatDistanceToNow } from "date-fns";
 import { bn } from "date-fns/locale";
 
+const toBengaliNumber = (num: number | string = 0): string => {
+  const bengaliDigits = ['০', '১', '২', '৩', '৪', '৫', '৬', '৭', '৮', '৯'];
+  return String(num).replace(/[0-9]/g, (w) => bengaliDigits[+w]);
+};
+
 interface Post {
   id: string;
   content: string;
@@ -93,6 +99,7 @@ interface Post {
   feeling?: string;
   likesCount: number;
   commentsCount: number;
+  viewsCount?: number;
   createdAt: any;
   userLiked?: boolean;
   userReaction?: 'like' | 'love' | 'haha' | 'wow' | 'sad' | 'angry' | null;
@@ -211,6 +218,29 @@ export default function DiscussionPage() {
     return () => document.removeEventListener('mousedown', handleClickOutside);
   }, [activeMenuPostId]);
 
+  // View Counter System
+  const viewedPostsRef = useRef<Set<string>>(new Set());
+
+  const recordPostView = useCallback(async (postId: string) => {
+    if (!postId || viewedPostsRef.current.has(postId)) return;
+    const sessionKey = `viewed_discussion_${postId}`;
+    if (sessionStorage.getItem(sessionKey)) {
+      viewedPostsRef.current.add(postId);
+      return;
+    }
+    viewedPostsRef.current.add(postId);
+    sessionStorage.setItem(sessionKey, '1');
+
+    try {
+      const postRef = doc(db, 'discussions', postId);
+      await updateDoc(postRef, {
+        viewsCount: increment(1)
+      });
+    } catch {
+      // silently ignore if offline
+    }
+  }, []);
+
   useEffect(() => {
     // Real-time listener for posts
     const q = query(collection(db, "discussions"), orderBy("createdAt", "desc"), limit(40));
@@ -270,6 +300,7 @@ export default function DiscussionPage() {
               feeling: data.feeling,
               likesCount: computedCount,
               commentsCount: data.commentsCount || 0,
+              viewsCount: data.viewsCount ?? data.views ?? 0,
               createdAt: data.createdAt,
               userLiked,
               userReaction,
@@ -299,6 +330,9 @@ export default function DiscussionPage() {
           });
 
           setPosts(postsData);
+          postsData.forEach(p => {
+            if (p.id) recordPostView(p.id);
+          });
           setLoading(false);
         } catch (err) {
           console.warn("Error reading discussions onSnapshot:", err);
@@ -377,7 +411,8 @@ export default function DiscussionPage() {
         reactionsCount: 0,
         reactions: {},
         likedBy: [],
-        commentsCount: 0
+        commentsCount: 0,
+        viewsCount: 1
       });
 
       // 1. Optimistic UI update: Display immediately in timeline
@@ -396,6 +431,7 @@ export default function DiscussionPage() {
         feeling: payload.feeling || '',
         likesCount: 0,
         commentsCount: 0,
+        viewsCount: 1,
         createdAt: { toDate: () => new Date(), seconds: Math.floor(Date.now() / 1000) } as any,
         userLiked: false,
         userReaction: null,
@@ -1252,44 +1288,51 @@ export default function DiscussionPage() {
                     </>
                   )}
 
-                  {/* Post Stats (Only shown if likes > 0, comments > 0, or shares > 0) */}
-                  {((post.likesCount || 0) > 0 || (post.commentsCount || 0) > 0 || (post.sharesCount || 0) > 0) && (
-                    <div className="px-3 sm:px-4 py-1.5 flex items-center justify-between text-xs text-slate-500 mx-2 border-b border-slate-100/60 mb-1">
-                      <div className="flex items-center gap-1.5">
-                        {post.likesCount > 0 && (
-                          <div 
-                            onClick={(e) => {
-                              e.stopPropagation();
-                              setActiveReactionsPost(post);
-                            }}
-                            className="flex items-center gap-1.5 cursor-pointer hover:opacity-85 active:scale-95 transition-all p-0.5 rounded-lg select-none"
-                            title="কে কে লাইক দিয়েছেন দেখুন"
-                          >
-                            {renderPostReactionIcons(post)}
-                            <span className="font-bold text-slate-700 dark:text-slate-200 hover:underline">{post.likesCount}</span>
-                          </div>
-                        )}
-                      </div>
-                      <div className="flex items-center gap-3 font-medium text-slate-600 dark:text-slate-400">
-                        {post.commentsCount > 0 && (
-                          <span 
-                            onClick={() => setActiveCommentPost(activeCommentPost === post.id ? null : post.id)}
-                            className="hover:underline cursor-pointer"
-                          >
-                            {post.commentsCount}টি মন্তব্য
-                          </span>
-                        )}
-                        {post.sharesCount && post.sharesCount > 0 ? (
-                          <span 
-                            onClick={() => handleShareClick(post)}
-                            className="hover:underline cursor-pointer"
-                          >
-                            {post.sharesCount}টি শেয়ার
-                          </span>
-                        ) : null}
-                      </div>
+                  {/* Post Stats (Likes on Left, Views / Comments / Shares on Right) */}
+                  <div className="px-3 sm:px-4 py-1.5 flex items-center justify-between text-xs text-slate-500 mx-2 border-b border-slate-100/60 mb-1">
+                    <div className="flex items-center gap-1.5">
+                      {post.likesCount > 0 && (
+                        <div 
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            setActiveReactionsPost(post);
+                          }}
+                          className="flex items-center gap-1.5 cursor-pointer hover:opacity-85 active:scale-95 transition-all p-0.5 rounded-lg select-none"
+                          title="কে কে লাইক দিয়েছেন দেখুন"
+                        >
+                          {renderPostReactionIcons(post)}
+                          <span className="font-bold text-slate-700 dark:text-slate-200 hover:underline">{toBengaliNumber(post.likesCount)}</span>
+                        </div>
+                      )}
                     </div>
-                  )}
+                    <div className="flex items-center gap-2.5 sm:gap-3.5 font-medium text-slate-600 dark:text-slate-400">
+                      {/* ভিউ সিস্টেম */}
+                      <span className="flex items-center gap-1 text-slate-500 dark:text-slate-400 select-none" title="মোট ভিউ সংখ্যা">
+                        <Eye size={13} className="text-slate-400 shrink-0" />
+                        <span>{toBengaliNumber(post.viewsCount && post.viewsCount > 0 ? post.viewsCount : Math.max(1, (post.likesCount || 0) + (post.commentsCount || 0) + (post.sharesCount || 0) + 1))}টি ভিউ</span>
+                      </span>
+
+                      {/* মন্তব্য -> কমেন্ট পরিবর্তন */}
+                      {post.commentsCount > 0 && (
+                        <span 
+                          onClick={() => setActiveCommentPost(activeCommentPost === post.id ? null : post.id)}
+                          className="hover:underline cursor-pointer"
+                        >
+                          {toBengaliNumber(post.commentsCount)}টি কমেন্ট
+                        </span>
+                      )}
+
+                      {/* শেয়ার সংখ্যা */}
+                      {post.sharesCount && post.sharesCount > 0 ? (
+                        <span 
+                          onClick={() => handleShareClick(post)}
+                          className="hover:underline cursor-pointer"
+                        >
+                          {toBengaliNumber(post.sharesCount)}টি শেয়ার
+                        </span>
+                      ) : null}
+                    </div>
+                  </div>
 
                   {/* Facebook Lite Style Action Pills */}
                   <div className="px-2 pb-2 pt-1 flex items-center justify-between gap-2">

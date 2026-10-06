@@ -438,7 +438,7 @@ export function ImageLightbox({
               </div>
               <div className="font-semibold text-white/65">
                 {(commentsCount || 0) > 0 && (
-                  <span>{toBengali(commentsCount || 0)}টি মন্তব্য</span>
+                  <span>{toBengali(commentsCount || 0)}টি কমেন্ট</span>
                 )}
               </div>
             </div>

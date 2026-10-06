@@ -550,7 +550,7 @@ export const AddaSearchResultsView: React.FC<AddaSearchResultsViewProps> = ({
                             <span className="flex items-center gap-1">
                               👍 {post.likes} রিঅ্যাকশন
                             </span>
-                            <span>{post.commentsCount} টি মন্তব্য</span>
+                            <span>{post.commentsCount}টি কমেন্ট</span>
                           </div>
                         </div>
                       ))
@@ -653,7 +653,7 @@ export const AddaSearchResultsView: React.FC<AddaSearchResultsViewProps> = ({
 
                         <div className="pt-2 border-t border-slate-100 flex items-center justify-between text-xs text-slate-500 font-bold">
                           <span>👍 {post.likes} রিঅ্যাকশন</span>
-                          <span>{post.commentsCount} মন্তব্য</span>
+                          <span>{post.commentsCount}টি কমেন্ট</span>
                         </div>
                       </div>
                     ))
