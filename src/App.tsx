@@ -14,6 +14,7 @@ import ScrollProgressBar from "./components/ScrollProgressBar";
 import { AccessibilityProvider } from "./contexts/AccessibilityContext";
 import { LanguageProvider } from "./contexts/LanguageContext";
 import { AccessibilityToolbar } from "./components/common/AccessibilityToolbar";
+import { Analytics } from '@vercel/analytics/react';
 
 // Helper for resilient lazy loading that retries on fetch failure
 function lazyWithRetry<T extends React.ComponentType<any>>(
@@ -921,6 +922,7 @@ export default function App() {
         <BrowserRouter>
           <MainAppContent />
           <AccessibilityToolbar />
+          <Analytics />
         </BrowserRouter>
       </AccessibilityProvider>
     </LanguageProvider>
