@@ -1,0 +1,268 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+
+    // ==========================================
+    // HELPER & RBAC FUNCTIONS
+    // ==========================================
+    function isSignedIn() {
+      return request.auth != null;
+    }
+
+    function getUserData() {
+      return get(/databases/$(database)/documents/users/$(request.auth.uid)).data;
+    }
+
+    function isSuperAdmin() {
+      return isSignedIn() && (
+        request.auth.token.email in [
+          'mdzosimuddin31@gmail.com',
+          'mdzosimuddin47@gmail.com',
+          'josimuddinadds@gmail.com'
+        ] ||
+        (exists(/databases/$(database)/documents/users/$(request.auth.uid)) &&
+          getUserData().get('role', 'user') == 'super_admin')
+      );
+    }
+
+    function isAdmin() {
+      return isSignedIn() && (
+        isSuperAdmin() || 
+        (exists(/databases/$(database)/documents/users/$(request.auth.uid)) &&
+          getUserData().get('role', 'user') in ['super_admin', 'admin'])
+      );
+    }
+
+    function isStaff() {
+      return isSignedIn() && (
+        isAdmin() || 
+        (exists(/databases/$(database)/documents/users/$(request.auth.uid)) &&
+          getUserData().get('role', 'user') in ['super_admin', 'admin', 'editor', 'staff', 'moderator'])
+      );
+    }
+
+    function isDocOwner() {
+      return isSignedIn() && resource != null && (
+        resource.data.get('userId', '') == request.auth.uid ||
+        resource.data.get('uid', '') == request.auth.uid ||
+        resource.data.get('authorId', '') == request.auth.uid ||
+        resource.data.get('ownerId', '') == request.auth.uid ||
+        resource.data.get('uploaderId', '') == request.auth.uid ||
+        resource.data.get('createdBy', '') == request.auth.uid
+      );
+    }
+
+    // ==========================================
+    // 1. USERS & PROFILE MANAGEMENT
+    // ==========================================
+    match /users/{userId} {
+      allow read: if true;
+      allow create: if isSignedIn() && request.auth.uid == userId && 
+        (!('role' in request.resource.data) || request.resource.data.role == 'user' || isStaff());
+      allow update: if isStaff() || (
+        isSignedIn() && request.auth.uid == userId &&
+        (!('role' in request.resource.data) || request.resource.data.role == resource.data.get('role', 'user'))
+      );
+      allow delete: if isStaff();
+    }
+
+    match /user_permissions/{uid} {
+      allow read: if isSignedIn() && (request.auth.uid == uid || isStaff());
+      allow write: if isStaff();
+    }
+
+    // ==========================================
+    // 2. SYSTEM SETTINGS & NOTICES
+    // ==========================================
+    match /settings/{document=**} {
+      allow read: if true;
+      allow write: if isStaff();
+    }
+
+    match /site_settings/{document=**} {
+      allow read: if true;
+      allow write: if isStaff();
+    }
+
+    match /notices/{noticeId} {
+      allow read: if true;
+      allow write: if isStaff();
+    }
+
+    match /banners/{bannerId} {
+      allow read: if true;
+      allow write: if isStaff();
+    }
+
+    match /hero_slides/{slideId} {
+      allow read: if true;
+      allow write: if isStaff();
+    }
+
+    match /ads/{adId} {
+      allow read: if true;
+      allow write: if isStaff();
+    }
+
+    match /stats/{docId} {
+      allow read: if true;
+      allow write: if isStaff();
+    }
+
+    match /sub_menu_pages/{pageId} {
+      allow read: if true;
+      allow write: if isStaff();
+    }
+
+    // ==========================================
+    // 3. SOCIAL, POSTS, DISCUSSIONS & INTERACTIONS
+    // ==========================================
+    match /discussions/{id} {
+      allow read, create: if true;
+      allow update, delete: if true;
+    }
+
+    match /posts/{id} {
+      allow read, create: if true;
+      allow update, delete: if true;
+    }
+
+    match /user_posts/{id} {
+      allow read, create: if true;
+      allow update, delete: if true;
+    }
+
+    match /comments/{id} {
+      allow read, create: if true;
+      allow update, delete: if true;
+    }
+
+    match /discussion_comments/{id} {
+      allow read, create: if true;
+      allow update, delete: if true;
+    }
+
+    match /likes/{likeId} {
+      allow read, write: if true;
+    }
+
+    match /post_reactions/{id} {
+      allow read, write: if true;
+    }
+
+    match /comment_reactions/{id} {
+      allow read, write: if true;
+    }
+
+    match /bookmarks/{id} {
+      allow read, write: if true;
+    }
+
+    match /stories/{storyId} {
+      allow read, write: if true;
+    }
+
+    match /reels/{reelId} {
+      allow read, write: if true;
+    }
+
+    // ==========================================
+    // 4. CHAT, CONVERSATIONS, CALLS & NOTIFICATIONS
+    // ==========================================
+    match /notifications/{id} {
+      allow read, write: if true;
+    }
+
+    match /conversations/{conversationId} {
+      allow read, write: if true;
+
+      match /{subcollection=**} {
+        allow read, write: if true;
+      }
+    }
+
+    match /calls/{callId} {
+      allow read, write: if true;
+
+      match /{subcollection=**} {
+        allow read, write: if true;
+      }
+    }
+
+    match /chat/{chatId} {
+      allow read, write: if true;
+    }
+
+    match /messages/{messageId} {
+      allow read, write: if true;
+    }
+
+    match /friend_requests/{requestId} {
+      allow read, write: if true;
+    }
+
+    match /friendships/{friendshipId} {
+      allow read, write: if true;
+    }
+
+    // ==========================================
+    // 5. RESTRICTED TRANSACTIONS & AUDITS
+    // ==========================================
+    match /point_history/{id} {
+      allow read: if isSignedIn() && (resource == null || resource.data.userId == request.auth.uid || isStaff());
+      allow create: if isSignedIn() && request.resource.data.userId == request.auth.uid;
+      allow update, delete: if isStaff();
+    }
+
+    match /recharge_requests/{id} {
+      allow read: if isSignedIn() && (resource == null || resource.data.uid == request.auth.uid || isStaff());
+      allow create: if isSignedIn() && request.resource.data.uid == request.auth.uid;
+      allow update, delete: if isStaff();
+    }
+
+    match /complaints/{id} {
+      allow read: if true;
+      allow create: if isSignedIn();
+      allow update: if isStaff() || (isSignedIn() && isDocOwner() && request.resource.data.status == resource.data.status);
+      allow delete: if isStaff() || isDocOwner();
+    }
+
+    match /blood_donations/{id} {
+      allow read: if true;
+      allow create: if isSignedIn() && request.resource.data.userId == request.auth.uid;
+      allow update, delete: if isStaff() || isDocOwner();
+    }
+
+    match /volunteers/{id} {
+      allow read: if true;
+      allow create: if isSignedIn();
+      allow update, delete: if isStaff() || isDocOwner();
+    }
+
+    match /audit_logs/{logId} {
+      allow read: if isStaff();
+      allow write: if true;
+    }
+
+    match /admin_audit_logs/{logId} {
+      allow read: if isStaff();
+      allow create: if true;
+      allow update, delete: if isStaff();
+    }
+
+    // ==========================================
+    // 6. GENERAL DIRECTORIES & FALLBACK
+    // ==========================================
+    match /{collection}/{id} {
+      allow read: if true;
+      allow create: if true;
+      allow update: if true;
+      allow delete: if isStaff() || isDocOwner();
+    }
+
+    match /{document=**} {
+      allow read: if true;
+      allow write: if isStaff();
+    }
+  }
+}
