@@ -1053,13 +1053,13 @@ class MediaProcessingService {
         width: 1080,
         height: 1920,
         durationSeconds: 45,
-        originalUrl: 'https://assets.mixkit.co/videos/preview/mixkit-tree-with-yellow-leaves-low-angle-shot-4735-large.mp4',
+        originalUrl: '/sample-reel.mp4',
         mediumUrl: 'https://images.unsplash.com/photo-1582510003544-4d00b7f74220?w=400&auto=format&fit=crop&q=80',
-        cdnUrl: 'https://assets.mixkit.co/videos/preview/mixkit-tree-with-yellow-leaves-low-angle-shot-4735-large.mp4',
+        cdnUrl: '/sample-reel.mp4',
         thumbnailUrl: 'https://images.unsplash.com/photo-1582510003544-4d00b7f74220?w=400&auto=format&fit=crop&q=80',
         variants: [
-          { label: 'original', url: 'https://assets.mixkit.co/videos/preview/mixkit-tree-with-yellow-leaves-low-angle-shot-4735-large.mp4', width: 1080, height: 1920 },
-          { label: 'quality_720p', url: 'https://assets.mixkit.co/videos/preview/mixkit-tree-with-yellow-leaves-low-angle-shot-4735-large.mp4', width: 720, height: 1280, bitrate: '2000 kbps' },
+          { label: 'original', url: '/sample-reel.mp4', width: 1080, height: 1920 },
+          { label: 'quality_720p', url: '/sample-reel.mp4', width: 720, height: 1280, bitrate: '2000 kbps' },
           { label: 'thumbnail', url: 'https://images.unsplash.com/photo-1582510003544-4d00b7f74220?w=400&auto=format&fit=crop&q=80' }
         ],
         exifStripped: true,

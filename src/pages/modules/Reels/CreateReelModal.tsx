@@ -27,6 +27,7 @@ import { ReelAudio } from '../../../types';
 import { reelService } from '../../../services/reelService';
 import { uploadShortVideoReel } from '../../../services/firebaseStorageService';
 import { cleanUndefined } from '../../../utils/firestoreUtils';
+import { saveReelVideoToDB } from '../../../utils/reelMediaCache';
 import { MusicLibraryModal } from './MusicLibraryModal';
 import { DEFAULT_REEL_RULES } from '../../../data/reelAudioData';
 
@@ -371,6 +372,15 @@ export const CreateReelModal: React.FC<CreateReelModalProps> = ({
       });
 
       const newReelId = await reelService.createReel(reelPayload);
+
+      // Persist original video file blob into persistent IndexedDB storage
+      if (videoFile && newReelId) {
+        try {
+          await saveReelVideoToDB(newReelId, videoFile);
+        } catch (dbErr) {
+          console.warn("Could not cache video blob to local DB:", dbErr);
+        }
+      }
 
       setUploadProgress(100);
       setProcessingStatus('published');

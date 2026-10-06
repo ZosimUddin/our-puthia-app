@@ -1,4 +1,4 @@
-import React, { useState, useRef, useEffect } from 'react';
+import React, { useState, useRef, useEffect, useCallback } from 'react';
 import { 
   Volume2, 
   VolumeX, 
@@ -14,11 +14,15 @@ import {
   ChevronDown,
   Sparkles,
   Maximize2,
-  Minimize2
+  Minimize2,
+  AlertCircle,
+  RotateCcw,
+  Loader2
 } from 'lucide-react';
 import { Reel, ReelReactionType } from '../../../types';
 import { ReelActionBar } from './ReelActionBar';
 import { reelService } from '../../../services/reelService';
+import { getReelVideoURLFromDB } from '../../../utils/reelMediaCache';
 
 interface ReelCardProps {
   reel: Reel;
@@ -67,7 +71,18 @@ export const ReelCard: React.FC<ReelCardProps> = ({
   isFollowing = false
 }) => {
   const videoRef = useRef<HTMLVideoElement | null>(null);
-  const [isPlaying, setIsPlaying] = useState<boolean>(true);
+
+  // Video Source resolution with fallback to local cache and public reliable video
+  const [activeVideoSrc, setActiveVideoSrc] = useState<string>(() => {
+    if (!reel.videoUrl || reel.videoUrl.includes('mixkit.co')) {
+      return '/sample-reel.mp4';
+    }
+    return reel.videoUrl;
+  });
+
+  const [isPlaying, setIsPlaying] = useState<boolean>(false);
+  const [isLoadingVideo, setIsLoadingVideo] = useState<boolean>(true);
+  const [hasError, setHasError] = useState<boolean>(false);
   const [showPlayPauseIcon, setShowPlayPauseIcon] = useState<boolean>(false);
   const [showDoubleTapHeart, setShowDoubleTapHeart] = useState<boolean>(false);
   const [isSaved, setIsSaved] = useState<boolean>(false);
@@ -81,6 +96,41 @@ export const ReelCard: React.FC<ReelCardProps> = ({
   const watchTimerRef = useRef<number>(0);
   const isAuthor = !!currentUser && currentUser.uid === reel.authorId;
 
+  // Resolve source from IndexedDB or clean fallback
+  useEffect(() => {
+    let isCancelled = false;
+
+    const resolveSource = async () => {
+      // 1. If it's a blob URL (which expires across reloads) or empty or known broken url, check IndexedDB first
+      if (!reel.videoUrl || reel.videoUrl.startsWith('blob:') || reel.videoUrl.includes('mixkit.co')) {
+        const localBlobUrl = await getReelVideoURLFromDB(reel.id);
+        if (localBlobUrl && !isCancelled) {
+          setActiveVideoSrc(localBlobUrl);
+          setHasError(false);
+          return;
+        }
+      }
+
+      if (reel.videoUrl && !reel.videoUrl.includes('mixkit.co')) {
+        if (!isCancelled) {
+          setActiveVideoSrc(reel.videoUrl);
+          setHasError(false);
+        }
+      } else {
+        if (!isCancelled) {
+          setActiveVideoSrc('/sample-reel.mp4');
+          setHasError(false);
+        }
+      }
+    };
+
+    resolveSource();
+
+    return () => {
+      isCancelled = true;
+    };
+  }, [reel.id, reel.videoUrl]);
+
   // Sync Saved state with local storage / user
   useEffect(() => {
     if (currentUser?.uid && reel.id) {
@@ -89,23 +139,42 @@ export const ReelCard: React.FC<ReelCardProps> = ({
     }
   }, [currentUser, reel.id]);
 
-  // Handle Play/Pause when isActive changes (Auto-play when in view)
+  // Autoplay management when active in view
   useEffect(() => {
     const video = videoRef.current;
     if (!video) return;
 
     if (isActive) {
       video.currentTime = 0;
+      video.muted = isMuted;
+
       const playPromise = video.play();
       if (playPromise !== undefined) {
         playPromise
           .then(() => {
             setIsPlaying(true);
+            setIsLoadingVideo(false);
+            setHasError(false);
             watchTimerRef.current = Date.now();
           })
           .catch((err) => {
-            console.warn("Autoplay was prevented:", err);
-            setIsPlaying(false);
+            console.warn("Autoplay with sound restricted by browser; auto-retrying muted:", err);
+            // Modern mobile browsers require initial playback to be muted
+            if (videoRef.current) {
+              videoRef.current.muted = true;
+              videoRef.current.play()
+                .then(() => {
+                  setIsPlaying(true);
+                  setIsLoadingVideo(false);
+                  setHasError(false);
+                  watchTimerRef.current = Date.now();
+                })
+                .catch((mutedErr) => {
+                  console.warn("Autoplay blocked, waiting for user tap:", mutedErr);
+                  setIsPlaying(false);
+                  setIsLoadingVideo(false);
+                });
+            }
           });
       }
     } else {
@@ -124,7 +193,43 @@ export const ReelCard: React.FC<ReelCardProps> = ({
     return () => {
       if (video) video.pause();
     };
-  }, [isActive, reel.id]);
+  }, [isActive, reel.id, isMuted, activeVideoSrc]);
+
+  // Handle Video Error & Recovery
+  const handleVideoError = useCallback(async (e: any) => {
+    console.warn("Reel video failed to load, attempting recovery:", activeVideoSrc, e);
+    // 1. Check local IndexedDB vault
+    const cachedUrl = await getReelVideoURLFromDB(reel.id);
+    if (cachedUrl && cachedUrl !== activeVideoSrc) {
+      setActiveVideoSrc(cachedUrl);
+      setHasError(false);
+      return;
+    }
+    // 2. Fallback to /sample-reel.mp4
+    if (activeVideoSrc !== '/sample-reel.mp4') {
+      setActiveVideoSrc('/sample-reel.mp4');
+      setHasError(false);
+      return;
+    }
+    setHasError(true);
+    setIsLoadingVideo(false);
+    setIsPlaying(false);
+  }, [activeVideoSrc, reel.id]);
+
+  const handleRetryVideo = async () => {
+    setHasError(false);
+    setIsLoadingVideo(true);
+    const cachedUrl = await getReelVideoURLFromDB(reel.id);
+    if (cachedUrl) {
+      setActiveVideoSrc(cachedUrl);
+    } else {
+      setActiveVideoSrc(reel.videoUrl || '/sample-reel.mp4');
+    }
+    if (videoRef.current) {
+      videoRef.current.load();
+      videoRef.current.play().then(() => setIsPlaying(true)).catch(() => {});
+    }
+  };
 
   // Track progress and view threshold
   const handleTimeUpdate = () => {
@@ -156,14 +261,24 @@ export const ReelCard: React.FC<ReelCardProps> = ({
         reelService.toggleReaction(reel.id, currentUser.uid, 'love', reel.reactions?.[currentUser.uid]);
       }
     } else {
-      // Single Tap Event -> Toggle Play / Pause
+      // Single Tap Event -> Toggle Play / Pause reliably using native paused status
       if (videoRef.current) {
-        if (isPlaying) {
+        if (videoRef.current.paused || videoRef.current.ended) {
+          videoRef.current.muted = isMuted;
+          videoRef.current.play()
+            .then(() => {
+              setIsPlaying(true);
+            })
+            .catch(() => {
+              // If unmuted failed, try muted
+              if (videoRef.current) {
+                videoRef.current.muted = true;
+                videoRef.current.play().then(() => setIsPlaying(true)).catch(() => {});
+              }
+            });
+        } else {
           videoRef.current.pause();
           setIsPlaying(false);
-        } else {
-          videoRef.current.play();
-          setIsPlaying(true);
         }
         setShowPlayPauseIcon(true);
         setTimeout(() => setShowPlayPauseIcon(false), 600);
@@ -209,12 +324,27 @@ export const ReelCard: React.FC<ReelCardProps> = ({
       {/* 1. Main Video with Smart Non-Zooming Fit */}
       <video
         ref={videoRef}
-        src={reel.videoUrl}
+        src={activeVideoSrc}
+        poster={reel.thumbnailUrl}
+        preload="auto"
         loop
         playsInline
         muted={isMuted}
         onTimeUpdate={handleTimeUpdate}
+        onWaiting={() => setIsLoadingVideo(true)}
+        onCanPlay={() => {
+          setIsLoadingVideo(false);
+          setHasError(false);
+        }}
+        onPlaying={() => {
+          setIsLoadingVideo(false);
+          setIsPlaying(true);
+          setHasError(false);
+        }}
+        onPause={() => setIsPlaying(false)}
+        onError={handleVideoError}
         onLoadedMetadata={() => {
+          setIsLoadingVideo(false);
           if (videoRef.current) {
             setDuration(videoRef.current.duration);
             if (reel.playbackSpeed) {
@@ -242,18 +372,63 @@ export const ReelCard: React.FC<ReelCardProps> = ({
         {videoFit === 'contain' ? <Maximize2 size={18} /> : <Minimize2 size={18} />}
       </button>
 
-      {/* 2. Double Tap Animated Heart */}
+      {/* 2. Buffering / Loading Indicator */}
+      {isLoadingVideo && !hasError && (
+        <div className="absolute inset-0 z-25 flex flex-col items-center justify-center bg-black/40 pointer-events-none">
+          <div className="w-12 h-12 border-4 border-emerald-500 border-t-transparent rounded-full animate-spin" />
+          <span className="mt-3 text-white text-xs font-bold drop-shadow-md bg-black/60 px-3 py-1 rounded-full">
+            ভিডিও লোড হচ্ছে...
+          </span>
+        </div>
+      )}
+
+      {/* 3. Prominent Facebook-style Play Overlay when video is paused/stopped */}
+      {!isPlaying && !isLoadingVideo && !hasError && (
+        <button
+          type="button"
+          onClick={handleVideoClick}
+          className="absolute inset-0 z-25 flex flex-col items-center justify-center bg-black/35 backdrop-blur-[1px] transition-all cursor-pointer group/play"
+        >
+          <div className="w-20 h-20 sm:w-24 sm:h-24 rounded-full bg-emerald-600/90 hover:bg-emerald-500 text-white flex items-center justify-center shadow-2xl ring-4 ring-white/30 transform transition-transform group-hover/play:scale-110 active:scale-95 animate-pulse">
+            <Play size={42} className="ml-1 fill-white" />
+          </div>
+          <span className="mt-4 px-4 py-1.5 rounded-full bg-black/75 backdrop-blur-md text-white font-bold text-xs sm:text-sm tracking-wide border border-white/20 shadow-lg">
+            ভিডিও চালু করতে ট্যাপ করুন
+          </span>
+        </button>
+      )}
+
+      {/* 4. Error Card with Retry Button */}
+      {hasError && (
+        <div className="absolute inset-0 z-35 flex flex-col items-center justify-center bg-black/85 px-6 text-center">
+          <div className="w-16 h-16 rounded-full bg-rose-500/20 text-rose-400 flex items-center justify-center mb-3">
+            <AlertCircle size={32} />
+          </div>
+          <p className="text-white text-sm font-bold mb-1">ভিডিও প্লে করা যায়নি</p>
+          <p className="text-slate-300 text-xs mb-4">নেটওয়ার্ক চেক করে আবার চেষ্টা করুন</p>
+          <button
+            type="button"
+            onClick={handleRetryVideo}
+            className="px-5 py-2.5 bg-emerald-600 hover:bg-emerald-500 text-white text-xs font-bold rounded-full shadow-lg transition-transform active:scale-95 flex items-center gap-1.5 cursor-pointer"
+          >
+            <RotateCcw size={14} />
+            <span>ভিডিও পুনরায় চালু করুন</span>
+          </button>
+        </div>
+      )}
+
+      {/* 5. Double Tap Animated Heart */}
       {showDoubleTapHeart && (
         <div className="absolute inset-0 flex items-center justify-center pointer-events-none z-40 animate-in zoom-in-50 duration-200">
           <Heart size={90} className="text-rose-500 fill-rose-500 drop-shadow-2xl animate-bounce-short" />
         </div>
       )}
 
-      {/* 3. Single Tap Play/Pause Indicator */}
-      {showPlayPauseIcon && (
+      {/* 6. Single Tap Play/Pause Indicator (HUD) */}
+      {showPlayPauseIcon && isPlaying && (
         <div className="absolute inset-0 flex items-center justify-center pointer-events-none z-30 animate-in fade-in zoom-in-75 duration-150">
           <div className="w-20 h-20 rounded-full bg-black/60 backdrop-blur-md flex items-center justify-center text-white">
-            {isPlaying ? <Play size={36} className="ml-1" /> : <Pause size={36} />}
+            <Play size={36} className="ml-1" />
           </div>
         </div>
       )}
