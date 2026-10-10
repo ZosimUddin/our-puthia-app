@@ -2,7 +2,21 @@ import React, { useState } from "react";
 import { Shield } from "lucide-react";
 
 export const AddaWelcomeRulesCard: React.FC = () => {
-  const [isDismissed, setIsDismissed] = useState(false);
+  const [isDismissed, setIsDismissed] = useState<boolean>(() => {
+    if (typeof localStorage !== "undefined") {
+      return localStorage.getItem("adda_rules_dismissed_v1") === "true";
+    }
+    return false;
+  });
+
+  const handleDismiss = () => {
+    setIsDismissed(true);
+    if (typeof localStorage !== "undefined") {
+      try {
+        localStorage.setItem("adda_rules_dismissed_v1", "true");
+      } catch {}
+    }
+  };
 
   if (isDismissed) {
     return null;
@@ -24,7 +38,7 @@ export const AddaWelcomeRulesCard: React.FC = () => {
             </h3>
             <button
               type="button"
-              onClick={() => setIsDismissed(true)}
+              onClick={handleDismiss}
               className="px-3.5 py-1 bg-gradient-to-r from-emerald-600 to-teal-700 hover:from-[#0B7A3B] hover:to-[#01412F] text-white text-xs font-black rounded-lg sm:rounded-xl shadow-xs cursor-pointer active:scale-95 transition-all shrink-0 border-0"
             >
               বুঝেছি
