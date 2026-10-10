@@ -13,7 +13,7 @@ export const DigitalIdCard: React.FC<Props> = ({ onGoBack }) => {
   // Dynamic values or elegant fallbacks
   const name = user ? userProfile?.name || "সম্মানিত নাগরিক" : "জসিম উদ্দিন";
   const bloodGroup = user ? userProfile?.bloodGroup || "O+" : "O+";
-  const location = user ? `${userProfile?.village || "জিউপাড়া"}, ${userProfile?.union || "পুঠিয়া"}` : "জিউপাড়া, পুঠিয়া";
+  const location = user ? `${userProfile?.union || "পুঠিয়া"} ইউনিয়ন, পুঠিয়া` : "পুঠিয়া ইউনিয়ন, পুঠিয়া";
   const idNumber = user ? `PUT-${userProfile?.uid?.substring(0, 6).toUpperCase() || "8745"}` : "PUT-8745";
   const joinDate = user ? new Date(userProfile?.createdAt || Date.now()).toLocaleDateString('bn-BD', { year: 'numeric', month: 'long', day: 'numeric' }) : "২২ আগস্ট ২০২৬";
 

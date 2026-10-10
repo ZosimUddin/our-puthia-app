@@ -1257,7 +1257,7 @@ export const UserProfileView: React.FC<Props> = ({
   // Digital card details
   const name = userProfile.name || "সম্মানিত নাগরিক";
   const bloodGroup = userProfile.bloodGroup || "O+";
-  const locationText = `${userProfile.village || "জিউপাড়া"}, ${userProfile.union || "বানেশ্বর"}`;
+  const locationText = `${userProfile.union || "বানেশ্বর"} ইউনিয়ন, পুঠিয়া`;
   const idNumber = userProfile.uid
     ? `PUT-${userProfile.uid.substring(0, 6).toUpperCase()}`
     : user?.uid
@@ -2647,10 +2647,10 @@ export const UserProfileView: React.FC<Props> = ({
                         <MapPin className="w-5 h-5 text-gray-400 shrink-0" />
                         <div>
                           <p className="text-[10px] text-gray-400 font-bold">
-                            গ্রাম ও ইউনিয়ন
+                            ইউনিয়ন ও উপজেলা
                           </p>
                           <p className="font-extrabold text-gray-700 dark:text-gray-100">
-                            {userProfile.village}, {userProfile.union}
+                            {userProfile.union}, পুঠিয়া
                           </p>
                         </div>
                       </div>
