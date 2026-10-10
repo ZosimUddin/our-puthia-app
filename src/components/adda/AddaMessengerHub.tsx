@@ -4316,39 +4316,6 @@ export const AddaMessengerHub: React.FC<AddaMessengerHubProps> = ({
                 <div className="space-y-0.5 px-2">
                   <div className="px-3 py-1.5 text-[13px] font-bold text-slate-900">Actions</div>
 
-                  {/* Mark as unread */}
-                  <button 
-                    type="button"
-                    onClick={() => {
-                      toast.success('Conversation marked as unread');
-                      setIsProfileModalOpen(false);
-                    }}
-                    className="w-full px-3 py-3 flex items-center gap-3.5 hover:bg-slate-50 active:bg-slate-100 rounded-2xl transition cursor-pointer border-0 bg-transparent text-left"
-                  >
-                    <div className="w-9 h-9 rounded-full bg-slate-100 flex items-center justify-center text-slate-900 shrink-0">
-                      <Mail size={18} className="stroke-[2.2]" />
-                    </div>
-                    <span className="text-[15px] font-medium text-slate-900">Mark as unread</span>
-                  </button>
-
-                  {/* Share contact */}
-                  <button 
-                    type="button"
-                    onClick={() => {
-                      const name = getChatName(activeChat);
-                      if (navigator.clipboard) {
-                        navigator.clipboard.writeText(`${name} - পুঠিয়া আড্ডা মেসেঞ্জার`);
-                        toast.success('Contact copied to clipboard');
-                      }
-                    }}
-                    className="w-full px-3 py-3 flex items-center gap-3.5 hover:bg-slate-50 active:bg-slate-100 rounded-2xl transition cursor-pointer border-0 bg-transparent text-left"
-                  >
-                    <div className="w-9 h-9 rounded-full bg-slate-100 flex items-center justify-center text-slate-900 shrink-0">
-                      <Share2 size={18} className="stroke-[2.2]" />
-                    </div>
-                    <span className="text-[15px] font-medium text-slate-900">Share contact</span>
-                  </button>
-
                   {/* Create group with [Name] */}
                   <button 
                     type="button"
@@ -4410,47 +4377,11 @@ export const AddaMessengerHub: React.FC<AddaMessengerHubProps> = ({
                       </div>
                     )}
                   </div>
-
-                  {/* Nicknames */}
-                  <button 
-                    type="button"
-                    onClick={() => {
-                      const partnerName = getChatName(activeChat);
-                      const newNick = window.prompt(`Enter nickname for ${partnerName}:`, customNickname || partnerName);
-                      if (newNick !== null) {
-                        setCustomNickname(newNick.trim());
-                        toast.success(newNick.trim() ? `Nickname set to "${newNick.trim()}"` : 'Nickname reset');
-                      }
-                    }}
-                    className="w-full px-3 py-3 flex items-center justify-between hover:bg-slate-50 active:bg-slate-100 rounded-2xl transition cursor-pointer border-0 bg-transparent text-left"
-                  >
-                    <div className="flex items-center gap-3.5">
-                      <div className="w-9 h-9 rounded-full bg-slate-100 flex items-center justify-center text-slate-900 shrink-0 font-serif font-bold text-sm">
-                        Aa
-                      </div>
-                      <span className="text-[15px] font-medium text-slate-900">Nicknames</span>
-                    </div>
-                    {customNickname && (
-                      <span className="text-xs font-semibold text-slate-500 mr-2">{customNickname}</span>
-                    )}
-                  </button>
                 </div>
 
                 {/* Section: Privacy & support */}
                 <div className="space-y-0.5 px-2 pt-2 pb-12">
                   <div className="px-3 py-1.5 text-[13px] font-bold text-slate-900">Privacy & support</div>
-
-                  {/* Verify end-to-end encryption */}
-                  <button 
-                    type="button"
-                    onClick={() => setShowEncryptionDetailsModal(true)}
-                    className="w-full px-3 py-3 flex items-center gap-3.5 hover:bg-slate-50 active:bg-slate-100 rounded-2xl transition cursor-pointer border-0 bg-transparent text-left"
-                  >
-                    <div className="w-9 h-9 rounded-full bg-slate-100 flex items-center justify-center text-slate-900 shrink-0">
-                      <Lock size={18} className="stroke-[2.2]" />
-                    </div>
-                    <span className="text-[15px] font-medium text-slate-900">Verify end-to-end encryption</span>
-                  </button>
 
                   {/* Message permissions */}
                   <button 
