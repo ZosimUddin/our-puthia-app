@@ -70,6 +70,7 @@ import { FacebookCommentSystem } from "../../components/comments/FacebookComment
 import { ImageLightbox } from "../../components/ImageLightbox";
 import { AuthModal } from "../../components/AuthModal";
 import { PeopleYouMayKnowWidget } from "../../components/adda/PeopleYouMayKnowWidget";
+import { AddaWelcomeRulesCard } from "../../components/adda/AddaWelcomeRulesCard";
 import { useFavorites } from "../../components/FavoriteContext";
 import { copyToClipboard } from "../../utils/clipboard";
 import { sendNotification } from "../../utils/notificationService";
@@ -952,6 +953,7 @@ export default function DiscussionPage() {
       />
       
       <main className="flex-1 w-full max-w-2xl mx-auto md:py-3 px-0 sm:px-2">
+        <AddaWelcomeRulesCard />
         <CreatePostBox 
           onOpenCreateModal={(action) => {
             setCreateAction(action || 'general');
