@@ -98,6 +98,7 @@ export const PeopleYouMayKnowWidget: React.FC<PeopleYouMayKnowWidgetProps> = ({
         const uid = u.uid || u.id;
         if (!uid) return false;
         if (user && uid === user.uid) return false;
+        if (outgoingSet.has(uid)) return false;
         if (friendSet.has(uid)) return false;
         if (dismissedSet.has(uid)) return false;
         if (!u.name && !u.displayName && !u.username) return false;
@@ -196,9 +197,9 @@ export const PeopleYouMayKnowWidget: React.FC<PeopleYouMayKnowWidgetProps> = ({
         </Link>
       </div>
 
-      {/* 2-Column Suggestions Grid (Facebook In-Feed Style) */}
-      <div className="grid grid-cols-2 gap-2.5 sm:gap-3.5">
-        {suggestions.slice(0, 2).map((targetUser) => {
+      {/* Horizontal Scrollable Suggestions Carousel (Facebook In-Feed Style) */}
+      <div className="flex overflow-x-auto gap-3 pb-2 pt-1 scrollbar-none snap-x">
+        {suggestions.map((targetUser) => {
           const targetUid = targetUser.uid || targetUser.id;
           const isPending = outgoingUids.includes(targetUid);
 
@@ -222,7 +223,7 @@ export const PeopleYouMayKnowWidget: React.FC<PeopleYouMayKnowWidgetProps> = ({
           return (
             <div
               key={targetUid}
-              className="bg-white rounded-2xl sm:rounded-3xl p-3 sm:p-4 border border-slate-100 shadow-md shadow-slate-100/60 relative flex flex-col items-center text-center transition-all hover:shadow-lg"
+              className="bg-white rounded-2xl sm:rounded-3xl p-3 sm:p-4 border border-slate-100 shadow-md shadow-slate-100/60 relative flex flex-col items-center text-center transition-all hover:shadow-lg min-w-[155px] max-w-[170px] w-[160px] flex-shrink-0 snap-start"
             >
               {/* Dismiss / Close button */}
               <button
