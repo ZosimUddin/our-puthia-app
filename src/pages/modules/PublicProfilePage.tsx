@@ -699,7 +699,7 @@ const PublicProfilePage: React.FC = () => {
           author: data.author || targetUserProfile?.name || "নাগরিক",
           authorId: data.authorId || targetUid,
           authorBadge: data.authorBadge,
-          authorPhotoUrl: data.authorPhotoUrl || targetUserProfile?.photoURL || "",
+          authorPhotoUrl: targetUserProfile?.photoURL || data.authorPhotoUrl || "",
           union: data.union || targetUserProfile?.union || "",
           category: data.category || "",
           imageUrl: data.imageUrl || "",
@@ -1667,9 +1667,9 @@ const PublicProfilePage: React.FC = () => {
                             <div className="p-[2.5px] bg-gradient-to-tr from-emerald-600 via-emerald-500 to-teal-500 rounded-full shrink-0 shadow-xs">
                               <div className="p-[1.5px] bg-white rounded-full">
                                 <div className="w-10 h-10 rounded-full overflow-hidden flex items-center justify-center bg-emerald-700 text-white">
-                                  {hasRealProfilePhoto || post.authorPhotoUrl ? (
+                                  {Boolean(targetUserProfile?.photoURL || post.authorPhotoUrl) ? (
                                     <img 
-                                      src={post.authorPhotoUrl || targetUserProfile?.photoURL}
+                                      src={targetUserProfile?.photoURL || post.authorPhotoUrl}
                                       alt={post.author}
                                       className="w-full h-full object-cover"
                                       referrerPolicy="no-referrer"

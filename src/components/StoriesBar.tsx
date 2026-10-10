@@ -32,7 +32,7 @@ import {
   compressImageToSafeFirestoreDataUrl, 
   generateVideoThumbnail 
 } from '../services/mediaProcessingService';
-import { getCleanAvatar, getUserInitial } from '../utils/avatarUtils';
+import { getCleanAvatar, getUserInitial, extractRawAvatar, isRealUserAvatar } from '../utils/avatarUtils';
 import { 
   MusicLibraryModal 
 } from './adda/music/MusicLibraryModal';
@@ -256,6 +256,7 @@ export function StoriesBar() {
 
   // All Users List for Mentions & Privacy Selection
   const [allUsers, setAllUsers] = useState<{ uid: string; name: string; photoURL?: string }[]>([]);
+  const [userProfilesMap, setUserProfilesMap] = useState<Record<string, { name: string; photoURL?: string }>>({});
 
   // Playback & Interaction
   const [progress, setProgress] = useState(0);
@@ -363,17 +364,36 @@ export function StoriesBar() {
       try {
         const snap = await getDocs(collection(db, "users"));
         const usersList: { uid: string; name: string; photoURL?: string }[] = [];
+        const profilesMap: Record<string, { name: string; photoURL?: string }> = {};
+
         snap.forEach((docSnap) => {
           const data = docSnap.data();
+          const cleanPhoto = extractRawAvatar(data) || data.photoURL || data.photoUrl || data.avatarUrl || data.avatar || "";
+          profilesMap[docSnap.id] = {
+            name: data.name || data.displayName || 'ব্যবহারকারী',
+            photoURL: cleanPhoto
+          };
           if (docSnap.id && docSnap.id !== user?.uid) {
             usersList.push({ 
               uid: docSnap.id, 
               name: data.name || data.displayName || 'ব্যবহারকারী',
-              photoURL: data.photoURL
+              photoURL: cleanPhoto
             });
           }
         });
+
+        if (user?.uid) {
+          const myPhoto = extractRawAvatar(userProfile, user);
+          if (myPhoto) {
+            profilesMap[user.uid] = {
+              name: userProfile?.name || user.displayName || 'আমি',
+              photoURL: myPhoto
+            };
+          }
+        }
+
         setAllUsers(usersList);
+        setUserProfilesMap(profilesMap);
       } catch (err) {
         console.warn("Users list offline fallback:", err);
       }
@@ -1091,18 +1111,24 @@ export function StoriesBar() {
                     <div className={`w-8.5 h-8.5 rounded-full p-0.5 ${
                       hasUnviewed ? 'bg-gradient-to-tr from-[#0B7A3B] to-[#10B981]' : 'bg-slate-400'
                     }`}>
-                      {firstStory.userAvatar && !firstStory.userAvatar.includes('dicebear') && !firstStory.userAvatar.includes('avataaars') && !firstStory.userAvatar.includes('unsplash') ? (
-                        <img 
-                          src={firstStory.userAvatar} 
-                          alt={firstStory.userName} 
-                          className="w-full h-full rounded-full object-cover border-2 border-white bg-slate-100" 
-                          referrerPolicy="no-referrer"
-                        />
-                      ) : (
-                        <div className="w-full h-full rounded-full bg-emerald-700 text-white flex items-center justify-center font-black text-xs border-2 border-white select-none">
-                          {firstStory.userName.charAt(0)}
-                        </div>
-                      )}
+                      {(() => {
+                        const authorProfile = userProfilesMap[firstStory.userId];
+                        const storyAuthorPhoto = (isMyOwn ? cleanMyAvatar : null) || authorProfile?.photoURL || firstStory.userAvatar;
+                        const hasRealPhoto = storyAuthorPhoto && !storyAuthorPhoto.includes('dicebear') && !storyAuthorPhoto.includes('avataaars') && !storyAuthorPhoto.includes('unsplash');
+
+                        return hasRealPhoto ? (
+                          <img 
+                            src={storyAuthorPhoto} 
+                            alt={firstStory.userName} 
+                            className="w-full h-full rounded-full object-cover border-2 border-white bg-slate-100" 
+                            referrerPolicy="no-referrer"
+                          />
+                        ) : (
+                          <div className="w-full h-full rounded-full bg-emerald-700 text-white flex items-center justify-center font-black text-xs border-2 border-white select-none">
+                            {(firstStory.userName?.trim().charAt(0) || 'আ').toUpperCase()}
+                          </div>
+                        );
+                      })()}
                     </div>
                   </div>
 
@@ -1150,11 +1176,21 @@ export function StoriesBar() {
               {/* Story Viewer Header */}
               <div className="absolute top-6 left-3 right-3 z-40 flex items-center justify-between text-white bg-gradient-to-b from-black/80 via-black/40 to-transparent p-2.5 rounded-t-2xl">
                 <div className="flex items-center gap-2.5">
-                  <img 
-                    src={activeStory.userAvatar} 
-                    alt={activeStory.userName} 
-                    className="w-9 h-9 rounded-full object-cover border-2 border-emerald-500 shadow-md"
-                  />
+                  {(() => {
+                    const activeAuthorPhoto = (activeStory.userId === user?.uid ? cleanMyAvatar : null) || userProfilesMap[activeStory.userId]?.photoURL || activeStory.userAvatar;
+                    return activeAuthorPhoto ? (
+                      <img 
+                        src={activeAuthorPhoto} 
+                        alt={activeStory.userName} 
+                        className="w-9 h-9 rounded-full object-cover border-2 border-emerald-500 shadow-md"
+                        referrerPolicy="no-referrer"
+                      />
+                    ) : (
+                      <div className="w-9 h-9 rounded-full bg-emerald-700 text-white flex items-center justify-center font-black text-xs border-2 border-emerald-500 shadow-md select-none">
+                        {(activeStory.userName?.trim().charAt(0) || 'আ').toUpperCase()}
+                      </div>
+                    );
+                  })()}
                   <div>
                     <h4 className="text-xs font-black text-white flex items-center gap-1 leading-tight">
                       {activeStory.userName}
