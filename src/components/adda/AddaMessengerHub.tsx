@@ -198,6 +198,7 @@ export const AddaMessengerHub: React.FC<AddaMessengerHubProps> = ({
   const [registeredUsers, setRegisteredUsers] = useState<UserInfo[]>([]);
   const [isLoadingUsers, setIsLoadingUsers] = useState(false);
   const [userSearchTerm, setUserSearchTerm] = useState('');
+  const [partnerUnion, setPartnerUnion] = useState<string>('');
 
   // Calling states
   const [activeCall, setActiveCall] = useState<{ type: 'audio' | 'video'; partnerName: string; partnerAvatar: string; status: 'ringing' | 'connected' } | null>(null);
@@ -391,12 +392,22 @@ export const AddaMessengerHub: React.FC<AddaMessengerHubProps> = ({
             lastSeen: d.lastSeen || Date.now()
           }
         }));
+        if (d.union) {
+          setPartnerUnion(d.union);
+        } else if (d.upazila) {
+          setPartnerUnion(d.upazila);
+        } else if (d.address) {
+          setPartnerUnion(d.address);
+        }
       }
     }, (err) => {
       console.warn("Partner presence subscription note:", err);
     });
 
-    return () => unsubPartner();
+    return () => {
+      unsubPartner();
+      setPartnerUnion('');
+    };
   }, [activeChat?.id]);
 
   // Update activeChatIdRef for message incoming checking
@@ -2120,30 +2131,28 @@ export const AddaMessengerHub: React.FC<AddaMessengerHubProps> = ({
                 </div>
 
                 {/* Bold Name */}
-                <h2 className="text-xl sm:text-2xl font-black text-slate-900 mb-3 tracking-tight">
+                <h2 
+                  className="text-xl sm:text-2xl font-black text-slate-900 mb-1.5 tracking-tight cursor-pointer hover:underline"
+                  onClick={() => setIsProfileModalOpen(true)}
+                  title="প্রোফাইল দেখুন"
+                >
                   {getChatName(activeChat)}
                 </h2>
 
-                {/* View profile button */}
-                <button 
-                  onClick={() => setIsProfileModalOpen(true)}
-                  className="px-6 py-2 rounded-xl bg-slate-100 hover:bg-slate-200 active:bg-slate-300 text-slate-900 font-bold text-sm transition cursor-pointer border-0 shadow-2xs mb-5 active:scale-95"
-                >
-                  View profile
-                </button>
-
-                {/* End-to-end encryption text */}
-                <div className="max-w-md mx-auto text-xs text-slate-500 font-medium leading-relaxed px-4 mb-2">
-                  Messages and calls are secured with end-to-end encryption. Only people in this chat can read, listen to or share them.{' '}
-                  <span onClick={() => toast('চ্যাট অ্যান্ড-টু-অ্যান্ড এনক্রিপ্টেড ও সম্পূর্ণ সুরক্ষিত')} className="text-[#0084FF] font-bold hover:underline cursor-pointer">
-                    Learn more.
-                  </span>
-                </div>
-
-                {/* Connected subtext */}
-                <p className="text-xs text-slate-500 font-medium mb-3">
-                  You are now connected on Messenger.
+                {/* Subtitle: Union • Adda Member (Matching Screenshot 2) */}
+                <p className="text-xs sm:text-[13px] font-bold text-slate-500 mb-2.5 tracking-tight">
+                  {activeChat.type === 'group'
+                    ? `${activeChat.participants?.length || 2} জন সদস্য • আড্ডা গ্রুপ`
+                    : partnerUnion
+                    ? `${partnerUnion.includes('ইউনিয়ন') ? partnerUnion : `${partnerUnion} ইউনিয়ন`} • আড্ডা সদস্য`
+                    : 'পুঠিয়া ইউনিয়ন • আড্ডা সদস্য'}
                 </p>
+
+                {/* Privacy & Moderation Notice (Matching Screenshot 2) */}
+                <div className="max-w-md mx-auto text-xs sm:text-[12.5px] text-slate-500 font-medium leading-relaxed px-4 text-center mb-3">
+                  <span className="inline-block mr-1">🔒</span>
+                  <span>মেসেজ শুধু আপনারা দুজন দেখেন। কেউ রিপোর্ট করলে অপব্যবহার ঠেকাতে এডমিন কথোপকথনটি দেখতে পারেন।</span>
+                </div>
               </div>
 
               {/* Message loop */}
