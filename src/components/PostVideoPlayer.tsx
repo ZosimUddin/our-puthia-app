@@ -433,12 +433,8 @@ export function PostVideoPlayer({
         {/* Gradient Overlay */}
         <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/30 to-black/20 group-hover:from-black/70 group-hover:via-black/20 transition-all" />
 
-        {/* Top Badges: Video Badge + Author */}
-        <div className="absolute top-3 left-3 right-3 flex items-center justify-between pointer-events-none">
-          <div className="flex items-center gap-2 bg-black/60 backdrop-blur-md px-3 py-1 rounded-full text-white text-xs font-bold border border-white/10">
-            <span className="w-2 h-2 rounded-full bg-rose-500 animate-pulse" />
-            <span>ইউটিউব ভিডিও</span>
-          </div>
+        {/* Top Author */}
+        <div className="absolute top-3 right-3 flex items-center justify-end pointer-events-none">
           {author && (
             <div className="flex items-center gap-1.5 bg-black/60 backdrop-blur-md px-2.5 py-1 rounded-full text-white/90 text-xs font-semibold border border-white/10 truncate max-w-[150px]">
               {authorPhotoUrl && (
@@ -462,13 +458,6 @@ export function PostVideoPlayer({
             </button>
           </div>
         </div>
-
-        {/* Bottom Title bar */}
-        {title && (
-          <div className="absolute bottom-0 left-0 right-0 p-4 bg-gradient-to-t from-black/90 to-transparent">
-            <p className="text-white text-sm font-bold truncate">{title}</p>
-          </div>
-        )}
       </div>
     );
   }
@@ -519,11 +508,7 @@ export function PostVideoPlayer({
           onClick={togglePlay}
         >
           {/* Top Info */}
-          <div className="flex items-center justify-between">
-            <div className="flex items-center gap-2 bg-black/60 backdrop-blur-md px-3 py-1 rounded-full text-white text-xs font-bold border border-white/15">
-              <span className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse" />
-              <span>ভিডিও প্লেয়ার</span>
-            </div>
+          <div className="flex items-center justify-end">
             {author && (
               <div className="flex items-center gap-1.5 bg-black/60 backdrop-blur-md px-2.5 py-1 rounded-full text-white/90 text-xs font-semibold border border-white/15 truncate max-w-[160px]">
                 {authorPhotoUrl && (
@@ -548,15 +533,8 @@ export function PostVideoPlayer({
             </div>
           </div>
 
-          {/* Bottom Title / Duration */}
-          <div className="flex items-center justify-between text-white text-xs font-medium">
-            <span className="font-bold text-sm truncate max-w-[70%]">{title || "ভিডিও দেখুন"}</span>
-            {duration > 0 && (
-              <span className="bg-black/70 px-2.5 py-0.5 rounded-md font-mono text-[11px]">
-                {toBengaliDigits(formatTime(duration))}
-              </span>
-            )}
-          </div>
+          {/* Bottom spacer */}
+          <div />
         </div>
       )}
 

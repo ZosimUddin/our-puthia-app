@@ -1106,23 +1106,6 @@ export function StoriesBar() {
                     </div>
                   </div>
 
-                  {/* Top-Right Category Icon (White square with icon) */}
-                  <div className="absolute top-2.5 right-2.5 z-10">
-                    <div className="w-6.5 h-6.5 bg-white/95 backdrop-blur-md rounded-lg flex items-center justify-center shadow-md border border-white/50 text-slate-700">
-                      {firstStory.feeling === '🏛️' || firstStory.userName.includes('রাজবাড়ী') ? (
-                        <svg className="w-3.5 h-3.5 text-[#A124B5]" viewBox="0 0 24 24" fill="currentColor">
-                           <path d="M12 7V3L2 12H5V21H9V15H15V21H19V12H22L12 7M12 11.5C10.6 11.5 9.5 10.4 9.5 9C9.5 7.6 10.6 6.5 12 6.5C13.4 6.5 14.5 7.6 14.5 9C14.5 10.4 13.4 11.5 12 11.5Z" />
-                        </svg>
-                      ) : firstStory.feeling === '🌿' || firstStory.userName.includes('দিঘী') ? (
-                        <svg className="w-3.5 h-3.5 text-[#0B7A3B]" viewBox="0 0 24 24" fill="currentColor">
-                           <path d="M17,8C8,10 5.9,16.17 3.82,21.34L5.71,22L6.66,19.7C7.14,19.87 7.64,20 8.13,20C11,20 13.85,18.08 15,15C16.59,10.72 19.97,8.53 22,7C16.73,7 17,8 17,8Z" />
-                        </svg>
-                      ) : (
-                        <span className="text-xs">{firstStory.feeling || '✨'}</span>
-                      )}
-                    </div>
-                  </div>
-
                   {/* Bottom User Name (Facebook Style) */}
                   <div className="absolute bottom-2 sm:bottom-2.5 inset-x-2 sm:inset-x-2.5 z-10 pointer-events-none">
                     <span className="text-white text-[11px] sm:text-xs font-black leading-tight line-clamp-2 drop-shadow-[0_1.5px_2px_rgba(0,0,0,0.8)] block">
