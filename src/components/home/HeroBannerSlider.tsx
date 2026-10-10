@@ -249,7 +249,7 @@ export const HeroBannerSlider: React.FC = () => {
                     {hasText && (
                       <div className="absolute inset-0 bg-gradient-to-r from-black/85 via-black/50 to-transparent flex flex-col justify-center p-3.5 sm:p-7 lg:p-10 z-10">
                         <div className="max-w-md sm:max-w-xl space-y-1 sm:space-y-2 relative z-20">
-                          <h2 className="text-[13px] sm:text-xl md:text-3xl font-black text-white leading-tight drop-shadow-md tracking-tight whitespace-nowrap overflow-x-auto scrollbar-none">
+                          <h2 className="text-xs sm:text-xl md:text-3xl font-black text-white leading-tight drop-shadow-md tracking-tight line-clamp-2 sm:line-clamp-none">
                             {banner.title}
                           </h2>
                           {banner.subtitle && (
