@@ -1,3 +1,12 @@
+
+function blobToBase64(blob: Blob): Promise<string> {
+  return new Promise((resolve, reject) => {
+    const reader = new FileReader();
+    reader.onloadend = () => resolve(reader.result as string);
+    reader.onerror = reject;
+    reader.readAsDataURL(blob);
+  });
+}
 /**
  * Puthia Digital Platform — Firebase Storage Integration Service
  * 
@@ -296,7 +305,7 @@ export function compressImage(
 /**
  * Core Firebase Storage Upload Function
  */
-export async function uploadMediaFile(
+async function uploadMediaFileActual(
   file: File, 
   options: StorageUploadOptions
 ): Promise<UploadResult> {
@@ -629,3 +638,50 @@ export const firebaseStorageService = {
 };
 
 export default firebaseStorageService;
+
+export async function uploadMediaFile(
+  file: File, 
+  options: StorageUploadOptions
+): Promise<UploadResult> {
+  const isImage = file.type.startsWith('image/');
+  let uploadBlob: Blob = file;
+  if (isImage && options.compressImageBeforeUpload !== false) {
+    try {
+      uploadBlob = await compressImage(file, {
+        maxWidth: options.maxImageDimension || 1920,
+        maxHeight: options.maxImageDimension || 1080,
+        quality: options.imageQuality || 0.85
+      });
+    } catch {
+      uploadBlob = file;
+    }
+  }
+
+  if (isImage) {
+    try {
+      return await Promise.race([
+        uploadMediaFileActual(file, options),
+        new Promise<UploadResult>((_, reject) => setTimeout(() => reject(new Error("Storage timeout")), 10000))
+      ]);
+    } catch (err) {
+      console.warn("Storage upload timeout or error, falling back to Base64:", err);
+      const base64Url = await blobToBase64(uploadBlob);
+      const timestamp = Date.now();
+      const fileExt = file.name.split(".").pop() || "webp";
+      const finalFileName = options.customFileName 
+        ? `${options.customFileName}_${timestamp}.${fileExt}` 
+        : `${timestamp}_${file.name.replace(/[^a-zA-Z0-9._-]/g, "_")}`;
+      const storagePath = `${options.category}/${options.ownerId}/${options.subFolder || ""}/${finalFileName}`;
+      return {
+        downloadUrl: base64Url,
+        storagePath,
+        fileName: finalFileName,
+        contentType: file.type,
+        fileSizeBytes: uploadBlob.size,
+        uploadedAt: new Date().toISOString()
+      };
+    }
+  } else {
+    return uploadMediaFileActual(file, options);
+  }
+}

@@ -993,10 +993,12 @@ export default function DiscussionPage() {
               const postBookmarked = isBookmarked(post.id);
 
               const isMyPost = Boolean(user && post.authorId === user.uid);
-              const rawAuthorPhoto = (isMyPost ? extractRawAvatar(userProfile, user) : null) || profilesCache[post.authorId]?.photoURL || post.authorPhotoUrl || '';
-              const authorName = (isMyPost ? (userProfile?.name || user?.displayName) : null) || profilesCache[post.authorId]?.name || post.author || 'নাগরিক';
+              const authorName = (isMyPost ? (userProfile?.name || user?.displayName) : null) || profilesCache[post.authorId]?.name || post.author || "নাগরিক";
+              const currentUserAvatar = extractRawAvatar(userProfile, user);
+              const isMyPostByAuthOrName = isMyPost || Boolean(authorName && (authorName === userProfile?.name || authorName === user?.displayName));
+              const rawAuthorPhoto = (isMyPostByAuthOrName ? currentUserAvatar : null) || profilesCache[post.authorId]?.photoURL || post.authorPhotoUrl || (isMyPost ? currentUserAvatar : "") || "";
               const hasRealPhoto = isRealUserAvatar(rawAuthorPhoto);
-              const authorInitial = (authorName.trim().charAt(0) || 'আ').toUpperCase();
+              const authorInitial = (authorName.trim().charAt(0) || "আ").toUpperCase();
 
               return (
                 <React.Fragment key={post.id}>

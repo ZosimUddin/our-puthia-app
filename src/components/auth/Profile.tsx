@@ -597,16 +597,16 @@ const Profile: React.FC<ProfileProps> = ({ openEditInitially = false }) => {
           </div>
 
           {/* Cover Camera Button (Bottom Right) */}
-          <label className="absolute right-3 bottom-2.5 w-7 h-7 rounded-full bg-black/40 hover:bg-black/60 text-white flex items-center justify-center border border-white/20 shadow-md cursor-pointer transition-all active:scale-95 z-20" title="কভার ছবি পরিবর্তন">
+          <button type="button" onClick={() => coverInputRef.current?.click()} className="absolute right-3 bottom-2.5 w-7 h-7 rounded-full bg-black/40 hover:bg-black/60 text-white flex items-center justify-center border border-white/20 shadow-md cursor-pointer transition-all active:scale-95 z-20" title="কভার ছবি পরিবর্তন">
             <Camera size={13} />
-            <input 
-              ref={coverInputRef} 
-              type="file" 
-              accept="image/*" 
-              onChange={handleCoverUpload} 
-              className="hidden" 
-            />
-          </label>
+          </button>
+          <input 
+             ref={coverInputRef}
+             type="file"
+             accept="image/*"
+             onChange={handleCoverUpload}
+             className="hidden"
+           />
         </div>
 
         {/* Profile Header (Avatar + Information Row) */}

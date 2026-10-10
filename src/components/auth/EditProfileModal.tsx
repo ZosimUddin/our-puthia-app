@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import { motion, AnimatePresence } from "motion/react";
 import { 
   ArrowLeft, Camera, Calendar, ChevronDown, Search, Plus, 
@@ -76,6 +76,8 @@ export const EditProfileModal: React.FC<EditProfileModalProps> = ({
   };
 
   const [coverUploading, setCoverUploading] = useState(false);
+  const coverInputRef = useRef<HTMLInputElement>(null);
+  const avatarInputRef = useRef<HTMLInputElement>(null);
 
   // New Work Entry Form state
   const [newWork, setNewWork] = useState({
@@ -479,11 +481,11 @@ export const EditProfileModal: React.FC<EditProfileModalProps> = ({
                           <span>মুছুন</span>
                         </button>
                       )}
-                      <label className="px-3 py-1 bg-white text-slate-900 hover:bg-emerald-50 font-bold text-xs rounded-xl flex items-center gap-1 cursor-pointer transition shadow-xs border-0">
+                      <button type="button" onClick={() => coverInputRef.current?.click()} className="px-3 py-1 bg-white text-slate-900 hover:bg-emerald-50 font-bold text-xs rounded-xl flex items-center gap-1 cursor-pointer transition shadow-xs border-0">
                         {coverUploading ? <Loader2 size={13} className="animate-spin" /> : <Camera size={13} />}
                         <span>{coverUploading ? "আপলোড হচ্ছে..." : "কভার ছবি পরিবর্তন"}</span>
-                        <input type="file" accept="image/*" className="hidden" onChange={onCoverFileSelect} disabled={coverUploading} />
-                      </label>
+                      </button>
+                      <input ref={coverInputRef} type="file" accept="image/*" className="hidden" onChange={onCoverFileSelect} disabled={coverUploading} />
                     </div>
                   </div>
 
@@ -509,10 +511,10 @@ export const EditProfileModal: React.FC<EditProfileModalProps> = ({
                           );
                         })()}
                       </div>
-                      <label className="absolute -bottom-1.5 -right-1.5 w-7 h-7 rounded-full bg-emerald-600 hover:bg-emerald-700 text-white flex items-center justify-center shadow-md border-2 border-white cursor-pointer transition">
+                      <button type="button" onClick={() => avatarInputRef.current?.click()} className="absolute -bottom-1.5 -right-1.5 w-7 h-7 rounded-full bg-emerald-600 hover:bg-emerald-700 text-white flex items-center justify-center shadow-md border-2 border-white cursor-pointer transition" title="প্রোফাইল ছবি পরিবর্তন">
                         <Camera size={13} />
-                        <input type="file" accept="image/*" className="hidden" onChange={handleImageUpload} />
-                      </label>
+                      </button>
+                      <input ref={avatarInputRef} type="file" accept="image/*" className="hidden" onChange={handleImageUpload} />
                     </div>
 
                     <div className="min-w-0 flex-1">
