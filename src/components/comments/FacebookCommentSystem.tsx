@@ -36,6 +36,7 @@ import {
 } from 'firebase/firestore';
 import { toast } from 'react-hot-toast';
 import { cleanUndefined } from '../../utils/firestoreUtils';
+import { extractRawAvatar, isRealUserAvatar, getUserInitial } from '../../utils/avatarUtils';
 const hotToast = toast;
 
 export interface Comment {
@@ -292,7 +293,7 @@ export const FacebookCommentSystem: React.FC<FacebookCommentSystemProps> = ({
         author: senderName,
         authorId: currentUser.uid,
         authorBadge: userProfile?.role === "super_admin" || userProfile?.role === "admin" || userProfile?.role === "moderator",
-        authorPhotoUrl: userProfile?.photoURL || currentUser.photoURL || "",
+        authorPhotoUrl: extractRawAvatar(userProfile, currentUser) || "",
         content: textToSend?.trim() || "",
         imageUrl: imgToSend || null,
         createdAt: serverTimestamp(),
@@ -328,7 +329,7 @@ export const FacebookCommentSystem: React.FC<FacebookCommentSystemProps> = ({
             recipientId: mUid,
             senderId: currentUser.uid,
             senderName,
-            senderPhotoUrl: userProfile?.photoURL || currentUser.photoURL || '',
+            senderPhotoUrl: extractRawAvatar(userProfile, currentUser) || '',
             type: 'comment_mention',
             targetType: 'comment',
             targetId: docRef.id,
@@ -356,7 +357,7 @@ export const FacebookCommentSystem: React.FC<FacebookCommentSystemProps> = ({
             recipientId: parentComment.authorId,
             senderId: currentUser.uid,
             senderName,
-            senderPhotoUrl: userProfile?.photoURL || currentUser.photoURL || '',
+            senderPhotoUrl: extractRawAvatar(userProfile, currentUser) || '',
             type: 'comment_reply',
             targetType: 'comment',
             targetId: docRef.id,
@@ -370,7 +371,7 @@ export const FacebookCommentSystem: React.FC<FacebookCommentSystemProps> = ({
         const postAuthorId = post?.authorId || post?.userId || post?.authorUid || post?.uid;
         if (postAuthorId && postAuthorId !== currentUser.uid) {
           // Notification: Top level comment
-          const senderPhotoUrl = userProfile?.photoURL || currentUser.photoURL || '';
+          const senderPhotoUrl = extractRawAvatar(userProfile, currentUser) || '';
           await addDoc(collection(db, "notifications"), cleanUndefined({
             userId: postAuthorId,
             recipientId: postAuthorId,
@@ -450,7 +451,7 @@ export const FacebookCommentSystem: React.FC<FacebookCommentSystemProps> = ({
           recipientId: comment.authorId,
           senderId: currentUser.uid,
           senderName,
-          senderPhotoUrl: userProfile?.photoURL || currentUser.photoURL || '',
+          senderPhotoUrl: extractRawAvatar(userProfile, currentUser) || '',
           type: 'comment_reaction',
           reactionType,
           targetType: 'comment',
@@ -734,9 +735,9 @@ export const FacebookCommentSystem: React.FC<FacebookCommentSystemProps> = ({
                   {/* Author Avatar */}
                   {(() => {
                     const isMe = comment.authorId === currentUser?.uid;
-                    const rawAuthorPhoto = (isMe ? (userProfile?.photoURL || (userProfile as any)?.photoUrl || currentUser?.photoURL) : null) || comment.authorPhotoUrl || '';
-                    const isDicebear = !rawAuthorPhoto || rawAuthorPhoto.includes('dicebear') || rawAuthorPhoto.includes('avataaars') || rawAuthorPhoto.includes('unsplash');
-                    const cleanAuthorPhoto = isDicebear ? '' : rawAuthorPhoto;
+                    const rawAuthorPhoto = (isMe ? extractRawAvatar(userProfile, currentUser) : null) || comment.authorPhotoUrl || '';
+                    const hasRealPhoto = isRealUserAvatar(rawAuthorPhoto);
+                    const cleanAuthorPhoto = hasRealPhoto ? rawAuthorPhoto : '';
                     const authorInitial = (comment.author || 'না').trim().charAt(0).toUpperCase();
 
                     return cleanAuthorPhoto ? (
@@ -1037,11 +1038,23 @@ export const FacebookCommentSystem: React.FC<FacebookCommentSystemProps> = ({
                     {/* Inline Reply Input Field if Active */}
                     {activeReplyInputId === comment.id && !post?.commentsDisabled && (
                       <div className="mt-2.5 pl-2 flex items-center gap-2 relative">
-                        <img
-                          src={userProfile?.photoURL || currentUser?.photoURL || '/logo.svg'}
-                          alt="avatar"
-                          className="w-7 h-7 rounded-full object-cover shrink-0"
-                        />
+                        {(() => {
+                          const replyInputAvatar = extractRawAvatar(userProfile, currentUser);
+                          const hasRealReplyAvatar = isRealUserAvatar(replyInputAvatar);
+                          const myInitial = getUserInitial(userProfile, currentUser, 'আ');
+                          return hasRealReplyAvatar ? (
+                            <img
+                              src={replyInputAvatar}
+                              alt="avatar"
+                              className="w-7 h-7 rounded-full object-cover shrink-0"
+                              referrerPolicy="no-referrer"
+                            />
+                          ) : (
+                            <div className="w-7 h-7 rounded-full bg-emerald-700 text-white flex items-center justify-center font-bold text-xs shrink-0 select-none">
+                              {myInitial}
+                            </div>
+                          );
+                        })()}
                         
                         <div className="flex-1 relative bg-[#f0f2f5] rounded-full px-3 py-1.5 flex items-center border border-transparent focus-within:border-emerald-500 focus-within:bg-white transition-all shadow-2xs">
                           <input
@@ -1116,9 +1129,9 @@ export const FacebookCommentSystem: React.FC<FacebookCommentSystemProps> = ({
                                 <div key={reply.id} className="flex gap-2 items-start relative group/reply">
                                   {(() => {
                                     const isMe = reply.authorId === currentUser?.uid;
-                                    const rawReplyPhoto = (isMe ? (userProfile?.photoURL || (userProfile as any)?.photoUrl || currentUser?.photoURL) : null) || reply.authorPhotoUrl || '';
-                                    const isDicebear = !rawReplyPhoto || rawReplyPhoto.includes('dicebear') || rawReplyPhoto.includes('avataaars') || rawReplyPhoto.includes('unsplash');
-                                    const cleanReplyPhoto = isDicebear ? '' : rawReplyPhoto;
+                                    const rawReplyPhoto = (isMe ? extractRawAvatar(userProfile, currentUser) : null) || reply.authorPhotoUrl || '';
+                                    const hasRealPhoto = isRealUserAvatar(rawReplyPhoto);
+                                    const cleanReplyPhoto = hasRealPhoto ? rawReplyPhoto : '';
                                     const replyInitial = (reply.author || 'না').trim().charAt(0).toUpperCase();
 
                                     return cleanReplyPhoto ? (

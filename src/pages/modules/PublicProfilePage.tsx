@@ -1845,7 +1845,10 @@ const PublicProfilePage: React.FC = () => {
                         )}
 
                         {/* Facebook Lite Style Action Pills */}
-                        <div className="px-2.5 pb-2.5 pt-1 flex items-center justify-between gap-2 border-t border-slate-100/80">
+                        <div 
+                          className="px-2.5 pb-2.5 pt-1 flex items-center justify-between gap-2 border-t border-slate-100/80 select-none"
+                          onContextMenu={(e) => e.preventDefault()}
+                        >
                           {/* Pill 1: Reaction Button */}
                           <div className="flex-1">
                             <FbReactionPicker

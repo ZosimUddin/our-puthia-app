@@ -1340,9 +1340,12 @@ export default function DiscussionPage() {
                   </div>
 
                   {/* Facebook Lite Style Action Pills */}
-                  <div className="px-2 pb-2 pt-1 flex items-center justify-between gap-2">
+                  <div 
+                    className="px-2 pb-2 pt-1 flex items-center justify-between gap-2 select-none"
+                    onContextMenu={(e) => e.preventDefault()}
+                  >
                     {/* Pill 1: Reaction Button */}
-                    <div className="flex-1">
+                    <div className="flex-1 select-none">
                       <FbReactionPicker
                         userLiked={post.userLiked}
                         userReaction={post.userReaction}
@@ -1350,32 +1353,34 @@ export default function DiscussionPage() {
                         showPillWithCount={true}
                         onToggleLike={() => handleLike(post, post.userReaction || 'like')}
                         onSelectReaction={(rId) => handleLike(post, rId)}
-                        className="w-full"
+                        className="w-full select-none"
                       />
                     </div>
 
                     {/* Pill 2: Comment Button */}
                     <button 
                       onClick={() => setActiveCommentPost(activeCommentPost === post.id ? null : post.id)}
-                      className={`flex-1 py-2 px-3 sm:px-4 rounded-full font-bold text-xs sm:text-[13px] border flex items-center justify-center gap-1.5 transition-all cursor-pointer active:scale-95 ${
+                      onContextMenu={(e) => e.preventDefault()}
+                      className={`flex-1 py-2 px-3 sm:px-4 rounded-full font-bold text-xs sm:text-[13px] border flex items-center justify-center gap-1.5 transition-all cursor-pointer select-none active:scale-95 ${
                         activeCommentPost === post.id 
                           ? 'text-emerald-700 bg-emerald-50 border-emerald-200' 
                           : 'bg-[#f0f2f5] text-[#050505] border-slate-200/80 hover:bg-[#e4e6eb]'
                       }`}
                     >
                       <MessageSquare size={16} />
-                      <span>কমেন্ট</span>
-                      {post.commentsCount > 0 && <span>({post.commentsCount})</span>}
+                      <span className="select-none pointer-events-none">কমেন্ট</span>
+                      {post.commentsCount > 0 && <span className="select-none pointer-events-none">({post.commentsCount})</span>}
                     </button>
 
                     {/* Pill 3: Share Button */}
                     <button 
                       onClick={() => handleShareClick(post)}
-                      className="flex-1 py-2 px-3 sm:px-4 rounded-full font-bold text-xs sm:text-[13px] border bg-[#f0f2f5] text-[#050505] border-slate-200/80 hover:bg-[#e4e6eb] flex items-center justify-center gap-1.5 transition-all cursor-pointer active:scale-95"
+                      onContextMenu={(e) => e.preventDefault()}
+                      className="flex-1 py-2 px-3 sm:px-4 rounded-full font-bold text-xs sm:text-[13px] border bg-[#f0f2f5] text-[#050505] border-slate-200/80 hover:bg-[#e4e6eb] flex items-center justify-center gap-1.5 transition-all cursor-pointer select-none active:scale-95"
                     >
                       <Share2 size={16} />
-                      <span>শেয়ার</span>
-                      {post.sharesCount && post.sharesCount > 0 ? <span>({post.sharesCount})</span> : null}
+                      <span className="select-none pointer-events-none">শেয়ার</span>
+                      {post.sharesCount && post.sharesCount > 0 ? <span className="select-none pointer-events-none">({post.sharesCount})</span> : null}
                     </button>
                   </div>
                 </div>

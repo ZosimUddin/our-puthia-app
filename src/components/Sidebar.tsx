@@ -476,30 +476,6 @@ export function Sidebar({ isOpen, onClose, onNavigate, activeItem }: SidebarProp
               <span className="text-red-500 inline-block">❤️</span>
             </p>
 
-            <div className="pt-2 pb-1 px-4">
-              <button
-                type="button"
-                onClick={() => {
-                  onClose();
-                  if (role === 'super_admin' || userProfile?.role === 'super_admin' || user?.email === 'mdzosimuddin31@gmail.com') {
-                    navigate('/super-admin');
-                    onNavigate('/super-admin');
-                  } else {
-                    navigate('/super-admin/login');
-                    onNavigate('/super-admin/login');
-                  }
-                }}
-                className="w-full py-2.5 px-4 bg-[#0B7A3B] hover:bg-[#01412F] text-white text-xs sm:text-sm font-black rounded-2xl shadow-sm transition-all flex items-center justify-center gap-2 cursor-pointer border border-emerald-600/40 active:scale-[0.98]"
-              >
-                <ShieldCheck size={16} className="text-emerald-200" />
-                <span>
-                  {role === 'super_admin' || userProfile?.role === 'super_admin' || user?.email === 'mdzosimuddin31@gmail.com'
-                    ? '👑 সুপার অ্যাডমিন ড্যাশবোর্ড'
-                    : '👑 সুপার অ্যাডমিন লগইন'}
-                </span>
-              </button>
-            </div>
-
             {/* Bottom Bangladesh / Puthia Flag Dual Wave Ribbon (#0B7A3B & #E11D2E) */}
             <div className="w-full h-4 relative overflow-hidden mt-3">
               <svg viewBox="0 0 340 24" className="w-full h-full object-cover" preserveAspectRatio="none">
