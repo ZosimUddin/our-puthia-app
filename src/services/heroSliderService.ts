@@ -19,7 +19,7 @@ const LEGACY_COLLECTION_NAME = "hero_slides";
 
 export const INITIAL_HERO_SLIDES: Omit<HeroSlide, 'id'>[] = [
   {
-    title: "পুঠিয়ার সব খবর, সেবা\nও আপডেট এক জায়গায়",
+    title: "পুঠিয়ার সব খবর, সেবা ও আপডেট এক জায়গায়",
     subtitle: "সহজে জানুন, দ্রুত সেবা নিন",
     image: "'/logo.svg'",
     cta: "বিস্তারিত দেখুন",
