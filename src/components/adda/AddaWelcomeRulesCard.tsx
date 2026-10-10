@@ -22,7 +22,7 @@ export const AddaWelcomeRulesCard: React.FC<{ className?: string }> = ({ classNa
     <div className={`bg-gradient-to-br from-amber-50/90 via-white to-orange-50/80 rounded-none sm:rounded-2xl border-y sm:border border-amber-200/80 p-3.5 sm:p-4 shadow-xs mx-0 sm:mx-2 mb-2 sm:mb-3 relative ${className}`}>
       <div className="flex items-start justify-between gap-3">
         <div className="flex items-start gap-3">
-          <div className="w-10 h-10 rounded-xl bg-gradient-to-tr from-amber-500 to-orange-500 flex items-center justify-center text-white shrink-0 shadow-sm shadow-orange-500/30 mt-0.5">
+          <div className="w-10 h-10 rounded-xl bg-gradient-to-tr from-[#0B7A3B] to-[#10B981] flex items-center justify-center text-white shrink-0 shadow-sm shadow-emerald-600/30 mt-0.5">
             <ShieldCheck size={22} strokeWidth={2.5} />
           </div>
           <div>

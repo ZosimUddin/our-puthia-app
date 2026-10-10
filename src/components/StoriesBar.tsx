@@ -1002,7 +1002,7 @@ export function StoriesBar() {
                       onError={() => setMyAvatarErr(true)}
                     />
                   ) : (
-                    <div className="w-full h-full flex items-center justify-center bg-gradient-to-tr from-purple-600 via-pink-500 to-indigo-600 text-white text-3xl font-black">
+                    <div className="w-full h-full flex items-center justify-center bg-gradient-to-tr from-[#0B7A3B] to-[#10B981] text-white text-3xl font-black">
                       {myInitial}
                     </div>
                   )}

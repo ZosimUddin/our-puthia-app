@@ -52,11 +52,11 @@ export function CreatePostBox({ onOpenCreateModal }: CreatePostBoxProps) {
         {/* Rainbow Story Ring Avatar */}
         <button 
           onClick={handleAvatarClick}
-          className="p-[2.5px] bg-gradient-to-tr from-[#FF8A00] via-[#E52E71] via-[#9B51E0] to-[#0091FF] rounded-full shrink-0 shadow-xs cursor-pointer active:scale-95 transition-transform"
+          className="p-[2.5px] bg-gradient-to-tr from-[#0B7A3B] to-[#10B981] rounded-full shrink-0 shadow-xs cursor-pointer active:scale-95 transition-transform"
           title="প্রোফাইল দেখুন"
         >
           <div className="p-[1.5px] bg-white rounded-full">
-            <div className="w-10 h-10 rounded-full overflow-hidden flex items-center justify-center bg-[#0091FF] text-white">
+            <div className="w-10 h-10 rounded-full overflow-hidden flex items-center justify-center bg-[#0B7A3B] text-white">
               {userAvatar && !avatarErr ? (
                 <img 
                   key={`create-post-avatar-${userAvatar}`}
