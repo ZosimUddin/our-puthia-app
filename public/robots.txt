@@ -1,0 +1,5 @@
+User-agent: *
+Allow: /
+
+# Production Sitemap
+Sitemap: https://our-puthia-app.vercel.app/sitemap.xml
