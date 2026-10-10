@@ -1639,29 +1639,6 @@ export const AddaMessengerHub: React.FC<AddaMessengerHubProps> = ({
               </button>
             )}
 
-            {/* Top Profile Avatar Button */}
-            <button
-              onClick={() => {
-                setSettingsSubView('menu');
-                setIsSettingsModalOpen(true);
-              }}
-              className="w-9 h-9 rounded-full overflow-hidden flex items-center justify-center bg-slate-100 border border-slate-200 cursor-pointer transition-all hover:scale-105 active:scale-95 shadow-2xs"
-              title="প্রোফাইল ও সেটিংস"
-            >
-              {currentUserInfo.photoURL ? (
-                <img 
-                  src={currentUserInfo.photoURL} 
-                  alt="Profile" 
-                  className="w-full h-full object-cover"
-                  referrerPolicy="no-referrer"
-                />
-              ) : (
-                <div className="w-full h-full bg-[#006a4e] text-white flex items-center justify-center font-black text-xs uppercase">
-                  {currentUserInfo.name.charAt(0)}
-                </div>
-              )}
-            </button>
-
             <h1 className="text-2xl sm:text-[28px] font-black text-slate-900 tracking-tight select-none">
               Messages
             </h1>
@@ -1771,19 +1748,21 @@ export const AddaMessengerHub: React.FC<AddaMessengerHubProps> = ({
               setNoteInput(userNote);
               setIsNoteModalOpen(true);
             }}
-            className="flex flex-col items-center gap-1 cursor-pointer shrink-0 group relative pt-5"
+            className={`flex flex-col items-center gap-1 cursor-pointer shrink-0 group relative ${userNote && userNote.trim() ? 'pt-5' : 'pt-1.5'}`}
           >
-            {/* Thought bubble over user's avatar */}
-            <div className="absolute top-0 transform -translate-y-1 bg-white border border-slate-200/90 rounded-2xl px-2.5 py-0.5 shadow-xs flex items-center gap-1 max-w-[85px] z-10">
-              <span className="text-[10px] font-medium text-slate-600 truncate">
-                {userNote ? userNote : 'Share a note...'}
-              </span>
-              {/* Little speech bubble tail */}
-              <div className="absolute -bottom-1 left-4 w-2 h-2 bg-white border-r border-b border-slate-200 rotate-45"></div>
-            </div>
+            {/* Thought bubble over user's avatar (only if user has a note set) */}
+            {userNote && userNote.trim() ? (
+              <div className="absolute top-0 transform -translate-y-1 bg-white border border-slate-200/90 rounded-2xl px-2.5 py-0.5 shadow-xs flex items-center gap-1 max-w-[85px] z-10">
+                <span className="text-[10px] font-medium text-slate-600 truncate">
+                  {userNote}
+                </span>
+                {/* Little speech bubble tail */}
+                <div className="absolute -bottom-1 left-4 w-2 h-2 bg-white border-r border-b border-slate-200 rotate-45"></div>
+              </div>
+            ) : null}
 
             {/* Profile Avatar with Plus Badge */}
-            <div className="relative mt-2">
+            <div className="relative mt-1">
               {currentUserInfo.photoURL ? (
                 <img 
                   src={currentUserInfo.photoURL} 
