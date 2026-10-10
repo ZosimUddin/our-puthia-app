@@ -5369,7 +5369,7 @@ export default function SubViews({
                                     onClick={() =>
                                       onSimulateCall(diag.phone, diag.title)
                                     }
-                                    className="px-3 py-1 bg-blue-600 hover:bg-blue-700 text-white rounded-lg text-xs font-bold font-sans transition cursor-pointer flex items-center gap-1"
+                                    className="px-3 py-1 bg-[#006a4e] hover:bg-[#00523b] text-white rounded-lg text-xs font-bold font-sans transition cursor-pointer flex items-center gap-1"
                                   >
                                     📞 কল করুন
                                   </button>

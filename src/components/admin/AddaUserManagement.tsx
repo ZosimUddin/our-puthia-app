@@ -721,7 +721,7 @@ export const AddaUserManagement: React.FC = () => {
                               </div>
                             )}
                             {u.isVerified && (
-                              <span className="absolute -bottom-1 -right-1 p-0.5 bg-blue-600 text-white rounded-full shadow-xs" title="ভেরিফাইড নাগরিক">
+                              <span className="absolute -bottom-1 -right-1 p-0.5 bg-[#006a4e] text-white rounded-full shadow-xs" title="ভেরিফাইড নাগরিক">
                                 <Check size={10} strokeWidth={3} />
                               </span>
                             )}
@@ -1021,7 +1021,7 @@ export const AddaUserManagement: React.FC = () => {
                 <div className="flex flex-wrap items-center gap-2 pt-2 border-t border-slate-100">
                   <button
                     onClick={() => handleToggleVerified(viewUser)}
-                    className="px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white font-bold text-xs rounded-xl cursor-pointer"
+                    className="px-4 py-2 bg-[#006a4e] hover:bg-[#00523b] text-white font-bold text-xs rounded-xl cursor-pointer"
                   >
                     {viewUser.isVerified ? 'ভেরিফিকেশন সরান' : 'ব্লু ভেরিফাইড করুন'}
                   </button>

@@ -357,7 +357,7 @@ const ProductForm: React.FC = () => {
             className={`w-full py-5 rounded-[24px] font-black text-sm uppercase tracking-widest transition-all flex items-center justify-center gap-3 shadow-xl ${
               success 
                 ? "bg-blue-500 text-white" 
-                : "bg-blue-600 text-white hover:bg-blue-700 shadow-blue-200"
+                : "bg-[#006a4e] text-white hover:bg-[#00523b] shadow-blue-200"
             } disabled:opacity-70`}
           >
             {loading ? (

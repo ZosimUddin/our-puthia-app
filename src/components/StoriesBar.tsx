@@ -1759,7 +1759,7 @@ export function StoriesBar() {
                   <div className="pt-2">
                     <button
                       type="submit"
-                      className="w-full py-2.5 rounded-xl bg-[#1877F2] hover:bg-blue-600 text-white font-bold text-sm shadow-md transition active:scale-95 cursor-pointer flex items-center justify-center gap-2"
+                      className="w-full py-2.5 rounded-xl bg-[#1877F2] hover:bg-[#006a4e] text-white font-bold text-sm shadow-md transition active:scale-95 cursor-pointer flex items-center justify-center gap-2"
                     >
                       <Sparkles size={16} />
                       <span>Share to story</span>

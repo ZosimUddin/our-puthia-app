@@ -119,7 +119,7 @@ export const LiveCommentsTray: React.FC<LiveCommentsTrayProps> = ({
                       )}
 
                       {isCommentMod && !isCommentHost && (
-                        <span className="bg-blue-600 text-white text-[9px] font-black px-1.5 py-0.2 rounded-md flex items-center gap-0.5">
+                        <span className="bg-[#006a4e] text-white text-[9px] font-black px-1.5 py-0.2 rounded-md flex items-center gap-0.5">
                           <Shield size={10} /> মডারেটর
                         </span>
                       )}

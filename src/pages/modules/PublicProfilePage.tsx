@@ -2058,7 +2058,7 @@ const PublicProfilePage: React.FC = () => {
                       {(isOwnProfile || targetUserProfile?.privacySettings?.email !== 'only_me') && targetUserProfile.email && (
                         <a 
                           href={`mailto:${targetUserProfile.email}`}
-                          className="px-3 py-1.5 bg-blue-600 hover:bg-blue-700 text-white rounded-xl text-xs font-bold transition flex items-center gap-1.5 shadow-2xs shrink-0 cursor-pointer"
+                          className="px-3 py-1.5 bg-[#006a4e] hover:bg-[#00523b] text-white rounded-xl text-xs font-bold transition flex items-center gap-1.5 shadow-2xs shrink-0 cursor-pointer"
                         >
                           <Mail size={13} />
                           <span>ইমেইল পাঠান</span>

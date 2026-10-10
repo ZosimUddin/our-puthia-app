@@ -2549,7 +2549,7 @@ const ServicePage: React.FC<ServicePageProps> = ({ title, type, initialCategory 
                       <a href="tel:999" className="p-4 bg-red-600 text-white rounded-2xl font-black text-lg shadow-lg shadow-red-200">৯৯৯</a>
                       <a href="tel:333" className="p-4 bg-orange-500 text-white rounded-2xl font-black text-lg shadow-lg shadow-orange-200">৩৩৩</a>
                       <a href="tel:109" className="p-4 bg-pink-500 text-white rounded-2xl font-black text-lg shadow-lg shadow-pink-200">১০৯</a>
-                      <a href="tel:106" className="p-4 bg-blue-600 text-white rounded-2xl font-black text-lg shadow-lg shadow-blue-200">১০৬</a>
+                      <a href="tel:106" className="p-4 bg-[#006a4e] text-white rounded-2xl font-black text-lg shadow-lg shadow-blue-200">১০৬</a>
                     </div>
                   </div>
                 </div>

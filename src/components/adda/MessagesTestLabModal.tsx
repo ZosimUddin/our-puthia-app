@@ -549,7 +549,7 @@ ${tests.filter(t => t.category === 'group').map(t => `- [${t.status === 'passed'
               <button
                 onClick={() => setActiveTab('automated')}
                 className={`px-3 py-1.5 rounded-lg text-xs font-bold transition cursor-pointer border-0 ${
-                  activeTab === 'automated' ? 'bg-blue-600 text-white shadow-xs' : 'text-slate-400 hover:text-white'
+                  activeTab === 'automated' ? 'bg-[#006a4e] text-white shadow-xs' : 'text-slate-400 hover:text-white'
                 }`}
               >
                 স্বয়ংক্রিয় টেস্ট স্যুট ({passedCount}/{tests.length})
@@ -557,7 +557,7 @@ ${tests.filter(t => t.category === 'group').map(t => `- [${t.status === 'passed'
               <button
                 onClick={() => setActiveTab('sandbox')}
                 className={`px-3 py-1.5 rounded-lg text-xs font-bold transition cursor-pointer border-0 ${
-                  activeTab === 'sandbox' ? 'bg-blue-600 text-white shadow-xs' : 'text-slate-400 hover:text-white'
+                  activeTab === 'sandbox' ? 'bg-[#006a4e] text-white shadow-xs' : 'text-slate-400 hover:text-white'
                 }`}
               >
                 দ্বৈত ইউজার লাইভ স্যান্ডবক্স
@@ -796,7 +796,7 @@ ${tests.filter(t => t.category === 'group').map(t => `- [${t.status === 'passed'
                   <button
                     onClick={() => setSandboxMode('direct')}
                     className={`px-3 py-1 rounded-lg text-xs font-bold cursor-pointer border-0 transition ${
-                      sandboxMode === 'direct' ? 'bg-blue-600 text-white shadow-2xs' : 'text-slate-600 hover:text-slate-900'
+                      sandboxMode === 'direct' ? 'bg-[#006a4e] text-white shadow-2xs' : 'text-slate-600 hover:text-slate-900'
                     }`}
                   >
                     Direct Chat (User A ⇄ User B)
@@ -888,7 +888,7 @@ ${tests.filter(t => t.category === 'group').map(t => `- [${t.status === 'passed'
                             </div>
                           )}
                           <div className={`px-3 py-1.5 rounded-2xl text-xs max-w-[85%] ${
-                            isMe ? 'bg-blue-600 text-white rounded-br-xs' : 'bg-slate-200 text-slate-900 rounded-bl-xs'
+                            isMe ? 'bg-[#006a4e] text-white rounded-br-xs' : 'bg-slate-200 text-slate-900 rounded-bl-xs'
                           }`}>
                             {msg.type === 'image' && msg.mediaUrl && (
                               <img src={msg.mediaUrl} alt="attachment" className="rounded-lg mb-1 max-h-32 object-cover" />
@@ -941,7 +941,7 @@ ${tests.filter(t => t.category === 'group').map(t => `- [${t.status === 'passed'
                   <button
                     type="submit"
                     disabled={!inputA.trim() || isBBlockedByA}
-                    className="w-8 h-8 rounded-full bg-blue-600 text-white flex items-center justify-center hover:bg-blue-700 transition cursor-pointer border-0 disabled:opacity-40"
+                    className="w-8 h-8 rounded-full bg-[#006a4e] text-white flex items-center justify-center hover:bg-blue-700 transition cursor-pointer border-0 disabled:opacity-40"
                   >
                     <Send size={13} />
                   </button>

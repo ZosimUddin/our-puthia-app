@@ -234,13 +234,13 @@ export function GSTVATCalculator({ onGoBack }: { onGoBack: () => void }) {
           <div className="flex gap-2">
             <button
               onClick={() => setTaxType('exclusive')}
-              className={`flex-1 py-2.5 rounded-xl text-xs font-bold border transition-all ${taxType === 'exclusive' ? 'bg-blue-600 text-white border-blue-600 shadow-md' : 'bg-slate-50 text-slate-600 hover:bg-slate-100'}`}
+              className={`flex-1 py-2.5 rounded-xl text-xs font-bold border transition-all ${taxType === 'exclusive' ? 'bg-[#006a4e] text-white border-blue-600 shadow-md' : 'bg-slate-50 text-slate-600 hover:bg-slate-100'}`}
             >
               ভ্যাট যুক্ত করুন (Exclusive)
             </button>
             <button
               onClick={() => setTaxType('inclusive')}
-              className={`flex-1 py-2.5 rounded-xl text-xs font-bold border transition-all ${taxType === 'inclusive' ? 'bg-blue-600 text-white border-blue-600 shadow-md' : 'bg-slate-50 text-slate-600 hover:bg-slate-100'}`}
+              className={`flex-1 py-2.5 rounded-xl text-xs font-bold border transition-all ${taxType === 'inclusive' ? 'bg-[#006a4e] text-white border-blue-600 shadow-md' : 'bg-slate-50 text-slate-600 hover:bg-slate-100'}`}
             >
               ভ্যাট অন্তর্ভুক্ত (Inclusive)
             </button>

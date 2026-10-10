@@ -684,7 +684,7 @@ export const TravelMapPage: React.FC = () => {
                       <button
                         onClick={() => downloadMap('jpg')}
                         disabled={isDownloading}
-                        className="py-2 px-3 rounded-xl bg-blue-600 hover:bg-blue-700 text-white text-xs font-black transition-all cursor-pointer flex items-center justify-center gap-1 shadow-xs"
+                        className="py-2 px-3 rounded-xl bg-[#006a4e] hover:bg-[#00523b] text-white text-xs font-black transition-all cursor-pointer flex items-center justify-center gap-1 shadow-xs"
                       >
                         <span>↓ JPG</span>
                       </button>
@@ -997,7 +997,7 @@ export const TravelMapPage: React.FC = () => {
                       <button
                         onClick={() => downloadWorldMap('jpg')}
                         disabled={isDownloading}
-                        className="py-2.5 px-3 rounded-xl bg-blue-600 hover:bg-blue-700 text-white text-xs font-black transition-all cursor-pointer flex items-center justify-center gap-1 shadow-xs"
+                        className="py-2.5 px-3 rounded-xl bg-[#006a4e] hover:bg-[#00523b] text-white text-xs font-black transition-all cursor-pointer flex items-center justify-center gap-1 shadow-xs"
                       >
                         <span>↓ JPG</span>
                       </button>

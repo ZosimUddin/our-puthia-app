@@ -472,7 +472,7 @@ export function UnionGrid({ onGoBack, onSimulateCall }: UnionGridProps) {
                       </div>
                       <button
                         onClick={() => handleCall(selectedUnion.secretary.phone, selectedUnion.secretary.name)}
-                        className="bg-blue-600 text-white p-2.5 rounded-full hover:bg-blue-700 transition cursor-pointer shadow-xs active:scale-95"
+                        className="bg-[#006a4e] text-white p-2.5 rounded-full hover:bg-blue-700 transition cursor-pointer shadow-xs active:scale-95"
                         title="সরাসরি কল করুন"
                       >
                         <Phone className="w-4 h-4" />

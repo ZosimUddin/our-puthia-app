@@ -171,7 +171,7 @@ export const GlobalSearchFilterModal: React.FC<GlobalSearchFilterModalProps> = (
                       onClick={() => setFilters((prev) => ({ ...prev, verification: item.value as VerificationFilterValue }))}
                       className={`py-2 px-2 text-center rounded-xl text-xs font-bold border transition-all cursor-pointer ${
                         isActive
-                          ? 'bg-blue-600 text-white border-blue-600 shadow-sm'
+                          ? 'bg-[#006a4e] text-white border-blue-600 shadow-sm'
                           : 'bg-slate-50 text-slate-700 border-slate-200 hover:bg-slate-100'
                       }`}
                     >

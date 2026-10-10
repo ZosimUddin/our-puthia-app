@@ -856,7 +856,7 @@ export function RoadsTransport({ onGoBack }: { onGoBack: () => void }) {
                           onClick={() => setBusFilterTab(tab.id as any)}
                           className={`flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-bold transition-all ${
                             isActive 
-                              ? 'bg-blue-600 text-white shadow-sm' 
+                              ? 'bg-[#006a4e] text-white shadow-sm' 
                               : 'bg-slate-50 text-slate-600 hover:bg-slate-100'
                           }`}
                         >
@@ -926,7 +926,7 @@ export function RoadsTransport({ onGoBack }: { onGoBack: () => void }) {
                               <>
                                 <a 
                                   href={`tel:${bus.phone}`} 
-                                  className="flex-1 min-w-[100px] flex items-center justify-center gap-1.5 bg-blue-600 hover:bg-blue-700 text-white px-3 py-2 rounded-xl text-xs font-bold transition-all"
+                                  className="flex-1 min-w-[100px] flex items-center justify-center gap-1.5 bg-[#006a4e] hover:bg-[#00523b] text-white px-3 py-2 rounded-xl text-xs font-bold transition-all"
                                 >
                                   <Phone className="w-3.5 h-3.5" /> কল করুন
                                 </a>

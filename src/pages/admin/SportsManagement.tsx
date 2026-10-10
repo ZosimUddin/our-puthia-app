@@ -82,7 +82,7 @@ export default function SportsManagement() {
             setFormData({});
             setShowForm(true);
           }}
-          className="px-5 py-2.5 bg-blue-600 text-white rounded-xl font-bold shadow-sm hover:bg-blue-700 transition flex items-center justify-center gap-2"
+          className="px-5 py-2.5 bg-[#006a4e] text-white rounded-xl font-bold shadow-sm hover:bg-blue-700 transition flex items-center justify-center gap-2"
         >
           <Plus size={18} />
           নতুন যোগ করুন
@@ -99,7 +99,7 @@ export default function SportsManagement() {
             }}
             className={`flex items-center gap-2 px-4 py-2.5 rounded-xl font-bold text-sm whitespace-nowrap transition-all ${
               activeTab === tab.id 
-                ? 'bg-blue-600 text-white shadow-md' 
+                ? 'bg-[#006a4e] text-white shadow-md' 
                 : 'bg-white text-slate-600 hover:bg-slate-50 border border-slate-200'
             }`}
           >
@@ -265,7 +265,7 @@ export default function SportsManagement() {
               </button>
               <button
                 type="submit"
-                className="px-6 py-2.5 rounded-xl font-bold text-white bg-blue-600 hover:bg-blue-700 shadow-sm transition flex items-center gap-2"
+                className="px-6 py-2.5 rounded-xl font-bold text-white bg-[#006a4e] hover:bg-[#00523b] shadow-sm transition flex items-center gap-2"
               >
                 <Save size={18} />
                 সংরক্ষণ করুন

@@ -389,7 +389,7 @@ export default function BackupRestoreManagement() {
                     <button 
                       onClick={triggerFileInput}
                       disabled={isRestoring}
-                      className="w-full py-3 bg-blue-600 hover:bg-blue-700 text-white font-bold rounded-xl transition-colors cursor-pointer flex items-center justify-center gap-2 disabled:opacity-50 border-none"
+                      className="w-full py-3 bg-[#006a4e] hover:bg-[#00523b] text-white font-bold rounded-xl transition-colors cursor-pointer flex items-center justify-center gap-2 disabled:opacity-50 border-none"
                     >
                       {isRestoring ? <RefreshCw className="w-5 h-5 animate-spin" /> : <Upload className="w-5 h-5" />}
                       <span>{isRestoring ? 'রিস্টোর হচ্ছে...' : 'ফাইল আপলোড করুন'}</span>

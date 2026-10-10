@@ -540,7 +540,7 @@ export const ServicesGridManagement: React.FC = () => {
                       <option value="bg-amber-500 text-white">অ্যাম্বার (হলুদ)</option>
                       <option value="bg-red-500 text-white">রেড (লাল)</option>
                       <option value="bg-emerald-600 text-white">এমারেল্ড (সবুজ)</option>
-                      <option value="bg-blue-600 text-white">ব্লু (নীল)</option>
+                      <option value="bg-[#006a4e] text-white">ব্লু (নীল)</option>
                       <option value="bg-purple-600 text-white">পার্পল (বেগুনি)</option>
                     </select>
                   </div>

@@ -132,7 +132,7 @@ export default function EducationManagement() {
                 </div>
                 <button 
                     onClick={() => setIsAdding(!isAdding)}
-                    className="flex items-center justify-center gap-2 px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-lg font-bold transition-all shadow-lg shadow-blue-900/20"
+                    className="flex items-center justify-center gap-2 px-4 py-2 bg-[#006a4e] hover:bg-[#00523b] text-white rounded-lg font-bold transition-all shadow-lg shadow-blue-900/20"
                 >
                     {isAdding ? <X className="w-4 h-4" /> : <Plus className="w-4 h-4" />}
                     <span>{isAdding ? 'বাতিল' : 'নতুন প্রতিষ্ঠান'}</span>
@@ -155,7 +155,7 @@ export default function EducationManagement() {
                                 setActiveTab(tab.id as EduType);
                                 resetForm();
                             }}
-                            className={`flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-bold transition-all ${activeTab === tab.id ? 'bg-blue-600 text-white shadow-lg' : 'text-gray-400 hover:text-gray-200'}`}
+                            className={`flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-bold transition-all ${activeTab === tab.id ? 'bg-[#006a4e] text-white shadow-lg' : 'text-gray-400 hover:text-gray-200'}`}
                         >
                             <Icon className="w-4 h-4" />
                             <span>{tab.label}</span>
@@ -236,7 +236,7 @@ export default function EducationManagement() {
                         <button 
                             onClick={handleSave}
                             disabled={isSaving}
-                            className="flex-1 flex items-center justify-center gap-2 py-4 bg-blue-600 hover:bg-blue-700 disabled:opacity-50 text-white rounded-xl font-bold transition-all shadow-lg shadow-blue-900/20"
+                            className="flex-1 flex items-center justify-center gap-2 py-4 bg-[#006a4e] hover:bg-[#00523b] disabled:opacity-50 text-white rounded-xl font-bold transition-all shadow-lg shadow-blue-900/20"
                         >
                             {isSaving ? <Loader2 className="w-5 h-5 animate-spin" /> : <><Save className="w-5 h-5" /> {editingId ? 'আপডেট করুন' : 'সংরক্ষণ করুন'}</>}
                         </button>

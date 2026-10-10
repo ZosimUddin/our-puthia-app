@@ -173,7 +173,7 @@ export const SubMenuDetailLayout: React.FC<SubMenuDetailLayoutProps> = ({
                       href={`https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(mapLocation)}`}
                       target="_blank"
                       rel="noopener noreferrer"
-                      className="mt-4 px-6 py-2.5 bg-blue-600 text-white rounded-xl text-xs font-black shadow-lg shadow-blue-200 no-underline"
+                      className="mt-4 px-6 py-2.5 bg-[#006a4e] text-white rounded-xl text-xs font-black shadow-lg shadow-blue-200 no-underline"
                     >
                       গুগল ম্যাপে দেখুন
                     </a>

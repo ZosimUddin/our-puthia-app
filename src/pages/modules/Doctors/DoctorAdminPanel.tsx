@@ -410,7 +410,7 @@ export const DoctorAdminPanel: React.FC<DoctorAdminPanelProps> = ({
                               type="button"
                               onClick={() => handleUpdateDoctorStatus(docItem.id, { isVerified: !isVerified, verificationStatus: !isVerified ? 'verified' : 'pending' })}
                               className={`py-1.5 px-2.5 font-bold text-xs rounded-lg border-none cursor-pointer flex items-center gap-1 ${
-                                isVerified ? 'bg-amber-100 text-amber-800 hover:bg-amber-200' : 'bg-blue-600 text-white hover:bg-blue-700'
+                                isVerified ? 'bg-amber-100 text-amber-800 hover:bg-amber-200' : 'bg-[#006a4e] text-white hover:bg-[#00523b]'
                               }`}
                             >
                               <ShieldCheck size={13} /> {isVerified ? 'Unverify' : 'Verify BMDC'}
@@ -522,7 +522,7 @@ export const DoctorAdminPanel: React.FC<DoctorAdminPanelProps> = ({
                         <button
                           type="button"
                           onClick={() => handleUpdateApptStatus(appt.id, 'completed')}
-                          className="py-1.5 px-2.5 bg-blue-600 hover:bg-blue-700 text-white font-bold text-xs rounded-lg border-none cursor-pointer"
+                          className="py-1.5 px-2.5 bg-[#006a4e] hover:bg-[#00523b] text-white font-bold text-xs rounded-lg border-none cursor-pointer"
                         >
                           Complete
                         </button>

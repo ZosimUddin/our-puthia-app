@@ -1733,7 +1733,7 @@ export function AdvancedCreatePostModal({ isOpen, onClose, onSubmit, initialData
               disabled={(!content.trim() && !images.length && !videoPreview && !videoFile) || isPublishing}
               className={`w-full py-3.5 rounded-xl font-black text-base transition-all cursor-pointer shadow-md text-center border-0 ${
                 (content.trim() || images.length > 0 || videoPreview || videoFile) && !isPublishing
-                  ? 'bg-[#1877F2] hover:bg-blue-600 text-white active:scale-98'
+                  ? 'bg-[#1877F2] hover:bg-[#006a4e] text-white active:scale-98'
                   : 'bg-[#1877F2]/40 text-white cursor-not-allowed'
               }`}
             >

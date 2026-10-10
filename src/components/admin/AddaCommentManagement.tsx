@@ -514,7 +514,7 @@ export const AddaCommentManagement: React.FC = () => {
                       </div>
                     )}
                     {comment.authorBadge && (
-                      <span className="absolute -bottom-1 -right-1 p-0.5 bg-blue-600 text-white rounded-full text-[8px] font-bold">✓</span>
+                      <span className="absolute -bottom-1 -right-1 p-0.5 bg-[#006a4e] text-white rounded-full text-[8px] font-bold">✓</span>
                     )}
                   </div>
 
@@ -599,7 +599,7 @@ export const AddaCommentManagement: React.FC = () => {
                     <button
                       onClick={() => handleRestoreComment(comment)}
                       disabled={actionLoading}
-                      className="px-3 py-1.5 bg-blue-600 hover:bg-blue-700 text-white rounded-xl text-xs font-black transition cursor-pointer flex items-center gap-1 shadow-xs"
+                      className="px-3 py-1.5 bg-[#006a4e] hover:bg-[#00523b] text-white rounded-xl text-xs font-black transition cursor-pointer flex items-center gap-1 shadow-xs"
                       title="মন্তব্য পুনরুদ্ধার করুন"
                     >
                       <RotateCcw size={13} /> Restore

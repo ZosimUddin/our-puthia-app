@@ -137,7 +137,7 @@ export function VillageGrid({ onGoBack }: VillageGridProps) {
                     onClick={() => setSelectedUnionId(union.id)}
                     className={`shrink-0 px-4 py-2 rounded-xl text-[13px] font-bold border transition-all cursor-pointer flex items-center gap-2 ${
                       selectedUnionId === union.id
-                        ? "bg-blue-600 text-white border-blue-600 shadow-md shadow-blue-600/20"
+                        ? "bg-[#006a4e] text-white border-blue-600 shadow-md shadow-blue-600/20"
                         : "bg-white text-neutral-600 border-neutral-200 hover:border-blue-200 hover:bg-blue-50/50"
                     }`}
                   >
@@ -248,7 +248,7 @@ export function VillageGrid({ onGoBack }: VillageGridProps) {
               
               {/* Stat Card 1 */}
               <div className="bg-blue-50/50 border border-blue-100/50 p-5 rounded-2xl flex items-start gap-4">
-                <div className="w-10 h-10 bg-blue-600 text-white rounded-xl flex items-center justify-center text-lg">
+                <div className="w-10 h-10 bg-[#006a4e] text-white rounded-xl flex items-center justify-center text-lg">
                   🏡
                 </div>
                 <div>
@@ -332,7 +332,7 @@ export function VillageGrid({ onGoBack }: VillageGridProps) {
             {/* Profile Content */}
             <div className="space-y-5">
               <div className="flex items-center gap-3 border-b border-neutral-100 pb-4">
-                <div className="w-12 h-12 bg-blue-600 text-white rounded-2xl flex items-center justify-center text-2xl">
+                <div className="w-12 h-12 bg-[#006a4e] text-white rounded-2xl flex items-center justify-center text-2xl">
                   🏡
                 </div>
                 <div>
@@ -405,7 +405,7 @@ export function VillageGrid({ onGoBack }: VillageGridProps) {
               <div className="pt-4 border-t border-neutral-100">
                 <button
                   onClick={() => setSelectedVillage(null)}
-                  className="w-full bg-blue-600 text-white py-2.5 rounded-xl text-xs font-bold hover:bg-blue-700 transition cursor-pointer shadow-xs active:scale-95"
+                  className="w-full bg-[#006a4e] text-white py-2.5 rounded-xl text-xs font-bold hover:bg-blue-700 transition cursor-pointer shadow-xs active:scale-95"
                 >
                   বন্ধ করুন
                 </button>

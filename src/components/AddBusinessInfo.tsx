@@ -188,7 +188,7 @@ export const AddBusinessInfo: React.FC<{ onGoBack: () => void }> = ({ onGoBack }
           <div className="flex justify-end pt-2">
             <button 
               type="submit" disabled={submitting}
-              className="w-full sm:w-auto px-8 py-3 bg-blue-600 hover:bg-blue-700 text-white font-bold rounded-2xl text-xs transition flex items-center justify-center gap-2 cursor-pointer shadow-md"
+              className="w-full sm:w-auto px-8 py-3 bg-[#006a4e] hover:bg-[#00523b] text-white font-bold rounded-2xl text-xs transition flex items-center justify-center gap-2 cursor-pointer shadow-md"
             >
               {submitting ? <Loader2 className="w-4 h-4 animate-spin" /> : <Send className="w-4 h-4" />}
               ব্যবসার তথ্য জমা দিন

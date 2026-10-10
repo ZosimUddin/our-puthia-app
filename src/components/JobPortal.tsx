@@ -800,7 +800,7 @@ export function JobPortal({
             <button 
               onClick={() => setActiveTab("active")}
               className={`px-4 py-2 rounded-xl text-xs font-bold transition flex items-center gap-1.5 ${
-                activeTab === "active" ? "bg-blue-600 text-white shadow-xs" : "bg-white text-slate-600 hover:bg-slate-100 border border-slate-200"
+                activeTab === "active" ? "bg-[#006a4e] text-white shadow-xs" : "bg-white text-slate-600 hover:bg-slate-100 border border-slate-200"
               }`}
             >
               <span>চাকরির সুযোগ</span>
@@ -810,7 +810,7 @@ export function JobPortal({
             <button 
               onClick={() => setActiveTab("saved")}
               className={`px-4 py-2 rounded-xl text-xs font-bold transition flex items-center gap-1.5 ${
-                activeTab === "saved" ? "bg-blue-600 text-white shadow-xs" : "bg-white text-slate-600 hover:bg-slate-100 border border-slate-200"
+                activeTab === "saved" ? "bg-[#006a4e] text-white shadow-xs" : "bg-white text-slate-600 hover:bg-slate-100 border border-slate-200"
               }`}
             >
               <Bookmark size={14} />
@@ -881,7 +881,7 @@ export function JobPortal({
               </p>
               <button 
                 onClick={handleResetFilters}
-                className="px-4 py-2 bg-blue-600 text-white rounded-xl text-xs font-bold shadow-xs hover:bg-blue-700 transition"
+                className="px-4 py-2 bg-[#006a4e] text-white rounded-xl text-xs font-bold shadow-xs hover:bg-blue-700 transition"
               >
                 সব ফিল্টার রিসেট করুন
               </button>
@@ -977,7 +977,7 @@ export function JobPortal({
                       ) : job.email ? (
                         <a 
                           href={`mailto:${job.email}`}
-                          className="py-2.5 px-4 bg-blue-600 hover:bg-blue-700 text-white rounded-xl text-xs font-bold flex items-center justify-center gap-1.5 transition shadow-xs"
+                          className="py-2.5 px-4 bg-[#006a4e] hover:bg-[#00523b] text-white rounded-xl text-xs font-bold flex items-center justify-center gap-1.5 transition shadow-xs"
                         >
                           <Mail size={14} />
                           <span>ইমেইল</span>
@@ -985,7 +985,7 @@ export function JobPortal({
                       ) : (
                         <button 
                           onClick={() => setSelectedJob(job)}
-                          className="py-2.5 px-4 bg-blue-600 hover:bg-blue-700 text-white rounded-xl text-xs font-bold flex items-center justify-center gap-1.5 transition shadow-xs"
+                          className="py-2.5 px-4 bg-[#006a4e] hover:bg-[#00523b] text-white rounded-xl text-xs font-bold flex items-center justify-center gap-1.5 transition shadow-xs"
                         >
                           <span>আবেদন পদ্ধতি</span>
                         </button>
@@ -1154,7 +1154,7 @@ export function JobPortal({
                 {selectedJob.email && (
                   <a 
                     href={`mailto:${selectedJob.email}`}
-                    className="flex-1 py-3 bg-blue-600 hover:bg-blue-700 text-white rounded-xl text-xs font-bold flex items-center justify-center gap-2 shadow-xs transition"
+                    className="flex-1 py-3 bg-[#006a4e] hover:bg-[#00523b] text-white rounded-xl text-xs font-bold flex items-center justify-center gap-2 shadow-xs transition"
                   >
                     <Mail size={16} />
                     <span>✉️ ই-মেইলে আবেদন পাঠান</span>
@@ -1288,7 +1288,7 @@ export function JobPortal({
               </button>
               <button 
                 onClick={() => setShowAdvancedFiltersModal(false)}
-                className="flex-1 py-3 bg-blue-600 hover:bg-blue-700 text-white rounded-xl font-bold text-xs transition shadow-xs"
+                className="flex-1 py-3 bg-[#006a4e] hover:bg-[#00523b] text-white rounded-xl font-bold text-xs transition shadow-xs"
               >
                 ফিল্টার প্রয়োগ করুন
               </button>
@@ -1356,7 +1356,7 @@ export function JobPortal({
 
               <button 
                 type="submit"
-                className="w-full py-3 bg-blue-600 hover:bg-blue-700 text-white rounded-xl font-bold text-xs shadow-xs transition"
+                className="w-full py-3 bg-[#006a4e] hover:bg-[#00523b] text-white rounded-xl font-bold text-xs shadow-xs transition"
               >
                 বিজ্ঞপ্তি সাবস্ক্রাইব করুন
               </button>

@@ -678,7 +678,7 @@ export const SocialOrganizations: React.FC<Props> = ({ onGoBack }) => {
                   href={selectedFbOrg.facebookUrl}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="w-full py-3 bg-blue-600 hover:bg-blue-700 text-white text-xs font-black rounded-xl transition flex items-center justify-center gap-2 shadow-md shadow-blue-500/20"
+                  className="w-full py-3 bg-[#006a4e] hover:bg-[#00523b] text-white text-xs font-black rounded-xl transition flex items-center justify-center gap-2 shadow-md shadow-blue-500/20"
                 >
                   <Globe className="w-4 h-4" /> ফেসবুক গ্রুপে যান
                 </a>

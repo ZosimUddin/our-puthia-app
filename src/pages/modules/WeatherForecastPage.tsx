@@ -291,7 +291,7 @@ export const WeatherForecastPage: React.FC = () => {
                 <div className="text-2xl font-black text-slate-900 mt-1">{activeHour.tempBn}</div>
                 <span className="text-xs font-bold text-slate-600">{activeHour.conditionText}</span>
               </div>
-              <span className="px-3 py-1 bg-blue-600 text-white text-xs font-black rounded-xl shadow-xs">
+              <span className="px-3 py-1 bg-[#006a4e] text-white text-xs font-black rounded-xl shadow-xs">
                 {toBengaliDigits(activeHour.rainAmount || 0.2)} মিমি
               </span>
             </div>
@@ -462,7 +462,7 @@ export const WeatherForecastPage: React.FC = () => {
               </div>
               <h3 className="text-sm font-black text-slate-900">বৃষ্টিপাত (মিমি)</h3>
             </div>
-            <span className="px-2.5 py-1 rounded-full bg-blue-600 text-white text-[10px] font-black">
+            <span className="px-2.5 py-1 rounded-full bg-[#006a4e] text-white text-[10px] font-black">
               {toBengaliDigits(data.precipitation)} মিমি
             </span>
           </div>

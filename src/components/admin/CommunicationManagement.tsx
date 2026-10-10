@@ -673,7 +673,7 @@ export default function CommunicationManagement() {
         {[
           { id: 'push', label: 'পুশ নোটিফিকেশন', icon: Bell, activeColor: 'bg-emerald-600 text-white shadow-md shadow-emerald-600/10' },
           { id: 'email', label: 'ইমেইল ব্রডকাস্ট', icon: Mail, activeColor: 'bg-indigo-600 text-white shadow-md shadow-indigo-600/10' },
-          { id: 'sms', label: 'এসএমএস ব্রডকাস্ট', icon: MessageSquare, activeColor: 'bg-blue-600 text-white shadow-md shadow-blue-600/10' },
+          { id: 'sms', label: 'এসএমএস ব্রডকাস্ট', icon: MessageSquare, activeColor: 'bg-[#006a4e] text-white shadow-md shadow-blue-600/10' },
           { id: 'announcements', label: 'ঘোষণা বোর্ড (Notices)', icon: Megaphone, activeColor: 'bg-rose-600 text-white shadow-md shadow-rose-600/10' }
         ].map((tab) => (
           <button
@@ -1104,7 +1104,7 @@ export default function CommunicationManagement() {
                       <button
                         type="button"
                         onClick={() => { triggerStatus('success', 'SMS গেটওয়ে সেভ সম্পন্ন হয়েছে!'); setIsSmsConfigured(true); }}
-                        className="px-4 py-1.5 bg-blue-600 text-white text-[10px] font-black rounded-lg transition-all"
+                        className="px-4 py-1.5 bg-[#006a4e] text-white text-[10px] font-black rounded-lg transition-all"
                       >
                         কনফিগারেশন সংরক্ষণ করুন
                       </button>
@@ -1171,7 +1171,7 @@ export default function CommunicationManagement() {
                       type="button"
                       onClick={handleSendSmsCampaign}
                       disabled={sendingSms || !smsMessage}
-                      className="flex-1 flex items-center justify-center gap-2 py-4 bg-blue-600 hover:bg-blue-700 disabled:opacity-40 disabled:hover:bg-blue-600 text-white rounded-2xl font-black text-sm transition-all shadow-lg shadow-blue-600/10"
+                      className="flex-1 flex items-center justify-center gap-2 py-4 bg-[#006a4e] hover:bg-[#00523b] disabled:opacity-40 disabled:hover:bg-[#006a4e] text-white rounded-2xl font-black text-sm transition-all shadow-lg shadow-blue-600/10"
                     >
                       {sendingSms ? (
                         <>

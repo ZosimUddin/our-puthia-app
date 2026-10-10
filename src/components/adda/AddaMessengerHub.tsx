@@ -1645,7 +1645,7 @@ export const AddaMessengerHub: React.FC<AddaMessengerHubProps> = ({
                   referrerPolicy="no-referrer"
                 />
               ) : (
-                <div className="w-full h-full bg-blue-600 text-white flex items-center justify-center font-black text-xs uppercase">
+                <div className="w-full h-full bg-[#006a4e] text-white flex items-center justify-center font-black text-xs uppercase">
                   {currentUserInfo.name.charAt(0)}
                 </div>
               )}
@@ -1681,7 +1681,7 @@ export const AddaMessengerHub: React.FC<AddaMessengerHubProps> = ({
                 setTimeout(() => searchInputRef.current?.focus(), 100);
               }}
               className={`w-10 h-10 rounded-full flex items-center justify-center cursor-pointer border-0 transition shadow-2xs active:scale-95 ${
-                isSearchOpen ? 'bg-blue-600 text-white' : 'bg-slate-100 hover:bg-slate-200 text-slate-800'
+                isSearchOpen ? 'bg-[#006a4e] text-white' : 'bg-slate-100 hover:bg-slate-200 text-slate-800'
               }`}
               title="খুঁজুন"
             >
@@ -1781,11 +1781,11 @@ export const AddaMessengerHub: React.FC<AddaMessengerHubProps> = ({
                   referrerPolicy="no-referrer"
                 />
               ) : (
-                <div className="w-14 h-14 rounded-full bg-blue-600 text-white flex items-center justify-center font-black text-xl border-2 border-slate-100 select-none">
+                <div className="w-14 h-14 rounded-full bg-[#006a4e] text-white flex items-center justify-center font-black text-xl border-2 border-slate-100 select-none">
                   {currentUserInfo.name.charAt(0)}
                 </div>
               )}
-              <span className="absolute bottom-0 right-0 w-4.5 h-4.5 bg-blue-600 text-white rounded-full flex items-center justify-center text-xs font-black border-2 border-white shadow-xs">
+              <span className="absolute bottom-0 right-0 w-4.5 h-4.5 bg-[#006a4e] text-white rounded-full flex items-center justify-center text-xs font-black border-2 border-white shadow-xs">
                 +
               </span>
             </div>
@@ -1897,7 +1897,7 @@ export const AddaMessengerHub: React.FC<AddaMessengerHubProps> = ({
                       ></span>
                     )}
                     {chat.type === 'group' && (
-                      <span className="absolute -bottom-0.5 -right-0.5 w-4.5 h-4.5 bg-blue-600 text-white rounded-full flex items-center justify-center text-[10px] border-2 border-white shadow-xs">
+                      <span className="absolute -bottom-0.5 -right-0.5 w-4.5 h-4.5 bg-[#006a4e] text-white rounded-full flex items-center justify-center text-[10px] border-2 border-white shadow-xs">
                         <Users size={11} />
                       </span>
                     )}
@@ -2633,7 +2633,7 @@ export const AddaMessengerHub: React.FC<AddaMessengerHubProps> = ({
                             ) : (
                               <div
                                 key={i}
-                                className="w-4 h-4 rounded-full bg-blue-600 text-white flex items-center justify-center text-[8px] font-black border border-white shadow-2xs"
+                                className="w-4 h-4 rounded-full bg-[#006a4e] text-white flex items-center justify-center text-[8px] font-black border border-white shadow-2xs"
                                 title={p?.name || 'সদস্য'}
                               >
                                 {(p?.name || 'স').charAt(0)}
@@ -2756,7 +2756,7 @@ export const AddaMessengerHub: React.FC<AddaMessengerHubProps> = ({
                           toast.error('রিকোয়েস্ট গ্রহণ করতে সমস্যা হয়েছে।');
                         }
                       }}
-                      className="px-5 py-2.5 rounded-full bg-blue-600 hover:bg-blue-700 text-white font-black text-xs cursor-pointer border-0 shadow-sm flex items-center gap-1.5 transition active:scale-95"
+                      className="px-5 py-2.5 rounded-full bg-[#006a4e] hover:bg-[#00523b] text-white font-black text-xs cursor-pointer border-0 shadow-sm flex items-center gap-1.5 transition active:scale-95"
                     >
                       <Check size={14} className="stroke-[2.5]" /> গ্রহণ করুন (Accept)
                     </button>
@@ -3014,7 +3014,7 @@ export const AddaMessengerHub: React.FC<AddaMessengerHubProps> = ({
                   className="w-16 h-16 rounded-full object-cover border-2 border-white shadow-xs mt-1" 
                 />
               ) : (
-                <div className="w-16 h-16 rounded-full bg-blue-600 text-white flex items-center justify-center font-black text-2xl border-2 border-white shadow-xs mt-1 select-none">
+                <div className="w-16 h-16 rounded-full bg-[#006a4e] text-white flex items-center justify-center font-black text-2xl border-2 border-white shadow-xs mt-1 select-none">
                   {currentUserInfo.name.charAt(0)}
                 </div>
               )}
@@ -3353,7 +3353,7 @@ export const AddaMessengerHub: React.FC<AddaMessengerHubProps> = ({
                                 toast.error('সমস্যা হয়েছে');
                               }
                             }}
-                            className="px-3 py-1.5 rounded-full bg-blue-600 hover:bg-blue-700 text-white font-bold text-xs cursor-pointer border-0 shadow-2xs transition active:scale-95"
+                            className="px-3 py-1.5 rounded-full bg-[#006a4e] hover:bg-[#00523b] text-white font-bold text-xs cursor-pointer border-0 shadow-2xs transition active:scale-95"
                           >
                             Accept
                           </button>
@@ -3592,7 +3592,7 @@ export const AddaMessengerHub: React.FC<AddaMessengerHubProps> = ({
                     {currentUserInfo.photoURL ? (
                       <img src={currentUserInfo.photoURL} alt="User" className="w-11 h-11 rounded-full object-cover border-2 border-blue-500 shadow-2xs" />
                     ) : (
-                      <div className="w-11 h-11 rounded-full bg-blue-600 text-white flex items-center justify-center font-black text-lg border-2 border-blue-500 shadow-2xs select-none">
+                      <div className="w-11 h-11 rounded-full bg-[#006a4e] text-white flex items-center justify-center font-black text-lg border-2 border-blue-500 shadow-2xs select-none">
                         {currentUserInfo.name.charAt(0)}
                       </div>
                     )}
@@ -3624,7 +3624,7 @@ export const AddaMessengerHub: React.FC<AddaMessengerHubProps> = ({
                         toast.success('Logged in');
                         setIsSettingsModalOpen(false);
                       }}
-                      className="px-3.5 py-1.5 rounded-xl bg-blue-600 hover:bg-blue-700 text-white font-bold text-xs cursor-pointer border-0 shadow-2xs transition"
+                      className="px-3.5 py-1.5 rounded-xl bg-[#006a4e] hover:bg-[#00523b] text-white font-bold text-xs cursor-pointer border-0 shadow-2xs transition"
                     >
                       Log In
                     </button>
@@ -3738,7 +3738,7 @@ export const AddaMessengerHub: React.FC<AddaMessengerHubProps> = ({
               }}
               className="flex items-center gap-3 p-3 rounded-2xl bg-blue-50 text-blue-700 hover:bg-blue-100 transition cursor-pointer border-0 font-bold text-xs shrink-0"
             >
-              <div className="w-10 h-10 rounded-full bg-blue-600 text-white flex items-center justify-center">
+              <div className="w-10 h-10 rounded-full bg-[#006a4e] text-white flex items-center justify-center">
                 <Users size={18} />
               </div>
               <div className="text-left">
@@ -4004,7 +4004,7 @@ export const AddaMessengerHub: React.FC<AddaMessengerHubProps> = ({
                     <div className="flex gap-2 pt-2">
                       <button 
                         onClick={handleUpdateGroupInfo}
-                        className="flex-1 py-2 rounded-xl bg-blue-600 hover:bg-blue-700 text-white font-bold text-xs cursor-pointer border-0 shadow-sm"
+                        className="flex-1 py-2 rounded-xl bg-[#006a4e] hover:bg-[#00523b] text-white font-bold text-xs cursor-pointer border-0 shadow-sm"
                       >
                         সংরক্ষণ করুন
                       </button>
@@ -4075,7 +4075,7 @@ export const AddaMessengerHub: React.FC<AddaMessengerHubProps> = ({
                       <button 
                         onClick={handleAddGroupMembers}
                         disabled={addMembersSelected.length === 0}
-                        className="flex-1 py-2 rounded-xl bg-blue-600 hover:bg-blue-700 disabled:opacity-50 text-white font-bold text-xs cursor-pointer border-0 shadow-sm"
+                        className="flex-1 py-2 rounded-xl bg-[#006a4e] hover:bg-[#00523b] disabled:opacity-50 text-white font-bold text-xs cursor-pointer border-0 shadow-sm"
                       >
                         সদস্য যুক্ত করুন ({addMembersSelected.length})
                       </button>

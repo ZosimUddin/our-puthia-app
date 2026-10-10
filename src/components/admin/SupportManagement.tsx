@@ -326,7 +326,7 @@ export default function SupportManagement() {
             <Mail size={14} />
             যোগাযোগ বার্তা
             {stats.pendingContacts > 0 && (
-              <span className="w-4 h-4 bg-blue-600 text-white rounded-full flex items-center justify-center text-[9px]">{stats.pendingContacts}</span>
+              <span className="w-4 h-4 bg-[#006a4e] text-white rounded-full flex items-center justify-center text-[9px]">{stats.pendingContacts}</span>
             )}
           </button>
           <button

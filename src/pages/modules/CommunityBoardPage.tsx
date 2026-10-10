@@ -302,7 +302,7 @@ export const CommunityBoardPage: React.FC = () => {
                     onClick={() => setActiveTab(tab.id)}
                     className={`px-4 py-2.5 rounded-2xl text-xs font-bold whitespace-nowrap flex items-center gap-2 transition cursor-pointer border ${
                       isActive 
-                        ? 'bg-blue-600 text-white border-blue-600 shadow-sm' 
+                        ? 'bg-[#006a4e] text-white border-blue-600 shadow-sm' 
                         : 'bg-white text-slate-700 border-slate-200/80 hover:bg-slate-50'
                     }`}
                   >
@@ -409,7 +409,7 @@ export const CommunityBoardPage: React.FC = () => {
                         />
                         <button
                           onClick={() => handleAddComment(post.id)}
-                          className="px-4 py-2.5 bg-blue-600 hover:bg-blue-700 text-white rounded-xl text-xs font-bold transition cursor-pointer shrink-0 flex items-center gap-1"
+                          className="px-4 py-2.5 bg-[#006a4e] hover:bg-[#00523b] text-white rounded-xl text-xs font-bold transition cursor-pointer shrink-0 flex items-center gap-1"
                         >
                           <Send size={13} /> মন্তব্য
                         </button>
@@ -517,7 +517,7 @@ export const CommunityBoardPage: React.FC = () => {
                   </button>
                   <button
                     type="submit"
-                    className="flex-1 py-2.5 bg-blue-600 text-white rounded-xl font-bold shadow-md cursor-pointer hover:bg-blue-700 transition"
+                    className="flex-1 py-2.5 bg-[#006a4e] text-white rounded-xl font-bold shadow-md cursor-pointer hover:bg-blue-700 transition"
                   >
                     প্রকাশ করুন
                   </button>

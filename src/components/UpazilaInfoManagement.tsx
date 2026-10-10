@@ -225,7 +225,7 @@ export default function UpazilaInfoManagement() {
                                         <button 
                                             onClick={() => handleSave(section.key)}
                                             disabled={isSaving}
-                                            className="flex-1 flex items-center justify-center gap-2 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-lg font-bold text-sm transition-all"
+                                            className="flex-1 flex items-center justify-center gap-2 py-2 bg-[#006a4e] hover:bg-[#00523b] text-white rounded-lg font-bold text-sm transition-all"
                                         >
                                             {isSaving ? <Loader2 className="w-4 h-4 animate-spin" /> : <Save className="w-4 h-4" />}
                                             সেভ করুন

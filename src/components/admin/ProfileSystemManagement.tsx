@@ -675,7 +675,7 @@ export const ProfileSystemManagement: React.FC = () => {
               {pendingVerificationList.map((u) => (
                 <div key={u.uid} className="bg-white border border-blue-200 rounded-3xl p-5 flex flex-col md:flex-row items-start md:items-center justify-between gap-4">
                   <div className="flex items-center gap-4">
-                    <div className="w-14 h-14 rounded-2xl bg-blue-600 text-white font-black text-xl flex items-center justify-center overflow-hidden">
+                    <div className="w-14 h-14 rounded-2xl bg-[#006a4e] text-white font-black text-xl flex items-center justify-center overflow-hidden">
                       {u.photoURL ? <img src={u.photoURL} alt="" className="w-full h-full object-cover" /> : u.name?.charAt(0)}
                     </div>
                     <div>
@@ -691,7 +691,7 @@ export const ProfileSystemManagement: React.FC = () => {
                     <button
                       onClick={() => handleVerificationStatusChange(u.uid, 'verified')}
                       disabled={actionLoading}
-                      className="flex-1 md:flex-none px-5 py-2.5 bg-blue-600 hover:bg-blue-700 text-white text-xs font-black rounded-xl shadow-md cursor-pointer transition-all"
+                      className="flex-1 md:flex-none px-5 py-2.5 bg-[#006a4e] hover:bg-[#00523b] text-white text-xs font-black rounded-xl shadow-md cursor-pointer transition-all"
                     >
                       অনুমোদন ও ব্যাজ প্রদান
                     </button>

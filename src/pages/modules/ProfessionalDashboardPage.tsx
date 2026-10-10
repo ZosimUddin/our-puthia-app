@@ -329,7 +329,7 @@ export const ProfessionalDashboardPage: React.FC = () => {
                 onClick={handleApplyMonetization}
                 className={`w-full py-3.5 rounded-2xl font-black text-xs sm:text-sm transition cursor-pointer border-none ${
                   allReqsMet
-                    ? "bg-[#0091FF] hover:bg-blue-600 text-white shadow-md"
+                    ? "bg-[#0091FF] hover:bg-[#006a4e] text-white shadow-md"
                     : "bg-[#E2E5E9] text-[#8C939E] cursor-not-allowed"
                 }`}
               >

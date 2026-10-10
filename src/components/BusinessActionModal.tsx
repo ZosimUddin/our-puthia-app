@@ -182,7 +182,7 @@ export const BusinessActionModal = ({ action, onClose, showToast, business }: Bu
                 <p className="text-xs text-slate-400 mt-1">Supports JPG, PNG, MP4</p>
               </div>
             </div>
-            <button type="submit" className="w-full py-3.5 bg-blue-600 hover:bg-blue-700 text-white font-bold rounded-xl text-sm transition-colors shadow-lg shadow-blue-200 flex items-center justify-center gap-2">
+            <button type="submit" className="w-full py-3.5 bg-[#006a4e] hover:bg-[#00523b] text-white font-bold rounded-xl text-sm transition-colors shadow-lg shadow-blue-200 flex items-center justify-center gap-2">
               <Camera className="w-4 h-4" /> আপলোড করুন
             </button>
           </form>

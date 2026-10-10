@@ -983,7 +983,7 @@ export default function BloodDonorManagement() {
                     {req.status === "approved" && (
                       <button
                         onClick={() => handleUpdateRequestStatus(req.id, "fulfilled")}
-                        className="px-3 py-1.5 bg-blue-600 hover:bg-blue-700 text-white font-bold text-xs rounded-[12px] transition-all"
+                        className="px-3 py-1.5 bg-[#006a4e] hover:bg-[#00523b] text-white font-bold text-xs rounded-[12px] transition-all"
                       >
                         সম্পন্ন চিহ্নিত করুন
                       </button>

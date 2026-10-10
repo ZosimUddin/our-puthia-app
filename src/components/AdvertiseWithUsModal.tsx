@@ -180,7 +180,7 @@ export const AdvertiseWithUsModal = ({ isOpen, onClose }: AdvertiseWithUsModalPr
                       onClick={() => setActiveTab('form')}
                       className={`w-full py-2.5 rounded-xl text-sm font-bold transition-colors ${
                         pkg.popular 
-                          ? 'bg-blue-600 hover:bg-blue-700 text-white shadow-md shadow-blue-200' 
+                          ? 'bg-[#006a4e] hover:bg-[#00523b] text-white shadow-md shadow-blue-200' 
                           : 'bg-slate-100 hover:bg-slate-200 text-slate-700'
                       }`}
                     >
@@ -325,7 +325,7 @@ export const AdvertiseWithUsModal = ({ isOpen, onClose }: AdvertiseWithUsModalPr
               <button 
                 type="submit" 
                 disabled={isSubmitting}
-                className="w-full py-4 bg-blue-600 hover:bg-blue-700 text-white font-bold rounded-xl text-base transition-colors shadow-lg shadow-blue-200 flex items-center justify-center gap-2"
+                className="w-full py-4 bg-[#006a4e] hover:bg-[#00523b] text-white font-bold rounded-xl text-base transition-colors shadow-lg shadow-blue-200 flex items-center justify-center gap-2"
               >
                 {isSubmitting ? 'প্রসেস হচ্ছে...' : <><Send className="w-5 h-5" /> বিজ্ঞাপন আবেদন করুন</>}
               </button>
@@ -439,7 +439,7 @@ export const AdvertiseWithUsModal = ({ isOpen, onClose }: AdvertiseWithUsModalPr
              <button onClick={() => setActiveTab('contact')} className="flex-1 py-3.5 bg-emerald-100 text-emerald-700 font-bold rounded-xl text-sm transition-colors flex items-center justify-center gap-2">
                 <MessageCircle className="w-4 h-4" /> WhatsApp
              </button>
-             <button onClick={() => setActiveTab('form')} className="flex-[2] py-3.5 bg-blue-600 text-white font-bold rounded-xl text-sm transition-colors shadow-lg shadow-blue-200 flex items-center justify-center gap-2">
+             <button onClick={() => setActiveTab('form')} className="flex-[2] py-3.5 bg-[#006a4e] text-white font-bold rounded-xl text-sm transition-colors shadow-lg shadow-blue-200 flex items-center justify-center gap-2">
                 আবেদন করুন
              </button>
           </div>

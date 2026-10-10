@@ -114,7 +114,7 @@ const MyProducts: React.FC = () => {
             whileHover={{ scale: 1.02 }}
             whileTap={{ scale: 0.98 }}
             onClick={() => navigate("/add-product")}
-            className="inline-flex items-center gap-2 px-6 py-3.5 bg-blue-600 text-white rounded-2xl font-black text-sm shadow-xl shadow-blue-900/10 hover:bg-blue-700 transition-all"
+            className="inline-flex items-center gap-2 px-6 py-3.5 bg-[#006a4e] text-white rounded-2xl font-black text-sm shadow-xl shadow-blue-900/10 hover:bg-blue-700 transition-all"
           >
             <Plus size={18} /> নতুন পণ্য যোগ করুন
           </motion.button>
@@ -226,7 +226,7 @@ const MyProducts: React.FC = () => {
               whileHover={{ scale: 1.05 }}
               whileTap={{ scale: 0.95 }}
               onClick={() => navigate("/add-product")}
-              className="inline-flex items-center gap-2 px-8 py-4 bg-blue-600 text-white rounded-2xl font-black text-sm shadow-xl shadow-blue-200"
+              className="inline-flex items-center gap-2 px-8 py-4 bg-[#006a4e] text-white rounded-2xl font-black text-sm shadow-xl shadow-blue-200"
             >
               <Plus size={20} /> প্রথম পণ্য যোগ করুন
             </motion.button>

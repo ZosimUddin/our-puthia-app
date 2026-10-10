@@ -1576,7 +1576,7 @@ export default function LandServicesPage() {
                     rel="noopener noreferrer"
                     className="flex items-center gap-3 w-full bg-blue-50 hover:bg-blue-100 text-blue-700 rounded-xl p-3 border border-blue-100 transition text-left cursor-pointer"
                   >
-                    <div className="w-8 h-8 rounded-full bg-blue-600 text-white flex items-center justify-center shrink-0">
+                    <div className="w-8 h-8 rounded-full bg-[#006a4e] text-white flex items-center justify-center shrink-0">
                       <MapPin size={14} />
                     </div>
                     <div>

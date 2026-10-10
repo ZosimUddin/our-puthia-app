@@ -261,7 +261,7 @@ const NgoModeration: React.FC = () => {
                     <button 
                       onClick={() => handleVerify(ngo.id, !ngo.isVerified)}
                       className={`w-12 h-12 rounded-2xl flex items-center justify-center transition-all shadow-sm ${
-                        ngo.isVerified ? 'bg-blue-600 text-white' : 'bg-blue-50 text-blue-600 hover:bg-blue-600 hover:text-white'
+                        ngo.isVerified ? 'bg-[#006a4e] text-white' : 'bg-blue-50 text-blue-600 hover:bg-blue-600 hover:text-white'
                       }`}
                       title={ngo.isVerified ? "Unverify" : "Verify"}
                     >

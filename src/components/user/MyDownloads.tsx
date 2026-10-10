@@ -274,7 +274,7 @@ const MyDownloads: React.FC = () => {
               onClick={() => setSelectedCategory(cat)}
               className={`px-3 py-1.5 rounded-xl text-xs font-bold transition-all shrink-0 cursor-pointer ${
                 selectedCategory === cat
-                  ? 'bg-blue-600 text-white shadow-xs'
+                  ? 'bg-[#006a4e] text-white shadow-xs'
                   : 'bg-slate-100 text-slate-600 hover:bg-slate-200'
               }`}
             >
@@ -296,7 +296,7 @@ const MyDownloads: React.FC = () => {
           </div>
           <button
             onClick={() => navigate('/resources-hub')}
-            className="px-5 py-2.5 bg-blue-600 hover:bg-blue-700 text-white rounded-xl text-xs font-bold transition-colors inline-flex items-center gap-2 cursor-pointer shadow-xs"
+            className="px-5 py-2.5 bg-[#006a4e] hover:bg-[#00523b] text-white rounded-xl text-xs font-bold transition-colors inline-flex items-center gap-2 cursor-pointer shadow-xs"
           >
             <Download size={15} />
             <span>রিসোর্স হাব ব্রাউজ করুন</span>

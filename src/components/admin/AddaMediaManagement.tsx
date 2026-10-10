@@ -672,7 +672,7 @@ export const AddaMediaManagement: React.FC = () => {
                     <button
                       onClick={() => handleRestoreMedia(media)}
                       disabled={actionLoading}
-                      className="px-3 py-1.5 bg-blue-600 hover:bg-blue-700 text-white rounded-xl text-xs font-black transition cursor-pointer flex items-center gap-1"
+                      className="px-3 py-1.5 bg-[#006a4e] hover:bg-[#00523b] text-white rounded-xl text-xs font-black transition cursor-pointer flex items-center gap-1"
                       title="পুনরুদ্ধার করুন"
                     >
                       <RotateCcw size={12} /> রিস্টোর
@@ -782,7 +782,7 @@ export const AddaMediaManagement: React.FC = () => {
                 {selectedMedia.isDeleted ? (
                   <button
                     onClick={() => handleRestoreMedia(selectedMedia)}
-                    className="px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white font-bold text-xs rounded-xl"
+                    className="px-4 py-2 bg-[#006a4e] hover:bg-[#00523b] text-white font-bold text-xs rounded-xl"
                   >
                     পুনরুদ্ধার করুন
                   </button>

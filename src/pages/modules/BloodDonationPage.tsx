@@ -2245,7 +2245,7 @@ export default function BloodDonationPage() {
                       onClick={() => setRequestForm({ ...requestForm, urgency: "regular" })}
                       className={`py-3 px-4 rounded-2xl font-extrabold text-xs sm:text-sm flex items-center justify-center gap-2 transition active:scale-95 ${
                         requestForm.urgency === "regular"
-                          ? "bg-blue-600 text-white shadow-md ring-2 ring-blue-600/30"
+                          ? "bg-[#006a4e] text-white shadow-md ring-2 ring-blue-600/30"
                           : "bg-blue-50 text-blue-700 border border-blue-200/80 hover:bg-blue-100"
                       }`}
                     >
@@ -2924,7 +2924,7 @@ export default function BloodDonationPage() {
                         showToast("🔗 শেয়ার করার জন্য লিংক কপি করা হয়েছে!");
                       }
                     }}
-                    className="py-3 bg-blue-600 hover:bg-blue-700 text-white rounded-2xl text-xs sm:text-sm font-black flex items-center justify-center gap-2 shadow-md transition active:scale-95 cursor-pointer"
+                    className="py-3 bg-[#006a4e] hover:bg-[#00523b] text-white rounded-2xl text-xs sm:text-sm font-black flex items-center justify-center gap-2 shadow-md transition active:scale-95 cursor-pointer"
                   >
                     <Share2 className="w-4 h-4" />
                     <span>শেয়ার করুন</span>
@@ -3098,7 +3098,7 @@ export default function BloodDonationPage() {
                         onClick={() => setFilterState({ ...filterState, distance: d.id })}
                         className={`py-2 px-3 rounded-xl text-xs font-bold transition text-center ${
                           filterState.distance === d.id
-                            ? "bg-blue-600 text-white shadow-2xs"
+                            ? "bg-[#006a4e] text-white shadow-2xs"
                             : "bg-slate-100 text-slate-700 hover:bg-slate-200"
                         }`}
                       >

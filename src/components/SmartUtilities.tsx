@@ -200,7 +200,7 @@ export function QRCodeGenerator({ onGoBack }: { onGoBack: () => void }) {
               <button
                 id="qr_download_btn"
                 onClick={handleDownload}
-                className="flex-1 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-xl text-xs font-bold transition-colors flex items-center justify-center gap-1 shadow-sm"
+                className="flex-1 py-2 bg-[#006a4e] hover:bg-[#00523b] text-white rounded-xl text-xs font-bold transition-colors flex items-center justify-center gap-1 shadow-sm"
               >
                 <Download className="w-4 h-4" /> ডাউনলোড PNG
               </button>

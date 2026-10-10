@@ -617,7 +617,7 @@ export const ReferralDashboard: React.FC = () => {
                         href="https://facebook.com/OurPuthia" 
                         target="_blank" 
                         rel="noopener noreferrer"
-                        className="px-3.5 py-2 rounded-xl bg-blue-600 hover:bg-blue-700 text-white font-extrabold text-xs transition flex items-center gap-1 cursor-pointer shrink-0"
+                        className="px-3.5 py-2 rounded-xl bg-[#006a4e] hover:bg-[#00523b] text-white font-extrabold text-xs transition flex items-center gap-1 cursor-pointer shrink-0"
                       >
                         <ExternalLink className="w-3.5 h-3.5" />
                         পেজ খুলুন
@@ -686,7 +686,7 @@ export const ReferralDashboard: React.FC = () => {
                         href="https://facebook.com/OurPuthia/posts" 
                         target="_blank" 
                         rel="noopener noreferrer"
-                        className="px-3.5 py-2 rounded-xl bg-blue-600 hover:bg-blue-700 text-white font-extrabold text-xs transition flex items-center gap-1 cursor-pointer shrink-0"
+                        className="px-3.5 py-2 rounded-xl bg-[#006a4e] hover:bg-[#00523b] text-white font-extrabold text-xs transition flex items-center gap-1 cursor-pointer shrink-0"
                       >
                         <ExternalLink className="w-3.5 h-3.5" />
                         পোস্ট দেখুন

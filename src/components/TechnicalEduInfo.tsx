@@ -110,7 +110,7 @@ export function TechnicalEduInfo({ onGoBack }: { onGoBack: () => void }) {
               }}
               className={`w-10 h-10 rounded-full flex items-center justify-center transition cursor-pointer border shadow-sm ${
                 showSearch 
-                  ? "bg-blue-600 text-white border-blue-600 hover:bg-blue-500" 
+                  ? "bg-[#006a4e] text-white border-blue-600 hover:bg-blue-500" 
                   : "bg-white/10 hover:bg-white/20 text-white border-white/10"
               }`}
               aria-label="Search"
@@ -138,7 +138,7 @@ export function TechnicalEduInfo({ onGoBack }: { onGoBack: () => void }) {
                   onClick={() => setSelectedType(tab.id as any)}
                   className={`flex flex-col items-center justify-center gap-1.5 p-2 rounded-xl transition cursor-pointer border ${
                     isActive
-                      ? "bg-blue-600 text-white border-blue-600 shadow-md"
+                      ? "bg-[#006a4e] text-white border-blue-600 shadow-md"
                       : "bg-white text-neutral-600 border-neutral-100 hover:bg-neutral-50 shadow-sm"
                   }`}
                 >

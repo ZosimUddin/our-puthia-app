@@ -320,7 +320,7 @@ export function UpazilaIntroGrid({ onGoBack }: UpazilaIntroGridProps) {
                 <div className="relative w-48 h-48 rounded-full border border-neutral-200/80 bg-white flex items-center justify-center shadow-inner">
                   
                   {/* Center Hub */}
-                  <div className="w-16 h-16 rounded-full bg-blue-600 text-white flex flex-col items-center justify-center text-[10px] font-black shadow-md z-10">
+                  <div className="w-16 h-16 rounded-full bg-[#006a4e] text-white flex flex-col items-center justify-center text-[10px] font-black shadow-md z-10">
                     <span>পুঠিয়া</span>
                   </div>
 

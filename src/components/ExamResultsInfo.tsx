@@ -122,7 +122,7 @@ export function ExamResultsInfo({ onGoBack }: { onGoBack: () => void }) {
           <div className="flex items-end">
             <button 
               type="submit"
-              className="w-full bg-blue-600 text-white font-bold py-2.5 px-4 rounded-xl text-xs hover:bg-blue-700 transition flex items-center justify-center gap-1 cursor-pointer shadow-sm"
+              className="w-full bg-[#006a4e] text-white font-bold py-2.5 px-4 rounded-xl text-xs hover:bg-blue-700 transition flex items-center justify-center gap-1 cursor-pointer shadow-sm"
             >
               <Search className="w-3.5 h-3.5" /> ফল দেখুন
             </button>

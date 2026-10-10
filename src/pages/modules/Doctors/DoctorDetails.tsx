@@ -441,7 +441,7 @@ export default function DoctorDetails({
               <button
                 type="button"
                 onClick={() => setShowApptModal(true)}
-                className="py-2.5 px-3 bg-blue-600 hover:bg-blue-700 active:scale-95 text-white font-bold text-xs rounded-xl shadow-sm flex items-center justify-center gap-1.5 transition-all cursor-pointer border-none"
+                className="py-2.5 px-3 bg-[#006a4e] hover:bg-[#00523b] active:scale-95 text-white font-bold text-xs rounded-xl shadow-sm flex items-center justify-center gap-1.5 transition-all cursor-pointer border-none"
               >
                 <Calendar size={15} /> অ্যাপয়েন্টমেন্ট
               </button>

@@ -568,7 +568,7 @@ export const AddaSocialGraphControl: React.FC = () => {
                     <div>
                       <div className="flex items-center gap-1.5">
                         <p className="text-xs font-black text-slate-900">{item.actorName}</p>
-                        {item.actorBadge && <span className="text-[9px] bg-blue-600 text-white px-1 rounded-full">✓</span>}
+                        {item.actorBadge && <span className="text-[9px] bg-[#006a4e] text-white px-1 rounded-full">✓</span>}
                       </div>
                       <p className="text-[10px] text-slate-400 font-mono">@{item.actorUsername || 'user'}</p>
                       <span className="text-[9px] text-slate-500 font-bold bg-white px-2 py-0.5 rounded-full border border-slate-200 inline-block mt-0.5">

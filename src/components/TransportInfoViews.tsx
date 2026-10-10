@@ -793,7 +793,7 @@ export function VanAutoInfoView({ onGoBack, onNavigateToMap }: { onGoBack: () =>
               </div>
               <a 
                 href={`tel:${stand.phone}`}
-                className="w-10 h-10 rounded-full bg-blue-600 hover:bg-blue-700 text-white flex items-center justify-center shrink-0 shadow-sm transition-colors"
+                className="w-10 h-10 rounded-full bg-[#006a4e] hover:bg-[#00523b] text-white flex items-center justify-center shrink-0 shadow-sm transition-colors"
                 title="কল করুন"
               >
                 <Phone className="w-4 h-4" />

@@ -83,7 +83,7 @@ export const QrCodeShare: React.FC<QrCodeShareProps> = ({ url, title, onClose })
                                 navigator.share({ title, url }).catch(() => {});
                             }
                         }}
-                        className="flex items-center justify-center gap-2 py-3 bg-blue-600 hover:bg-blue-700 text-white rounded-xl font-bold text-sm transition-all shadow-lg shadow-blue-200"
+                        className="flex items-center justify-center gap-2 py-3 bg-[#006a4e] hover:bg-[#00523b] text-white rounded-xl font-bold text-sm transition-all shadow-lg shadow-blue-200"
                     >
                         <Share2 className="w-4 h-4" />
                         শেয়ার

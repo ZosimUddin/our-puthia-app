@@ -56,7 +56,7 @@ export default function PassportServices({ onBack }: Props) {
             <p className="text-slate-400 mb-8 max-w-lg">
               পুঠিয়া থেকে পাসপোর্ট আবেদনের জন্য আপনাকে রাজশাহী আঞ্চলিক পাসপোর্ট অফিসে যোগাযোগ করতে হবে। নিচে আবেদনের বিস্তারিত ধাপ দেওয়া হলো।
             </p>
-            <button className="px-6 py-3 bg-blue-600 hover:bg-blue-700 rounded-xl font-bold flex items-center gap-2 transition-all active:scale-95">
+            <button className="px-6 py-3 bg-[#006a4e] hover:bg-[#00523b] rounded-xl font-bold flex items-center gap-2 transition-all active:scale-95">
               <span>অনলাইন আবেদন করুন</span>
               <ExternalLink size={18} />
             </button>

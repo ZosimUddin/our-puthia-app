@@ -361,7 +361,7 @@ export default function AdminManagement() {
           </div>
           <div 
             onClick={() => setActiveRoleTab('editor')} 
-            className={`p-4 rounded-3xl border cursor-pointer transition-all ${activeRoleTab === 'editor' ? 'bg-blue-600 text-white border-blue-600 shadow-md' : 'bg-white text-blue-900 border-blue-200 hover:bg-blue-50 shadow-xs'}`}
+            className={`p-4 rounded-3xl border cursor-pointer transition-all ${activeRoleTab === 'editor' ? 'bg-[#006a4e] text-white border-blue-600 shadow-md' : 'bg-white text-blue-900 border-blue-200 hover:bg-blue-50 shadow-xs'}`}
           >
             <p className="text-[10px] font-black uppercase opacity-70">📝 কন্টেন্ট এডিটর</p>
             <h3 className="text-xl font-black mt-1">{editorCount} জন</h3>

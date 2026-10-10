@@ -1160,7 +1160,7 @@ export const EditorDashboard: React.FC = () => {
                         onClick={() => setDraftType(t.id as any)}
                         className={`py-2 text-xs font-bold rounded-xl border transition-all cursor-pointer ${
                           draftType === t.id 
-                            ? "bg-blue-600 text-white border-blue-600 shadow-2xs" 
+                            ? "bg-[#006a4e] text-white border-blue-600 shadow-2xs" 
                             : "bg-slate-50 text-slate-700 border-slate-200 hover:bg-slate-100"
                         }`}
                       >
@@ -1208,7 +1208,7 @@ export const EditorDashboard: React.FC = () => {
                   <button
                     type="submit"
                     disabled={draftSaving}
-                    className="px-5 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-xl text-xs font-bold transition-all flex items-center gap-1.5 shadow-md cursor-pointer disabled:opacity-50"
+                    className="px-5 py-2 bg-[#006a4e] hover:bg-[#00523b] text-white rounded-xl text-xs font-bold transition-all flex items-center gap-1.5 shadow-md cursor-pointer disabled:opacity-50"
                   >
                     <Save size={14} />
                     <span>{draftSaving ? "সংরক্ষণ হচ্ছে..." : "ড্রাফটে সংরক্ষণ করুন"}</span>
