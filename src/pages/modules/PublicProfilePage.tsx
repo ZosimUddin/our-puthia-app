@@ -87,7 +87,8 @@ import {
   Store,
   LogOut,
   ChevronRight,
-  CreditCard
+  CreditCard,
+  Link2
 } from "lucide-react";
 import { FbReactionPicker } from "../../components/common/FbReactionPicker";
 import { FacebookCommentSystem } from "../../components/comments/FacebookCommentSystem";
@@ -157,6 +158,7 @@ const PublicProfilePage: React.FC = () => {
   // Edit Modals State
   const [showEditModal, setShowEditModal] = useState(false);
   const [showMoreMenu, setShowMoreMenu] = useState(false);
+  const [showShareProfileModal, setShowShareProfileModal] = useState(false);
   const [editModalType, setEditModalType] = useState<"details" | "education" | "note" | "bio">("details");
   const [nameInput, setNameInput] = useState("");
   const [usernameInput, setUsernameInput] = useState("");
@@ -1251,18 +1253,63 @@ const PublicProfilePage: React.FC = () => {
   };
 
   const handleShare = () => {
+    setShowShareProfileModal(true);
+  };
+
+  const handleShareLinkOption = async () => {
+    setShowShareProfileModal(false);
     const url = window.location.href;
+    const title = `${targetUserProfile?.name || 'নাগরিক'} - আমাদের পুঠিয়া প্রোফাইল`;
+
     if (navigator.share) {
-      navigator.share({
-        title: `${targetUserProfile.name} - স্মার্ট পুঠিয়া প্রোফাইল`,
-        url,
-      }).catch(() => {});
-    } else {
-      navigator.clipboard.writeText(url);
+      try {
+        await navigator.share({
+          title,
+          text: `${targetUserProfile?.name || 'নাগরিক'}-এর প্রোফাইল দেখুন`,
+          url,
+        });
+        return;
+      } catch (err: any) {
+        if (err.name === 'AbortError') return;
+      }
+    }
+
+    try {
+      await navigator.clipboard.writeText(url);
       setCopied(true);
       toast.success("প্রোফাইল লিংক কপি করা হয়েছে!");
       setTimeout(() => setCopied(false), 2000);
+    } catch {
+      toast.success("প্রোফাইল লিংক কপি করা হয়েছে!");
     }
+  };
+
+  const handleSendViaChatOption = async () => {
+    setShowShareProfileModal(false);
+    const url = window.location.href;
+
+    if (!user) {
+      toast.error("চ্যাটে শেয়ার করতে প্রথমে লগইন করুন");
+      navigate('/login');
+      return;
+    }
+
+    try {
+      await navigator.clipboard.writeText(url);
+    } catch {}
+
+    toast.success("প্রোফাইল লিংক কপি হয়েছে, মেসেজে নিয়ে যাওয়া হচ্ছে...");
+
+    navigate('/messages', {
+      state: {
+        shareProfile: {
+          uid: targetUserProfile?.uid || '',
+          name: targetUserProfile?.name || 'নাগরিক',
+          url,
+          avatar: targetUserProfile?.photoURL || ''
+        }
+      }
+    });
   };
 
   const toBengali = (num: number) => {
@@ -2997,6 +3044,66 @@ const PublicProfilePage: React.FC = () => {
                     </button>
                   </>
                 )}
+              </div>
+            </motion.div>
+          </div>
+        )}
+      </AnimatePresence>
+
+      {/* 9.1 Share Profile Bottom Sheet (Matching Screenshot 2) */}
+      <AnimatePresence>
+        {showShareProfileModal && (
+          <div className="fixed inset-0 bg-black/60 z-[9999] flex items-end justify-center p-0 backdrop-blur-xs">
+            <div 
+              className="absolute inset-0" 
+              onClick={() => setShowShareProfileModal(false)} 
+            />
+            <motion.div
+              initial={{ y: "100%" }}
+              animate={{ y: 0 }}
+              exit={{ y: "100%" }}
+              transition={{ type: "spring", damping: 28, stiffness: 340 }}
+              className="relative bg-white rounded-t-[28px] w-full max-w-lg p-5 pb-8 shadow-2xl border-t border-slate-100 z-10"
+            >
+              {/* Drag handle */}
+              <div className="w-12 h-1 bg-slate-300 rounded-full mx-auto mb-3.5" />
+
+              {/* Title */}
+              <h3 className="text-base font-bold text-center text-slate-900 mb-4 select-none">
+                Share Profile
+              </h3>
+
+              {/* Options List */}
+              <div className="space-y-1">
+                {/* 1. Share Link */}
+                <button
+                  type="button"
+                  onClick={handleShareLinkOption}
+                  className="w-full flex items-center gap-3.5 p-3 rounded-2xl hover:bg-slate-50 active:bg-slate-100 transition cursor-pointer border-0 bg-transparent text-left group"
+                >
+                  <div className="w-10 h-10 rounded-full bg-sky-50 text-[#0284c7] flex items-center justify-center shrink-0">
+                    <Link2 size={20} className="stroke-[2.2]" />
+                  </div>
+                  <div className="flex-1 min-w-0">
+                    <h4 className="text-[15px] font-semibold text-slate-900 leading-tight">Share Link</h4>
+                    <p className="text-xs text-slate-500 mt-0.5">Copy profile link or share via apps</p>
+                  </div>
+                </button>
+
+                {/* 2. Send via Chat */}
+                <button
+                  type="button"
+                  onClick={handleSendViaChatOption}
+                  className="w-full flex items-center gap-3.5 p-3 rounded-2xl hover:bg-slate-50 active:bg-slate-100 transition cursor-pointer border-0 bg-transparent text-left group"
+                >
+                  <div className="w-10 h-10 rounded-full bg-orange-50 text-[#f97316] flex items-center justify-center shrink-0">
+                    <MessageSquare size={20} className="stroke-[2.2]" />
+                  </div>
+                  <div className="flex-1 min-w-0">
+                    <h4 className="text-[15px] font-semibold text-slate-900 leading-tight">Send via Chat</h4>
+                    <p className="text-xs text-slate-500 mt-0.5">Share profile in a conversation</p>
+                  </div>
+                </button>
               </div>
             </motion.div>
           </div>
