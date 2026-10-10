@@ -130,7 +130,7 @@ const BottomNavigation: React.FC<BottomNavProps> = ({
     { id: "home", label: "হোম", icon: Home },
     { id: "services", label: "সেবা সমূহ", icon: LayoutGrid },
     { id: "adda", label: "আড্ডা", icon: MessagesSquare, isAction: true },
-    { id: "news", label: "স্থানীয় সংবাদ", icon: Newspaper },
+    { id: "news", label: "খবর", icon: Newspaper },
     { id: "profile", label: "প্রোফাইল", icon: User },
   ];
 

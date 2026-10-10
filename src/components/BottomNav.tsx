@@ -41,7 +41,7 @@ export const BottomNav: React.FC = () => {
         { label: 'হোম', icon: Home, path: '/' },
         { label: 'সেবা সমূহ', icon: Search, path: '/services' },
         { label: 'আড্ডা', icon: MessagesSquare, isAction: true, path: '/messages' },
-        { label: 'স্থানীয় সংবাদ', icon: Newspaper, path: '/news' },
+        { label: 'খবর', icon: Newspaper, path: '/news' },
         { label: 'প্রোফাইল', icon: User, path: '/dashboard' },
       ].map((item) => {
         const longPressProps = item.isAction ? {
