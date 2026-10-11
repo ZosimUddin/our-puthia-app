@@ -288,22 +288,22 @@ export const AuthModal: React.FC<AuthModalProps> = ({ isOpen, onClose }) => {
   const bloodGroups = ["A+", "A-", "B+", "B-", "O+", "O-", "AB+", "AB-"];
 
   return (
-    <div className="fixed inset-0 z-[110] flex items-center justify-center p-4">
-      {/* Backdrop */}
-      <div className="absolute inset-0 bg-black/50 backdrop-blur-sm" onClick={onClose} />
+    <div className="fixed inset-0 z-[110] flex items-start justify-center p-0 sm:p-4 bg-gradient-to-b from-[#f2fcf9] via-[#f7fcfb] to-[#eaf5f2] sm:bg-black/60 sm:backdrop-blur-sm overflow-y-auto">
+      {/* Backdrop (desktop only) */}
+      <div className="hidden sm:block absolute inset-0" onClick={onClose} />
       
       {/* Modal Box */}
       <motion.div 
-        initial={{ opacity: 0, scale: 0.95, y: 10 }}
-        animate={{ opacity: 1, scale: 1, y: 0 }}
-        exit={{ opacity: 0, scale: 0.95, y: 10 }}
-        transition={{ duration: 0.25, ease: "easeOut" }}
-        className="bg-gradient-to-b from-[#f2fcf9] via-[#f7fcfb] to-[#eaf5f2] border border-emerald-100 rounded-[28px] w-full max-w-md relative shadow-2xl overflow-hidden flex flex-col max-h-[92vh] z-10 font-sans select-none"
+        initial={{ opacity: 0, y: 10 }}
+        animate={{ opacity: 1, y: 0 }}
+        exit={{ opacity: 0, y: 10 }}
+        transition={{ duration: 0.2, ease: "easeOut" }}
+        className="bg-gradient-to-b from-[#f2fcf9] via-[#f7fcfb] to-[#eaf5f2] border-0 sm:border sm:border-emerald-100 rounded-none sm:rounded-[32px] w-full min-h-screen sm:min-h-0 sm:h-auto sm:max-w-lg relative shadow-none sm:shadow-2xl overflow-y-auto flex flex-col z-10 font-sans select-none my-0 sm:my-auto"
       >
         {/* Close Button */}
         <button 
           onClick={onClose}
-          className="absolute top-4 right-4 p-2 bg-emerald-100/50 hover:bg-emerald-200/70 text-emerald-900 rounded-full transition-colors cursor-pointer z-20"
+          className="absolute top-4 right-4 p-2 bg-emerald-100/60 hover:bg-emerald-200/80 text-emerald-900 rounded-full transition-colors cursor-pointer z-30 shadow-2xs"
           aria-label="Close modal"
         >
           <X className="w-5 h-5" />
