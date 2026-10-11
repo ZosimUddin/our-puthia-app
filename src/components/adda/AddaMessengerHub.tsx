@@ -1784,40 +1784,45 @@ export const AddaMessengerHub: React.FC<AddaMessengerHubProps> = ({
             </span>
           </div>
 
-          {/* ACTIVE REGISTERED USERS FROM FIRESTORE */}
-          {registeredUsers.map(citizen => {
-            const dynamic = usersPresenceMap[citizen.uid];
-            const isUserOnline = dynamic ? Boolean(dynamic.isOnline || (dynamic.lastSeen && Date.now() - dynamic.lastSeen < 2 * 60 * 1000)) : Boolean(citizen.isOnline);
-            const citizenPhoto = (citizen.photoURL && !citizen.photoURL.includes('dicebear') && !citizen.photoURL.includes('unsplash')) ? citizen.photoURL : '';
-            return (
-              <div 
-                key={citizen.uid} 
-                onClick={() => handleStartChatWithCitizen({ id: citizen.uid, name: citizen.name, avatar: citizenPhoto, online: isUserOnline })}
-                className="flex flex-col items-center gap-1 cursor-pointer shrink-0 group pt-7"
-              >
-                <div className="relative">
-                  {citizenPhoto ? (
-                    <img 
-                      src={citizenPhoto} 
-                      alt={citizen.name} 
-                      className="w-14 h-14 rounded-full object-cover border-2 border-slate-100 group-hover:scale-105 transition-transform"
-                      referrerPolicy="no-referrer"
-                    />
-                  ) : (
-                    <div className="w-14 h-14 rounded-full bg-emerald-600 text-white flex items-center justify-center font-black text-xl border-2 border-slate-100 group-hover:scale-105 transition-transform select-none">
-                      {citizen.name.charAt(0)}
-                    </div>
-                  )}
-                  {isUserOnline && (
-                    <span className="absolute bottom-0.5 right-0.5 w-3.5 h-3.5 bg-emerald-500 rounded-full border-2 border-white shadow-xs"></span>
-                  )}
+          {/* ACTIVE / ONLINE USERS ONLY IN TOP TRAY */}
+          {registeredUsers
+            .filter(citizen => {
+              const dynamic = usersPresenceMap[citizen.uid];
+              return dynamic 
+                ? Boolean(dynamic.isOnline || (dynamic.lastSeen && Date.now() - dynamic.lastSeen < 2 * 60 * 1000)) 
+                : Boolean(citizen.isOnline);
+            })
+            .map(citizen => {
+              const dynamic = usersPresenceMap[citizen.uid];
+              const isUserOnline = dynamic ? Boolean(dynamic.isOnline || (dynamic.lastSeen && Date.now() - dynamic.lastSeen < 2 * 60 * 1000)) : Boolean(citizen.isOnline);
+              const citizenPhoto = (citizen.photoURL && !citizen.photoURL.includes('dicebear') && !citizen.photoURL.includes('unsplash')) ? citizen.photoURL : '';
+              return (
+                <div 
+                  key={citizen.uid} 
+                  onClick={() => handleStartChatWithCitizen({ id: citizen.uid, name: citizen.name, avatar: citizenPhoto, online: isUserOnline })}
+                  className="flex flex-col items-center gap-1 cursor-pointer shrink-0 group pt-7"
+                >
+                  <div className="relative">
+                    {citizenPhoto ? (
+                      <img 
+                        src={citizenPhoto} 
+                        alt={citizen.name} 
+                        className="w-14 h-14 rounded-full object-cover border-2 border-slate-100 group-hover:scale-105 transition-transform"
+                        referrerPolicy="no-referrer"
+                      />
+                    ) : (
+                      <div className="w-14 h-14 rounded-full bg-emerald-600 text-white flex items-center justify-center font-black text-xl border-2 border-slate-100 group-hover:scale-105 transition-transform select-none">
+                        {citizen.name.charAt(0)}
+                      </div>
+                    )}
+                    <span className="absolute bottom-0.5 right-0.5 w-3.5 h-3.5 bg-emerald-500 rounded-full border-2 border-white shadow-xs" title="🟢 এক্টিভ আছেন"></span>
+                  </div>
+                  <span className="text-[11px] font-medium text-slate-800 truncate max-w-[58px] text-center">
+                    {citizen.name}
+                  </span>
                 </div>
-                <span className="text-[11px] font-medium text-slate-800 truncate max-w-[58px] text-center">
-                  {citizen.name}
-                </span>
-              </div>
-            );
-          })}
+              );
+            })}
         </div>
 
         {/* =======================================================================
