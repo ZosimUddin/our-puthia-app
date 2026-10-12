@@ -3,7 +3,8 @@ import { useNavigate } from 'react-router-dom';
 import { 
   ArrowLeft, Download, Share2, Sparkles, Image as ImageIcon, 
   RefreshCw, Type, Calendar, User, Newspaper, Check, Tag,
-  Zap, Save, Eye, FileText, Layers, Palette, Share
+  Zap, Save, Eye, FileText, Layers, Palette, Share, Highlighting,
+  Sliders, Building, Award, Search, HelpCircle, CheckCircle2
 } from 'lucide-react';
 import { motion } from 'motion/react';
 import { collection, query, orderBy, limit, getDocs, addDoc, serverTimestamp } from 'firebase/firestore';
@@ -40,22 +41,78 @@ const getBengaliFormattedDate = (dateObj: Date = new Date()) => {
 
 type CardTemplate = 'red_corner' | 'classic_news' | 'breaking_red' | 'puthia_branded' | 'modern_dark' | 'paper_poster';
 
+// Quick Preset News Items
+const NEWS_PRESETS = [
+  {
+    label: '🚨 হারানো বিজ্ঞপ্তি',
+    category: 'হারানো বিজ্ঞপ্তি',
+    headline: '*একটি হারানো বিজ্ঞপ্তি*: পুঠিয়া উপজেলার বিলমাড়িয়া গ্রামের মোঃ হাসান আলী নিখোঁজ',
+    subHeadline: 'পুঠিয়া উপজেলার, জিউপাড়া ইউনিয়নের, বিলমাড়িয়া-নগরপাড়া গ্রামের মোঃ আব্দুল এর ছেলে মোঃ হাসান আলী আজ এশার নামাজের পর থেকে নিখোঁজ। সন্ধানে কল করুন: 01799041821',
+    badgeColor: '#dc2626',
+    image: 'https://images.unsplash.com/photo-1585829365295-ab7cd400c167?w=800&auto=format&fit=crop'
+  },
+  {
+    label: '📢 বিশেষ সংবাদ',
+    category: 'বিশেষ সংবাদ',
+    headline: 'আমাদের পুঠিয়ায় চালু হলো *ডিজিটাল ফটোকার্ড* জেনারেটর সিস্টেম',
+    subHeadline: 'এখন থেকে যে কোনো সংবাদের প্রফেশনাল মিডিয়া ফটোকার্ড এক ক্লিকেই তৈরি ও এইচডি ডাউনলোড করা যাবে।',
+    badgeColor: '#009664',
+    image: 'https://images.unsplash.com/photo-1504711434969-e33886168f5c?w=800&auto=format&fit=crop'
+  },
+  {
+    label: '🏆 খেলাধুলা',
+    category: 'খেলাধুলা',
+    headline: 'পুঠিয়া স্টেডিয়ামে অনুষ্ঠিত হলো *বার্ষিক ফুটবল টুর্নামেন্ট* ফাইনালে চ্যাম্পিয়ন টিম',
+    subHeadline: 'জাঁকজমকপূর্ণ আয়োজনে শত শত দর্শকের উপস্থিতিতে বিজয়ী দলের হাতে ট্রফি তুলে দেন স্থানীয় অতিথিবৃন্দ।',
+    badgeColor: '#2563eb',
+    image: 'https://images.unsplash.com/photo-1508098682722-e99c43a406b2?w=800&auto=format&fit=crop'
+  },
+  {
+    label: '💐 অভিনন্দন',
+    category: 'অভিনন্দন',
+    headline: 'পুঠিয়া উপজেলার কৃতি সন্তানকে *উষ্ণ শুভেচ্ছা ও রিমঝিম অভিনন্দন*',
+    subHeadline: 'মেধা ও সাফল্যের মাধ্যমে পুঠিয়াকে দেশের দরবারে সম্মানিত করায় সর্বস্তরের জনগণের পক্ষ থেকে রইল রক্তিম শুভেচ্ছা।',
+    badgeColor: '#d97706',
+    image: 'https://images.unsplash.com/photo-1513151233558-d860c5398176?w=800&auto=format&fit=crop'
+  },
+  {
+    label: '🌹 শোক সংবাদ',
+    category: 'শোক সংবাদ',
+    headline: 'গভীর শোক ও বিনম্র শ্রদ্ধায় *চিরবিদায় নিলেন শ্রদ্ধেয় ব্যক্তিত্ব*',
+    subHeadline: 'তাঁর বিদেহী আত্মার মাগফিরাত কামনা করছি এবং শোকসন্তপ্ত পরিবারের প্রতি গভীর সমবেদনা জ্ঞাপন করছি।',
+    badgeColor: '#1e293b',
+    image: 'https://images.unsplash.com/photo-1518241353330-0f7941c2d9b5?w=800&auto=format&fit=crop'
+  }
+];
+
 export const NewsCardGeneratorPage: React.FC = () => {
   const navigate = useNavigate();
   const { user } = useAuth();
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
 
+  // Workflow Active Step (1: Template & Style, 2: Content & Text, 3: Photo & Branding, 4: Export)
+  const [activeTab, setActiveTab] = useState<number>(1);
+
   // Form states
   const [template, setTemplate] = useState<CardTemplate>('red_corner');
   const [category, setCategory] = useState('বিশেষ সংবাদ');
-  const [headline, setHeadline] = useState('আমাদের পুঠিয়ায় শুভ উদ্বোধন হতে যাচ্ছে বিশেষ নিউজ কার্ড জেনারেটর সিস্টেম');
+  const [headline, setHeadline] = useState('আমাদের পুঠিয়ায় শুভ উদ্বোধন হতে যাচ্ছে *বিশেষ নিউজ কার্ড জেনারেটর* সিস্টেম');
   const [subHeadline, setSubHeadline] = useState('এখন থেকে যে কোনো সংবাদের প্রফেশনাল মিডিয়া ফটোকার্ড এক ক্লিকেই তৈরি ও এইচডি ডাউনলোড করা যাবে।');
   const [reporter, setReporter] = useState('আমাদের পুঠিয়া ডেস্ক');
   const [dateText, setDateText] = useState(getBengaliFormattedDate());
   const [imageUrl, setImageUrl] = useState('https://images.unsplash.com/photo-1585829365295-ab7cd400c167?w=800&auto=format&fit=crop');
   const [watermark, setWatermark] = useState('আমাদের পুঠিয়া • সত্য প্রকাশে আপসহীন');
   const [showWatermark, setShowWatermark] = useState(true);
-  const [aspectRatio, setAspectRatio] = useState<'1:1' | '16:9'>('1:1');
+  const [aspectRatio, setAspectRatio] = useState<'1:1' | '16:9' | '4:5'>('1:1');
+
+  // New customization controls requested by user & screenshot
+  const [fontFamily, setFontFamily] = useState<'Hind Siliguri' | 'SolaimanLipi' | 'Kalpurush' | 'Tiro Bangla'>('Hind Siliguri');
+  const [badgeBgColor, setBadgeBgColor] = useState('#009664');
+  const [highlightColor, setHighlightColor] = useState('#fef08a'); // Yellow fill highlight
+  const [headlineFontSize, setHeadlineFontSize] = useState<number>(46);
+  const [subHeadlineFontSize, setSubHeadlineFontSize] = useState<number>(28);
+  const [institutionName, setInstitutionName] = useState('দৈনিক আমাদের পুঠিয়া');
+  const [showInstitution, setShowInstitution] = useState(false);
 
   // App Notices / News list for import
   const [recentNotices, setRecentNotices] = useState<any[]>([]);
@@ -84,6 +141,16 @@ export const NewsCardGeneratorPage: React.FC = () => {
     fetchNotices();
   }, []);
 
+  // Apply Quick News Preset
+  const applyPreset = (preset: typeof NEWS_PRESETS[0]) => {
+    setCategory(preset.category);
+    setHeadline(preset.headline);
+    setSubHeadline(preset.subHeadline);
+    setBadgeBgColor(preset.badgeColor);
+    if (preset.image) setImageUrl(preset.image);
+    toast.success(`"${preset.category}" ফরম্যাট লোড হয়েছে!`);
+  };
+
   // Handle notice import selection
   const handleImportNotice = (e: React.ChangeEvent<HTMLSelectElement>) => {
     const id = e.target.value;
@@ -92,12 +159,12 @@ export const NewsCardGeneratorPage: React.FC = () => {
     
     const item = recentNotices.find(n => n.id === id);
     if (item) {
-      if (item.title || item.text) setHeadline(item.title || item.text);
+      if (item.title || item.text) setHeadline(`*${item.title || item.text}*`);
       if (item.content || item.description) setSubHeadline(item.content || item.description);
       if (item.category) setCategory(item.category);
       if (item.image && item.image.startsWith('http')) setImageUrl(item.image);
       if (item.publisher || item.author) setReporter(item.publisher || item.author);
-      toast.success('নোটিশের তথ্য নিউজ কার্ডে ইমপোর্ট হয়েছে!');
+      toast.success('নোটিশের তথ্য সফলভাবে ইমপোর্ট করা হয়েছে!');
     }
   };
 
@@ -128,7 +195,9 @@ export const NewsCardGeneratorPage: React.FC = () => {
     if (!ctx) return;
 
     const width = 1200;
-    const height = aspectRatio === '16:9' ? 675 : 1200;
+    let height = 1200;
+    if (aspectRatio === '16:9') height = 675;
+    if (aspectRatio === '4:5') height = 1500;
 
     canvas.width = width;
     canvas.height = height;
@@ -154,17 +223,17 @@ export const NewsCardGeneratorPage: React.FC = () => {
 
       // 2. Main Image Area Layout
       let imgY = 0;
-      let imgH = height * 0.55;
+      let imgH = height * 0.52;
 
       if (template === 'red_corner' || template === 'breaking_red') {
-        imgY = 80;
-        imgH = height * 0.52;
-      } else if (template === 'puthia_branded') {
-        imgY = 120;
+        imgY = 85;
         imgH = height * 0.50;
-      } else if (template === 'classic_news') {
-        imgY = 140;
+      } else if (template === 'puthia_branded') {
+        imgY = 125;
         imgH = height * 0.48;
+      } else if (template === 'classic_news') {
+        imgY = 145;
+        imgH = height * 0.46;
       }
 
       // Draw Main Image
@@ -193,132 +262,135 @@ export const NewsCardGeneratorPage: React.FC = () => {
         ctx.fillRect(0, imgY, width, imgH);
       }
 
-      // Dark Overlay on bottom of image for contrast
+      // Dark Overlay on bottom of image for text readability
       const imgGradient = ctx.createLinearGradient(0, imgY + imgH - 180, 0, imgY + imgH);
       imgGradient.addColorStop(0, 'rgba(0,0,0,0)');
       imgGradient.addColorStop(1, template === 'modern_dark' ? 'rgba(15,23,42,0.95)' : 'rgba(0,0,0,0.7)');
       ctx.fillStyle = imgGradient;
       ctx.fillRect(0, imgY + imgH - 180, width, 180);
 
+      // Institution Banner overlay if enabled
+      if (showInstitution && institutionName) {
+        ctx.fillStyle = 'rgba(0,0,0,0.6)';
+        ctx.fillRect(0, imgY, width, 45);
+        ctx.fillStyle = '#ffffff';
+        ctx.font = `bold 22px "${fontFamily}", sans-serif`;
+        ctx.textAlign = 'center';
+        ctx.fillText(`🏛️ ${institutionName}`, width / 2, imgY + 30);
+        ctx.textAlign = 'left';
+      }
+
       // 3. Header Styling based on Template
       if (template === 'red_corner') {
-        // Top Red Header Bar
         ctx.fillStyle = '#dc2626';
-        ctx.fillRect(0, 0, width, 80);
+        ctx.fillRect(0, 0, width, 85);
 
         ctx.fillStyle = '#ffffff';
-        ctx.font = 'bold 36px "Hind Siliguri", "SolaimanLipi", sans-serif';
-        ctx.fillText('আমাদের পুঠিয়া • ফটোকার্ড', 40, 52);
+        ctx.font = `bold 36px "${fontFamily}", sans-serif`;
+        ctx.fillText('আমাদের পুঠিয়া • ফটোকার্ড', 40, 54);
 
-        // Date text on top right
-        ctx.font = 'bold 24px "Hind Siliguri", sans-serif';
+        ctx.font = `bold 24px "${fontFamily}", sans-serif`;
         ctx.textAlign = 'right';
-        ctx.fillText(dateText, width - 40, 52);
+        ctx.fillText(dateText, width - 40, 54);
         ctx.textAlign = 'left';
 
       } else if (template === 'breaking_red') {
-        // Breaking News Top Bar
         ctx.fillStyle = '#991b1b';
-        ctx.fillRect(0, 0, width, 80);
+        ctx.fillRect(0, 0, width, 85);
 
         ctx.fillStyle = '#fef08a';
-        ctx.font = '900 38px "Hind Siliguri", sans-serif';
-        ctx.fillText('🚨 ব্রেকিং নিউজ', 40, 54);
+        ctx.font = `900 38px "${fontFamily}", sans-serif`;
+        ctx.fillText('🚨 ব্রেকিং নিউজ', 40, 56);
 
         ctx.fillStyle = '#ffffff';
-        ctx.font = '24px "Hind Siliguri", sans-serif';
+        ctx.font = `24px "${fontFamily}", sans-serif`;
         ctx.textAlign = 'right';
-        ctx.fillText(dateText, width - 40, 52);
+        ctx.fillText(dateText, width - 40, 54);
         ctx.textAlign = 'left';
 
       } else if (template === 'puthia_branded') {
-        // Puthia Branded Header
         const headerGrad = ctx.createLinearGradient(0, 0, width, 0);
         headerGrad.addColorStop(0, '#01412F');
         headerGrad.addColorStop(1, '#009664');
         ctx.fillStyle = headerGrad;
-        ctx.fillRect(0, 0, width, 120);
+        ctx.fillRect(0, 0, width, 125);
 
-        // App Logo Circle
         ctx.fillStyle = '#ffffff';
         ctx.beginPath();
-        ctx.arc(80, 60, 40, 0, Math.PI * 2);
+        ctx.arc(80, 62, 42, 0, Math.PI * 2);
         ctx.fill();
 
         ctx.fillStyle = '#009664';
-        ctx.font = 'bold 42px sans-serif';
+        ctx.font = 'bold 44px sans-serif';
         ctx.textAlign = 'center';
-        ctx.fillText('P', 80, 75);
+        ctx.fillText('P', 80, 78);
         ctx.textAlign = 'left';
 
-        // Title
         ctx.fillStyle = '#ffffff';
-        ctx.font = '900 40px "Hind Siliguri", sans-serif';
-        ctx.fillText('আমাদের পুঠিয়া', 145, 62);
+        ctx.font = `900 42px "${fontFamily}", sans-serif`;
+        ctx.fillText('আমাদের পুঠিয়া', 145, 65);
 
         ctx.fillStyle = '#a7f3d0';
-        ctx.font = 'bold 22px "Hind Siliguri", sans-serif';
-        ctx.fillText('উপজেলার প্রথম ডিজিটাল তথ্য ও সংবাদ নেটওয়ার্ক', 145, 92);
+        ctx.font = `bold 22px "${fontFamily}", sans-serif`;
+        ctx.fillText('উপজেলার প্রথম ডিজিটাল তথ্য ও সংবাদ নেটওয়ার্ক', 145, 96);
 
-        // Date Right
         ctx.fillStyle = '#ffffff';
-        ctx.font = '22px "Hind Siliguri", sans-serif';
+        ctx.font = `22px "${fontFamily}", sans-serif`;
         ctx.textAlign = 'right';
-        ctx.fillText(dateText, width - 40, 68);
+        ctx.fillText(dateText, width - 40, 70);
         ctx.textAlign = 'left';
 
       } else if (template === 'classic_news') {
-        // Newspaper Masthead
         ctx.fillStyle = '#1e293b';
-        ctx.font = '900 48px "SolaimanLipi", "Hind Siliguri", serif';
+        ctx.font = `900 48px "${fontFamily}", serif`;
         ctx.textAlign = 'center';
-        ctx.fillText('দৈনিক আমাদের পুঠিয়া', width / 2, 65);
+        ctx.fillText(institutionName || 'দৈনিক আমাদের পুঠিয়া', width / 2, 68);
 
         ctx.fillStyle = '#64748b';
-        ctx.font = '22px "Hind Siliguri", sans-serif';
-        ctx.fillText(`স্মার্ট রাজশাহী ও পুঠিয়ার মুখপত্র | ${dateText}`, width / 2, 105);
+        ctx.font = `22px "${fontFamily}", sans-serif`;
+        ctx.fillText(`স্মার্ট রাজশাহী ও পুঠিয়ার মুখপত্র | ${dateText}`, width / 2, 110);
         ctx.textAlign = 'left';
 
-        // Double lines below masthead
         ctx.strokeStyle = '#0f172a';
         ctx.lineWidth = 4;
         ctx.beginPath();
-        ctx.moveTo(40, 120);
-        ctx.lineTo(width - 40, 120);
+        ctx.moveTo(40, 128);
+        ctx.lineTo(width - 40, 128);
         ctx.stroke();
 
         ctx.lineWidth = 1;
         ctx.beginPath();
-        ctx.moveTo(40, 126);
-        ctx.lineTo(width - 40, 126);
+        ctx.moveTo(40, 134);
+        ctx.lineTo(width - 40, 134);
         ctx.stroke();
 
       } else if (template === 'modern_dark') {
         ctx.fillStyle = '#38bdf8';
-        ctx.font = '900 36px "Hind Siliguri", sans-serif';
-        ctx.fillText('OUR PUTHIA MEDIA', 40, 50);
+        ctx.font = `900 36px "${fontFamily}", sans-serif`;
+        ctx.fillText('OUR PUTHIA MEDIA', 40, 52);
 
         ctx.fillStyle = '#94a3b8';
-        ctx.font = '22px "Hind Siliguri", sans-serif';
+        ctx.font = `22px "${fontFamily}", sans-serif`;
         ctx.textAlign = 'right';
-        ctx.fillText(dateText, width - 40, 50);
+        ctx.fillText(dateText, width - 40, 52);
         ctx.textAlign = 'left';
       }
 
       // 4. Category Badge Floating over image or card
       const badgeY = imgY + imgH - 30;
       ctx.save();
-      ctx.fillStyle = template === 'breaking_red' ? '#dc2626' : '#009664';
+      ctx.fillStyle = badgeBgColor || (template === 'breaking_red' ? '#dc2626' : '#009664');
       ctx.shadowColor = 'rgba(0,0,0,0.3)';
-      ctx.shadowBlur = 10;
+      ctx.shadowBlur = 12;
       
-      // Rounded rect for category badge
-      const badgeWidth = ctx.measureText(category).width + 50;
+      const badgeText = category || 'বিশেষ সংবাদ';
+      ctx.font = `bold 26px "${fontFamily}", sans-serif`;
+      const badgeWidth = ctx.measureText(badgeText).width + 50;
       const bx = 40;
-      const by = badgeY - 25;
+      const by = badgeY - 26;
       const bw = Math.max(160, badgeWidth);
-      const bh = 50;
-      const br = 12;
+      const bh = 52;
+      const br = 14;
 
       ctx.beginPath();
       ctx.moveTo(bx + br, by);
@@ -334,58 +406,118 @@ export const NewsCardGeneratorPage: React.FC = () => {
       ctx.fill();
       ctx.restore();
 
-      // Category Text
       ctx.fillStyle = '#ffffff';
-      ctx.font = 'bold 26px "Hind Siliguri", sans-serif';
-      ctx.fillText(category, 65, badgeY + 8);
+      ctx.font = `bold 26px "${fontFamily}", sans-serif`;
+      ctx.fillText(badgeText, 65, badgeY + 8);
 
-      // Reporter tag on right side of image
       if (reporter) {
-        ctx.fillStyle = 'rgba(255,255,255,0.9)';
-        ctx.font = 'bold 22px "Hind Siliguri", sans-serif';
+        ctx.fillStyle = 'rgba(255,255,255,0.92)';
+        ctx.font = `bold 22px "${fontFamily}", sans-serif`;
         ctx.textAlign = 'right';
         ctx.fillText(`— ${reporter}`, width - 40, imgY + imgH - 15);
         ctx.textAlign = 'left';
       }
 
-      // 5. Headline Section
-      const contentStartY = imgY + imgH + 50;
+      // 5. Headline Section with Smart Highlight Support (`*text*`)
+      const contentStartY = imgY + imgH + 55;
       let textColor = '#0f172a';
       if (template === 'modern_dark') textColor = '#f8fafc';
       if (template === 'paper_poster') textColor = '#1a1a1a';
 
-      ctx.fillStyle = textColor;
-      ctx.font = '900 48px "Hind Siliguri", "SolaimanLipi", sans-serif';
+      // Advanced Headline Text Drawing with Word Wrapping & Yellow/Color Highlights
+      const renderFormattedHeadline = (
+        text: string, 
+        startX: number, 
+        startY: number, 
+        maxWidth: number, 
+        lineHeight: number
+      ) => {
+        ctx.font = `900 ${headlineFontSize}px "${fontFamily}", sans-serif`;
+        
+        // Parse words and flags for asterisks *highlight*
+        const parts = text.split('*');
+        const formattedWords: { word: string; isHighlighted: boolean }[] = [];
 
-      // Wrap headline text logic
-      const wrapText = (text: string, x: number, y: number, maxWidth: number, lineHeight: number) => {
-        const words = text.split(' ');
-        let line = '';
-        let currentY = y;
+        parts.forEach((part, index) => {
+          const isHighlighted = index % 2 === 1; // odd segments were wrapped in *...*
+          const words = part.split(' ');
+          words.forEach((w, wIdx) => {
+            if (w.length > 0) {
+              formattedWords.push({
+                word: w + (wIdx < words.length - 1 ? ' ' : ''),
+                isHighlighted
+              });
+            }
+          });
+        });
 
-        for (let n = 0; n < words.length; n++) {
-          const testLine = line + words[n] + ' ';
-          const metrics = ctx.measureText(testLine);
-          const testWidth = metrics.width;
-          if (testWidth > maxWidth && n > 0) {
-            ctx.fillText(line, x, currentY);
-            line = words[n] + ' ';
+        let currentX = startX;
+        let currentY = startY;
+
+        for (let i = 0; i < formattedWords.length; i++) {
+          const item = formattedWords[i];
+          const metrics = ctx.measureText(item.word);
+          const wordWidth = metrics.width;
+
+          // Wrap to next line if exceeds boundary
+          if (currentX + wordWidth > startX + maxWidth && currentX > startX) {
+            currentX = startX;
             currentY += lineHeight;
-          } else {
-            line = testLine;
           }
+
+          // Draw highlight background box if flagged
+          if (item.isHighlighted) {
+            ctx.save();
+            ctx.fillStyle = highlightColor || '#fef08a';
+            const hPadding = 4;
+            const hHeight = headlineFontSize * 1.15;
+            ctx.fillRect(
+              currentX - hPadding, 
+              currentY - headlineFontSize * 0.82, 
+              wordWidth + (hPadding * 2), 
+              hHeight
+            );
+            ctx.restore();
+            ctx.fillStyle = '#0f172a'; // dark text on highlighted bg
+          } else {
+            ctx.fillStyle = textColor;
+          }
+
+          ctx.fillText(item.word, currentX, currentY);
+          currentX += wordWidth;
         }
-        ctx.fillText(line, x, currentY);
+
         return currentY + lineHeight;
       };
 
-      const nextY = wrapText(headline, 40, contentStartY, width - 80, 62);
+      const nextY = renderFormattedHeadline(headline, 40, contentStartY, width - 80, headlineFontSize * 1.3);
 
       // 6. Sub-headline / Detail Text
       if (subHeadline) {
         ctx.fillStyle = template === 'modern_dark' ? '#cbd5e1' : '#475569';
-        ctx.font = '28px "Hind Siliguri", sans-serif';
-        wrapText(subHeadline, 40, nextY + 15, width - 80, 42);
+        ctx.font = `${subHeadlineFontSize}px "${fontFamily}", sans-serif`;
+
+        const wrapSimpleText = (text: string, x: number, y: number, maxWidth: number, lineHeight: number) => {
+          const words = text.split(' ');
+          let line = '';
+          let curY = y;
+
+          for (let n = 0; n < words.length; n++) {
+            const testLine = line + words[n] + ' ';
+            const metrics = ctx.measureText(testLine);
+            if (metrics.width > maxWidth && n > 0) {
+              ctx.fillText(line, x, curY);
+              line = words[n] + ' ';
+              curY += lineHeight;
+            } else {
+              line = testLine;
+            }
+          }
+          ctx.fillText(line, x, curY);
+          return curY + lineHeight;
+        };
+
+        wrapSimpleText(subHeadline, 40, nextY + 10, width - 80, subHeadlineFontSize * 1.4);
       }
 
       // 7. Bottom Branding / Watermark Bar
@@ -399,11 +531,11 @@ export const NewsCardGeneratorPage: React.FC = () => {
         ctx.stroke();
 
         ctx.fillStyle = '#009664';
-        ctx.font = '900 28px "Hind Siliguri", sans-serif';
+        ctx.font = `900 28px "${fontFamily}", sans-serif`;
         ctx.fillText('আমাদের পুঠিয়া', 40, footerY + 20);
 
         ctx.fillStyle = template === 'modern_dark' ? '#94a3b8' : '#64748b';
-        ctx.font = 'bold 22px "Hind Siliguri", sans-serif';
+        ctx.font = `bold 22px "${fontFamily}", sans-serif`;
         ctx.textAlign = 'right';
         ctx.fillText(watermark, width - 40, footerY + 20);
         ctx.textAlign = 'left';
@@ -413,22 +545,21 @@ export const NewsCardGeneratorPage: React.FC = () => {
     };
 
     img.onload = drawContent;
-    img.onerror = () => {
-      drawContent();
-    };
-
-    if (img.complete) {
-      drawContent();
-    }
+    img.onerror = () => drawContent();
+    if (img.complete) drawContent();
   };
 
   // Re-render canvas whenever relevant controls change
   useEffect(() => {
     const timer = setTimeout(() => {
       renderCanvasCard();
-    }, 150);
+    }, 120);
     return () => clearTimeout(timer);
-  }, [template, category, headline, subHeadline, reporter, dateText, imageUrl, watermark, showWatermark, aspectRatio]);
+  }, [
+    template, category, headline, subHeadline, reporter, dateText, imageUrl, 
+    watermark, showWatermark, aspectRatio, fontFamily, badgeBgColor, highlightColor,
+    headlineFontSize, subHeadlineFontSize, institutionName, showInstitution
+  ]);
 
   // Download HD PNG Image
   const handleDownloadImage = () => {
@@ -440,7 +571,7 @@ export const NewsCardGeneratorPage: React.FC = () => {
       link.download = `Puthia_NewsCard_${Date.now()}.png`;
       link.href = canvas.toDataURL('image/png', 1.0);
       link.click();
-      toast.success('নিউজ কার্ড এইচডি ইমেজ হিসেবে ডাউনলোড হয়েছে!');
+      toast.success('প্রফেশনাল নিউজ কার্ড এইচডি ইমেজ হিসেবে ডাউনলোড হয়েছে!');
     } catch (err) {
       toast.error('ডাউনলোড করতে সমস্যা হয়েছে।');
       console.error(err);
@@ -455,12 +586,13 @@ export const NewsCardGeneratorPage: React.FC = () => {
     try {
       canvas.toBlob(async (blob) => {
         if (!blob) return;
+        const cleanHeadline = headline.replace(/\*/g, '');
         const file = new File([blob], 'puthia-news-card.png', { type: 'image/png' });
         if (navigator.canShare && navigator.canShare({ files: [file] })) {
           await navigator.share({
             files: [file],
-            title: headline,
-            text: `${headline}\n— আমাদের পুঠিয়া ফটোকার্ড`,
+            title: cleanHeadline,
+            text: `${cleanHeadline}\n— আমাদের পুঠিয়া ফটোকার্ড`,
           });
           toast.success('ফটোকার্ড শেয়ার করা হয়েছে!');
         } else {
@@ -488,13 +620,13 @@ export const NewsCardGeneratorPage: React.FC = () => {
       await addDoc(collection(db, 'photo_cards'), {
         userId: user.uid,
         userName: user.displayName || 'ব্যবহারকারী',
-        headline,
+        headline: headline.replace(/\*/g, ''),
         category,
         template,
         imageUrl: dataUrl.length < 950000 ? dataUrl : imageUrl,
         createdAt: serverTimestamp(),
       });
-      toast.success('ফটোকার্ড গ্যালারিতে সেভ হয়েছে!');
+      toast.success('ফটোকার্ড মাই গ্যালারিতে সফলভাবে সেভ হয়েছে!');
     } catch (err) {
       console.error(err);
       toast.error('সেভ করতে ব্যর্থ হয়েছে।');
@@ -502,7 +634,7 @@ export const NewsCardGeneratorPage: React.FC = () => {
   };
 
   return (
-    <div className="min-h-screen bg-[#fafcfb] flex flex-col font-sans">
+    <div className="min-h-screen bg-[#f8faf8] flex flex-col font-sans">
       <Header 
         user={user} 
         onMenuClick={() => setIsSidebarOpen(true)} 
@@ -531,12 +663,12 @@ export const NewsCardGeneratorPage: React.FC = () => {
               </button>
               <div>
                 <div className="flex items-center gap-2">
-                  <h1 className="text-xl font-black text-slate-800 leading-tight">নিউজ কার্ড মেকার</h1>
-                  <span className="px-2.5 py-0.5 rounded-full text-xs font-black bg-rose-100 text-rose-700 flex items-center gap-1">
+                  <h1 className="text-xl font-black text-slate-800 leading-tight">নিউজ কার্ড জেনারেটর</h1>
+                  <span className="px-2.5 py-0.5 rounded-full text-xs font-black bg-emerald-100 text-[#009664] flex items-center gap-1">
                     <Sparkles size={12} /> ফটোকার্ড বিডি
                   </span>
                 </div>
-                <p className="text-xs font-bold text-slate-500">মিডিয়া ও সংবাদের জন্য মুহূর্তেই প্রফেশনাল ফটোকার্ড জেনারেটর</p>
+                <p className="text-xs font-bold text-slate-500">মিডিয়া ও সংবাদের জন্য প্রফেশনাল ফটোকার্ড ডিজাইন সিস্টেম</p>
               </div>
             </div>
 
@@ -558,215 +690,443 @@ export const NewsCardGeneratorPage: React.FC = () => {
         </div>
 
         <div className="max-w-6xl mx-auto px-4 py-6">
+          
+          {/* Quick Preset Badges Bar */}
+          <div className="mb-6 bg-white p-3.5 rounded-2xl border border-slate-100 shadow-xs">
+            <div className="flex items-center justify-between mb-2">
+              <span className="text-xs font-black text-slate-700 flex items-center gap-1.5">
+                <Zap size={15} className="text-amber-500 fill-amber-500" /> ১-ক্লিক কুইক টেমপ্লেট ও সংবাদের ফরম্যাট
+              </span>
+              <span className="text-[11px] font-bold text-slate-400">ক্লিক করলেই অটো-ফিল হবে</span>
+            </div>
+            <div className="flex items-center gap-2 overflow-x-auto pb-1 scrollbar-none">
+              {NEWS_PRESETS.map((p, idx) => (
+                <button
+                  key={idx}
+                  onClick={() => applyPreset(p)}
+                  className="px-3.5 py-2 rounded-xl bg-slate-50 border border-slate-200 text-slate-700 text-xs font-black hover:bg-emerald-50 hover:border-emerald-200 hover:text-[#009664] transition-all whitespace-nowrap flex items-center gap-1.5 shadow-2xs"
+                >
+                  {p.label}
+                </button>
+              ))}
+            </div>
+          </div>
+
+          {/* Workflow Tabs (1 to 4) like requested in screenshot */}
+          <div className="mb-6 bg-white rounded-2xl border border-slate-100 p-1.5 shadow-xs grid grid-cols-4 gap-1">
+            {[
+              { id: 1, label: '১. টেমপ্লেট ও স্টাইল', icon: Palette },
+              { id: 2, label: '২. সংবাদ ও টেক্সট', icon: FileText },
+              { id: 3, label: '৩. ছবি ও ব্রান্ডিং', icon: ImageIcon },
+              { id: 4, label: '৪. সেভ ও ডাউনলোড', icon: Download },
+            ].map((tab) => {
+              const Icon = tab.icon;
+              const isActive = activeTab === tab.id;
+              return (
+                <button
+                  key={tab.id}
+                  onClick={() => setActiveTab(tab.id)}
+                  className={`py-2.5 px-2 rounded-xl text-xs font-black flex items-center justify-center gap-1.5 transition-all ${
+                    isActive 
+                      ? 'bg-[#009664] text-white shadow-md shadow-emerald-600/20' 
+                      : 'text-slate-600 hover:bg-slate-100'
+                  }`}
+                >
+                  <Icon size={15} />
+                  <span className="hidden sm:inline">{tab.label}</span>
+                  <span className="sm:hidden">{tab.id}</span>
+                </button>
+              );
+            })}
+          </div>
+
           {/* Main Grid Layout: Controls Left, Live Canvas Preview Right */}
           <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 items-start">
             
             {/* Left Controls Column (5 cols on lg) */}
             <div className="lg:col-span-5 space-y-5">
               
-              {/* Notice Quick Import */}
-              <div className="bg-gradient-to-r from-emerald-500/10 to-teal-500/10 p-4 rounded-2xl border border-emerald-200/80">
-                <div className="flex items-center justify-between mb-2">
-                  <span className="text-xs font-black text-[#01412F] flex items-center gap-1.5">
-                    <Zap size={14} className="text-amber-500 fill-amber-500" /> অ্যাপের সাম্প্রতিক নোটিশ থেকে অটো-ফিল
-                  </span>
-                </div>
-                <select
-                  value={selectedNoticeId}
-                  onChange={handleImportNotice}
-                  className="w-full bg-white border border-emerald-200 rounded-xl px-3 py-2 text-xs font-bold text-slate-700 focus:outline-none focus:ring-2 focus:ring-[#009664]"
+              {/* TAB 1: Template & Styles */}
+              {(activeTab === 1 || activeTab === 0) && (
+                <motion.div 
+                  initial={{ opacity: 0, y: 10 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  className="space-y-4"
                 >
-                  <option value="">-- নোটিশ ইমপোর্ট সিলেক্ট করুন --</option>
-                  {recentNotices.map((notice) => (
-                    <option key={notice.id} value={notice.id}>
-                      {notice.title || notice.text || 'শিরোনামহীন নোটিশ'}
-                    </option>
-                  ))}
-                </select>
-              </div>
-
-              {/* Template Style Switcher */}
-              <div className="bg-white p-4 rounded-2xl border border-slate-100 shadow-xs">
-                <label className="text-xs font-black text-slate-700 mb-2.5 flex items-center gap-1.5">
-                  <Palette size={15} className="text-[#009664]" /> টেমপ্লেট ডিজাইন নির্বাচন করুন
-                </label>
-                <div className="grid grid-cols-3 gap-2">
-                  {[
-                    { id: 'red_corner', name: 'রেড কর্নার', color: 'bg-red-500' },
-                    { id: 'breaking_red', name: 'ব্রেকিং নিউজ', color: 'bg-rose-700' },
-                    { id: 'puthia_branded', name: 'আমাদের পুঠিয়া', color: 'bg-[#009664]' },
-                    { id: 'classic_news', name: 'ক্লাসিক নিউজ', color: 'bg-slate-800' },
-                    { id: 'modern_dark', name: 'মডার্ন ডার্ক', color: 'bg-slate-900' },
-                    { id: 'paper_poster', name: 'পেপার পোস্টার', color: 'bg-amber-100 text-amber-900' },
-                  ].map((t) => (
-                    <button
-                      key={t.id}
-                      onClick={() => setTemplate(t.id as CardTemplate)}
-                      className={`p-2.5 rounded-xl border text-center transition-all ${
-                        template === t.id 
-                          ? 'border-[#009664] bg-emerald-50/50 shadow-xs' 
-                          : 'border-slate-100 hover:border-slate-200 bg-slate-50/50'
-                      }`}
-                    >
-                      <div className={`w-full h-3 rounded-md mb-1.5 ${t.color}`}></div>
-                      <span className="text-[11px] font-black text-slate-800 block truncate">{t.name}</span>
-                    </button>
-                  ))}
-                </div>
-              </div>
-
-              {/* Text Fields */}
-              <div className="bg-white p-4 rounded-2xl border border-slate-100 shadow-xs space-y-3.5">
-                <div>
-                  <label className="text-xs font-black text-slate-700 mb-1 block">
-                    ক্যাটাগরি বা ব্যাজ
-                  </label>
-                  <input
-                    type="text"
-                    value={category}
-                    onChange={(e) => setCategory(e.target.value)}
-                    placeholder="যেমন: বিশেষ সংবাদ, খেলাধুলা, স্থানীয় খবর"
-                    className="w-full bg-slate-50 border border-slate-200 rounded-xl px-3 py-2 text-xs font-bold text-slate-800 focus:outline-none focus:ring-2 focus:ring-[#009664]"
-                  />
-                </div>
-
-                <div>
-                  <label className="text-xs font-black text-slate-700 mb-1 block">
-                    প্রধান শিরোনাম (Headline)
-                  </label>
-                  <textarea
-                    rows={2}
-                    value={headline}
-                    onChange={(e) => setHeadline(e.target.value)}
-                    placeholder="সংবাদের আকর্ষণীয় শিরোনাম লিখুন"
-                    className="w-full bg-slate-50 border border-slate-200 rounded-xl px-3 py-2 text-xs font-bold text-slate-800 focus:outline-none focus:ring-2 focus:ring-[#009664]"
-                  />
-                </div>
-
-                <div>
-                  <label className="text-xs font-black text-slate-700 mb-1 block">
-                    উপ-শিরোনাম / বার্তা (Sub-headline)
-                  </label>
-                  <textarea
-                    rows={2}
-                    value={subHeadline}
-                    onChange={(e) => setSubHeadline(e.target.value)}
-                    placeholder="সংবাদের মূল অংশ বা বিস্তারিত সংক্ষেপ"
-                    className="w-full bg-slate-50 border border-slate-200 rounded-xl px-3 py-2 text-xs font-bold text-slate-800 focus:outline-none focus:ring-2 focus:ring-[#009664]"
-                  />
-                </div>
-
-                <div className="grid grid-cols-2 gap-3">
-                  <div>
-                    <label className="text-xs font-black text-slate-700 mb-1 block">
-                      প্রতিবেদক / উৎস
+                  {/* Template Selection */}
+                  <div className="bg-white p-4.5 rounded-2xl border border-slate-100 shadow-xs">
+                    <label className="text-xs font-black text-slate-800 mb-3 flex items-center justify-between">
+                      <span className="flex items-center gap-1.5"><Palette size={16} className="text-[#009664]" /> টেমপ্লেট লেআউট ডিজাইন</span>
+                      <span className="text-[10px] text-slate-400">৬টি প্রফেশনাল থিম</span>
                     </label>
-                    <input
-                      type="text"
-                      value={reporter}
-                      onChange={(e) => setReporter(e.target.value)}
-                      placeholder="যেমন: পুঠিয়া প্রতিনিধি"
-                      className="w-full bg-slate-50 border border-slate-200 rounded-xl px-3 py-2 text-xs font-bold text-slate-800 focus:outline-none focus:ring-2 focus:ring-[#009664]"
-                    />
+                    <div className="grid grid-cols-3 gap-2.5">
+                      {[
+                        { id: 'red_corner', name: 'রেড কর্নার', color: 'bg-red-500' },
+                        { id: 'breaking_red', name: 'ব্রেকিং নিউজ', color: 'bg-rose-700' },
+                        { id: 'puthia_branded', name: 'আমাদের পুঠিয়া', color: 'bg-[#009664]' },
+                        { id: 'classic_news', name: 'ক্লাসিক নিউজ', color: 'bg-slate-800' },
+                        { id: 'modern_dark', name: 'মডার্ন ডার্ক', color: 'bg-slate-900' },
+                        { id: 'paper_poster', name: 'পেপার পোস্টার', color: 'bg-amber-100 text-amber-900' },
+                      ].map((t) => (
+                        <button
+                          key={t.id}
+                          onClick={() => setTemplate(t.id as CardTemplate)}
+                          className={`p-2.5 rounded-xl border text-center transition-all ${
+                            template === t.id 
+                              ? 'border-[#009664] bg-emerald-50/60 shadow-xs ring-2 ring-[#009664]/20' 
+                              : 'border-slate-100 hover:border-slate-200 bg-slate-50/50'
+                          }`}
+                        >
+                          <div className={`w-full h-3.5 rounded-md mb-2 ${t.color}`}></div>
+                          <span className="text-[11px] font-black text-slate-800 block truncate">{t.name}</span>
+                        </button>
+                      ))}
+                    </div>
                   </div>
-                  <div>
-                    <label className="text-xs font-black text-slate-700 mb-1 block">
-                      প্রকাশের তারিখ ও সময়
-                    </label>
-                    <input
-                      type="text"
-                      value={dateText}
-                      onChange={(e) => setDateText(e.target.value)}
-                      className="w-full bg-slate-50 border border-slate-200 rounded-xl px-3 py-2 text-xs font-bold text-slate-800 focus:outline-none focus:ring-2 focus:ring-[#009664]"
-                    />
+
+                  {/* Fonts & Styling Customization */}
+                  <div className="bg-white p-4.5 rounded-2xl border border-slate-100 shadow-xs space-y-3.5">
+                    <h3 className="text-xs font-black text-slate-800 flex items-center gap-1.5">
+                      <Type size={16} className="text-[#009664]" /> ফন্ট ও টেক্সট সাইজ কাস্টমাইজেশন
+                    </h3>
+
+                    <div>
+                      <label className="text-[11px] font-bold text-slate-600 mb-1.5 block">বাংলা ফন্ট নির্বাচন</label>
+                      <div className="grid grid-cols-2 gap-2">
+                        {[
+                          { id: 'Hind Siliguri', name: 'হিন্দ শিলিগুড়ি (বোল্ড)' },
+                          { id: 'SolaimanLipi', name: 'সোলাইমান লিপি' },
+                          { id: 'Kalpurush', name: 'কালপুরুষ' },
+                          { id: 'Tiro Bangla', name: 'তিরো বাংলা (ঐতিহ্যবাহী)' }
+                        ].map((f) => (
+                          <button
+                            key={f.id}
+                            onClick={() => setFontFamily(f.id as any)}
+                            className={`p-2 rounded-xl text-xs font-bold border transition-all ${
+                              fontFamily === f.id ? 'bg-emerald-50 border-[#009664] text-[#009664]' : 'bg-slate-50 border-slate-200 text-slate-700'
+                            }`}
+                          >
+                            {f.name}
+                          </button>
+                        ))}
+                      </div>
+                    </div>
+
+                    <div className="grid grid-cols-2 gap-3 pt-1">
+                      <div>
+                        <label className="text-[11px] font-bold text-slate-600 mb-1 flex items-center justify-between">
+                          <span>শিরোনামের সাইজ</span>
+                          <span className="text-[#009664]">{toBengaliNumber(headlineFontSize)}px</span>
+                        </label>
+                        <input
+                          type="range"
+                          min="32"
+                          max="60"
+                          value={headlineFontSize}
+                          onChange={(e) => setHeadlineFontSize(Number(e.target.value))}
+                          className="w-full accent-[#009664] cursor-pointer"
+                        />
+                      </div>
+                      <div>
+                        <label className="text-[11px] font-bold text-slate-600 mb-1 flex items-center justify-between">
+                          <span>উপ-শিরোনামের সাইজ</span>
+                          <span className="text-[#009664]">{toBengaliNumber(subHeadlineFontSize)}px</span>
+                        </label>
+                        <input
+                          type="range"
+                          min="20"
+                          max="38"
+                          value={subHeadlineFontSize}
+                          onChange={(e) => setSubHeadlineFontSize(Number(e.target.value))}
+                          className="w-full accent-[#009664] cursor-pointer"
+                        />
+                      </div>
+                    </div>
+
+                    {/* Colors */}
+                    <div className="grid grid-cols-2 gap-3 pt-1">
+                      <div>
+                        <label className="text-[11px] font-bold text-slate-600 mb-1 block">ক্যাটাগরি ব্যাকগ্রাউন্ড</label>
+                        <div className="flex items-center gap-1.5">
+                          {['#009664', '#dc2626', '#2563eb', '#1e293b', '#d97706'].map((c) => (
+                            <button
+                              key={c}
+                              onClick={() => setBadgeBgColor(c)}
+                              className={`w-6 h-6 rounded-full transition-transform ${badgeBgColor === c ? 'scale-125 ring-2 ring-slate-800' : ''}`}
+                              style={{ backgroundColor: c }}
+                            />
+                          ))}
+                          <input 
+                            type="color" 
+                            value={badgeBgColor} 
+                            onChange={(e) => setBadgeBgColor(e.target.value)} 
+                            className="w-6 h-6 rounded-md cursor-pointer border-0"
+                          />
+                        </div>
+                      </div>
+
+                      <div>
+                        <label className="text-[11px] font-bold text-slate-600 mb-1 block">হাইলাইট ব্যাকগ্রাউন্ড</label>
+                        <div className="flex items-center gap-1.5">
+                          {['#fef08a', '#fca5a5', '#a7f3d0', '#bae6fd', '#fed7aa'].map((c) => (
+                            <button
+                              key={c}
+                              onClick={() => setHighlightColor(c)}
+                              className={`w-6 h-6 rounded-full transition-transform ${highlightColor === c ? 'scale-125 ring-2 ring-slate-800' : ''}`}
+                              style={{ backgroundColor: c }}
+                            />
+                          ))}
+                          <input 
+                            type="color" 
+                            value={highlightColor} 
+                            onChange={(e) => setHighlightColor(e.target.value)} 
+                            className="w-6 h-6 rounded-md cursor-pointer border-0"
+                          />
+                        </div>
+                      </div>
+                    </div>
                   </div>
-                </div>
-              </div>
+                </motion.div>
+              )}
 
-              {/* Image & Watermark Controls */}
-              <div className="bg-white p-4 rounded-2xl border border-slate-100 shadow-xs space-y-3.5">
-                <div>
-                  <label className="text-xs font-black text-slate-700 mb-1.5 flex items-center justify-between">
-                    <span>ছবি নির্বাচন / আপলোড</span>
-                    <span className="text-[10px] text-slate-400">গ্যালারি থেকে আপলোড করুন</span>
-                  </label>
-                  <input
-                    type="file"
-                    accept="image/*"
-                    onChange={handleImageUpload}
-                    className="w-full text-xs text-slate-500 file:mr-3 file:py-2 file:px-3 file:rounded-xl file:border-0 file:text-xs file:font-black file:bg-emerald-50 file:text-[#009664] hover:file:bg-emerald-100 cursor-pointer"
-                  />
-                </div>
+              {/* TAB 2: Text & Content */}
+              {(activeTab === 2 || activeTab === 0) && (
+                <motion.div 
+                  initial={{ opacity: 0, y: 10 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  className="space-y-4"
+                >
+                  <div className="bg-white p-4.5 rounded-2xl border border-slate-100 shadow-xs space-y-3.5">
+                    <div>
+                      <label className="text-xs font-black text-slate-800 mb-1 block">
+                        ক্যাটাগরি / বিষয়শ্রেণী
+                      </label>
+                      <input
+                        type="text"
+                        value={category}
+                        onChange={(e) => setCategory(e.target.value)}
+                        placeholder="যেমন: বিশেষ সংবাদ, খেলাধুলা, স্থানীয় খবর"
+                        className="w-full bg-slate-50 border border-slate-200 rounded-xl px-3 py-2.5 text-xs font-bold text-slate-800 focus:outline-none focus:ring-2 focus:ring-[#009664]"
+                      />
+                    </div>
 
-                <div>
-                  <label className="text-xs font-black text-slate-700 mb-1 block">
-                    ওয়াটারমার্ক / ব্র্যান্ড ট্যাগলাইন
-                  </label>
-                  <div className="flex items-center gap-2">
-                    <input
-                      type="text"
-                      value={watermark}
-                      onChange={(e) => setWatermark(e.target.value)}
-                      className="flex-1 bg-slate-50 border border-slate-200 rounded-xl px-3 py-2 text-xs font-bold text-slate-800 focus:outline-none focus:ring-2 focus:ring-[#009664]"
-                    />
-                    <button
-                      type="button"
-                      onClick={() => setShowWatermark(!showWatermark)}
-                      className={`px-3 py-2 rounded-xl text-xs font-black border transition-colors ${
-                        showWatermark ? 'bg-emerald-50 border-emerald-200 text-[#009664]' : 'bg-slate-100 border-slate-200 text-slate-500'
-                      }`}
+                    <div>
+                      <div className="flex items-center justify-between mb-1">
+                        <label className="text-xs font-black text-slate-800 block">
+                          প্রধান শিরোনাম (Headline)
+                        </label>
+                        <span className="text-[10px] font-black text-amber-600 bg-amber-50 px-2 py-0.5 rounded-md border border-amber-200">
+                          💡 শব্দকে *হাইলাইট* করতে স্টার (*) চিহ্ন দিন
+                        </span>
+                      </div>
+                      <textarea
+                        rows={3}
+                        value={headline}
+                        onChange={(e) => setHeadline(e.target.value)}
+                        placeholder="যেমন: আমাদের পুঠিয়ায় শুভ উদ্বোধন হতে যাচ্ছে *বিশেষ নিউজ কার্ড* জেনারেটর"
+                        className="w-full bg-slate-50 border border-slate-200 rounded-xl px-3 py-2.5 text-xs font-bold text-slate-800 focus:outline-none focus:ring-2 focus:ring-[#009664]"
+                      />
+                    </div>
+
+                    <div>
+                      <label className="text-xs font-black text-slate-800 mb-1 block">
+                        উপ-শিরোনাম / সংবাদ সংক্ষেপ (Sub-headline)
+                      </label>
+                      <textarea
+                        rows={3}
+                        value={subHeadline}
+                        onChange={(e) => setSubHeadline(e.target.value)}
+                        placeholder="সংবাদের মূল অংশ বা বিবরণ সংক্ষেপে লিখুন"
+                        className="w-full bg-slate-50 border border-slate-200 rounded-xl px-3 py-2.5 text-xs font-bold text-slate-800 focus:outline-none focus:ring-2 focus:ring-[#009664]"
+                      />
+                    </div>
+
+                    <div className="grid grid-cols-2 gap-3">
+                      <div>
+                        <label className="text-xs font-black text-slate-800 mb-1 block">
+                          প্রতিবেদক / উৎস
+                        </label>
+                        <input
+                          type="text"
+                          value={reporter}
+                          onChange={(e) => setReporter(e.target.value)}
+                          placeholder="যেমন: পুঠিয়া প্রতিনিধি"
+                          className="w-full bg-slate-50 border border-slate-200 rounded-xl px-3 py-2 text-xs font-bold text-slate-800 focus:outline-none focus:ring-2 focus:ring-[#009664]"
+                        />
+                      </div>
+                      <div>
+                        <label className="text-xs font-black text-slate-800 mb-1 block">
+                          প্রকাশের তারিখ ও সময়
+                        </label>
+                        <input
+                          type="text"
+                          value={dateText}
+                          onChange={(e) => setDateText(e.target.value)}
+                          className="w-full bg-slate-50 border border-slate-200 rounded-xl px-3 py-2 text-xs font-bold text-slate-800 focus:outline-none focus:ring-2 focus:ring-[#009664]"
+                        />
+                      </div>
+                    </div>
+                  </div>
+                </motion.div>
+              )}
+
+              {/* TAB 3: Photos & Branding */}
+              {(activeTab === 3 || activeTab === 0) && (
+                <motion.div 
+                  initial={{ opacity: 0, y: 10 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  className="space-y-4"
+                >
+                  {/* Notice Quick Import */}
+                  <div className="bg-gradient-to-r from-emerald-500/10 to-teal-500/10 p-4 rounded-2xl border border-emerald-200/80">
+                    <div className="flex items-center justify-between mb-2">
+                      <span className="text-xs font-black text-[#01412F] flex items-center gap-1.5">
+                        <Zap size={15} className="text-amber-500 fill-amber-500" /> অ্যাপের সাম্প্রতিক নোটিশ থেকে ইমপোর্ট
+                      </span>
+                    </div>
+                    <select
+                      value={selectedNoticeId}
+                      onChange={handleImportNotice}
+                      className="w-full bg-white border border-emerald-200 rounded-xl px-3 py-2 text-xs font-bold text-slate-700 focus:outline-none focus:ring-2 focus:ring-[#009664]"
                     >
-                      {showWatermark ? 'অন' : 'অফ'}
+                      <option value="">-- নোটিশ সিলেক্ট করে অটো-ফিল করুন --</option>
+                      {recentNotices.map((notice) => (
+                        <option key={notice.id} value={notice.id}>
+                          {notice.title || notice.text || 'শিরোনামহীন নোটিশ'}
+                        </option>
+                      ))}
+                    </select>
+                  </div>
+
+                  {/* Image Upload & Branding Controls */}
+                  <div className="bg-white p-4.5 rounded-2xl border border-slate-100 shadow-xs space-y-3.5">
+                    <div>
+                      <label className="text-xs font-black text-slate-800 mb-1.5 flex items-center justify-between">
+                        <span>সংবাদের মূল ছবি নির্বাচন / আপলোড</span>
+                        <span className="text-[10px] text-slate-400">ডিভাইস থেকে আপলোড করুন</span>
+                      </label>
+                      <input
+                        type="file"
+                        accept="image/*"
+                        onChange={handleImageUpload}
+                        className="w-full text-xs text-slate-500 file:mr-3 file:py-2 file:px-3 file:rounded-xl file:border-0 file:text-xs file:font-black file:bg-emerald-50 file:text-[#009664] hover:file:bg-emerald-100 cursor-pointer"
+                      />
+                    </div>
+
+                    {/* Institution Banner Option */}
+                    <div className="pt-2 border-t border-slate-100">
+                      <div className="flex items-center justify-between mb-2">
+                        <label className="text-xs font-black text-slate-800 flex items-center gap-1.5">
+                          <Building size={15} className="text-[#009664]" /> প্রতিষ্ঠান / সংবাদের নাম
+                        </label>
+                        <button
+                          type="button"
+                          onClick={() => setShowInstitution(!showInstitution)}
+                          className={`px-3 py-1 rounded-lg text-xs font-black border transition-colors ${
+                            showInstitution ? 'bg-emerald-50 border-emerald-200 text-[#009664]' : 'bg-slate-100 border-slate-200 text-slate-500'
+                          }`}
+                        >
+                          {showInstitution ? 'দৃশ্যমান' : 'লুকানো'}
+                        </button>
+                      </div>
+                      {showInstitution && (
+                        <input
+                          type="text"
+                          value={institutionName}
+                          onChange={(e) => setInstitutionName(e.target.value)}
+                          placeholder="যেমন: দৈনিক আমাদের পুঠিয়া / পুঠিয়া মডেল প্রেস ক্লাব"
+                          className="w-full bg-slate-50 border border-slate-200 rounded-xl px-3 py-2 text-xs font-bold text-slate-800 focus:outline-none focus:ring-2 focus:ring-[#009664]"
+                        />
+                      )}
+                    </div>
+
+                    {/* Watermark Tagline */}
+                    <div>
+                      <label className="text-xs font-black text-slate-800 mb-1 block">
+                        ওয়াটারমার্ক / ব্র্যান্ড ট্যাগলাইন
+                      </label>
+                      <div className="flex items-center gap-2">
+                        <input
+                          type="text"
+                          value={watermark}
+                          onChange={(e) => setWatermark(e.target.value)}
+                          className="flex-1 bg-slate-50 border border-slate-200 rounded-xl px-3 py-2 text-xs font-bold text-slate-800 focus:outline-none focus:ring-2 focus:ring-[#009664]"
+                        />
+                        <button
+                          type="button"
+                          onClick={() => setShowWatermark(!showWatermark)}
+                          className={`px-3 py-2 rounded-xl text-xs font-black border transition-colors ${
+                            showWatermark ? 'bg-emerald-50 border-emerald-200 text-[#009664]' : 'bg-slate-100 border-slate-200 text-slate-500'
+                          }`}
+                        >
+                          {showWatermark ? 'অন' : 'অফ'}
+                        </button>
+                      </div>
+                    </div>
+                  </div>
+                </motion.div>
+              )}
+
+              {/* TAB 4: Save & Download Actions */}
+              {(activeTab === 4 || activeTab === 0) && (
+                <motion.div 
+                  initial={{ opacity: 0, y: 10 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  className="space-y-4"
+                >
+                  <div className="bg-white p-4.5 rounded-2xl border border-slate-100 shadow-xs space-y-3">
+                    <h3 className="text-xs font-black text-slate-800 flex items-center gap-1.5">
+                      <Save size={16} className="text-[#009664]" /> সেভ ও প্রসেসিং
+                    </h3>
+                    <p className="text-xs text-slate-500 font-bold">
+                      তৈরিকৃত নিউজ ফটোকার্ডটি আপনার একাউন্টে অথবা সরাসরি এইচডি ফাইল হিসেবে ডাউনলোড করুন।
+                    </p>
+                    
+                    <button
+                      onClick={handleSaveToGallery}
+                      className="w-full py-3 rounded-xl bg-slate-900 text-white font-black text-xs flex items-center justify-center gap-2 hover:bg-slate-800 transition-all shadow-md"
+                    >
+                      <Save size={16} /> মাই গ্যালারিতে ফটোকার্ড সেভ করুন
                     </button>
                   </div>
-                </div>
-
-                <div className="pt-2 flex items-center gap-2">
-                  <button
-                    onClick={handleSaveToGallery}
-                    className="w-full py-3 rounded-xl bg-slate-900 text-white font-black text-xs flex items-center justify-center gap-2 hover:bg-slate-800 transition-all"
-                  >
-                    <Save size={15} /> মাই গ্যালারিতে সেভ করুন
-                  </button>
-                </div>
-              </div>
+                </motion.div>
+              )}
 
             </div>
 
             {/* Right Canvas Live Preview Column (7 cols on lg) */}
             <div className="lg:col-span-7 sticky top-24">
               <div className="bg-white p-5 rounded-3xl border border-slate-100 shadow-lg shadow-slate-200/50 space-y-4">
-                <div className="flex items-center justify-between">
+                <div className="flex items-center justify-between flex-wrap gap-2">
                   <div className="flex items-center gap-2">
                     <span className="w-2.5 h-2.5 rounded-full bg-emerald-500 animate-pulse"></span>
                     <h3 className="text-sm font-black text-slate-800">লাইভ প্রাকদর্শন (HD Canvas Preview)</h3>
                   </div>
                   
-                  <div className="flex items-center gap-1.5 bg-slate-100 p-1 rounded-xl text-xs font-black">
-                    <button
-                      onClick={() => setAspectRatio('1:1')}
-                      className={`px-2.5 py-1 rounded-lg transition-all ${
-                        aspectRatio === '1:1' ? 'bg-white text-slate-900 shadow-xs' : 'text-slate-500'
-                      }`}
-                    >
-                      ১:১ স্কয়ার
-                    </button>
-                    <button
-                      onClick={() => setAspectRatio('16:9')}
-                      className={`px-2.5 py-1 rounded-lg transition-all ${
-                        aspectRatio === '16:9' ? 'bg-white text-slate-900 shadow-xs' : 'text-slate-500'
-                      }`}
-                    >
-                      ১৬:৯ ল্যান্ডস্কেপ
-                    </button>
+                  <div className="flex items-center gap-1 bg-slate-100 p-1 rounded-xl text-xs font-black">
+                    {[
+                      { id: '1:1', label: '১:১ স্কয়ার' },
+                      { id: '16:9', label: '১৬:৯ ল্যান্ডস্কেপ' },
+                      { id: '4:5', label: '৪:৫ পোর্ট্রেট' },
+                    ].map((ar) => (
+                      <button
+                        key={ar.id}
+                        onClick={() => setAspectRatio(ar.id as any)}
+                        className={`px-2.5 py-1 rounded-lg transition-all ${
+                          aspectRatio === ar.id ? 'bg-white text-slate-900 shadow-xs' : 'text-slate-500'
+                        }`}
+                      >
+                        {ar.label}
+                      </button>
+                    ))}
                   </div>
                 </div>
 
                 {/* Canvas Container */}
-                <div className="relative w-full rounded-2xl overflow-hidden bg-slate-100 border border-slate-200/60 shadow-inner flex items-center justify-center min-h-[380px]">
+                <div className="relative w-full rounded-2xl overflow-hidden bg-slate-100 border border-slate-200/60 shadow-inner flex items-center justify-center min-h-[400px]">
                   <canvas 
                     ref={canvasRef} 
-                    className="w-full h-auto max-h-[620px] object-contain rounded-xl shadow-md"
+                    className="w-full h-auto max-h-[640px] object-contain rounded-xl shadow-md transition-all"
                   />
                   {isRendering && (
                     <div className="absolute inset-0 bg-white/60 backdrop-blur-xs flex items-center justify-center">
@@ -777,17 +1137,17 @@ export const NewsCardGeneratorPage: React.FC = () => {
                   )}
                 </div>
 
-                {/* Action Footer */}
+                {/* Action Footer Buttons */}
                 <div className="grid grid-cols-2 gap-3 pt-2">
                   <button
                     onClick={handleDownloadImage}
-                    className="py-3.5 rounded-2xl bg-[#009664] text-white font-black text-sm flex items-center justify-center gap-2 hover:bg-[#007a52] shadow-lg shadow-emerald-600/20 transition-all"
+                    className="py-3.5 rounded-2xl bg-[#009664] text-white font-black text-xs sm:text-sm flex items-center justify-center gap-2 hover:bg-[#007a52] shadow-lg shadow-emerald-600/20 transition-all"
                   >
                     <Download size={18} /> হাই-ডেফিনিশন PNG ডাউনলোড
                   </button>
                   <button
                     onClick={handleShareCard}
-                    className="py-3.5 rounded-2xl bg-emerald-50 text-[#009664] border border-emerald-200/80 font-black text-sm flex items-center justify-center gap-2 hover:bg-emerald-100 transition-all"
+                    className="py-3.5 rounded-2xl bg-emerald-50 text-[#009664] border border-emerald-200/80 font-black text-xs sm:text-sm flex items-center justify-center gap-2 hover:bg-emerald-100 transition-all"
                   >
                     <Share2 size={18} /> সোশ্যাল মিডিয়ায় শেয়ার
                   </button>
