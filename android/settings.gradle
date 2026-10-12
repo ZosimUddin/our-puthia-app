@@ -5,6 +5,7 @@ pluginManagement {
         gradlePluginPortal()
     }
 }
+
 dependencyResolutionManagement {
     repositoriesMode.set(RepositoriesMode.PREFER_SETTINGS)
     repositories {
@@ -14,4 +15,7 @@ dependencyResolutionManagement {
 }
 
 rootProject.name = "Our Puthia App"
+
 include ':app'
+
+apply from: 'capacitor.settings.gradle'
