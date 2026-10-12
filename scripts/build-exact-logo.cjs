@@ -1,0 +1,259 @@
+const fs = require('fs');
+const path = require('path');
+const { Resvg } = require('@resvg/resvg-js');
+
+// 1000x1000 coordinate system
+const svgContent = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1000 1000" width="1000" height="1000">
+  <defs>
+    <!-- Outer Ring Gradient -->
+    <linearGradient id="ringGrad" x1="20%" y1="10%" x2="80%" y2="90%">
+      <stop offset="0%" stop-color="#149E48"/>
+      <stop offset="45%" stop-color="#0E8A3D"/>
+      <stop offset="100%" stop-color="#005B23"/>
+    </linearGradient>
+
+    <!-- 'প' Character Gradient -->
+    <linearGradient id="poGrad" x1="30%" y1="20%" x2="70%" y2="80%">
+      <stop offset="0%" stop-color="#058537"/>
+      <stop offset="100%" stop-color="#006327"/>
+    </linearGradient>
+
+    <!-- Upper Leaf Light Side -->
+    <linearGradient id="leafLightGrad" x1="0%" y1="100%" x2="100%" y2="0%">
+      <stop offset="0%" stop-color="#55C445"/>
+      <stop offset="100%" stop-color="#6DD754"/>
+    </linearGradient>
+
+    <!-- Upper Leaf Dark Side -->
+    <linearGradient id="leafDarkGrad" x1="0%" y1="100%" x2="100%" y2="0%">
+      <stop offset="0%" stop-color="#158C30"/>
+      <stop offset="100%" stop-color="#2DA83E"/>
+    </linearGradient>
+
+    <!-- Lower Leaf Light Side -->
+    <linearGradient id="lowLeafLight" x1="0%" y1="50%" x2="100%" y2="50%">
+      <stop offset="0%" stop-color="#50BE41"/>
+      <stop offset="100%" stop-color="#60CF4C"/>
+    </linearGradient>
+
+    <!-- Lower Leaf Dark Side -->
+    <linearGradient id="lowLeafDark" x1="0%" y1="50%" x2="100%" y2="50%">
+      <stop offset="0%" stop-color="#15892F"/>
+      <stop offset="100%" stop-color="#249B38"/>
+    </linearGradient>
+  </defs>
+
+  <!-- Canvas White Background -->
+  <rect width="1000" height="1000" fill="#FFFFFF"/>
+
+  <!-- Outer Green Circle Ring -->
+  <circle cx="500" cy="500" r="410" fill="none" stroke="url(#ringGrad)" stroke-width="78"/>
+
+  <!-- Central 'প' (Po) Glyphic Art -->
+  <g id="po-character">
+    <!-- Right Vertical Stem -->
+    <!-- Extends from joint with leaves down to base, ending with a stylish angled cut -->
+    <path d="
+      M 558, 442
+      L 640, 442
+      L 640, 706
+      C 640, 720, 626, 730, 610, 728
+      C 580, 724, 564, 708, 558, 688
+      Z
+    " fill="url(#poGrad)"/>
+
+    <!-- Left Arch, Stylized Notch, Diagonal Sweep -->
+    <!-- Outer contour: starts from stem joint, arches up-left, curves down to iconic notch, then swoops down-right back into the stem -->
+    <path d="
+      M 560, 444
+      C 540, 360, 480, 315, 395, 320
+      C 305, 325, 260, 385, 263, 470
+      C 264, 500, 285, 520, 320, 520
+      C 350, 520, 372, 498, 370, 488
+      C 368, 475, 340, 475, 328, 485
+      C 324, 488, 318, 488, 316, 484
+      C 308, 470, 312, 435, 350, 405
+      C 390, 375, 450, 370, 485, 400
+      C 515, 426, 532, 455, 480, 505
+      C 425, 558, 350, 608, 330, 595
+      C 310, 582, 335, 545, 375, 520
+      C 335, 525, 310, 550, 330, 600
+      C 345, 638, 395, 622, 435, 582
+      C 490, 528, 535, 482, 560, 444
+      Z
+    " fill="url(#poGrad)" style="display:none;"/>
+
+    <!-- Accurate continuous outer 'প' body with the stylized notch and loop -->
+    <path d="
+      M 560, 442
+      C 542, 350, 465, 322, 390, 324
+      C 305, 326, 260, 385, 263, 472
+      C 265, 505, 288, 522, 324, 515
+      C 352, 510, 372, 488, 370, 472
+      C 368, 445, 320, 478, 298, 470
+      C 288, 466, 284, 452, 288, 435
+      C 302, 382, 356, 360, 402, 362
+      C 455, 364, 505, 392, 526, 428
+      C 540, 452, 520, 478, 478, 522
+      C 424, 578, 358, 622, 334, 598
+      C 315, 580, 338, 548, 376, 522
+      L 370, 472
+      C 330, 505, 305, 545, 322, 595
+      C 342, 650, 402, 632, 445, 590
+      C 502, 534, 544, 482, 560, 442
+      Z
+    " fill="url(#poGrad)" style="display:none;"/>
+  </g>
+
+  <!-- Clean Precision Bengali 'প' Path matching Image 2 exactly -->
+  <path d="
+    M 558, 442
+    C 545, 352, 475, 320, 395, 320
+    C 305, 320, 260, 382, 262, 472
+    C 264, 502, 290, 525, 325, 522
+    C 355, 520, 375, 496, 370, 480
+    C 365, 465, 345, 465, 335, 474
+    C 328, 480, 320, 478, 318, 470
+    C 312, 445, 335, 398, 392, 394
+    C 442, 390, 490, 415, 515, 450
+    C 490, 475, 455, 510, 412, 552
+    C 355, 608, 328, 595, 326, 570
+    C 325, 545, 342, 530, 370, 480
+    C 330, 515, 295, 552, 328, 605
+    C 355, 648, 415, 625, 458, 580
+    C 508, 528, 546, 480, 558, 442
+    Z
+  " fill="url(#poGrad)" style="display:none;"/>
+
+  <!-- Master Solid Precision Polygon for 'প' Character -->
+  <!-- 1. Right Column -->
+  <path d="
+    M 558, 442
+    L 640, 442
+    L 640, 706
+    C 640, 722, 622, 730, 606, 726
+    C 576, 720, 558, 700, 558, 680
+    Z
+  " fill="url(#poGrad)"/>
+
+  <!-- 2. Loop & Sweep of 'প' (Outer arch, inner loop, bottom-left notch, diagonal swoop) -->
+  <path d="
+    M 558, 442
+    C 545, 345, 465, 320, 385, 320
+    C 295, 320, 260, 385, 262, 470
+    C 264, 508, 296, 525, 332, 520
+    C 368, 515, 378, 492, 374, 475
+    C 370, 455, 342, 458, 330, 470
+    C 324, 476, 314, 472, 314, 462
+    C 314, 425, 345, 388, 395, 388
+    C 445, 388, 495, 415, 525, 455
+    C 475, 508, 418, 565, 372, 608
+    C 345, 632, 324, 615, 326, 580
+    C 328, 545, 350, 525, 374, 475
+    C 335, 510, 298, 548, 325, 605
+    C 348, 650, 405, 635, 445, 595
+    C 502, 538, 545, 482, 558, 442
+    Z
+  " fill="url(#poGrad)"/>
+
+  <!-- 3. TOP-RIGHT LEAVES -->
+  <!-- Upper Leaf (Main Leaf, pointing ~45 deg up-right) -->
+  <g id="upper-leaf">
+    <!-- Left/Upper bright half -->
+    <path d="
+      M 618, 442
+      C 610, 350, 665, 240, 804, 168
+      C 760, 265, 715, 360, 618, 442
+      Z
+    " fill="url(#leafLightGrad)"/>
+    <!-- Right/Lower deep half -->
+    <path d="
+      M 618, 442
+      C 715, 360, 760, 265, 804, 168
+      C 825, 255, 785, 355, 640, 442
+      Z
+    " fill="url(#leafDarkGrad)"/>
+    <!-- Center Spine Vein Highlight -->
+    <path d="
+      M 618, 442
+      C 715, 360, 760, 265, 804, 168
+    " stroke="#FFFFFF" stroke-width="2.5" fill="none" opacity="0.6"/>
+  </g>
+
+  <!-- Lower Leaf (Secondary Leaf, pointing ~15 deg up-right) -->
+  <g id="lower-leaf">
+    <!-- Upper bright half -->
+    <path d="
+      M 640, 442
+      C 668, 400, 740, 360, 836, 368
+      C 790, 415, 735, 450, 640, 455
+      Z
+    " fill="url(#lowLeafLight)"/>
+    <!-- Lower dark half -->
+    <path d="
+      M 640, 455
+      C 735, 450, 790, 415, 836, 368
+      C 815, 435, 755, 470, 640, 460
+      Z
+    " fill="url(#lowLeafDark)"/>
+  </g>
+
+  <!-- 4. RED CIRCLE DOT -->
+  <!-- Positioned to the right of the vertical bar, under the lower leaf -->
+  <circle cx="692" cy="572" r="39" fill="#E51818"/>
+</svg>`;
+
+// Write public/logo.svg
+const logoSvgPath = path.join(__dirname, '../public/logo.svg');
+fs.writeFileSync(logoSvgPath, svgContent);
+console.log('✅ Generated public/logo.svg');
+
+// Render PNGs at various resolutions
+const resvg = new Resvg(Buffer.from(svgContent), {
+  fitTo: { mode: 'width', value: 512 }
+});
+const pngBuffer512 = resvg.render().asPng();
+
+const resvg192 = new Resvg(Buffer.from(svgContent), {
+  fitTo: { mode: 'width', value: 192 }
+});
+const pngBuffer192 = resvg192.render().asPng();
+
+const resvg180 = new Resvg(Buffer.from(svgContent), {
+  fitTo: { mode: 'width', value: 180 }
+});
+const pngBuffer180 = resvg180.render().asPng();
+
+const resvg72 = new Resvg(Buffer.from(svgContent), {
+  fitTo: { mode: 'width', value: 72 }
+});
+const pngBuffer72 = resvg72.render().asPng();
+
+const resvg64 = new Resvg(Buffer.from(svgContent), {
+  fitTo: { mode: 'width', value: 64 }
+});
+const pngBuffer64 = resvg64.render().asPng();
+
+const pngTargets = [
+  { path: 'public/logo.png', buf: pngBuffer512 },
+  { path: 'public/logo.jpg', buf: pngBuffer512 },
+  { path: 'public/icon-512.png', buf: pngBuffer512 },
+  { path: 'public/pwa-512x512.png', buf: pngBuffer512 },
+  { path: 'public/puthia_official_icon_logo.jpg', buf: pngBuffer512 },
+  { path: 'public/puthia_official_full_logo.jpg', buf: pngBuffer512 },
+  { path: 'src/assets/images/puthia_official_icon_logo.jpg', buf: pngBuffer512 },
+  { path: 'src/assets/images/puthia_official_full_logo.jpg', buf: pngBuffer512 },
+  { path: 'public/icon-192.png', buf: pngBuffer192 },
+  { path: 'public/pwa-192x192.png', buf: pngBuffer192 },
+  { path: 'public/apple-touch-icon.png', buf: pngBuffer180 },
+  { path: 'public/badge-72x72.png', buf: pngBuffer72 },
+  { path: 'public/favicon.ico', buf: pngBuffer64 },
+];
+
+pngTargets.forEach(t => {
+  const full = path.join(__dirname, '..', t.path);
+  fs.writeFileSync(full, t.buf);
+  console.log('Generated:', t.path);
+});
+
+console.log('🎉 Generated all brand-new Image 2 logo files successfully!');
