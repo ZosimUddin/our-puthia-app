@@ -4,7 +4,7 @@ plugins {
 
 android {
     namespace 'com.ourputhia.app'
-    compileSdk 34
+    compileSdk 36
 
     defaultConfig {
         applicationId "com.ourputhia.app"
@@ -34,12 +34,17 @@ android {
 }
 
 dependencies {
+    // Capacitor Android
+    implementation project(':capacitor-android')
+
+    // AndroidX
     implementation 'androidx.appcompat:appcompat:1.6.1'
     implementation 'com.google.android.material:material:1.11.0'
     implementation 'androidx.constraintlayout:constraintlayout:2.1.4'
     implementation 'androidx.swiperefreshlayout:swiperefreshlayout:1.1.0'
     implementation 'androidx.activity:activity:1.8.2'
 
+    // Testing
     testImplementation 'junit:junit:4.13.2'
     androidTestImplementation 'androidx.test.ext:junit:1.1.5'
     androidTestImplementation 'androidx.test.espresso:espresso-core:3.5.1'
