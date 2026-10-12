@@ -652,73 +652,75 @@ export const NewsCardGeneratorPage: React.FC = () => {
 
       <main className="flex-1 pb-24">
         {/* Top Header Navigation */}
-        <div className="bg-white border-b border-slate-100 shadow-xs px-4 py-4 sticky top-0 z-30">
-          <div className="max-w-6xl mx-auto flex items-center justify-between gap-3">
-            <div className="flex items-center gap-3">
+        <div className="bg-white border-b border-slate-100 shadow-xs px-3 sm:px-4 py-3 sticky top-0 z-30">
+          <div className="max-w-6xl mx-auto flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+            <div className="flex items-center gap-2.5">
               <button 
                 onClick={() => navigate(-1)}
-                className="w-10 h-10 rounded-full bg-slate-100 flex items-center justify-center text-slate-700 hover:bg-slate-200 transition-colors"
+                className="w-9 h-9 rounded-full bg-slate-100 flex items-center justify-center text-slate-700 hover:bg-slate-200 transition-colors shrink-0"
               >
-                <ArrowLeft size={20} />
+                <ArrowLeft size={18} />
               </button>
-              <div>
-                <div className="flex items-center gap-2">
-                  <h1 className="text-xl font-black text-slate-800 leading-tight">নিউজ কার্ড জেনারেটর</h1>
-                  <span className="px-2.5 py-0.5 rounded-full text-xs font-black bg-emerald-100 text-[#009664] flex items-center gap-1">
-                    <Sparkles size={12} /> ফটোকার্ড বিডি
+              <div className="min-w-0 flex-1">
+                <div className="flex items-center gap-2 flex-wrap">
+                  <h1 className="text-lg sm:text-xl font-black text-slate-800 leading-tight">নিউজ কার্ড জেনারেটর</h1>
+                  <span className="px-2 py-0.5 rounded-full text-[11px] font-black bg-emerald-100 text-[#009664] flex items-center gap-1 shrink-0">
+                    <Sparkles size={11} /> ফটোকার্ড বিডি
                   </span>
                 </div>
-                <p className="text-xs font-bold text-slate-500">মিডিয়া ও সংবাদের জন্য প্রফেশনাল ফটোকার্ড ডিজাইন সিস্টেম</p>
+                <p className="text-[11px] font-bold text-slate-500 truncate">মিডিয়া ও সংবাদের জন্য প্রফেশনাল ফটোকার্ড সিস্টেম</p>
               </div>
             </div>
 
-            <div className="flex items-center gap-2">
+            <div className="flex items-center gap-2 self-end sm:self-auto">
               <button
                 onClick={handleShareCard}
-                className="px-3.5 py-2 rounded-xl bg-slate-100 text-slate-700 font-bold text-xs flex items-center gap-1.5 hover:bg-slate-200 transition-all"
+                className="px-3 py-1.5 rounded-xl bg-slate-100 text-slate-700 font-bold text-xs flex items-center gap-1.5 hover:bg-slate-200 transition-all shrink-0"
               >
-                <Share2 size={15} /> শেয়ার
+                <Share2 size={14} /> শেয়ার
               </button>
               <button
                 onClick={handleDownloadImage}
-                className="px-4 py-2 rounded-xl bg-[#009664] text-white font-black text-xs flex items-center gap-1.5 hover:bg-[#007a52] shadow-md shadow-emerald-600/20 transition-all"
+                className="px-3.5 py-1.5 rounded-xl bg-[#009664] text-white font-black text-xs flex items-center gap-1.5 hover:bg-[#007a52] shadow-md shadow-emerald-600/20 transition-all shrink-0"
               >
-                <Download size={15} /> ডাউনলোড এইচডি
+                <Download size={14} /> ডাউনলোড এইচডি
               </button>
             </div>
           </div>
         </div>
 
-        <div className="max-w-6xl mx-auto px-4 py-6">
+        <div className="max-w-6xl mx-auto px-3 sm:px-4 py-4 sm:py-6">
           
           {/* Quick Preset Badges Bar */}
-          <div className="mb-6 bg-white p-3.5 rounded-2xl border border-slate-100 shadow-xs">
-            <div className="flex items-center justify-between mb-2">
-              <span className="text-xs font-black text-slate-700 flex items-center gap-1.5">
+          <div className="mb-5 bg-white p-3 sm:p-4 rounded-2xl border border-slate-200/80 shadow-xs">
+            <div className="flex items-center justify-between mb-2.5">
+              <span className="text-xs font-black text-slate-800 flex items-center gap-1.5">
                 <Zap size={15} className="text-amber-500 fill-amber-500" /> ১-ক্লিক কুইক টেমপ্লেট ও সংবাদের ফরম্যাট
               </span>
-              <span className="text-[11px] font-bold text-slate-400">ক্লিক করলেই অটো-ফিল হবে</span>
+              <span className="text-[10px] sm:text-[11px] font-bold text-emerald-700 bg-emerald-50 px-2 py-0.5 rounded-md border border-emerald-200/60 shrink-0">
+                ক্লিক করলে অটো-ফিল হবে ➔
+              </span>
             </div>
-            <div className="flex items-center gap-2 overflow-x-auto pb-1 scrollbar-none">
+            <div className="flex items-center gap-2 overflow-x-auto pb-1.5 scrollbar-none snap-x touch-pan-x">
               {NEWS_PRESETS.map((p, idx) => (
                 <button
                   key={idx}
                   onClick={() => applyPreset(p)}
-                  className="px-3.5 py-2 rounded-xl bg-slate-50 border border-slate-200 text-slate-700 text-xs font-black hover:bg-emerald-50 hover:border-emerald-200 hover:text-[#009664] transition-all whitespace-nowrap flex items-center gap-1.5 shadow-2xs"
+                  className="shrink-0 min-w-max px-3.5 py-2 rounded-xl bg-slate-50 hover:bg-emerald-50 border border-slate-200 hover:border-emerald-300 text-slate-800 hover:text-[#009664] text-xs font-black transition-all flex items-center gap-1.5 shadow-2xs snap-start active:scale-95 cursor-pointer"
                 >
-                  {p.label}
+                  <span className="leading-none">{p.label}</span>
                 </button>
               ))}
             </div>
           </div>
 
-          {/* Workflow Tabs (1 to 4) like requested in screenshot */}
-          <div className="mb-6 bg-white rounded-2xl border border-slate-100 p-1.5 shadow-xs grid grid-cols-4 gap-1">
+          {/* Workflow Tabs (1 to 4) with Full Bengali Labels on Mobile & Desktop */}
+          <div className="mb-5 bg-white rounded-2xl border border-slate-200/80 p-1 shadow-xs grid grid-cols-4 gap-1">
             {[
-              { id: 1, label: '১. টেমপ্লেট ও স্টাইল', icon: Palette },
-              { id: 2, label: '২. সংবাদ ও টেক্সট', icon: FileText },
-              { id: 3, label: '৩. ছবি ও ব্রান্ডিং', icon: ImageIcon },
-              { id: 4, label: '৪. সেভ ও ডাউনলোড', icon: Download },
+              { id: 1, fullLabel: '১. টেমপ্লেট ও স্টাইল', mobileLabel: '১. স্টাইল', icon: Palette },
+              { id: 2, fullLabel: '২. সংবাদ ও টেক্সট', mobileLabel: '২. সংবাদ', icon: FileText },
+              { id: 3, fullLabel: '৩. ছবি ও ব্রান্ডিং', mobileLabel: '৩. ব্রান্ডিং', icon: ImageIcon },
+              { id: 4, fullLabel: '৪. সেভ ও ডাউনলোড', mobileLabel: '৪. ডাউনলোড', icon: Download },
             ].map((tab) => {
               const Icon = tab.icon;
               const isActive = activeTab === tab.id;
@@ -726,15 +728,15 @@ export const NewsCardGeneratorPage: React.FC = () => {
                 <button
                   key={tab.id}
                   onClick={() => setActiveTab(tab.id)}
-                  className={`py-2.5 px-2 rounded-xl text-xs font-black flex items-center justify-center gap-1.5 transition-all ${
+                  className={`py-2 px-1.5 sm:px-2 rounded-xl text-xs font-black flex items-center justify-center gap-1 sm:gap-1.5 transition-all ${
                     isActive 
                       ? 'bg-[#009664] text-white shadow-md shadow-emerald-600/20' 
                       : 'text-slate-600 hover:bg-slate-100'
                   }`}
                 >
-                  <Icon size={15} />
-                  <span className="hidden sm:inline">{tab.label}</span>
-                  <span className="sm:hidden">{tab.id}</span>
+                  <Icon size={14} className="shrink-0" />
+                  <span className="hidden sm:inline">{tab.fullLabel}</span>
+                  <span className="sm:hidden text-[11px]">{tab.mobileLabel}</span>
                 </button>
               );
             })}
