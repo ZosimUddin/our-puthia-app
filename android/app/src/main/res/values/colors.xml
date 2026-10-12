@@ -13,6 +13,10 @@
     <color name="color_text_primary">#0F172A</color>
     <color name="color_text_secondary">#64748B</color>
 
+    <color name="colorPrimary">#047857</color>
+    <color name="colorPrimaryDark">#01412F</color>
+    <color name="colorAccent">#10B981</color>
+
     <color name="white">#FFFFFF</color>
     <color name="black">#000000</color>
     <color name="transparent">#00000000</color>
