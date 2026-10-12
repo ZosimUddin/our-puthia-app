@@ -12,19 +12,21 @@ import BottomNavigation from '../../components/home/BottomNavigation';
 import { Sidebar } from '../../components/Sidebar';
 import { useAuth } from '../../contexts/AuthContext';
 
+export const EXCLUSIVE_FEATURES = [
+  { title: 'বাংলাদেশ ভ্রমণ ম্যাপ', desc: '৬৪ জেলার ভ্রমণ ট্র্যাকার, কাস্টম ম্যাপ ও ইমেজ জেনারেটর', icon: <Map size={24} strokeWidth={1.5} />, color: 'text-[#009664]', bg: 'bg-emerald-50', path: '/travel-map' },
+  { title: 'নিউজ কার্ড মেকার', desc: 'মিডিয়ার জন্য প্রফেশনাল ফটোকার্ড জেনারেটর ও ডাউনলোড', icon: <Newspaper size={24} strokeWidth={1.5} />, color: 'text-rose-600', bg: 'bg-rose-50', path: '/news-card-generator' },
+  { title: 'পুঠিয়া গাড়ি ভাড়া ও রাইড', desc: 'ভ্যান, অটো রিকশা, সিএনজি, নছিমন, পিকআপ ও মাইক্রোবাস', icon: <Car size={24} strokeWidth={1.5} />, color: 'text-indigo-600', bg: 'bg-indigo-50', path: '/vehicle-rental' },
+  { title: 'আবহাওয়া ও পূর্বাভাস', desc: 'লাইভ আবহাওয়া, ১৬ দিনের পূর্বাভাস, বৃষ্টিপাত ও কৃষি পরামর্শ', icon: <CloudSun size={24} strokeWidth={1.5} />, color: 'text-blue-600', bg: 'bg-blue-50', path: '/weather' },
+  { title: 'ওষুধের দাম ও তথ্য', desc: 'ওষুধের খুচরা মূল্য, জেনেরিক বিকল্প, বিলের হিসাব ও তথ্য', icon: <Pill size={24} strokeWidth={1.5} />, color: 'text-emerald-600', bg: 'bg-emerald-50', path: '/medicines' },
+  { title: 'স্মার্ট রিমাইন্ডার', desc: 'গুরুত্বপূর্ণ তারিখ ও কাজের রিমাইন্ডার সেট করুন', icon: <CalendarClock size={24} strokeWidth={1.5} />, color: 'text-amber-600', bg: 'bg-amber-50', path: '/reminder' },
+];
+
 const ExclusiveFeaturesPage: React.FC = () => {
   const navigate = useNavigate();
   const { user } = useAuth();
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
 
-  const popularFeatures = [
-    { title: 'বাংলাদেশ ভ্রমণ ম্যাপ', desc: '৬৪ জেলার ভ্রমণ ট্র্যাকার, কাস্টম ম্যাপ ও ইমেজ জেনারেটর', icon: <Map size={24} strokeWidth={1.5} />, color: 'text-[#009664]', bg: 'bg-emerald-50', path: '/travel-map' },
-    { title: 'নিউজ কার্ড মেকার', desc: 'মিডিয়ার জন্য প্রফেশনাল ফটোকার্ড জেনারেটর ও ডাউনলোড', icon: <Newspaper size={24} strokeWidth={1.5} />, color: 'text-rose-600', bg: 'bg-rose-50', path: '/news-card-generator' },
-    { title: 'পুঠিয়া গাড়ি ভাড়া ও রাইড', desc: 'ভ্যান, অটো রিকশা, সিএনজি, নছিমন, পিকআপ ও মাইক্রোবাস', icon: <Car size={24} strokeWidth={1.5} />, color: 'text-indigo-600', bg: 'bg-indigo-50', path: '/vehicle-rental' },
-    { title: 'আবহাওয়া ও পূর্বাভাস', desc: 'লাইভ আবহাওয়া, ১৬ দিনের পূর্বাভাস, বৃষ্টিপাত ও কৃষি পরামর্শ', icon: <CloudSun size={24} strokeWidth={1.5} />, color: 'text-blue-600', bg: 'bg-blue-50', path: '/weather' },
-    { title: 'ওষুধের দাম ও তথ্য', desc: 'ওষুধের খুচরা মূল্য, জেনেরিক বিকল্প, বিলের হিসাব ও তথ্য', icon: <Pill size={24} strokeWidth={1.5} />, color: 'text-emerald-600', bg: 'bg-emerald-50', path: '/medicines' },
-    { title: 'স্মার্ট রিমাইন্ডার', desc: 'গুরুত্বপূর্ণ তারিখ ও কাজের রিমাইন্ডার সেট করুন', icon: <CalendarClock size={24} strokeWidth={1.5} />, color: 'text-amber-600', bg: 'bg-amber-50', path: '/reminder' },
-  ];
+  const popularFeatures = EXCLUSIVE_FEATURES;
 
   return (
     <div className="min-h-screen bg-[#fafcfb] flex flex-col font-sans">

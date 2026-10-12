@@ -119,9 +119,25 @@ export const NewsCardGeneratorPage: React.FC = () => {
   const [isLoadingNotices, setIsLoadingNotices] = useState(false);
   const [selectedNoticeId, setSelectedNoticeId] = useState('');
 
-  // Canvas ref
+  // Canvas ref & image cache
   const canvasRef = useRef<HTMLCanvasElement | null>(null);
+  const imageCacheRef = useRef<Map<string, HTMLImageElement>>(new Map());
   const [isRendering, setIsRendering] = useState(false);
+
+  // Map font selections to loaded Google/local fonts
+  const getCanvasFontFamily = (f: string) => {
+    switch (f) {
+      case 'SolaimanLipi':
+        return "'Noto Serif Bengali', 'SolaimanLipi', serif";
+      case 'Kalpurush':
+        return "'Anek Bangla', 'Kalpurush', sans-serif";
+      case 'Tiro Bangla':
+        return "'Tiro Bangla', serif";
+      case 'Hind Siliguri':
+      default:
+        return "'Hind Siliguri', sans-serif";
+    }
+  };
 
   // Load recent notices for 1-click import
   useEffect(() => {
@@ -204,11 +220,9 @@ export const NewsCardGeneratorPage: React.FC = () => {
 
     setIsRendering(true);
 
-    const img = new Image();
-    img.crossOrigin = 'anonymous';
-    img.src = imageUrl;
+    const activeFont = getCanvasFontFamily(fontFamily);
 
-    const drawContent = () => {
+    const drawContent = (loadedImg: HTMLImageElement | null) => {
       // 1. Draw Background
       if (template === 'modern_dark') {
         ctx.fillStyle = '#0f172a';
@@ -237,7 +251,7 @@ export const NewsCardGeneratorPage: React.FC = () => {
       }
 
       // Draw Main Image
-      if (img.complete && img.naturalWidth > 0) {
+      if (loadedImg && loadedImg.complete && loadedImg.naturalWidth > 0) {
         ctx.save();
         ctx.beginPath();
         if (template === 'paper_poster') {
@@ -248,16 +262,16 @@ export const NewsCardGeneratorPage: React.FC = () => {
         ctx.clip();
 
         // Object cover draw logic
-        const scale = Math.max(width / img.naturalWidth, imgH / img.naturalHeight);
-        const x = (width - img.naturalWidth * scale) / 2;
-        const y = imgY + (imgH - img.naturalHeight * scale) / 2;
-        ctx.drawImage(img, x, y, img.naturalWidth * scale, img.naturalHeight * scale);
+        const scale = Math.max(width / loadedImg.naturalWidth, imgH / loadedImg.naturalHeight);
+        const x = (width - loadedImg.naturalWidth * scale) / 2;
+        const y = imgY + (imgH - loadedImg.naturalHeight * scale) / 2;
+        ctx.drawImage(loadedImg, x, y, loadedImg.naturalWidth * scale, loadedImg.naturalHeight * scale);
         ctx.restore();
       } else {
         // Fallback image gradient pattern
         const grad = ctx.createLinearGradient(0, imgY, width, imgY + imgH);
         grad.addColorStop(0, '#01412F');
-        grad.addColorStop(1, '#009664');
+        grad.addColorStop(1, badgeBgColor || '#009664');
         ctx.fillStyle = grad;
         ctx.fillRect(0, imgY, width, imgH);
       }
@@ -274,7 +288,7 @@ export const NewsCardGeneratorPage: React.FC = () => {
         ctx.fillStyle = 'rgba(0,0,0,0.6)';
         ctx.fillRect(0, imgY, width, 45);
         ctx.fillStyle = '#ffffff';
-        ctx.font = `bold 22px "${fontFamily}", sans-serif`;
+        ctx.font = `bold 22px ${activeFont}`;
         ctx.textAlign = 'center';
         ctx.fillText(`🏛️ ${institutionName}`, width / 2, imgY + 30);
         ctx.textAlign = 'left';
@@ -282,28 +296,28 @@ export const NewsCardGeneratorPage: React.FC = () => {
 
       // 3. Header Styling based on Template
       if (template === 'red_corner') {
-        ctx.fillStyle = '#dc2626';
+        ctx.fillStyle = badgeBgColor || '#dc2626';
         ctx.fillRect(0, 0, width, 85);
 
         ctx.fillStyle = '#ffffff';
-        ctx.font = `bold 36px "${fontFamily}", sans-serif`;
+        ctx.font = `bold 36px ${activeFont}`;
         ctx.fillText('আমাদের পুঠিয়া • ফটোকার্ড', 40, 54);
 
-        ctx.font = `bold 24px "${fontFamily}", sans-serif`;
+        ctx.font = `bold 24px ${activeFont}`;
         ctx.textAlign = 'right';
         ctx.fillText(dateText, width - 40, 54);
         ctx.textAlign = 'left';
 
       } else if (template === 'breaking_red') {
-        ctx.fillStyle = '#991b1b';
+        ctx.fillStyle = badgeBgColor || '#991b1b';
         ctx.fillRect(0, 0, width, 85);
 
-        ctx.fillStyle = '#fef08a';
-        ctx.font = `900 38px "${fontFamily}", sans-serif`;
+        ctx.fillStyle = highlightColor || '#fef08a';
+        ctx.font = `900 38px ${activeFont}`;
         ctx.fillText('🚨 ব্রেকিং নিউজ', 40, 56);
 
         ctx.fillStyle = '#ffffff';
-        ctx.font = `24px "${fontFamily}", sans-serif`;
+        ctx.font = `24px ${activeFont}`;
         ctx.textAlign = 'right';
         ctx.fillText(dateText, width - 40, 54);
         ctx.textAlign = 'left';
@@ -311,7 +325,7 @@ export const NewsCardGeneratorPage: React.FC = () => {
       } else if (template === 'puthia_branded') {
         const headerGrad = ctx.createLinearGradient(0, 0, width, 0);
         headerGrad.addColorStop(0, '#01412F');
-        headerGrad.addColorStop(1, '#009664');
+        headerGrad.addColorStop(1, badgeBgColor || '#009664');
         ctx.fillStyle = headerGrad;
         ctx.fillRect(0, 0, width, 125);
 
@@ -320,38 +334,38 @@ export const NewsCardGeneratorPage: React.FC = () => {
         ctx.arc(80, 62, 42, 0, Math.PI * 2);
         ctx.fill();
 
-        ctx.fillStyle = '#009664';
+        ctx.fillStyle = badgeBgColor || '#009664';
         ctx.font = 'bold 44px sans-serif';
         ctx.textAlign = 'center';
         ctx.fillText('P', 80, 78);
         ctx.textAlign = 'left';
 
         ctx.fillStyle = '#ffffff';
-        ctx.font = `900 42px "${fontFamily}", sans-serif`;
+        ctx.font = `900 42px ${activeFont}`;
         ctx.fillText('আমাদের পুঠিয়া', 145, 65);
 
         ctx.fillStyle = '#a7f3d0';
-        ctx.font = `bold 22px "${fontFamily}", sans-serif`;
+        ctx.font = `bold 22px ${activeFont}`;
         ctx.fillText('উপজেলার প্রথম ডিজিটাল তথ্য ও সংবাদ নেটওয়ার্ক', 145, 96);
 
         ctx.fillStyle = '#ffffff';
-        ctx.font = `22px "${fontFamily}", sans-serif`;
+        ctx.font = `22px ${activeFont}`;
         ctx.textAlign = 'right';
         ctx.fillText(dateText, width - 40, 70);
         ctx.textAlign = 'left';
 
       } else if (template === 'classic_news') {
         ctx.fillStyle = '#1e293b';
-        ctx.font = `900 48px "${fontFamily}", serif`;
+        ctx.font = `900 48px ${activeFont}`;
         ctx.textAlign = 'center';
         ctx.fillText(institutionName || 'দৈনিক আমাদের পুঠিয়া', width / 2, 68);
 
         ctx.fillStyle = '#64748b';
-        ctx.font = `22px "${fontFamily}", sans-serif`;
+        ctx.font = `22px ${activeFont}`;
         ctx.fillText(`স্মার্ট রাজশাহী ও পুঠিয়ার মুখপত্র | ${dateText}`, width / 2, 110);
         ctx.textAlign = 'left';
 
-        ctx.strokeStyle = '#0f172a';
+        ctx.strokeStyle = badgeBgColor || '#0f172a';
         ctx.lineWidth = 4;
         ctx.beginPath();
         ctx.moveTo(40, 128);
@@ -365,12 +379,12 @@ export const NewsCardGeneratorPage: React.FC = () => {
         ctx.stroke();
 
       } else if (template === 'modern_dark') {
-        ctx.fillStyle = '#38bdf8';
-        ctx.font = `900 36px "${fontFamily}", sans-serif`;
+        ctx.fillStyle = badgeBgColor || '#38bdf8';
+        ctx.font = `900 36px ${activeFont}`;
         ctx.fillText('OUR PUTHIA MEDIA', 40, 52);
 
         ctx.fillStyle = '#94a3b8';
-        ctx.font = `22px "${fontFamily}", sans-serif`;
+        ctx.font = `22px ${activeFont}`;
         ctx.textAlign = 'right';
         ctx.fillText(dateText, width - 40, 52);
         ctx.textAlign = 'left';
@@ -384,7 +398,7 @@ export const NewsCardGeneratorPage: React.FC = () => {
       ctx.shadowBlur = 12;
       
       const badgeText = category || 'বিশেষ সংবাদ';
-      ctx.font = `bold 26px "${fontFamily}", sans-serif`;
+      ctx.font = `bold 26px ${activeFont}`;
       const badgeWidth = ctx.measureText(badgeText).width + 50;
       const bx = 40;
       const by = badgeY - 26;
@@ -407,12 +421,12 @@ export const NewsCardGeneratorPage: React.FC = () => {
       ctx.restore();
 
       ctx.fillStyle = '#ffffff';
-      ctx.font = `bold 26px "${fontFamily}", sans-serif`;
+      ctx.font = `bold 26px ${activeFont}`;
       ctx.fillText(badgeText, 65, badgeY + 8);
 
       if (reporter) {
         ctx.fillStyle = 'rgba(255,255,255,0.92)';
-        ctx.font = `bold 22px "${fontFamily}", sans-serif`;
+        ctx.font = `bold 22px ${activeFont}`;
         ctx.textAlign = 'right';
         ctx.fillText(`— ${reporter}`, width - 40, imgY + imgH - 15);
         ctx.textAlign = 'left';
@@ -432,7 +446,7 @@ export const NewsCardGeneratorPage: React.FC = () => {
         maxWidth: number, 
         lineHeight: number
       ) => {
-        ctx.font = `900 ${headlineFontSize}px "${fontFamily}", sans-serif`;
+        ctx.font = `900 ${headlineFontSize}px ${activeFont}`;
         
         // Parse words and flags for asterisks *highlight*
         const parts = text.split('*');
@@ -469,16 +483,15 @@ export const NewsCardGeneratorPage: React.FC = () => {
           if (item.isHighlighted) {
             ctx.save();
             ctx.fillStyle = highlightColor || '#fef08a';
-            const hPadding = 4;
-            const hHeight = headlineFontSize * 1.15;
-            ctx.fillRect(
-              currentX - hPadding, 
-              currentY - headlineFontSize * 0.82, 
-              wordWidth + (hPadding * 2), 
-              hHeight
-            );
+            const hPadding = 6;
+            const hHeight = headlineFontSize * 1.18;
+            ctx.beginPath();
+            ctx.roundRect 
+              ? ctx.roundRect(currentX - hPadding, currentY - headlineFontSize * 0.84, wordWidth + (hPadding * 2), hHeight, 6)
+              : ctx.rect(currentX - hPadding, currentY - headlineFontSize * 0.84, wordWidth + (hPadding * 2), hHeight);
+            ctx.fill();
             ctx.restore();
-            ctx.fillStyle = '#0f172a'; // dark text on highlighted bg
+            ctx.fillStyle = '#0f172a'; // dark readable text on highlighted bg
           } else {
             ctx.fillStyle = textColor;
           }
@@ -495,7 +508,7 @@ export const NewsCardGeneratorPage: React.FC = () => {
       // 6. Sub-headline / Detail Text
       if (subHeadline) {
         ctx.fillStyle = template === 'modern_dark' ? '#cbd5e1' : '#475569';
-        ctx.font = `${subHeadlineFontSize}px "${fontFamily}", sans-serif`;
+        ctx.font = `${subHeadlineFontSize}px ${activeFont}`;
 
         const wrapSimpleText = (text: string, x: number, y: number, maxWidth: number, lineHeight: number) => {
           const words = text.split(' ');
@@ -530,12 +543,12 @@ export const NewsCardGeneratorPage: React.FC = () => {
         ctx.lineTo(width - 40, footerY - 20);
         ctx.stroke();
 
-        ctx.fillStyle = '#009664';
-        ctx.font = `900 28px "${fontFamily}", sans-serif`;
+        ctx.fillStyle = badgeBgColor || '#009664';
+        ctx.font = `900 28px ${activeFont}`;
         ctx.fillText('আমাদের পুঠিয়া', 40, footerY + 20);
 
         ctx.fillStyle = template === 'modern_dark' ? '#94a3b8' : '#64748b';
-        ctx.font = `bold 22px "${fontFamily}", sans-serif`;
+        ctx.font = `bold 22px ${activeFont}`;
         ctx.textAlign = 'right';
         ctx.fillText(watermark, width - 40, footerY + 20);
         ctx.textAlign = 'left';
@@ -544,17 +557,38 @@ export const NewsCardGeneratorPage: React.FC = () => {
       setIsRendering(false);
     };
 
-    img.onload = drawContent;
-    img.onerror = () => drawContent();
-    if (img.complete) drawContent();
+    // Use cached image for immediate synchronous rendering if already loaded
+    const cached = imageCacheRef.current.get(imageUrl);
+    if (cached && cached.complete && cached.naturalWidth > 0) {
+      drawContent(cached);
+      return;
+    }
+
+    const img = new Image();
+    img.crossOrigin = 'anonymous';
+    img.src = imageUrl;
+    img.onload = () => {
+      imageCacheRef.current.set(imageUrl, img);
+      drawContent(img);
+    };
+    img.onerror = () => {
+      drawContent(null);
+    };
+    if (img.complete && img.naturalWidth > 0) {
+      imageCacheRef.current.set(imageUrl, img);
+      drawContent(img);
+    }
   };
 
   // Re-render canvas whenever relevant controls change
   useEffect(() => {
-    const timer = setTimeout(() => {
+    if ('fonts' in document) {
+      document.fonts.ready.then(() => {
+        renderCanvasCard();
+      });
+    } else {
       renderCanvasCard();
-    }, 120);
-    return () => clearTimeout(timer);
+    }
   }, [
     template, category, headline, subHeadline, reporter, dateText, imageUrl, 
     watermark, showWatermark, aspectRatio, fontFamily, badgeBgColor, highlightColor,
@@ -712,6 +746,24 @@ export const NewsCardGeneratorPage: React.FC = () => {
                 </button>
               ))}
             </div>
+          </div>
+
+          {/* Mobile Quick Preview Jump Anchor */}
+          <div className="lg:hidden mb-4">
+            <button
+              type="button"
+              onClick={() => {
+                const el = document.getElementById('news-card-canvas-preview-container');
+                el?.scrollIntoView({ behavior: 'smooth' });
+              }}
+              className="w-full py-2.5 px-3.5 rounded-xl bg-emerald-50 border border-emerald-200 text-[#009664] text-xs font-black flex items-center justify-between shadow-xs active:scale-[0.98] transition-all cursor-pointer"
+            >
+              <span className="flex items-center gap-2">
+                <span className="w-2.5 h-2.5 rounded-full bg-emerald-500 animate-pulse"></span>
+                কার্ডের লাইভ রূপ দেখতে ক্লিক করুন
+              </span>
+              <span className="text-[11px] font-bold bg-[#009664] text-white px-2 py-0.5 rounded-md shadow-2xs">প্রিভিউ নিচে ⬇</span>
+            </button>
           </div>
 
           {/* Workflow Tabs (1 to 4) with Full Bengali Labels on Mobile & Desktop */}
@@ -957,6 +1009,61 @@ export const NewsCardGeneratorPage: React.FC = () => {
                         placeholder="যেমন: আমাদের পুঠিয়ায় শুভ উদ্বোধন হতে যাচ্ছে *বিশেষ নিউজ কার্ড* জেনারেটর"
                         className="w-full bg-slate-50 border border-slate-200 rounded-xl px-3 py-2.5 text-xs font-bold text-slate-800 focus:outline-none focus:ring-2 focus:ring-[#009664]"
                       />
+                      <div className="flex items-center gap-1.5 flex-wrap pt-1.5">
+                        <span className="text-[10px] text-slate-400 font-bold">দ্রুত হাইলাইট:</span>
+                        <button
+                          type="button"
+                          onClick={() => {
+                            const raw = headline.replace(/\*/g, '').trim();
+                            const words = raw.split(/\s+/);
+                            if (words.length > 0) {
+                              words[0] = `*${words[0]}*`;
+                              setHeadline(words.join(' '));
+                            }
+                          }}
+                          className="px-2 py-0.5 rounded-md text-[10px] font-black bg-amber-50 text-amber-800 border border-amber-200 hover:bg-amber-100 transition-colors cursor-pointer"
+                        >
+                          ⭐ ১ম শব্দ
+                        </button>
+                        <button
+                          type="button"
+                          onClick={() => {
+                            const raw = headline.replace(/\*/g, '').trim();
+                            const words = raw.split(/\s+/);
+                            if (words.length >= 2) {
+                              const midIdx = Math.floor(words.length / 2);
+                              words[midIdx] = `*${words[midIdx]}*`;
+                              setHeadline(words.join(' '));
+                            }
+                          }}
+                          className="px-2 py-0.5 rounded-md text-[10px] font-black bg-amber-50 text-amber-800 border border-amber-200 hover:bg-amber-100 transition-colors cursor-pointer"
+                        >
+                          ⭐ মাঝের শব্দ
+                        </button>
+                        <button
+                          type="button"
+                          onClick={() => {
+                            const raw = headline.replace(/\*/g, '').trim();
+                            const words = raw.split(/\s+/);
+                            if (words.length > 0) {
+                              words[words.length - 1] = `*${words[words.length - 1]}*`;
+                              setHeadline(words.join(' '));
+                            }
+                          }}
+                          className="px-2 py-0.5 rounded-md text-[10px] font-black bg-amber-50 text-amber-800 border border-amber-200 hover:bg-amber-100 transition-colors cursor-pointer"
+                        >
+                          ⭐ শেষ শব্দ
+                        </button>
+                        {headline.includes('*') && (
+                          <button
+                            type="button"
+                            onClick={() => setHeadline(headline.replace(/\*/g, ''))}
+                            className="px-2 py-0.5 rounded-md text-[10px] font-bold bg-slate-100 text-slate-600 hover:bg-slate-200 transition-colors cursor-pointer"
+                          >
+                            মুছুন
+                          </button>
+                        )}
+                      </div>
                     </div>
 
                     <div>
@@ -1126,7 +1233,7 @@ export const NewsCardGeneratorPage: React.FC = () => {
             </div>
 
             {/* Right Canvas Live Preview Column (7 cols on lg) */}
-            <div className="lg:col-span-7 sticky top-24">
+            <div id="news-card-canvas-preview-container" className="lg:col-span-7 sticky top-24 scroll-mt-24">
               <div className="bg-white p-5 rounded-3xl border border-slate-100 shadow-lg shadow-slate-200/50 space-y-4">
                 <div className="flex items-center justify-between flex-wrap gap-2">
                   <div className="flex items-center gap-2">

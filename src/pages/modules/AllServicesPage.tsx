@@ -14,6 +14,13 @@ import BottomNavigation from '../../components/home/BottomNavigation';
 import { Sidebar } from '../../components/Sidebar';
 import { useAuth } from '../../contexts/AuthContext';
 import { UnifiedHeroHeader, UnifiedBottomCTA } from '../../components/common/UnifiedDesignSystem';
+import { EXCLUSIVE_FEATURES } from './ExclusiveFeaturesPage';
+
+// Convert number to Bengali digits
+const toBengaliNumber = (num: number | string): string => {
+  const bengaliDigits = ['০', '১', '২', '৩', '৪', '৫', '৬', '৭', '৮', '৯'];
+  return num.toString().replace(/\d/g, (d) => bengaliDigits[parseInt(d, 10)]);
+};
 
 // @ts-ignore
 import puthiaBg from "../../assets/images/puthia_temple_bg_1783616072369.jpg";
@@ -74,10 +81,10 @@ const AllServicesPage: React.FC = () => {
     {
       id: 'exclusive',
       title: 'এক্সক্লুসিভ ফিচার',
-      subtitle: 'ভ্রমণ ম্যাপ, আবহাওয়া, ওষুধের দাম ও স্মার্ট রিমাইন্ডার',
+      subtitle: 'ভ্রমণ ম্যাপ, নিউজ কার্ড, গাড়ি ভাড়া, আবহাওয়া ও আরও',
       icon: <Sparkles size={22} className="text-amber-500" strokeWidth={2.5} />,
       bg: 'bg-amber-50 border border-amber-100',
-      counterText: '(৪টি সেবা)',
+      counterText: `(${toBengaliNumber(EXCLUSIVE_FEATURES.length)}টি সেবা)`,
       lastUpdated: 'আজকে হালনাগাদ',
       path: '/exclusive-features'
     }

@@ -84,7 +84,33 @@ export const DEFAULT_64_SERVICES_GRID: HomepageGridServiceItem[] = [
 ];
 
 const FIRESTORE_DOC = 'site_content/homepage_services_grid';
-const EXCLUDED_SERVICE_IDS = new Set(['insurance', 'graveyard', 'agriculture', 'smart-map', 'news', 'news-card']);
+
+export const isExcludedHomepageService = (item: HomepageGridServiceItem): boolean => {
+  if (!item) return true;
+  const id = (item.id || '').toLowerCase().trim();
+  const label = (item.label || '').toLowerCase().trim();
+  const path = (item.path || '').toLowerCase().trim();
+
+  // Excluded service IDs
+  const excludedIds = new Set([
+    'insurance', 'graveyard', 'agriculture', 'smart-map',
+    'news', 'news-card', 'news-portals', 'news-portal', 'news_portal',
+    'newspaper', 'newspapers', 'news_card', 'newscard'
+  ]);
+  if (excludedIds.has(id)) return true;
+
+  // Excluded paths
+  if (path === '/news-portals' || path === '/news-card-generator' || path === '/smart-map' || path === '/agriculture' || path === '/insurance' || path === '/graveyard') {
+    return true;
+  }
+
+  // Excluded labels
+  if (label.includes('পত্রিকা') || label.includes('নিউজ কার্ড') || label.includes('নিউজ পোর্টাল')) {
+    return true;
+  }
+
+  return false;
+};
 
 export class ServicesGridService {
   /**
@@ -96,31 +122,33 @@ export class ServicesGridService {
       return onSnapshot(docRef, (docSnap) => {
         if (docSnap.exists() && Array.isArray(docSnap.data().items)) {
           const rawItems = docSnap.data().items as HomepageGridServiceItem[];
-          const enriched = rawItems.map(item => {
-            let badgeColor = item.badgeColor;
-            if (item.badge === 'লাইভ' || item.badge === 'জরুরি' || item.badge === '২৪/৭' || item.id === 'smart-map' || item.id === 'blood' || item.id === 'emergency') {
-              badgeColor = 'bg-red-600 text-white';
-            }
-            return {
-              ...item,
-              enabled: EXCLUDED_SERVICE_IDS.has(item.id) ? false : item.enabled,
-              badgeColor: badgeColor || (item.badge ? 'bg-red-600 text-white' : undefined),
-              // Ensure uniform green theme across all services
-              bgColor: item.bgColor?.includes('text-white') ? item.bgColor : 'bg-emerald-50 text-emerald-700'
-            };
-          });
+          const enriched = rawItems
+            .filter(item => !isExcludedHomepageService(item))
+            .map(item => {
+              let badgeColor = item.badgeColor;
+              if (item.badge === 'লাইভ' || item.badge === 'জরুরি' || item.badge === '২৪/৭' || item.id === 'smart-map' || item.id === 'blood' || item.id === 'emergency') {
+                badgeColor = 'bg-red-600 text-white';
+              }
+              return {
+                ...item,
+                enabled: item.enabled,
+                badgeColor: badgeColor || (item.badge ? 'bg-red-600 text-white' : undefined),
+                // Ensure uniform green theme across all services
+                bgColor: item.bgColor?.includes('text-white') ? item.bgColor : 'bg-emerald-50 text-emerald-700'
+              };
+            });
           const sorted = enriched.sort((a, b) => a.order - b.order);
           callback(sorted);
         } else {
-          callback(DEFAULT_64_SERVICES_GRID);
+          callback(DEFAULT_64_SERVICES_GRID.filter(i => !isExcludedHomepageService(i)));
         }
       }, (error) => {
         console.warn('[ServicesGridService] Firestore snapshot error, using default green grid:', error);
-        callback(DEFAULT_64_SERVICES_GRID);
+        callback(DEFAULT_64_SERVICES_GRID.filter(i => !isExcludedHomepageService(i)));
       });
     } catch (e) {
       console.warn('[ServicesGridService] Setup error, falling back to default green grid:', e);
-      callback(DEFAULT_64_SERVICES_GRID);
+      callback(DEFAULT_64_SERVICES_GRID.filter(i => !isExcludedHomepageService(i)));
       return () => {};
     }
   }

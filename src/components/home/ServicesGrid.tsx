@@ -11,7 +11,7 @@ import {
 import { motion } from "motion/react";
 import { useNavigate } from "react-router-dom";
 import SectionHeader from "./SectionHeader";
-import { ServicesGridService, HomepageGridServiceItem, DEFAULT_64_SERVICES_GRID } from "../../services/servicesGridService";
+import { ServicesGridService, HomepageGridServiceItem, DEFAULT_64_SERVICES_GRID, isExcludedHomepageService } from "../../services/servicesGridService";
 
 // Helper map to convert string icon names to Lucide icon components
 const ICON_MAP: Record<string, React.ReactNode> = {
@@ -104,17 +104,15 @@ const getServiceBgColor = (item: HomepageGridServiceItem): string => {
   return 'bg-emerald-50 text-emerald-700 border border-emerald-100/70';
 };
 
-const EXCLUDED_SERVICE_IDS = new Set(['insurance', 'graveyard', 'agriculture', 'smart-map', 'news', 'news-card']);
-
 const ServicesGrid: React.FC<ServicesGridProps> = ({ onServiceClick, hideHeader = false }) => {
   const navigate = useNavigate();
   const [services, setServices] = useState<HomepageGridServiceItem[]>(() => 
-    DEFAULT_64_SERVICES_GRID.filter(item => item.enabled && !EXCLUDED_SERVICE_IDS.has(item.id))
+    DEFAULT_64_SERVICES_GRID.filter(item => item.enabled && !isExcludedHomepageService(item))
   );
 
   useEffect(() => {
     const unsubscribe = ServicesGridService.subscribeToServicesGrid((items) => {
-      setServices(items.filter(item => item.enabled && !EXCLUDED_SERVICE_IDS.has(item.id)));
+      setServices(items.filter(item => item.enabled && !isExcludedHomepageService(item)));
     });
     return () => {
       if (typeof unsubscribe === 'function') {
