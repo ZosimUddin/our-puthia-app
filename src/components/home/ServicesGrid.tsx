@@ -104,7 +104,7 @@ const getServiceBgColor = (item: HomepageGridServiceItem): string => {
   return 'bg-emerald-50 text-emerald-700 border border-emerald-100/70';
 };
 
-const EXCLUDED_SERVICE_IDS = new Set(['insurance', 'graveyard', 'agriculture', 'smart-map']);
+const EXCLUDED_SERVICE_IDS = new Set(['insurance', 'graveyard', 'agriculture', 'smart-map', 'news', 'news-card']);
 
 const ServicesGrid: React.FC<ServicesGridProps> = ({ onServiceClick, hideHeader = false }) => {
   const navigate = useNavigate();

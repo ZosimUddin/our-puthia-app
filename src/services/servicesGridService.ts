@@ -46,8 +46,8 @@ export const DEFAULT_64_SERVICES_GRID: HomepageGridServiceItem[] = [
   { id: "video", label: "ভিডিও ও ছবি", iconName: "Play", bgColor: "bg-emerald-50 text-emerald-700", path: "/video-gallery", enabled: true, order: 28, category: "অন্যান্য" },
   { id: "parlor", label: "পার্লার", iconName: "Sparkles", bgColor: "bg-emerald-50 text-emerald-700", path: "/parlor", enabled: true, order: 29, category: "ব্যবসা" },
   { id: "mosque", label: "মসজিদ ও ধর্মীয়", iconName: "Moon", bgColor: "bg-emerald-50 text-emerald-700", path: "/mosques", enabled: true, order: 30, category: "ধর্মীয়" },
-  { id: "news", label: "পত্রিকা ও সংবাদ", iconName: "Newspaper", bgColor: "bg-[#009664] text-white shadow-xs", path: "/news-portals", enabled: true, order: 31, category: "মিডিয়া" },
-  { id: "news-card", label: "নিউজ কার্ড মেকার", iconName: "Sparkles", bgColor: "bg-rose-50 text-rose-700", path: "/news-card-generator", enabled: true, order: 31.5, category: "মিডিয়া", badge: "নতুন", badgeColor: "bg-rose-600 text-white" },
+  { id: "news", label: "পত্রিকা ও সংবাদ", iconName: "Newspaper", bgColor: "bg-[#009664] text-white shadow-xs", path: "/news-portals", enabled: false, order: 31, category: "মিডিয়া" },
+  { id: "news-card", label: "নিউজ কার্ড মেকার", iconName: "Sparkles", bgColor: "bg-rose-50 text-rose-700", path: "/news-card-generator", enabled: false, order: 31.5, category: "মিডিয়া", badge: "নতুন", badgeColor: "bg-rose-600 text-white" },
   { id: "journalists", label: "সাংবাদিক", iconName: "Mic", bgColor: "bg-emerald-50 text-emerald-700", path: "/journalists", enabled: true, order: 32, category: "মিডিয়া" },
   { id: "content-creator", label: "কনটেন্ট ক্রিয়েটর", iconName: "Video", bgColor: "bg-emerald-50 text-emerald-700", path: "/content-creators", enabled: true, order: 33, category: "মিডিয়া" },
   { id: "mela", label: "মেলা ও উৎসব", iconName: "Tent", bgColor: "bg-emerald-50 text-emerald-700", path: "/mela", enabled: true, order: 34, category: "অন্যান্য" },
@@ -84,7 +84,7 @@ export const DEFAULT_64_SERVICES_GRID: HomepageGridServiceItem[] = [
 ];
 
 const FIRESTORE_DOC = 'site_content/homepage_services_grid';
-const EXCLUDED_SERVICE_IDS = new Set(['insurance', 'graveyard', 'agriculture', 'smart-map']);
+const EXCLUDED_SERVICE_IDS = new Set(['insurance', 'graveyard', 'agriculture', 'smart-map', 'news', 'news-card']);
 
 export class ServicesGridService {
   /**
