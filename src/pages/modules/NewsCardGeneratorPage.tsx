@@ -761,7 +761,7 @@ export const NewsCardGeneratorPage: React.FC = () => {
                       <span className="flex items-center gap-1.5"><Palette size={16} className="text-[#009664]" /> টেমপ্লেট লেআউট ডিজাইন</span>
                       <span className="text-[10px] text-slate-400">৬টি প্রফেশনাল থিম</span>
                     </label>
-                    <div className="grid grid-cols-3 gap-2.5">
+                    <div className="grid grid-cols-2 sm:grid-cols-3 gap-2.5">
                       {[
                         { id: 'red_corner', name: 'রেড কর্নার', color: 'bg-red-500' },
                         { id: 'breaking_red', name: 'ব্রেকিং নিউজ', color: 'bg-rose-700' },
@@ -775,7 +775,7 @@ export const NewsCardGeneratorPage: React.FC = () => {
                           onClick={() => setTemplate(t.id as CardTemplate)}
                           className={`p-2.5 rounded-xl border text-center transition-all ${
                             template === t.id 
-                              ? 'border-[#009664] bg-emerald-50/60 shadow-xs ring-2 ring-[#009664]/20' 
+                              ? 'border-[#009664] bg-emerald-50/60 shadow-xs ring-2 ring-[#009664]/30' 
                               : 'border-slate-100 hover:border-slate-200 bg-slate-50/50'
                           }`}
                         >
@@ -804,8 +804,10 @@ export const NewsCardGeneratorPage: React.FC = () => {
                           <button
                             key={f.id}
                             onClick={() => setFontFamily(f.id as any)}
-                            className={`p-2 rounded-xl text-xs font-bold border transition-all ${
-                              fontFamily === f.id ? 'bg-emerald-50 border-[#009664] text-[#009664]' : 'bg-slate-50 border-slate-200 text-slate-700'
+                            className={`p-2.5 rounded-xl text-xs font-bold border transition-all text-center ${
+                              fontFamily === f.id 
+                                ? 'bg-emerald-50/80 border-[#009664] text-[#009664] ring-2 ring-[#009664]/20' 
+                                : 'bg-slate-50 border-slate-200 text-slate-700 hover:bg-slate-100'
                             }`}
                           >
                             {f.name}
@@ -818,7 +820,7 @@ export const NewsCardGeneratorPage: React.FC = () => {
                       <div>
                         <label className="text-[11px] font-bold text-slate-600 mb-1 flex items-center justify-between">
                           <span>শিরোনামের সাইজ</span>
-                          <span className="text-[#009664]">{toBengaliNumber(headlineFontSize)}px</span>
+                          <span className="text-[#009664] font-black">{toBengaliNumber(headlineFontSize)}px</span>
                         </label>
                         <input
                           type="range"
@@ -826,13 +828,13 @@ export const NewsCardGeneratorPage: React.FC = () => {
                           max="60"
                           value={headlineFontSize}
                           onChange={(e) => setHeadlineFontSize(Number(e.target.value))}
-                          className="w-full accent-[#009664] cursor-pointer"
+                          className="w-full accent-[#009664] cursor-pointer h-2 bg-slate-100 rounded-lg"
                         />
                       </div>
                       <div>
                         <label className="text-[11px] font-bold text-slate-600 mb-1 flex items-center justify-between">
                           <span>উপ-শিরোনামের সাইজ</span>
-                          <span className="text-[#009664]">{toBengaliNumber(subHeadlineFontSize)}px</span>
+                          <span className="text-[#009664] font-black">{toBengaliNumber(subHeadlineFontSize)}px</span>
                         </label>
                         <input
                           type="range"
@@ -840,50 +842,77 @@ export const NewsCardGeneratorPage: React.FC = () => {
                           max="38"
                           value={subHeadlineFontSize}
                           onChange={(e) => setSubHeadlineFontSize(Number(e.target.value))}
-                          className="w-full accent-[#009664] cursor-pointer"
+                          className="w-full accent-[#009664] cursor-pointer h-2 bg-slate-100 rounded-lg"
                         />
                       </div>
                     </div>
 
                     {/* Colors */}
-                    <div className="grid grid-cols-2 gap-3 pt-1">
-                      <div>
-                        <label className="text-[11px] font-bold text-slate-600 mb-1 block">ক্যাটাগরি ব্যাকগ্রাউন্ড</label>
-                        <div className="flex items-center gap-1.5">
-                          {['#009664', '#dc2626', '#2563eb', '#1e293b', '#d97706'].map((c) => (
-                            <button
-                              key={c}
-                              onClick={() => setBadgeBgColor(c)}
-                              className={`w-6 h-6 rounded-full transition-transform ${badgeBgColor === c ? 'scale-125 ring-2 ring-slate-800' : ''}`}
-                              style={{ backgroundColor: c }}
+                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 pt-2">
+                      <div className="bg-slate-50/70 p-3 rounded-xl border border-slate-100">
+                        <label className="text-[11px] font-bold text-slate-700 mb-2 block">ক্যাটাগরি ব্যাকগ্রাউন্ড কালার</label>
+                        <div className="flex items-center gap-2 flex-wrap">
+                          {['#009664', '#dc2626', '#2563eb', '#1e293b', '#d97706'].map((c) => {
+                            const isSelected = badgeBgColor.toLowerCase() === c.toLowerCase();
+                            return (
+                              <button
+                                key={c}
+                                type="button"
+                                onClick={() => setBadgeBgColor(c)}
+                                className={`w-7 h-7 rounded-full flex items-center justify-center transition-all shrink-0 cursor-pointer ${
+                                  isSelected ? 'ring-2 ring-offset-2 ring-slate-800 shadow-xs' : 'hover:opacity-90'
+                                }`}
+                                style={{ backgroundColor: c }}
+                                title={c}
+                              >
+                                {isSelected && <Check size={14} className="text-white drop-shadow-xs" />}
+                              </button>
+                            );
+                          })}
+                          <div className="relative w-7 h-7 rounded-full overflow-hidden border border-slate-300 shadow-2xs shrink-0 cursor-pointer flex items-center justify-center bg-white">
+                            <input 
+                              type="color" 
+                              value={badgeBgColor} 
+                              onChange={(e) => setBadgeBgColor(e.target.value)} 
+                              className="absolute -inset-2 w-11 h-11 cursor-pointer bg-transparent border-0 opacity-0"
+                              title="পছন্দের কালার বাছাই করুন"
                             />
-                          ))}
-                          <input 
-                            type="color" 
-                            value={badgeBgColor} 
-                            onChange={(e) => setBadgeBgColor(e.target.value)} 
-                            className="w-6 h-6 rounded-md cursor-pointer border-0"
-                          />
+                            <Palette size={14} className="text-slate-600 pointer-events-none" />
+                          </div>
                         </div>
                       </div>
 
-                      <div>
-                        <label className="text-[11px] font-bold text-slate-600 mb-1 block">হাইলাইট ব্যাকগ্রাউন্ড</label>
-                        <div className="flex items-center gap-1.5">
-                          {['#fef08a', '#fca5a5', '#a7f3d0', '#bae6fd', '#fed7aa'].map((c) => (
-                            <button
-                              key={c}
-                              onClick={() => setHighlightColor(c)}
-                              className={`w-6 h-6 rounded-full transition-transform ${highlightColor === c ? 'scale-125 ring-2 ring-slate-800' : ''}`}
-                              style={{ backgroundColor: c }}
+                      <div className="bg-slate-50/70 p-3 rounded-xl border border-slate-100">
+                        <label className="text-[11px] font-bold text-slate-700 mb-2 block">হাইলাইট ব্যাকগ্রাউন্ড কালার</label>
+                        <div className="flex items-center gap-2 flex-wrap">
+                          {['#fef08a', '#fca5a5', '#a7f3d0', '#bae6fd', '#fed7aa'].map((c) => {
+                            const isSelected = highlightColor.toLowerCase() === c.toLowerCase();
+                            const isLight = ['#fef08a', '#fed7aa', '#a7f3d0', '#bae6fd'].includes(c);
+                            return (
+                              <button
+                                key={c}
+                                type="button"
+                                onClick={() => setHighlightColor(c)}
+                                className={`w-7 h-7 rounded-full flex items-center justify-center transition-all shrink-0 cursor-pointer ${
+                                  isSelected ? 'ring-2 ring-offset-2 ring-slate-800 shadow-xs' : 'hover:opacity-90'
+                                }`}
+                                style={{ backgroundColor: c }}
+                                title={c}
+                              >
+                                {isSelected && <Check size={14} className={isLight ? "text-slate-800" : "text-white"} />}
+                              </button>
+                            );
+                          })}
+                          <div className="relative w-7 h-7 rounded-full overflow-hidden border border-slate-300 shadow-2xs shrink-0 cursor-pointer flex items-center justify-center bg-white">
+                            <input 
+                              type="color" 
+                              value={highlightColor} 
+                              onChange={(e) => setHighlightColor(e.target.value)} 
+                              className="absolute -inset-2 w-11 h-11 cursor-pointer bg-transparent border-0 opacity-0"
+                              title="পছন্দের কালার বাছাই করুন"
                             />
-                          ))}
-                          <input 
-                            type="color" 
-                            value={highlightColor} 
-                            onChange={(e) => setHighlightColor(e.target.value)} 
-                            className="w-6 h-6 rounded-md cursor-pointer border-0"
-                          />
+                            <Palette size={14} className="text-slate-600 pointer-events-none" />
+                          </div>
                         </div>
                       </div>
                     </div>
