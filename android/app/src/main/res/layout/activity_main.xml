@@ -1,12 +1,58 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.coordinatorlayout.widget.CoordinatorLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".MainActivity">
+    android:background="@color/color_bg_main">
 
-    <WebView
+    <!-- Top Loading Progress Bar -->
+    <ProgressBar
+        android:id="@+id/progressBar"
+        style="?android:attr/progressBarStyleHorizontal"
         android:layout_width="match_parent"
-        android:layout_height="match_parent" />
-</androidx.coordinatorlayout.widget.CoordinatorLayout>
+        android:layout_height="3.5dp"
+        android:layout_alignParentTop="true"
+        android:indeterminate="false"
+        android:max="100"
+        android:progressDrawable="@drawable/bg_progressbar"
+        android:visibility="gone"
+        android:elevation="8dp" />
+
+    <!-- Swipe to Refresh & WebView -->
+    <androidx.swiperefreshlayout.widget.SwipeRefreshLayout
+        android:id="@+id/swipeRefreshLayout"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_below="@id/progressBar">
+
+        <WebView
+            android:id="@+id/webView"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:overScrollMode="never" />
+
+    </androidx.swiperefreshlayout.widget.SwipeRefreshLayout>
+
+    <!-- Floating Native Share Button (Bottom Right) -->
+    <ImageButton
+        android:id="@+id/btnShare"
+        android:layout_width="50dp"
+        android:layout_height="50dp"
+        android:layout_alignParentEnd="true"
+        android:layout_alignParentBottom="true"
+        android:layout_marginEnd="18dp"
+        android:layout_marginBottom="72dp"
+        android:background="@drawable/bg_button_share"
+        android:contentDescription="@string/btn_share"
+        android:elevation="6dp"
+        android:src="@drawable/ic_share"
+        android:visibility="gone" />
+
+    <!-- Offline / Network Error Screen Overlay -->
+    <include
+        android:id="@+id/layoutOffline"
+        layout="@layout/layout_offline"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:visibility="gone" />
+
+</RelativeLayout>
