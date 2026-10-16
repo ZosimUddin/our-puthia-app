@@ -253,6 +253,28 @@ export const AdminDashboard: React.FC = () => {
         console.warn("Shops load error", e);
       }
 
+      // Educational Institutions Pending Check
+      try {
+        const eduSnap = await getDocs(collection(db, "educational_institutions"));
+        eduSnap.docs.forEach((doc) => {
+          const d = doc.data();
+          if (!d.status || d.status === 'pending') {
+            if (pendingItems.length < 5) {
+              pendingItems.push({
+                id: doc.id,
+                title: d.institutionName || d.name || "নতুন শিক্ষা প্রতিষ্ঠান",
+                category: "শিক্ষা প্রতিষ্ঠান অনুমোদন",
+                submitter: d.userName || "নাগরিক",
+                link: "/super-admin/universal?tab=services&key=education&status=pending",
+                date: d.createdAt ? new Date(d.createdAt).toLocaleDateString("bn-BD") : "সম্প্রতি"
+              });
+            }
+          }
+        });
+      } catch (e) {
+        console.warn("Edu load error", e);
+      }
+
       // 11. Reports
       try {
         const rSnap = await getDocs(collection(db, "reports"));
