@@ -798,26 +798,26 @@ export const UniversalAdminManager: React.FC = () => {
               </div>
 
               {/* Status Filter Tabs */}
-              <div className="flex items-center gap-1.5 overflow-x-auto no-scrollbar pt-2 border-t border-slate-100">
+              <div className="flex items-center gap-2 overflow-x-auto no-scrollbar pt-3 border-t border-slate-100 pb-1">
                 {[
                   { id: 'all', label: 'সবগুলো', count: serviceItems.length },
-                  { id: 'pending', label: '⏳ অপেক্ষমাণ (Pending)', count: pendingCount },
-                  { id: 'approved', label: '✅ অনুমোদিত (Approved)', count: approvedCount },
-                  { id: 'correction_required', label: '⚠️ সংশোধন প্রয়োজন', count: correctionCount },
-                  { id: 'rejected', label: '❌ বাতিল (Rejected)', count: rejectedCount },
+                  { id: 'pending', label: '⏳ অপেক্ষমাণ', count: pendingCount },
+                  { id: 'approved', label: '✅ অনুমোদিত', count: approvedCount },
+                  { id: 'correction_required', label: '⚠️ সংশোধন', count: correctionCount },
+                  { id: 'rejected', label: '❌ বাতিল', count: rejectedCount },
                 ].map((st) => (
                   <button
                     key={st.id}
                     type="button"
                     onClick={() => setVerificationStatusFilter(st.id)}
-                    className={`py-1.5 px-3 rounded-xl text-xs font-bold transition-all border-none cursor-pointer flex items-center gap-1.5 ${
+                    className={`py-2 px-3 rounded-xl text-xs font-black transition-all border-none cursor-pointer flex items-center gap-1.5 shrink-0 whitespace-nowrap ${
                       verificationStatusFilter === st.id
                         ? 'bg-[#006a4e] text-white shadow-xs'
-                        : 'bg-slate-100 text-slate-600 hover:bg-slate-200'
+                        : 'bg-slate-100 text-slate-700 hover:bg-slate-200'
                     }`}
                   >
                     <span>{st.label}</span>
-                    <span className="text-[10px] bg-black/10 px-1.5 py-0.2 rounded-md font-bold">
+                    <span className="text-[10px] bg-black/15 px-1.5 py-0.5 rounded-md font-bold">
                       {st.count}
                     </span>
                   </button>
