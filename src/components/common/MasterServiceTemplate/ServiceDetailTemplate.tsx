@@ -256,7 +256,7 @@ export const ServiceDetailTemplate: React.FC<ServiceDetailTemplateProps> = ({
 
   // Helper to categorize serviceKey into specific page-type groups
   const getCategoryGroup = (key: string): string => {
-    if (['doctor', 'coaching', 'lawyer', 'entrepreneur', 'freelancing', 'content-creator'].includes(key)) return 'doctor_professional';
+    if (['doctor', 'lawyer', 'entrepreneur', 'freelancing', 'content-creator'].includes(key)) return 'doctor_professional';
     if (['health', 'hospital', 'community-clinic', 'orphanage'].includes(key)) return 'hospital';
     if (['diagnostic', 'vaccination'].includes(key)) return 'diagnostic';
     if (key === 'pharmacy') return 'pharmacy';
@@ -267,7 +267,7 @@ export const ServiceDetailTemplate: React.FC<ServiceDetailTemplateProps> = ({
     if (['rent-a-car', 'car-rental', 'vehicle-rental'].includes(key)) return 'car_rental';
     if (['petrol-pump'].includes(key)) return 'petrol_pump';
     if (['bank', 'digital-center', 'it-center', 'mobile-banking', 'insurance'].includes(key)) return 'bank';
-    if (['school', 'college', 'computer-training', 'library', 'training', 'education'].includes(key)) return 'education';
+    if (['school', 'college', 'coaching', 'computer-training', 'library', 'training', 'education'].includes(key)) return 'education';
     if (['house-rent'].includes(key)) return 'house_rent';
     if (['land-sale'].includes(key)) return 'land_sale';
     if (['mistri'].includes(key)) return 'mistri';
