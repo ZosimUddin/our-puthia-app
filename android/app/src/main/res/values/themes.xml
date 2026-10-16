@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- Base application theme without ActionBar -->
+    <style name="Theme.OurPuthiaApp" parent="Theme.AppCompat.Light.NoActionBar">
+        <item name="colorPrimary">@color/brand_emerald_600</item>
+        <item name="colorPrimaryDark">@color/brand_emerald_900</item>
+        <item name="colorAccent">@color/brand_emerald_500</item>
+        <item name="android:windowBackground">@color/color_bg_main</item>
+        <item name="android:statusBarColor">@color/brand_emerald_900</item>
+        <item name="android:navigationBarColor">@color/white</item>
+    </style>
+
+    <!-- Splash Screen theme -->
+    <style name="Theme.OurPuthiaApp.Splash" parent="Theme.AppCompat.Light.NoActionBar">
+        <item name="android:windowBackground">@drawable/bg_splash</item>
+        <item name="android:statusBarColor">@color/brand_emerald_900</item>
+        <item name="android:navigationBarColor">@color/brand_emerald_900</item>
+    </style>
+</resources>
