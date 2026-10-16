@@ -642,34 +642,90 @@ export const DomainSpecificDetails: React.FC<DomainSpecificDetailsProps> = ({
 
       {/* 11. EDUCATION & COACHING & TRAINING */}
       {group === 'education' && (
-        <div className="bg-white rounded-3xl p-5 shadow-sm border border-slate-100 space-y-4">
-          <h3 className="text-xs font-black uppercase tracking-wider text-slate-400 flex items-center gap-1.5">
-            <GraduationCap size={15} className="text-[#006a4e]" />
-            <span>কোর্স, বিভাগ ও প্রতিষ্ঠান তথ্য</span>
-          </h3>
+        <div className="space-y-4">
+          {/* 1. Basic Info & Overview */}
+          <div className="bg-white rounded-3xl p-5 shadow-sm border border-slate-100 space-y-4">
+            <h3 className="text-xs font-black uppercase tracking-wider text-slate-400 flex items-center gap-1.5">
+              <GraduationCap size={15} className="text-[#006a4e]" />
+              <span>শিক্ষা প্রতিষ্ঠান ও কোচিং বিবরণী</span>
+            </h3>
 
-          <div className="p-4 bg-slate-50 rounded-2xl border border-slate-100 space-y-2.5 text-xs font-bold">
-            {item.eiin && (
-              <div className="flex justify-between border-b border-slate-200 pb-2">
-                <span className="text-slate-500">EIIN নম্বর:</span>
-                <span className="text-slate-900">{item.eiin}</span>
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 text-xs">
+              {(item.headmaster || item.director || item.headTeacher) && (
+                <div className="p-3 bg-slate-50 rounded-2xl border border-slate-100 space-y-1">
+                  <span className="text-slate-400 text-[10px] block font-bold">পরিচালক / অধ্যক্ষ / শিক্ষক:</span>
+                  <span className="font-black text-slate-800 block text-sm">
+                    {item.headmaster || item.director || item.headTeacher}
+                  </span>
+                </div>
+              )}
+
+              {item.establishmentYear && (
+                <div className="p-3 bg-slate-50 rounded-2xl border border-slate-100 space-y-1">
+                  <span className="text-slate-400 text-[10px] block font-bold">প্রতিষ্ঠার সাল:</span>
+                  <span className="font-black text-emerald-800 block text-sm">
+                    {item.establishmentYear}
+                  </span>
+                </div>
+              )}
+
+              {item.eiin && (
+                <div className="p-3 bg-slate-50 rounded-2xl border border-slate-100 space-y-1">
+                  <span className="text-slate-400 text-[10px] block font-bold">EIIN নম্বর:</span>
+                  <span className="font-black text-slate-800 block">{item.eiin}</span>
+                </div>
+              )}
+
+              {item.coachingCategory && (
+                <div className="p-3 bg-slate-50 rounded-2xl border border-slate-100 space-y-1">
+                  <span className="text-slate-400 text-[10px] block font-bold">ক্যাটাগরি:</span>
+                  <span className="font-black text-[#006a4e] block">{item.coachingCategory}</span>
+                </div>
+              )}
+            </div>
+
+            {/* Description / Bio */}
+            {(item.description || item.bio || item.about) && (
+              <div className="p-3.5 bg-slate-50 rounded-2xl border border-slate-100 text-xs space-y-1">
+                <span className="font-bold text-slate-500 block">বিস্তারিত বিবরণ:</span>
+                <p className="text-slate-700 font-medium leading-relaxed">
+                  {item.description || item.bio || item.about}
+                </p>
               </div>
             )}
-            {item.courses && (
-              <div className="flex justify-between border-b border-slate-200 pb-2">
-                <span className="text-slate-500">প্রশিক্ষণ কোর্স:</span>
-                <span className="text-slate-900">{item.courses}</span>
+          </div>
+
+          {/* 2. Courses & Subjects Offered */}
+          {(item.courses || item.coursesOffered || item.subjects) && (
+            <div className="bg-white rounded-3xl p-5 shadow-sm border border-slate-100 space-y-3">
+              <h3 className="text-xs font-black uppercase tracking-wider text-slate-400 flex items-center gap-1.5">
+                <BookOpen size={15} className="text-[#006a4e]" />
+                <span>প্রশিক্ষণ কোর্স ও পাঠদানের বিষয়সমূহ</span>
+              </h3>
+
+              <div className="p-4 bg-emerald-50/60 rounded-2xl border border-emerald-100 text-xs text-slate-800 font-bold space-y-2">
+                <div className="flex items-start gap-2">
+                  <span className="text-[#006a4e] shrink-0 mt-0.5">📚</span>
+                  <span className="leading-relaxed">
+                    {item.courses || item.coursesOffered || item.subjects}
+                  </span>
+                </div>
               </div>
-            )}
-            {item.coursesOffered && (
-              <div className="flex justify-between border-b border-slate-200 pb-2">
-                <span className="text-slate-500">পাঠদানের বিষয়:</span>
-                <span className="text-slate-900">{item.coursesOffered}</span>
-              </div>
-            )}
-            <div className="flex justify-between">
-              <span className="text-slate-500">ক্লাস ও অফিস সময়:</span>
-              <span className="text-slate-800">{timeStr || 'সকাল ৯:০০ AM – বিকাল ৪:০০ PM'}</span>
+            </div>
+          )}
+
+          {/* 3. Schedule & Office Timing */}
+          <div className="bg-white rounded-3xl p-5 shadow-sm border border-slate-100 space-y-3">
+            <h3 className="text-xs font-black uppercase tracking-wider text-slate-400 flex items-center gap-1.5">
+              <Clock size={15} className="text-[#006a4e]" />
+              <span>ক্লাস ও অফিস সময়সূচি</span>
+            </h3>
+
+            <div className="p-3.5 bg-slate-50 rounded-2xl border border-slate-100 text-xs flex items-center gap-2">
+              <Clock size={16} className="text-[#006a4e] shrink-0" />
+              <span className="font-black text-slate-800">
+                {timeStr || item.classTiming || item.batchSchedule || 'সকাল ৯:০০ AM – বিকাল ৪:০০ PM'}
+              </span>
             </div>
           </div>
         </div>
