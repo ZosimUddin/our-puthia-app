@@ -17,6 +17,7 @@ import {
 import { motion } from 'motion/react';
 import defaultAppLogo from '../../assets/images/puthia_official_icon_logo.jpg';
 import fullOfficialLogo from '../../assets/images/puthia_official_full_logo.jpg';
+import { AdminQuickActionsSidebarWidget } from '../admin/AdminQuickActionsSidebarWidget';
 
 interface SidebarItemProps {
   to: string;
@@ -131,6 +132,9 @@ export const DesktopSidebar: React.FC<{ isCollapsed: boolean; onToggle: () => vo
           )}
           <SidebarItem to="/dashboard" icon={<LayoutDashboard size={26} />} label="ড্যাশবোর্ড" isCollapsed={isCollapsed} />
         </div>
+
+        {/* Admin Quick Actions */}
+        <AdminQuickActionsSidebarWidget isCollapsed={isCollapsed} />
       </div>
 
       {/* Footer / App Version */}

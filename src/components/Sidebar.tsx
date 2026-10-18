@@ -8,6 +8,7 @@ import { useSiteSettings } from '../context/SiteSettingsContext';
 import { SiteContentService } from '../services/siteContentService';
 import { CitizenDrawerMenuItem } from '../types';
 import RoleBottomSheet from './home/RoleBottomSheet';
+import { AdminQuickActionsSidebarWidget } from './admin/AdminQuickActionsSidebarWidget';
 import { 
   Home, Landmark, User, Wallet, GraduationCap, Sprout, HeartPulse, 
   Bus, Train, Car, Bike, Map as MapIcon, Plane, Fuel, Briefcase, HandHelping, ShieldAlert, Users, Calendar, HelpCircle, 
@@ -327,6 +328,9 @@ export function Sidebar({
               </button>
             </div>
           )}
+
+          {/* Quick Actions Menu for Admins */}
+          <AdminQuickActionsSidebarWidget onItemClick={onClose} />
 
           {/* ========================================================================= */}
           {/* 2. FAST ACTION BUTTONS (২. ফাস্ট অ্যাকশন বাটন - ৩টি কার্ড)                */}

@@ -16,6 +16,7 @@ import { Link, useLocation, Outlet, useNavigate } from 'react-router-dom';
 import { useAuth } from '../../contexts/AuthContext';
 import toast from 'react-hot-toast';
 import puthiaIconLogo from '../../assets/images/puthia_official_icon_logo.jpg';
+import { AdminQuickActionsSidebarWidget } from './AdminQuickActionsSidebarWidget';
 
 interface NavSubItem {
   name: string;
@@ -695,7 +696,10 @@ const AdminLayout: React.FC = () => {
         </div>
 
         {/* Dynamic Nav Menu */}
-        <div className="flex-1 overflow-y-auto py-4 px-3 space-y-6 custom-scrollbar">
+        <div className="flex-1 overflow-y-auto py-4 px-3 space-y-5 custom-scrollbar">
+          {/* Admin Quick Actions Widget */}
+          <AdminQuickActionsSidebarWidget onItemClick={() => setSidebarOpen(false)} />
+
           {visibleSections.map((section, sIdx) => (
             <div key={sIdx} className="space-y-1">
               {/* Section Header */}
