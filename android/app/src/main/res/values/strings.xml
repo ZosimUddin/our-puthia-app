@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">আমাদের পুঠিয়া</string>
+    <string name="package_name">com.ourputhia.app</string>
+    <string name="splash_subtitle">ঐতিহ্য থেকে ডিজিটাল ভবিষ্যতের পথে</string>
+    <string name="splash_footer">উপজেলার প্রথম সমন্বিত ডিজিটাল প্ল্যাটফর্ম</string>
+
+    <string name="offline_title">ইন্টারনেট সংযোগ নেই</string>
+    <string name="offline_message">আপনার ডিভাইসের ওয়াইফাই অথবা মোবাইল ডাটা চালু আছে কিনা পরীক্ষা করুন এবং পুনরায় চেষ্টা করুন।</string>
+    <string name="btn_retry">পুনরায় চেষ্টা করুন</string>
+    <string name="btn_share">শেয়ার করুন</string>
+</resources>
