@@ -42,6 +42,40 @@ export const UniversalAdminManager: React.FC = () => {
 
   // Service Verification State
   const allServiceKeys = useMemo(() => Object.keys(ALL_SERVICES_CONFIG), []);
+
+  // Categorized Service Groups for clean, organized dropdown selection
+  const groupedServiceKeys = useMemo(() => {
+    const groups: { label: string; keys: string[] }[] = [
+      { label: "🩺 স্বাস্থ্য ও চিকিৎসা সেবা", keys: [] },
+      { label: "🎓 শিক্ষা, ক্যারিয়ার ও প্রশিক্ষণ", keys: [] },
+      { label: "🏪 ব্যবসা, দোকান ও বাণিজ্য", keys: [] },
+      { label: "🚗 বাসা ভাড়া, জমি ও পরিবহন", keys: [] },
+      { label: "🚨 জরুরি, আইন ও সরকারি সেবা", keys: [] },
+      { label: "🌾 কৃষি, সমাজ ও নাগরিক সেবা", keys: [] }
+    ];
+
+    allServiceKeys.forEach((key) => {
+      const k = key.toLowerCase();
+      const cfg = ALL_SERVICES_CONFIG[key];
+      const title = (cfg?.title || "").toLowerCase();
+
+      if (k.includes('doctor') || k.includes('hospital') || k.includes('diagnostic') || k.includes('pharmacy') || k.includes('clinic') || k.includes('blood') || k.includes('ambulance') || k.includes('vaccin') || title.includes('ডাক্তার') || title.includes('হাসপাতাল') || title.includes('ফার্মেসি') || title.includes('স্বাস্থ্য') || title.includes('অ্যাম্বুলেন্স') || title.includes('রক্ত')) {
+        groups[0].keys.push(key);
+      } else if (k.includes('edu') || k.includes('school') || k.includes('college') || k.includes('madrasa') || k.includes('job') || k.includes('teacher') || k.includes('library') || k.includes('training') || title.includes('শিক্ষা') || title.includes('স্কুল') || title.includes('কলেজ') || title.includes('মাদ্রাসা') || title.includes('চাকরি') || title.includes('প্রশিক্ষণ')) {
+        groups[1].keys.push(key);
+      } else if (k.includes('shop') || k.includes('business') || k.includes('market') || k.includes('entrepreneur') || k.includes('parlor') || k.includes('courier') || title.includes('দোকান') || title.includes('ব্যবসা') || title.includes('মার্কেট') || title.includes('উদ্যোক্তা')) {
+        groups[2].keys.push(key);
+      } else if (k.includes('rent') || k.includes('house') || k.includes('car') || k.includes('vehicle') || k.includes('bus') || k.includes('train') || k.includes('land') || title.includes('ভাড়া') || title.includes('বাসা') || title.includes('গাড়ি') || title.includes('পরিবহন') || title.includes('জমি')) {
+        groups[3].keys.push(key);
+      } else if (k.includes('police') || k.includes('fire') || k.includes('emergency') || k.includes('govt') || k.includes('lawyer') || k.includes('union') || title.includes('পুলিশ') || title.includes('ফায়ার') || title.includes('জরুরি') || title.includes('আইনজীবী') || title.includes('সরকারি')) {
+        groups[4].keys.push(key);
+      } else {
+        groups[5].keys.push(key);
+      }
+    });
+
+    return groups.filter(g => g.keys.length > 0);
+  }, [allServiceKeys]);
   
   // Use query params for initial state if present
   const queryParams = new URLSearchParams(location.search);
@@ -812,14 +846,22 @@ export const UniversalAdminManager: React.FC = () => {
                     onChange={(e) => setSelectedServiceKey(e.target.value)}
                     className="w-full bg-slate-50 border border-slate-200 rounded-2xl px-3 py-2 text-xs font-black text-slate-800 outline-none focus:ring-2 focus:ring-[#006a4e]"
                   >
-                    {allServiceKeys.map((key) => {
-                      const cfg = ALL_SERVICES_CONFIG[key];
-                      return (
-                        <option key={key} value={key}>
-                          {cfg.icon} {cfg.title}
-                        </option>
-                      );
-                    })}
+                    {groupedServiceKeys.map((group) => (
+                      <optgroup 
+                        key={group.label} 
+                        label={group.label} 
+                        className="font-black text-slate-900 bg-slate-100 py-1"
+                      >
+                        {group.keys.map((key) => {
+                          const cfg = ALL_SERVICES_CONFIG[key];
+                          return (
+                            <option key={key} value={key} className="font-bold text-slate-800 bg-white py-1">
+                              {cfg?.icon || '🔹'} {cfg?.title || key}
+                            </option>
+                          );
+                        })}
+                      </optgroup>
+                    ))}
                   </select>
                 </div>
 
