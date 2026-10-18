@@ -275,6 +275,26 @@ export const AdminDashboard: React.FC = () => {
         console.warn("Edu load error", e);
       }
 
+      // News Pending Check
+      try {
+        const newsSnap = await getDocs(query(collection(db, "news"), where("status", "==", "pending")));
+        newsSnap.docs.forEach((doc) => {
+          const d = doc.data();
+          if (pendingItems.length < 5) {
+            pendingItems.push({
+              id: doc.id,
+              title: d.title || "নতুন সংবাদ পোস্ট",
+              category: "সংবাদ অনুমোদন",
+              submitter: d.author || d.submittedByName || d.reporterName || "নাগরিক",
+              link: "/admin/news",
+              date: d.createdAt ? (typeof d.createdAt === 'string' ? d.createdAt : new Date(d.createdAt?.toDate?.() || Date.now()).toLocaleDateString("bn-BD")) : "সম্প্রতি"
+            });
+          }
+        });
+      } catch (e) {
+        console.warn("News pending check error", e);
+      }
+
       // 11. Reports
       try {
         const rSnap = await getDocs(collection(db, "reports"));
@@ -362,6 +382,7 @@ export const AdminDashboard: React.FC = () => {
     setLoading(true);
     const unsubs: (() => void)[] = [];
 
+    let pNews: any[] = [];
     let pShops: any[] = [];
     let pProducts: any[] = [];
     let pRentals: any[] = [];
@@ -373,6 +394,7 @@ export const AdminDashboard: React.FC = () => {
 
     const syncMetrics = () => {
       const unifiedPending = [
+        ...pNews,
         ...pShops,
         ...pProducts,
         ...pRentals,
@@ -392,7 +414,7 @@ export const AdminDashboard: React.FC = () => {
         pendingEServices: pSubmissions.length + pEdits.length,
         pendingEducation: pEducation.length,
         pendingEduPosts: pEduPosts.length,
-        pendingContentApprovals: pProducts.length + pRentals.length + pSubmissions.length + pEdits.length + pEducation.length + pEduPosts.length,
+        pendingContentApprovals: pNews.length + pProducts.length + pRentals.length + pSubmissions.length + pEdits.length + pEducation.length + pEduPosts.length,
         activeReports: pReports.length
       }));
     };
@@ -671,7 +693,19 @@ export const AdminDashboard: React.FC = () => {
 
     // 14. Pending News Realtime
     unsubs.push(onSnapshot(query(collection(db, "news"), where("status", "==", "pending")), (snap) => {
+      pNews = snap.docs.map(dSnap => {
+        const d = dSnap.data();
+        return {
+          id: dSnap.id,
+          title: d.title || "নতুন সংবাদ পোস্ট",
+          category: "সংবাদ অনুমোদন",
+          submitter: d.author || d.submittedByName || d.reporterName || "নাগরিক",
+          link: "/admin/news",
+          date: d.createdAt ? (typeof d.createdAt === 'string' ? d.createdAt : new Date(d.createdAt?.toDate?.() || Date.now()).toLocaleDateString("bn-BD")) : "সম্প্রতি"
+        };
+      });
       setStats(prev => ({ ...prev, pendingNews: snap.size }));
+      syncMetrics();
     }));
 
     // 15. Pending Comments Realtime
@@ -855,25 +889,76 @@ export const AdminDashboard: React.FC = () => {
               </div>
             </div>
             <div className="flex flex-wrap gap-2">
-              <div className="px-3 py-1.5 bg-white/80 rounded-xl border border-rose-100 text-[11px] font-bold text-rose-700">
-                নিউজ: {stats.pendingNews}
-              </div>
-              <div className="px-3 py-1.5 bg-white/80 rounded-xl border border-amber-100 text-[11px] font-bold text-amber-700">
-                রিপোর্ট: {stats.activeReports}
-              </div>
-              <div className="px-3 py-1.5 bg-white/80 rounded-xl border border-blue-100 text-[11px] font-bold text-blue-700">
-                কমেন্ট: {stats.pendingComments}
-              </div>
-              <div className="px-3 py-1.5 bg-white/80 rounded-xl border border-emerald-100 text-[11px] font-bold text-emerald-700">
-                ভেরিফিকেশন: {stats.pendingVerifications}
-              </div>
-              <div className="px-3 py-1.5 bg-white/80 rounded-xl border border-purple-100 text-[11px] font-bold text-purple-700">
-                অ্যাডমিন কাজ: {stats.pendingAdminActions}
-              </div>
+              <button
+                type="button"
+                onClick={() => navigate("/admin/news")}
+                className="px-3 py-1.5 bg-white/90 hover:bg-rose-50 active:scale-95 rounded-xl border border-rose-200/80 text-[11px] font-black text-rose-700 cursor-pointer transition shadow-2xs flex items-center gap-1.5"
+                title="পেন্ডিং নিউজ মডারেশন দেখুন"
+              >
+                <span>নিউজ:</span>
+                <span className="px-1.5 py-0.5 bg-rose-100 rounded-md font-bold">{stats.pendingNews}</span>
+              </button>
+              <button
+                type="button"
+                onClick={() => {
+                  setActiveTab("approvals_verification");
+                  setTimeout(() => {
+                    document.getElementById("reports-section")?.scrollIntoView({ behavior: "smooth" });
+                  }, 80);
+                }}
+                className="px-3 py-1.5 bg-white/90 hover:bg-amber-50 active:scale-95 rounded-xl border border-amber-200/80 text-[11px] font-black text-amber-700 cursor-pointer transition shadow-2xs flex items-center gap-1.5"
+                title="নাগরিক রিপোর্টসমূহ দেখুন"
+              >
+                <span>রিপোর্ট:</span>
+                <span className="px-1.5 py-0.5 bg-amber-100 rounded-md font-bold">{stats.activeReports}</span>
+              </button>
+              <button
+                type="button"
+                onClick={() => navigate("/admin/comments")}
+                className="px-3 py-1.5 bg-white/90 hover:bg-blue-50 active:scale-95 rounded-xl border border-blue-200/80 text-[11px] font-black text-blue-700 cursor-pointer transition shadow-2xs flex items-center gap-1.5"
+                title="পেন্ডিং কমেন্ট মডারেশন দেখুন"
+              >
+                <span>কমেন্ট:</span>
+                <span className="px-1.5 py-0.5 bg-blue-100 rounded-md font-bold">{stats.pendingComments}</span>
+              </button>
+              <button
+                type="button"
+                onClick={() => {
+                  setActiveTab("approvals_verification");
+                  setTimeout(() => {
+                    document.getElementById("pending-approvals-section")?.scrollIntoView({ behavior: "smooth" });
+                  }, 80);
+                }}
+                className="px-3 py-1.5 bg-white/90 hover:bg-emerald-50 active:scale-95 rounded-xl border border-emerald-200/80 text-[11px] font-black text-emerald-700 cursor-pointer transition shadow-2xs flex items-center gap-1.5"
+                title="পেন্ডিং ভেরিফিকেশন ও কন্টেন্ট অনুমোদন কিউ দেখুন"
+              >
+                <span>ভেরিফিকেশন:</span>
+                <span className="px-1.5 py-0.5 bg-emerald-100 rounded-md font-bold">{stats.pendingVerifications}</span>
+              </button>
+              <button
+                type="button"
+                onClick={() => navigate("/admin/roles")}
+                className="px-3 py-1.5 bg-white/90 hover:bg-purple-50 active:scale-95 rounded-xl border border-purple-200/80 text-[11px] font-black text-purple-700 cursor-pointer transition shadow-2xs flex items-center gap-1.5"
+                title="পেন্ডিং অ্যাডমিন রোল রিকোয়েস্ট দেখুন"
+              >
+                <span>অ্যাডমিন কাজ:</span>
+                <span className="px-1.5 py-0.5 bg-purple-100 rounded-md font-bold">{stats.pendingAdminActions}</span>
+              </button>
             </div>
             <button 
-              onClick={() => setActiveTab("approvals_verification")}
-              className="px-5 py-2.5 bg-slate-900 text-white rounded-xl text-xs font-black hover:bg-slate-800 transition shadow-md cursor-pointer whitespace-nowrap"
+              type="button"
+              onClick={() => {
+                // If only news is pending, navigate directly to news management
+                if (stats.pendingNews > 0 && stats.pendingVerifications === 0 && stats.pendingContentApprovals <= stats.pendingNews && stats.activeReports === 0) {
+                  navigate("/admin/news");
+                  return;
+                }
+                setActiveTab("approvals_verification");
+                setTimeout(() => {
+                  document.getElementById("pending-approvals-section")?.scrollIntoView({ behavior: "smooth" });
+                }, 80);
+              }}
+              className="px-5 py-2.5 bg-slate-900 text-white rounded-xl text-xs font-black hover:bg-slate-800 transition shadow-md cursor-pointer whitespace-nowrap active:scale-95"
             >
               সবগুলো দেখুন →
             </button>
@@ -1545,7 +1630,7 @@ export const AdminDashboard: React.FC = () => {
 
         {/* 9, 11, 12. VERIFICATION, REPORTS & CONTENT APPROVAL DESK */}
         {(activeTab === "all" || activeTab === "approvals_verification") && (
-          <div className="space-y-4">
+          <div id="pending-approvals-section" className="space-y-4 scroll-mt-24">
             <div className="flex items-center justify-between">
               <h2 className="text-sm font-black text-slate-900 uppercase tracking-wider flex items-center gap-2">
                 <CheckSquare size={16} className="text-amber-600" />
@@ -1616,7 +1701,7 @@ export const AdminDashboard: React.FC = () => {
               </div>
 
               {/* 11. Reports & Moderation Desk */}
-              <div className="bg-white rounded-2xl border border-slate-200/80 p-5 shadow-xs flex flex-col justify-between">
+              <div id="reports-section" className="bg-white rounded-2xl border border-slate-200/80 p-5 shadow-xs flex flex-col justify-between scroll-mt-24">
                 <div>
                   <div className="flex items-center justify-between mb-4">
                     <div className="flex items-center gap-2.5">
