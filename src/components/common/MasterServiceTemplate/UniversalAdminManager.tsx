@@ -105,6 +105,8 @@ export const UniversalAdminManager: React.FC = () => {
   const [adminNote, setAdminNote] = useState('');
   const [rejectionReason, setRejectionReason] = useState('');
   const [verificationBadge, setVerificationBadge] = useState('অফিসিয়ালি ভেরিফায়েড');
+  const [deleteTarget, setDeleteTarget] = useState<{ colName: string; id: string; name?: string } | null>(null);
+  const [isDeleting, setIsDeleting] = useState<boolean>(false);
 
   const currentConfig = useMemo(() => ALL_SERVICES_CONFIG[selectedServiceKey] || getServiceConfig(selectedServiceKey), [selectedServiceKey]);
 
@@ -367,16 +369,30 @@ export const UniversalAdminManager: React.FC = () => {
     }
   };
 
-  // Delete Item Action
-  const handleDeleteItem = async (colName: string, id: string, name?: string) => {
-    if (true) {
-      return;
-    }
+  // Open Delete Confirmation Modal
+  const handleDeleteItem = (colName: string, id: string, name?: string) => {
+    setDeleteTarget({ colName, id, name });
+  };
+
+  // Perform Actual Delete on user confirmation
+  const confirmDeleteItem = async () => {
+    if (!deleteTarget) return;
+    const { colName, id, name } = deleteTarget;
+    setIsDeleting(true);
     try {
       if (typeof id === 'string' && !id.startsWith('fallback-')) {
         await deleteDoc(doc(db, colName, id));
       }
-      setServiceItems((prev) => prev.filter((item) => item.id !== id));
+
+      if (colName === 'corrections') {
+        setCorrectionsList((prev) => prev.filter((item) => item.id !== id));
+      } else if (colName === 'complaints') {
+        setComplaintsList((prev) => prev.filter((item) => item.id !== id));
+      } else if (colName === 'reviews') {
+        setReviewsList((prev) => prev.filter((item) => item.id !== id));
+      } else {
+        setServiceItems((prev) => prev.filter((item) => item.id !== id));
+      }
 
       // Log to Global Activity & Audit Log
       await logAuditActivity({
@@ -394,9 +410,13 @@ export const UniversalAdminManager: React.FC = () => {
 
       setActionSuccess('তথ্যটি সফলভাবে মুছে ফেলা হয়েছে।');
       setTimeout(() => setActionSuccess(null), 3000);
+      setDeleteTarget(null);
     } catch (err) {
       console.error('Delete error:', err);
-      alert('তথ্য মুছতে সমস্যা হয়েছে।');
+      setActionSuccess('তথ্য মুছতে সমস্যা হয়েছে। অনুগ্রহ করে আবার চেষ্টা করুন।');
+      setTimeout(() => setActionSuccess(null), 4000);
+    } finally {
+      setIsDeleting(false);
     }
   };
 
@@ -1378,6 +1398,49 @@ export const UniversalAdminManager: React.FC = () => {
             setEditingItem(null);
           }}
         />
+      )}
+
+      {/* Delete Confirmation Modal */}
+      {deleteTarget && (
+        <div className="fixed inset-0 z-50 bg-black/60 backdrop-blur-xs flex items-center justify-center p-4">
+          <motion.div
+            initial={{ scale: 0.95, opacity: 0 }}
+            animate={{ scale: 1, opacity: 1 }}
+            className="bg-white rounded-3xl max-w-sm w-full p-6 shadow-2xl space-y-4 border border-slate-100"
+          >
+            <div className="w-12 h-12 rounded-2xl bg-rose-50 text-rose-600 flex items-center justify-center mx-auto">
+              <Trash2 size={24} />
+            </div>
+
+            <div className="text-center space-y-1.5">
+              <h3 className="text-base font-black text-slate-900">
+                তথ্যটি মুছে ফেলতে চান?
+              </h3>
+              <p className="text-xs text-slate-500 font-medium leading-relaxed">
+                "{deleteTarget.name || 'এই তথ্যটি'}" স্থায়ীভাবে মুছে ফেলা হবে। এই পদক্ষেপটি ফিরিয়ে আনা সম্ভব নয়।
+              </p>
+            </div>
+
+            <div className="flex items-center gap-3 pt-2">
+              <button
+                type="button"
+                onClick={() => setDeleteTarget(null)}
+                disabled={isDeleting}
+                className="flex-1 py-2.5 px-4 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-700 text-xs font-bold transition border-none cursor-pointer"
+              >
+                বাতিল করুন
+              </button>
+              <button
+                type="button"
+                onClick={confirmDeleteItem}
+                disabled={isDeleting}
+                className="flex-1 py-2.5 px-4 rounded-xl bg-rose-600 hover:bg-rose-700 text-white text-xs font-black transition border-none cursor-pointer flex items-center justify-center gap-1.5 shadow-md shadow-rose-600/20"
+              >
+                {isDeleting ? 'মুছছি...' : 'হ্যাঁ, মুছুন'}
+              </button>
+            </div>
+          </motion.div>
+        </div>
       )}
     </div>
   );
