@@ -102,7 +102,7 @@ export const ScalabilityDashboardView: React.FC = () => {
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 text-xs font-bold text-slate-700">
           <div className="p-3.5 bg-slate-50 rounded-2xl border border-slate-100 space-y-1">
             <span className="font-black text-slate-900 block">⚡ Code Splitting & Lazy Loading</span>
-            <p className="text-[11px] text-slate-500">৬০টি মডিউল আলাদা আলাদা চাঙ্কে (Chunk) লোড হয়, ফলে প্রথম পেজ লোড হয় ১ সেকেন্ডের নিচে।</p>
+            <p className="text-[11px] text-slate-500">৪৮টি মডিউল আলাদা আলাদা চাঙ্কে (Chunk) লোড হয়, ফলে প্রথম পেজ লোড হয় ১ সেকেন্ডের নিচে।</p>
           </div>
 
           <div className="p-3.5 bg-slate-50 rounded-2xl border border-slate-100 space-y-1">

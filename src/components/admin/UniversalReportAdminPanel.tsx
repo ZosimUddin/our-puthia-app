@@ -160,7 +160,7 @@ export const UniversalReportAdminPanel: React.FC = () => {
             <span>সর্বজনীন ইউজার কন্টেন্ট মডারেশন প্যানেল (Universal Report System)</span>
           </h3>
           <p className="text-xs text-slate-500 font-medium mt-0.5">
-            প্লাটফর্মের ৬০টি পেজে নাগরিক ও ব্যবহারকারীদের দেয়া আপত্তি, ফেক তথ্য ও রিপোর্টের তালিকা
+            প্লাটফর্মের ৪৮টি পেজে নাগরিক ও ব্যবহারকারীদের দেয়া আপত্তি, ফেক তথ্য ও রিপোর্টের তালিকা
           </p>
         </div>
 

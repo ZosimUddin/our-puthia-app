@@ -32,7 +32,7 @@ export const SitemapPage: React.FC = () => {
     <div className="bg-slate-50 min-h-screen flex flex-col font-sans">
       <SEO
         title="সাইটম্যাপ ও সকল পেজ সূচি"
-        description="আমাদের পুঠিয়া পোর্টালের ৬০টি ডিরেক্টরি সেবা ও সকল পেজের পূর্ণাঙ্গ এসইও সাইটম্যাপ।"
+        description="আমাদের পুঠিয়া পোর্টালের ৪৮টি ডিরেক্টরি সেবা ও সকল পেজের পূর্ণাঙ্গ এসইও সাইটম্যাপ।"
         path="/sitemap"
       />
 
@@ -62,7 +62,7 @@ export const SitemapPage: React.FC = () => {
                 🗺️ সম্পূর্ণ সাইটম্যাপ ও এসইও ইনডেক্স
               </h1>
               <p className="text-xs sm:text-sm text-emerald-100 mt-1">
-                পুঠিয়া পোর্টালের ৬০টি ডিরেক্টরি পেজ, গুগল ক্রলার ও সার্চ ইঞ্জিনের জন্য ডাইনামিক সাইটম্যাপ
+                পুঠিয়া পোর্টালের ৪৮টি ডিরেক্টরি পেজ, গুগল ক্রলার ও সার্চ ইঞ্জিনের জন্য ডাইনামিক সাইটম্যাপ
               </p>
             </div>
 
@@ -130,7 +130,7 @@ export const SitemapPage: React.FC = () => {
                 <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3">
                   <h2 className="text-sm font-black text-slate-800 flex items-center gap-2">
                     <span className="w-2 h-2 rounded-full bg-emerald-500" />
-                    <span>৬০টি ডিরেক্টরি সার্ভিস পেজ (Dynamic Service Routes)</span>
+                    <span>৪৮টি ডিরেক্টরি সার্ভিস পেজ (Dynamic Service Routes)</span>
                   </h2>
 
                   <div className="relative w-full sm:w-60">

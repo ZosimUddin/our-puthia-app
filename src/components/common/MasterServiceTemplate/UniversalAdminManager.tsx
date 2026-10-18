@@ -595,7 +595,7 @@ export const UniversalAdminManager: React.FC = () => {
                   </span>
                 </h1>
                 <p className="text-xs text-emerald-100/80 font-medium">
-                  ৬০টি সার্ভিস, ইউজার সাবমিশন, ভেরিফিকেশন, রিপোর্ট, রিভিউ, কনটেন্ট, ব্যবহারকারী ও সার্বিক পরিসংখ্যান
+                  ৪৮টি সার্ভিস, ইউজার সাবমিশন, ভেরিফিকেশন, রিপোর্ট, রিভিউ, কনটেন্ট, ব্যবহারকারী ও সার্বিক পরিসংখ্যান
                 </p>
               </div>
             </div>
@@ -642,7 +642,7 @@ export const UniversalAdminManager: React.FC = () => {
         <div className="max-w-7xl mx-auto mt-5 pt-3 border-t border-white/10 flex items-center gap-1.5 overflow-x-auto no-scrollbar">
           {[
             { id: 'overview', label: '📊 ওভারভিউ (Overview)', icon: LayoutDashboard },
-            { id: 'services', label: '🏛️ ৬০টি সার্ভিস (60 Services)', icon: Building2 },
+            { id: 'services', label: '🏛️ ৪৮টি সার্ভিস (48 Services)', icon: Building2 },
             { id: 'verification', label: '🛡️ ভেরিফিকেশন (Verification)', icon: ShieldCheck, badge: pendingCount > 0 ? `${pendingCount}` : undefined },
             { id: 'corrections', label: '✏️ সংশোধন প্রস্তাবনা (Corrections)', icon: Edit3, badge: pendingCorrectionsCount > 0 ? `${pendingCorrectionsCount}` : undefined },
             { id: 'reports', label: '⚠️ রিপোর্ট ও অভিযোগ (Reports)', icon: AlertTriangle, badge: reports.length > 0 ? `${reports.length}` : undefined },
@@ -745,7 +745,7 @@ export const UniversalAdminManager: React.FC = () => {
                   onClick={() => setActiveTab('services')}
                   className="p-3 bg-emerald-50 hover:bg-emerald-100 text-[#006a4e] rounded-2xl text-xs font-black border border-emerald-200 transition-all flex items-center justify-between cursor-pointer"
                 >
-                  <span>🏛️ ৬০টি সার্ভিসের তথ্য এডিট</span>
+                  <span>🏛️ ৪৮টি সার্ভিসের তথ্য এডিট</span>
                   <ChevronRight size={16} />
                 </button>
                 <button
@@ -1313,9 +1313,9 @@ export const UniversalAdminManager: React.FC = () => {
 
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               <div className="p-4 bg-slate-50 rounded-2xl border border-slate-200 space-y-2">
-                <span className="text-xs font-black text-slate-700">৬০টি ক্যাটাগরি ও ডাটাবেজ স্ট্যাটাস</span>
+                <span className="text-xs font-black text-slate-700">৪৮টি ক্যাটাগরি ও ডাটাবেজ স্ট্যাটাস</span>
                 <p className="text-xs text-slate-500">
-                  সকল ৬০টি সেবার কালেকশন ফায়ারবেস ক্লাউড ফায়ারস্টোরের সাথে রিয়েল-টাইমে সিঙ্ক রয়েছে।
+                  সকল ৪৮টি সেবার কালেকশন ফায়ারবেস ক্লাউড ফায়ারস্টোরের সাথে রিয়েল-টাইমে সিঙ্ক রয়েছে।
                 </p>
                 <div className="text-xs font-black text-[#006a4e] pt-2">
                   ✅ অল সিস্টেম অপারেশনাল (All Systems Operational)
