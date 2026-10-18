@@ -331,6 +331,7 @@ import { AutoReturnTimer } from "./components/home/AutoReturnTimer";
 import { EmergencyOneTap } from "./components/common/EmergencyOneTap";
 
 import { Toaster } from "sonner";
+import { AdminActivityNotifier } from "./components/common/AdminActivityNotifier";
 import NotFound from "./components/common/NotFound";
 import { AnimatePresence, motion } from "motion/react";
 import { useLocation } from "react-router-dom";
@@ -430,6 +431,7 @@ const MainAppContent = () => {
           <OfflineManager>
             <SEO />
             <PushNotificationListener />
+            <AdminActivityNotifier />
             <ReloadPrompt />
             <PWAInstall />
             <SuspiciousLoginBanner onOpenSecurityCenter={() => setIsSecurityCenterOpen(true)} />

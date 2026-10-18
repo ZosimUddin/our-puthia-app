@@ -17,6 +17,7 @@ import { BusinessActionModal } from './BusinessActionModal';
 import { SubscriptionModal } from './SubscriptionModal';
 import { AdvertiseWithUsModal } from './AdvertiseWithUsModal';
 import { UnifiedHeroHeader } from './common/UnifiedDesignSystem';
+import { logAdminActivitySubmission } from '../services/adminActivityNotificationService';
 
 interface LocalShopDirectoryInfoProps {
   onGoBack?: () => void;
@@ -124,6 +125,17 @@ export const LocalShopDirectoryInfo = ({ onGoBack, category: initialCategory }: 
         verified: false,
         isOpen: true,
       });
+
+      // Trigger real-time Admin Activity notification stream
+      logAdminActivitySubmission({
+        title: newShopName || 'নতুন ব্যবসা প্রতিষ্ঠান',
+        category: newShopCategory || 'দোকান ও ব্যবসা ডিরেক্টরি',
+        collectionName: 'local_shops',
+        submitterName: newShopOwner || user?.displayName || 'উদ্যোক্তা',
+        submitterPhone: newShopPhone,
+        link: '/admin/businesses'
+      }).catch(() => {});
+
       setShowAddForm(false);
       setNewShopName("");
       setNewShopOwner("");

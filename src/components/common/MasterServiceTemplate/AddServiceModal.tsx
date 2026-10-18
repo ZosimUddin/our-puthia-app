@@ -10,6 +10,7 @@ import { db } from '../../../firebase';
 import { useAuth } from '../../../contexts/AuthContext';
 import { ServiceConfig } from '../../../config/servicesConfig';
 import { SuggestCorrectionModal } from './SuggestCorrectionModal';
+import { logAdminActivitySubmission } from '../../../services/adminActivityNotificationService';
 
 interface AddServiceModalProps {
   isOpen: boolean;
@@ -179,6 +180,16 @@ export const AddServiceModal: React.FC<AddServiceModalProps> = ({
       };
 
       await addDoc(collection(db, config.collectionName), payload);
+
+      // Trigger real-time Admin Activity notification stream
+      logAdminActivitySubmission({
+        title: (payload as any).name || (payload as any).title || (payload as any).institutionName || config.title,
+        category: config.title || 'সেবা প্রোফাইল',
+        collectionName: config.collectionName,
+        submitterName: payload.userName,
+        submitterPhone: payload.userPhone,
+        link: `/super-admin/universal?tab=services&key=${config.id}&status=pending`
+      }).catch(() => {});
 
       setStep('success');
       setTimeout(() => {

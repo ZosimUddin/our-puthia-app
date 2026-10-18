@@ -6,7 +6,7 @@ import {
   CheckCircle2, XCircle, Clock, Award, Building2, Phone, MapPin, Sparkles,
   ArrowUpRight, ChevronRight, MessageSquare, AlertCircle, TrendingUp,
   Download, UserCheck, Stethoscope, School, Landmark, HeartHandshake, Briefcase, Plus,
-  ExternalLink
+  ExternalLink, Bell
 } from 'lucide-react';
 import { useNavigate, useLocation } from 'react-router-dom';
 import { useAuth } from '../../../contexts/AuthContext';
@@ -19,6 +19,7 @@ import { SERVICES_CONFIG, getServiceConfig, ServiceConfig, ALL_SERVICES_CONFIG }
 import { EditServiceModal } from './EditServiceModal';
 import { TrustVerificationManager } from '../../admin/TrustVerificationManager';
 import { logAuditActivity } from '../../../services/auditLogger';
+import { showAdminActivityToast } from '../../../services/adminActivityNotificationService';
 
 type AdminMasterTab =
   | 'overview'
@@ -385,11 +386,11 @@ export const UniversalAdminManager: React.FC = () => {
       }
 
       if (colName === 'corrections') {
-        setCorrectionsList((prev) => prev.filter((item) => item.id !== id));
+        setCorrections((prev) => prev.filter((item) => item.id !== id));
       } else if (colName === 'complaints') {
-        setComplaintsList((prev) => prev.filter((item) => item.id !== id));
+        setReports((prev) => prev.filter((item) => item.id !== id));
       } else if (colName === 'reviews') {
-        setReviewsList((prev) => prev.filter((item) => item.id !== id));
+        setReviews((prev) => prev.filter((item) => item.id !== id));
       } else {
         setServiceItems((prev) => prev.filter((item) => item.id !== id));
       }
@@ -573,6 +574,24 @@ export const UniversalAdminManager: React.FC = () => {
               className="py-2 px-3.5 bg-white/10 hover:bg-white/20 text-white rounded-xl text-xs font-bold transition-all border border-white/10 cursor-pointer"
             >
               নাগরিক পোর্টালে যান
+            </button>
+            <button
+              type="button"
+              onClick={() => {
+                showAdminActivityToast({
+                  title: 'এম এইচ কম্পিউটার ট্রেনিং ও আইটি',
+                  category: 'কম্পিউটার ও আইটি প্রশিক্ষণ',
+                  submitterName: 'মো. রফিকুল ইসলাম',
+                  submitterPhone: '01712-345678',
+                  link: '/super-admin/universal?tab=verification',
+                  time: 'এইমাত্র জমা হয়েছে'
+                }, navigate);
+              }}
+              className="py-2 px-3 bg-amber-500/20 hover:bg-amber-500/30 text-amber-200 border border-amber-400/40 rounded-xl text-xs font-bold transition-all cursor-pointer flex items-center gap-1.5"
+              title="টেস্ট নোটিফিকেশন চালিয়ে দেখুন"
+            >
+              <Bell size={13} className="text-amber-300" />
+              <span>টেস্ট অ্যালার্ট</span>
             </button>
             <button
               type="button"
