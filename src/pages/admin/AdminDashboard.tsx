@@ -1221,144 +1221,81 @@ export const AdminDashboard: React.FC = () => {
           </div>
         </div>
 
-        {/* 1 & 2. USER OVERVIEW & PROFILE MANAGEMENT SECTION */}
+        {/* 1. USER OVERVIEW & STATISTICS SECTION */}
         {(activeTab === "all" || activeTab === "users_profile") && (
           <div className="space-y-4">
             <div className="flex items-center justify-between">
               <h2 className="text-sm md:text-3xl font-black text-slate-900 uppercase tracking-wider flex items-center gap-2">
                 <Users size={16} className="text-emerald-600 md:w-6 md:h-6" />
-                ১. ইউজার ওভারভিউ ও ২. প্রোফাইল ম্যানেজমেন্ট
+                ১. ইউজার ওভারভিউ ও নাগরিক পরিসংখ্যান
               </h2>
-              <span className="text-xs md:text-lg text-slate-400 font-medium">নাগরিক ডেটা ও অ্যাডমিন অ্যাকাউন্ট</span>
+              <span className="text-xs md:text-lg text-slate-400 font-medium">নাগরিক ডেটা ও রেজিস্ট্রেশন পরিসংখ্যান</span>
             </div>
 
-            <div className="grid grid-cols-1 lg:grid-cols-3 gap-4">
-              {/* User Overview Stats Card */}
-              <div className="lg:col-span-2 bg-white rounded-2xl border border-slate-200/80 p-5 shadow-xs flex flex-col justify-between">
-                <div>
-                  <div className="flex items-center justify-between mb-4">
-                    <div>
-                      <h3 className="text-sm font-black text-slate-900">নাগরিক ও ইউজার পরিসংখ্যান</h3>
-                      <p className="text-xs text-slate-500">পুঠিয়া উপজেলার মোট নিবন্ধিত সদস্য ও সক্রিয় নাগরিক</p>
-                    </div>
-                    <button
-                      onClick={() => navigate("/admin/users")}
-                      className="inline-flex items-center gap-1 text-xs font-bold text-emerald-600 hover:text-emerald-700 cursor-pointer"
-                    >
-                      <span>সম্পূর্ণ তালিকা দেখুন</span>
-                      <ArrowRight size={13} />
-                    </button>
+            {/* User Overview Stats Card */}
+            <div className="w-full bg-white rounded-2xl border border-slate-200/80 p-5 shadow-xs flex flex-col justify-between">
+              <div>
+                <div className="flex items-center justify-between mb-4">
+                  <div>
+                    <h3 className="text-sm font-black text-slate-900">নাগরিক ও ইউজার পরিসংখ্যান</h3>
+                    <p className="text-xs text-slate-500">পুঠিয়া উপজেলার মোট নিবন্ধিত সদস্য ও সক্রিয় নাগরিক</p>
                   </div>
-
-                  <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
-                    <div className="bg-slate-50 p-3.5 rounded-xl border border-slate-100">
-                      <span className="text-[11px] md:text-lg font-bold text-slate-500">মোট ইউজার</span>
-                      <p className="text-2xl md:text-5xl font-black text-slate-900 mt-1">{stats.totalUsers}</p>
-                      <span className="text-[10px] md:text-base text-emerald-600 font-semibold">১০০% নিবন্ধিত</span>
-                    </div>
-
-                    <div className="bg-slate-50 p-3.5 rounded-xl border border-slate-100">
-                      <span className="text-[11px] md:text-lg font-bold text-slate-500">যাচাইকৃত প্রোফাইল</span>
-                      <p className="text-2xl md:text-5xl font-black text-emerald-600 mt-1">{stats.verifiedCitizens}</p>
-                      <span className="text-[10px] md:text-base text-slate-500 font-medium">ভেরিফাইড ব্যাজসহ</span>
-                    </div>
-
-                    <div className="bg-slate-50 p-3.5 rounded-xl border border-slate-100">
-                      <span className="text-[11px] font-bold text-slate-500">আজ সক্রিয়</span>
-                      <p className="text-2xl font-black text-blue-600 mt-1">{stats.activeUsersToday}</p>
-                      <span className="text-[10px] text-blue-600 font-medium">লাইভ একটিভ</span>
-                    </div>
-
-                    <div className="bg-slate-50 p-3.5 rounded-xl border border-slate-100">
-                      <span className="text-[11px] font-bold text-slate-500">সাধারণ একাউন্ট</span>
-                      <p className="text-2xl font-black text-purple-600 mt-1">{stats.generalUsers}</p>
-                      <span className="text-[10px] text-slate-500 font-medium">নাগরিক ইউজার</span>
-                    </div>
-                  </div>
-                </div>
-
-                <div className="mt-4 pt-3 border-t border-slate-100 flex items-center justify-between text-xs text-slate-500">
-                  <span>ইউজার রিপোর্ট বা তথ্য সংশোধনে সহায়তার জন্য ইউজার ম্যানেজমেন্ট ব্যবহার করুন</span>
                   <button
                     onClick={() => navigate("/admin/users")}
-                    className="px-3 py-1.5 bg-slate-100 hover:bg-slate-200 text-slate-800 rounded-lg font-bold text-xs transition-colors cursor-pointer"
+                    className="inline-flex items-center gap-1 text-xs font-bold text-emerald-600 hover:text-emerald-700 cursor-pointer"
                   >
-                    ইউজার ম্যানেজ
+                    <span>সম্পূর্ণ তালিকা দেখুন</span>
+                    <ArrowRight size={13} />
                   </button>
+                </div>
+
+                <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
+                  <div className="bg-slate-50 p-3.5 rounded-xl border border-slate-100">
+                    <span className="text-[11px] md:text-lg font-bold text-slate-500">মোট ইউজার</span>
+                    <p className="text-2xl md:text-5xl font-black text-slate-900 mt-1">{stats.totalUsers}</p>
+                    <span className="text-[10px] md:text-base text-emerald-600 font-semibold">১০০% নিবন্ধিত</span>
+                  </div>
+
+                  <div className="bg-slate-50 p-3.5 rounded-xl border border-slate-100">
+                    <span className="text-[11px] md:text-lg font-bold text-slate-500">যাচাইকৃত প্রোফাইল</span>
+                    <p className="text-2xl md:text-5xl font-black text-emerald-600 mt-1">{stats.verifiedCitizens}</p>
+                    <span className="text-[10px] md:text-base text-slate-500 font-medium">ভেরিফাইড ব্যাজসহ</span>
+                  </div>
+
+                  <div className="bg-slate-50 p-3.5 rounded-xl border border-slate-100">
+                    <span className="text-[11px] font-bold text-slate-500">আজ সক্রিয়</span>
+                    <p className="text-2xl font-black text-blue-600 mt-1">{stats.activeUsersToday}</p>
+                    <span className="text-[10px] text-blue-600 font-medium">লাইভ একটিভ</span>
+                  </div>
+
+                  <div className="bg-slate-50 p-3.5 rounded-xl border border-slate-100">
+                    <span className="text-[11px] font-bold text-slate-500">সাধারণ একাউন্ট</span>
+                    <p className="text-2xl font-black text-purple-600 mt-1">{stats.generalUsers}</p>
+                    <span className="text-[10px] text-slate-500 font-medium">নাগরিক ইউজার</span>
+                  </div>
                 </div>
               </div>
 
-              {/* Profile Management Card */}
-              <div className="bg-gradient-to-br from-emerald-900 to-teal-950 text-white rounded-2xl p-5 shadow-xs flex flex-col justify-between">
-                <div>
-                  <div className="flex items-center justify-between mb-3">
-                    <span className="text-xs font-bold text-emerald-200 flex items-center gap-1.5">
-                      <ShieldCheck size={14} className="text-emerald-400" />
-                      অ্যাডমিন প্রোফাইল
-                    </span>
-                    <span className="text-[10px] font-bold px-2 py-0.5 rounded-full bg-emerald-500/20 text-emerald-300 border border-emerald-400/30">
-                      সক্রিয়
-                    </span>
-                  </div>
-
-                  <div className="flex items-center gap-3.5 mb-4">
-                    <div className="w-12 h-12 rounded-xl bg-white/10 border border-white/20 flex items-center justify-center text-emerald-300 font-black text-xl shadow-inner">
-                      {user?.displayName ? user.displayName.charAt(0) : "A"}
-                    </div>
-                    <div className="overflow-hidden">
-                      <h4 className="text-sm font-black text-white truncate">{user?.displayName || "অ্যাডমিনিস্ট্রেটর"}</h4>
-                      <p className="text-xs text-emerald-200/80 truncate">{user?.email || "admin@puthia.gov.bd"}</p>
-                      <p className="text-[10px] text-emerald-300 font-semibold mt-0.5">পদবী: উপজেলা পোর্টাল অ্যাডমিন</p>
-                    </div>
-                  </div>
-
-                  <div className="space-y-1.5">
-                    <Link
-                      to="/admin/profile"
-                      className="flex items-center justify-between p-2.5 rounded-xl bg-white/10 hover:bg-white/15 border border-white/10 text-xs font-bold transition-all text-slate-100"
-                    >
-                      <span className="flex items-center gap-2">
-                        <User size={14} className="text-emerald-300" />
-                        আমার সম্পূর্ণ প্রোফাইল
-                      </span>
-                      <ChevronRight size={13} className="text-emerald-300" />
-                    </Link>
-
-                    <Link
-                      to="/admin/profile/edit"
-                      className="flex items-center justify-between p-2.5 rounded-xl bg-white/10 hover:bg-white/15 border border-white/10 text-xs font-bold transition-all text-slate-100"
-                    >
-                      <span className="flex items-center gap-2">
-                        <Settings size={14} className="text-emerald-300" />
-                        প্রোফাইল তথ্য ও বায়ো পরিবর্তন
-                      </span>
-                      <ChevronRight size={13} className="text-emerald-300" />
-                    </Link>
-
-                    <Link
-                      to="/admin/password"
-                      className="flex items-center justify-between p-2.5 rounded-xl bg-white/10 hover:bg-white/15 border border-white/10 text-xs font-bold transition-all text-slate-100"
-                    >
-                      <span className="flex items-center gap-2">
-                        <Lock size={14} className="text-emerald-300" />
-                        পাসওয়ার্ড ও অ্যাকাউন্ট নিরাপত্তা
-                      </span>
-                      <ChevronRight size={13} className="text-emerald-300" />
-                    </Link>
-                  </div>
-                </div>
+              <div className="mt-4 pt-3 border-t border-slate-100 flex items-center justify-between text-xs text-slate-500">
+                <span>ইউজার রিপোর্ট বা তথ্য সংশোধনে সহায়তার জন্য ইউজার ম্যানেজমেন্ট ব্যবহার করুন</span>
+                <button
+                  onClick={() => navigate("/admin/users")}
+                  className="px-3 py-1.5 bg-slate-100 hover:bg-slate-200 text-slate-800 rounded-lg font-bold text-xs transition-colors cursor-pointer"
+                >
+                  ইউজার ম্যানেজ
+                </button>
               </div>
             </div>
           </div>
         )}
 
-        {/* 3 & 4. 63 CITIZEN SERVICES & DOCTOR / HOSPITAL / DIAGNOSTIC SECTION */}
+        {/* 3 & 4. 48 CITIZEN SERVICES & DOCTOR / HOSPITAL / DIAGNOSTIC SECTION */}
         {(activeTab === "all" || activeTab === "services_health") && (
           <div className="space-y-4">
             <div className="flex items-center justify-between">
               <h2 className="text-sm md:text-3xl font-black text-slate-900 uppercase tracking-wider flex items-center gap-2">
                 <ShieldCheck size={16} className="text-emerald-600 md:w-6 md:h-6" />
-                ৩. ৬৩ উপজেলা সেবা ও ৪. ডাক্তার / হাসপাতাল / ডায়াগনস্টিক
+                ৩. ৪৮ উপজেলা সেবা ও ৪. ডাক্তার / হাসপাতাল / ডায়াগনস্টিক
               </h2>
               <span className="text-xs md:text-lg text-slate-400 font-medium">নাগরিক সেবা ও স্বাস্থ্য ব্যবস্থা</span>
             </div>
