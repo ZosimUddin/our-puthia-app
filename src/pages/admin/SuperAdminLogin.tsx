@@ -60,7 +60,15 @@ export const SuperAdminLogin: React.FC = () => {
         navigate("/super-admin");
       }, 500);
     } catch (err: any) {
-      console.error("Super Admin Login Error:", err);
+      if (
+        err?.code !== 'auth/invalid-credential' && 
+        err?.code !== 'auth/wrong-password' && 
+        err?.code !== 'auth/user-not-found'
+      ) {
+        console.error("Super Admin Login Error:", err);
+      } else {
+        console.warn("Super Admin Login notice: User entered incorrect credentials");
+      }
       setError(getFriendlyAuthErrorMessage(err) || "লগইন করতে ব্যর্থ হয়েছে। অনুগ্রহ করে সঠিক তথ্য প্রদান করুন।");
     } finally {
       setLoading(false);

@@ -257,7 +257,15 @@ export const AuthModal: React.FC<AuthModalProps> = ({ isOpen, onClose }) => {
         onClose();
       }
     } catch (err: any) {
-      console.error("AuthModal error:", err);
+      if (
+        err?.code !== 'auth/invalid-credential' && 
+        err?.code !== 'auth/wrong-password' && 
+        err?.code !== 'auth/user-not-found'
+      ) {
+        console.error("AuthModal error:", err);
+      } else {
+        console.warn("AuthModal notice: User entered incorrect credentials");
+      }
       setError(getFriendlyAuthErrorMessage(err));
     } finally {
       setLoading(false);

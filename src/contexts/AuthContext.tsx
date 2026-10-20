@@ -16,7 +16,7 @@ import {
   browserSessionPersistence,
   updateProfile
 } from "firebase/auth";
-import { doc, getDoc, setDoc, updateDoc, onSnapshot } from "firebase/firestore";
+import { doc, getDoc, setDoc, updateDoc, onSnapshot, collection, query, where, getDocs, limit } from "firebase/firestore";
 import { logAuditEvent } from "../utils/audit";
 import { AdminRole } from "../types/admin";
 import { cleanWardFromText } from "../utils/cleanWard";
@@ -511,17 +511,65 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
         console.warn("Could not set persistence:", pErr);
       }
       
-      let loginEmail = emailOrPhone.trim();
-      // If the user entered a phone number (e.g., exactly 11 digits starting with 01), format it
-      if (/^01\d{9}$/.test(loginEmail)) {
-        try { localStorage.setItem('auth_registered_phone', loginEmail); } catch {}
-        loginEmail = `${loginEmail}@puthiadiary.com`;
+      const rawInput = (emailOrPhone || "").trim();
+      // Normalize Bengali numerals to English numerals
+      const bengaliDigits = ['০', '১', '২', '৩', '৪', '৫', '৬', '৭', '৮', '৯'];
+      const normalized = rawInput.replace(/[০-৯]/g, (d) => bengaliDigits.indexOf(d).toString());
+      
+      // Clean up punctuation, spaces and international prefix for BD numbers
+      let cleanDigits = normalized.replace(/[\s\-\(\)]/g, '');
+      if (cleanDigits.startsWith('+8801')) {
+        cleanDigits = cleanDigits.slice(3);
+      } else if (cleanDigits.startsWith('8801')) {
+        cleanDigits = cleanDigits.slice(2);
+      }
+      
+      let loginEmail = rawInput;
+      const isPhonePattern = /^01\d{9}$/.test(cleanDigits);
+      if (isPhonePattern) {
+        try { localStorage.setItem('auth_registered_phone', cleanDigits); } catch {}
+        loginEmail = `${cleanDigits}@puthiadiary.com`;
       }
 
-      const result = await signInWithEmailAndPassword(auth, loginEmail, password);
-      await logAuditEvent("login", "users", result.user.uid, { method: "email" });
-    } catch (error) {
-      console.error("Email login error:", error);
+      try {
+        const result = await signInWithEmailAndPassword(auth, loginEmail, password);
+        await logAuditEvent("login", "users", result.user.uid, { method: "email" });
+        return;
+      } catch (firstErr: any) {
+        // If phone-based synthetic email failed, check if user registered with a real email in Firestore
+        if (
+          isPhonePattern &&
+          (firstErr?.code === 'auth/invalid-credential' || firstErr?.code === 'auth/user-not-found')
+        ) {
+          try {
+            const usersRef = collection(db, "users");
+            const q = query(usersRef, where("phone", "==", cleanDigits), limit(1));
+            const snap = await getDocs(q);
+            if (!snap.empty) {
+              const userData = snap.docs[0].data();
+              if (userData?.email && userData.email !== loginEmail) {
+                const secondResult = await signInWithEmailAndPassword(auth, userData.email, password);
+                await logAuditEvent("login", "users", secondResult.user.uid, { method: "email_by_phone" });
+                return;
+              }
+            }
+          } catch (lookupErr) {
+            console.warn("Phone-to-email lookup notice:", lookupErr);
+          }
+        }
+        
+        throw firstErr;
+      }
+    } catch (error: any) {
+      if (
+        error?.code === 'auth/invalid-credential' || 
+        error?.code === 'auth/wrong-password' || 
+        error?.code === 'auth/user-not-found'
+      ) {
+        console.warn("Authentication notice: Invalid credentials entered by user");
+      } else {
+        console.error("Email login error:", error);
+      }
       throw error;
     } finally {
       setLoading(false);
