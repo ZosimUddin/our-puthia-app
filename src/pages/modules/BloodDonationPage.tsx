@@ -1,3 +1,4 @@
+import { BloodInventoryTracker } from "../../components/BloodInventoryTracker";
 import React, { useState, useEffect } from "react";
 import html2canvas from "html2canvas-pro";
 import {
@@ -334,7 +335,7 @@ export default function BloodDonationPage() {
   const [showAuthModal, setShowAuthModal] = useState<boolean>(false);
 
   // Primary Tab: "requests" (রক্তের প্রয়োজন) or "donors" (রক্তদাতা খুঁজুন)
-  const [activeTab, setActiveTab] = useState<"requests" | "donors">("requests");
+  const [activeTab, setActiveTab] = useState<"requests" | "inventory" | "donors">("requests");
   
   // Blood group filter: "all" or specific group e.g. "B+"
   const [selectedGroup, setSelectedGroup] = useState<string>("all");
@@ -1339,26 +1340,39 @@ export default function BloodDonationPage() {
         })()}
 
         {/* 3. Navigation Toggle Tabs (Matching Screenshot) */}
-        <div className="bg-slate-200/80 p-1 rounded-2xl flex items-center">
+        <div className="bg-slate-200/80 p-1 rounded-2xl flex items-center gap-1">
           <button
             onClick={() => setActiveTab("requests")}
             className={`flex-1 py-2.5 text-xs sm:text-sm font-black rounded-xl transition text-center ${
               activeTab === "requests"
-                ? "bg-white text-red-600 shadow-xs"
+                ? "bg-white text-rose-600 shadow-xs"
                 : "text-slate-600 hover:text-slate-900"
             }`}
           >
             রক্তের প্রয়োজন ({requests.length})
           </button>
           <button
-            onClick={() => setActiveTab("donors")}
-            className={`flex-1 py-2.5 text-xs sm:text-sm font-black rounded-xl transition text-center ${
-              activeTab === "donors"
-                ? "bg-white text-red-600 shadow-xs"
+            onClick={() => setActiveTab("inventory")}
+            className={`flex-1 py-2.5 text-xs sm:text-sm font-black rounded-xl transition text-center flex items-center justify-center gap-1 ${
+              activeTab === "inventory"
+                ? "bg-white text-rose-600 shadow-xs"
                 : "text-slate-600 hover:text-slate-900"
             }`}
           >
-            রক্তদাতা খুঁজুন ({donors.length})
+            <span>ইনভেন্টরি</span>
+            <span className="px-1.5 py-0.5 text-[9px] bg-rose-600 text-white rounded-full font-bold animate-pulse">
+              স্টক
+            </span>
+          </button>
+          <button
+            onClick={() => setActiveTab("donors")}
+            className={`flex-1 py-2.5 text-xs sm:text-sm font-black rounded-xl transition text-center ${
+              activeTab === "donors"
+                ? "bg-white text-rose-600 shadow-xs"
+                : "text-slate-600 hover:text-slate-900"
+            }`}
+          >
+            রক্তদাতা ({donors.length})
           </button>
         </div>
 
@@ -1866,6 +1880,15 @@ export default function BloodDonationPage() {
         )}
 
         {/* 7. TAB 2: "রক্তদাতা খুঁজুন" Donor List Cards */}
+        {activeTab === "inventory" && (
+          <BloodInventoryTracker
+            onOpenEmergencyRequest={(bg) => {
+              if (bg) setSelectedGroup(bg);
+              setShowRequestModal(true);
+            }}
+          />
+        )}
+
         {activeTab === "donors" && (
           <div className="space-y-3">
             {filteredDonors.length === 0 ? (

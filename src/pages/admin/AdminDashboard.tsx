@@ -833,7 +833,7 @@ export const AdminDashboard: React.FC = () => {
             {[
               { id: "all", label: "সার্বিক ওভারভিউ", icon: Layers },
               { id: "users_profile", label: "ইউজার ও প্রোফাইল", icon: Users },
-              { id: "services_health", label: "৬৩ সেবা ও স্বাস্থ্য", icon: Heart },
+              { id: "services_health", label: "৪৮টি সেবা ও স্বাস্থ্য", icon: Heart },
               { id: "content_media", label: "সংবাদ ও নোটিশ", icon: Newspaper },
               { id: "approvals_verification", label: "অনুমোদন ও ভেরিফিকেশন", icon: CheckSquare },
               { id: "reports_analytics", label: "রিপোর্ট ও এনালাইটিক্স", icon: BarChart3 },
@@ -843,7 +843,15 @@ export const AdminDashboard: React.FC = () => {
               return (
                 <button
                   key={tab.id}
-                  onClick={() => setActiveTab(tab.id as any)}
+                  onClick={() => {
+                    setActiveTab(tab.id as any);
+                    setTimeout(() => {
+                      const target = document.getElementById(tab.id === "all" ? "dashboard-tab-content" : "section-" + tab.id);
+                      if (target) {
+                        target.scrollIntoView({ behavior: "smooth", block: "start" });
+                      }
+                    }, 50);
+                  }}
                   className={`inline-flex items-center gap-2 px-4 py-2.5 rounded-full text-[11px] font-black whitespace-nowrap transition-all cursor-pointer shrink-0 border ${
                     isActive 
                       ? "bg-emerald-800 text-white border-emerald-800 shadow-md shadow-emerald-900/10" 
@@ -870,7 +878,7 @@ export const AdminDashboard: React.FC = () => {
         </div>
 
         {/* 1. 🔴 PENDING ACTIONS OVERVIEW (TOP) */}
-        <div className="bg-gradient-to-r from-rose-50 to-amber-50 rounded-3xl p-6 border border-rose-100 shadow-sm">
+        <div id="dashboard-tab-content" className="bg-gradient-to-r from-rose-50 to-amber-50 rounded-3xl p-6 border border-rose-100 shadow-sm">
           <div className="flex flex-col md:flex-row md:items-center justify-between gap-6">
             <div className="flex items-center gap-4">
               <div className="w-14 h-14 rounded-2xl bg-white text-rose-600 flex items-center justify-center shadow-xs">
@@ -1223,7 +1231,7 @@ export const AdminDashboard: React.FC = () => {
 
         {/* 1. USER OVERVIEW & STATISTICS SECTION */}
         {(activeTab === "all" || activeTab === "users_profile") && (
-          <div className="space-y-4">
+          <div id="section-users_profile" className="space-y-4">
             <div className="flex items-center justify-between">
               <h2 className="text-sm md:text-3xl font-black text-slate-900 uppercase tracking-wider flex items-center gap-2">
                 <Users size={16} className="text-emerald-600 md:w-6 md:h-6" />
@@ -1291,7 +1299,7 @@ export const AdminDashboard: React.FC = () => {
 
         {/* 3 & 4. 48 CITIZEN SERVICES & DOCTOR / HOSPITAL / DIAGNOSTIC SECTION */}
         {(activeTab === "all" || activeTab === "services_health") && (
-          <div className="space-y-4">
+          <div id="section-services_health" className="space-y-4">
             <div className="flex items-center justify-between">
               <h2 className="text-sm md:text-3xl font-black text-slate-900 uppercase tracking-wider flex items-center gap-2">
                 <ShieldCheck size={16} className="text-emerald-600 md:w-6 md:h-6" />
@@ -1436,7 +1444,7 @@ export const AdminDashboard: React.FC = () => {
 
         {/* 5, 6, 7, 10. NEWS, NOTICE, BANNER & FEATURED CONTENT SECTION */}
         {(activeTab === "all" || activeTab === "content_media") && (
-          <div className="space-y-4">
+          <div id="section-content_media" className="space-y-4">
             <div className="flex items-center justify-between">
               <h2 className="text-sm md:text-3xl font-black text-slate-900 uppercase tracking-wider flex items-center gap-2">
                 <Newspaper size={16} className="text-blue-600 md:w-6 md:h-6" />
@@ -1700,7 +1708,7 @@ export const AdminDashboard: React.FC = () => {
 
         {/* 13. PRACTICAL OPERATIONAL ANALYTICS SECTION */}
         {(activeTab === "all" || activeTab === "reports_analytics") && (
-          <div className="space-y-4">
+          <div id="section-reports_analytics" className="space-y-4">
             <div className="flex items-center justify-between">
               <h2 className="text-sm font-black text-slate-900 uppercase tracking-wider flex items-center gap-2">
                 <BarChart3 size={16} className="text-emerald-600" />

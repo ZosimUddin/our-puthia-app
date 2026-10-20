@@ -245,10 +245,19 @@ service cloud.firestore {
       allow delete: if isStaff() || isDocOwner();
     }
 
-    match /blood_donations/{id} {
+        match /blood_donations/{id} {
       allow read: if true;
       allow create: if isSignedIn() && request.resource.data.userId == request.auth.uid;
       allow update, delete: if isStaff() || isDocOwner();
+    }
+    match /blood_inventory/{id} {
+      allow read: if true;
+      allow write: if isStaff() || isAdmin();
+    }
+    match /blood_stock_logs/{id} {
+      allow read: if true;
+      allow create: if isStaff() || isAdmin();
+      allow update, delete: if isAdmin();
     }
 
     match /volunteers/{id} {
