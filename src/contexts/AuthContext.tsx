@@ -21,6 +21,7 @@ import { logAuditEvent } from "../utils/audit";
 import { AdminRole } from "../types/admin";
 import { cleanWardFromText } from "../utils/cleanWard";
 import { toast } from "sonner";
+import { sendWelcomeEmail } from "../services/emailService";
 
 export interface UserProfile {
   uid: string;
@@ -494,6 +495,18 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
       try { localStorage.setItem('auth_registered_village', locVillage); } catch {}
       try { localStorage.setItem('auth_registered_union', locUnion); } catch {}
       setUserProfile(initialProfile);
+
+      // Trigger Welcome Email to new user
+      if (registrationEmail && !registrationEmail.endsWith("@puthiadiary.com")) {
+        sendWelcomeEmail({
+          to: registrationEmail,
+          name: name.trim(),
+          phone: phone.trim(),
+          stars: 20
+        }).catch((err) => {
+          console.warn("Welcome email async trigger notice:", err);
+        });
+      }
     } catch (error) {
       console.error("Email registration error:", error);
       throw error;

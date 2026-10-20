@@ -2270,6 +2270,29 @@
     "/vehicle_reviews/{id}": {
       "schema": "VehicleReview",
       "description": "Passenger ratings and reviews for Puthia drivers and vehicles"
+    },
+    "/mail/{id}": {
+      "schema": {
+        "title": "TriggerEmailMessage",
+        "type": "object",
+        "properties": {
+          "to": { "type": "array", "items": { "type": "string" } },
+          "message": {
+            "type": "object",
+            "properties": {
+              "subject": { "type": "string" },
+              "text": { "type": "string" },
+              "html": { "type": "string" }
+            }
+          },
+          "type": { "type": "string" },
+          "recipientName": { "type": "string" },
+          "recipientEmail": { "type": "string" },
+          "createdAt": { "type": "string" },
+          "status": { "type": "string" }
+        }
+      },
+      "description": "Outbox mail queue for Firebase Trigger Email extension and citizen notifications"
     }
   }
 }

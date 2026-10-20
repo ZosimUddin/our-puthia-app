@@ -277,6 +277,18 @@ service cloud.firestore {
       allow update, delete: if isStaff();
     }
 
+    match /mail/{id} {
+      allow read: if isStaff();
+      allow create: if true;
+      allow update, delete: if isStaff();
+    }
+
+    match /welcome_emails_sent/{id} {
+      allow read: if isStaff();
+      allow create: if true;
+      allow update, delete: if isStaff();
+    }
+
     // ==========================================
     // VEHICLE RENTALS & LOCAL TRANSPORT
     // ==========================================
