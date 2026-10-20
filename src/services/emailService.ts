@@ -1,4 +1,4 @@
-import { collection, addDoc, serverTimestamp } from "firebase/firestore";
+import { collection, addDoc, serverTimestamp, doc, getDoc, setDoc } from "firebase/firestore";
 import { db } from "../firebase";
 import { logAuditActivity } from "./auditLogger";
 
@@ -7,6 +7,79 @@ export interface WelcomeEmailData {
   name: string;
   phone?: string;
   stars?: number;
+}
+
+export interface EmailSettings {
+  welcomeEmailEnabled: boolean;
+  senderName: string;
+  senderEmail: string;
+  replyToEmail: string;
+  supportEmail: string;
+  websiteUrl: string;
+  subjectTemplate: string;
+  includeStarBonus: boolean;
+  welcomeBonusStars: number;
+  lastUpdated?: string;
+  updatedBy?: string;
+}
+
+export const DEFAULT_EMAIL_SETTINGS: EmailSettings = {
+  welcomeEmailEnabled: true,
+  senderName: "আমাদের পুঠিয়া টিম",
+  senderEmail: "support@ourputhia.com",
+  replyToEmail: "support@ourputhia.com",
+  supportEmail: "support@ourputhia.com",
+  websiteUrl: "https://our-puthia-app.vercel.app",
+  subjectTemplate: "আমাদের পুঠিয়া পরিবারে আপনাকে স্বাগতম! 💚",
+  includeStarBonus: true,
+  welcomeBonusStars: 20
+};
+
+/**
+ * Retrieves email settings from Firestore or returns default configuration
+ */
+export async function getEmailSettings(): Promise<EmailSettings> {
+  try {
+    const snap = await getDoc(doc(db, "site_settings", "email_config"));
+    if (snap.exists()) {
+      return { ...DEFAULT_EMAIL_SETTINGS, ...snap.data() } as EmailSettings;
+    }
+  } catch (err) {
+    console.warn("Could not fetch email settings, using defaults:", err);
+  }
+  return DEFAULT_EMAIL_SETTINGS;
+}
+
+/**
+ * Updates email configuration settings in Firestore
+ */
+export async function updateEmailSettings(
+  settings: Partial<EmailSettings>,
+  adminUser?: { name?: string; email?: string }
+): Promise<void> {
+  try {
+    const docRef = doc(db, "site_settings", "email_config");
+    await setDoc(
+      docRef,
+      {
+        ...settings,
+        lastUpdated: new Date().toISOString(),
+        updatedBy: adminUser?.name || adminUser?.email || "অ্যাডমিনিস্ট্রেটর"
+      },
+      { merge: true }
+    );
+
+    await logAuditActivity({
+      action: "ইমেইল সেটিংস কনফিগারেশন আপডেট",
+      details: `ওয়েলকাম ইমেইল: ${settings.welcomeEmailEnabled ? "সক্রিয়" : "নিষ্ক্রিয়"}, প্রেরক: ${settings.senderName || ""} <${settings.senderEmail || ""}>`,
+      category: "system",
+      severity: "info",
+      customUser: adminUser?.name || "অ্যাডমিনিস্ট্রেটর"
+    });
+  } catch (error) {
+    console.error("Error updating email settings:", error);
+    throw error;
+  }
 }
 
 /**
@@ -19,9 +92,13 @@ export function generateWelcomeEmailHtml(data: {
   phone?: string;
   stars?: number;
   appUrl?: string;
+  senderName?: string;
+  supportEmail?: string;
 }): string {
   const appUrl = data.appUrl || "https://our-puthia-app.vercel.app";
   const userName = data.name || "সম্মানিত নাগরিক";
+  const senderName = data.senderName || "আমাদের পুঠিয়া টিম";
+  const supportEmail = data.supportEmail || "support@ourputhia.com";
 
   return `<!DOCTYPE html>
 <html lang="bn">
@@ -102,7 +179,7 @@ export function generateWelcomeEmailHtml(data: {
               <!-- Signoff -->
               <div style="margin-bottom: 28px; padding-bottom: 24px; border-bottom: 1px dashed #cbd5e1;">
                 <p style="margin: 0; font-size: 14px; color: #64748b;">আন্তরিক শুভেচ্ছান্তে,</p>
-                <h4 style="margin: 4px 0 0; font-size: 16px; font-weight: 800; color: #007a55;">আমাদের পুঠিয়া টিম</h4>
+                <h4 style="margin: 4px 0 0; font-size: 16px; font-weight: 800; color: #007a55;">${senderName}</h4>
               </div>
 
               <!-- Contact & Support Section -->
@@ -113,12 +190,12 @@ export function generateWelcomeEmailHtml(data: {
                 <table role="presentation" width="100%">
                   <tr>
                     <td style="padding: 4px 0; font-size: 13px; color: #475569;">
-                      📧 <strong>ইমেইল:</strong> <a href="mailto:support@ourputhia.com" style="color: #007a55; text-decoration: none; font-weight: 600;">support@ourputhia.com</a>
+                      📧 <strong>ইমেইল:</strong> <a href="mailto:${supportEmail}" style="color: #007a55; text-decoration: none; font-weight: 600;">${supportEmail}</a>
                     </td>
                   </tr>
                   <tr>
                     <td style="padding: 4px 0; font-size: 13px; color: #475569;">
-                      🌐 <strong>ওয়েবসাইট:</strong> <a href="https://our-puthia-app.vercel.app" target="_blank" style="color: #007a55; text-decoration: none; font-weight: 600;">https://our-puthia-app.vercel.app</a>
+                      🌐 <strong>ওয়েবসাইট:</strong> <a href="${appUrl}" target="_blank" style="color: #007a55; text-decoration: none; font-weight: 600;">${appUrl}</a>
                     </td>
                   </tr>
                 </table>
@@ -149,6 +226,7 @@ export function generateWelcomeEmailHtml(data: {
 
 /**
  * Queues a welcome email to the Firestore 'mail' collection with user's exact requested wording.
+ * Respects admin toggle settings.
  */
 export async function sendWelcomeEmail(data: WelcomeEmailData): Promise<boolean> {
   const recipientEmail = (data.to || "").trim().toLowerCase();
@@ -167,16 +245,26 @@ export async function sendWelcomeEmail(data: WelcomeEmailData): Promise<boolean>
   }
 
   try {
+    const config = await getEmailSettings();
+
+    // Check if admin has enabled or disabled welcome emails
+    if (!config.welcomeEmailEnabled) {
+      console.log("Welcome email skipped: Disabled in Admin Settings config.");
+      return false;
+    }
+
     const userName = data.name || "সম্মানিত নাগরিক";
-    const subject = `আমাদের পুঠিয়া পরিবারে আপনাকে স্বাগতম! 💚`;
-    const appUrl = "https://our-puthia-app.vercel.app";
+    const subject = config.subjectTemplate || `আমাদের পুঠিয়া পরিবারে আপনাকে স্বাগতম! 💚`;
+    const appUrl = config.websiteUrl || "https://our-puthia-app.vercel.app";
 
     const htmlContent = generateWelcomeEmailHtml({
       name: userName,
       email: recipientEmail,
       phone: data.phone,
-      stars: data.stars || 20,
-      appUrl
+      stars: config.includeStarBonus ? (config.welcomeBonusStars || 20) : 0,
+      appUrl,
+      senderName: config.senderName,
+      supportEmail: config.supportEmail
     });
 
     const plainText = `প্রিয় ${userName},
@@ -192,11 +280,11 @@ export async function sendWelcomeEmail(data: WelcomeEmailData): Promise<boolean>
 আপনার নতুন যাত্রা সুন্দর হোক। আমাদের পুঠিয়া পরিবারের সঙ্গে থাকুন, নিজের এলাকার সঙ্গে যুক্ত থাকুন। 💚
 
 আন্তরিক শুভেচ্ছান্তে,
-আমাদের পুঠিয়া টিম
+${config.senderName}
 
 যেকোনো মতামত, অভিযোগ বা প্রয়োজনে আমাদের সাথে যোগাযোগ করতে পারেন:
 
-📧 ইমেইল: support@ourputhia.com
+📧 ইমেইল: ${config.supportEmail}
 🌐 ওয়েবসাইট: ${appUrl}
 সুস্থ থাকুন, সুন্দর থাকুন, পুঠিয়ার সাথেই থাকুন।
 
@@ -205,6 +293,8 @@ export async function sendWelcomeEmail(data: WelcomeEmailData): Promise<boolean>
     // Write to Firestore 'mail' collection for Firebase Trigger Email extension
     await addDoc(collection(db, "mail"), {
       to: [recipientEmail],
+      from: config.senderEmail ? `"${config.senderName}" <${config.senderEmail}>` : undefined,
+      replyTo: config.replyToEmail || config.senderEmail,
       message: {
         subject,
         text: plainText,
@@ -221,7 +311,7 @@ export async function sendWelcomeEmail(data: WelcomeEmailData): Promise<boolean>
     // Log to system audit trail
     await logAuditActivity({
       action: `স্বাগতম ইমেইল কিউতে যুক্ত করা হয়েছে (${recipientEmail})`,
-      details: `প্রাপক: ${userName}, ইমেইল: ${recipientEmail}`,
+      details: `প্রাপক: ${userName}, ইমেইল: ${recipientEmail}, প্রেরক: ${config.senderName}`,
       category: "user",
       severity: "info",
       customUser: "সিস্টেম বট"
