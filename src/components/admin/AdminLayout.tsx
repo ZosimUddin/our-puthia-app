@@ -10,7 +10,7 @@ import {
   Phone, PhoneCall, Share2, Search, Wrench, Clock, AlertCircle, AlertTriangle, FileCheck, CheckSquare,
   Tag, ShoppingBag, Truck, MapPin, Stethoscope, GraduationCap, Sprout, Briefcase,
   Video, FolderKanban, Sliders, Layers, UserCheck, UserX, UserPlus, BarChart2, MessageSquare, Flame, Smartphone,
-  Database, HardDrive, UploadCloud, Wifi, Mic, SearchCode, History, Info, Headphones, Star, Download, Leaf
+  Database, HardDrive, UploadCloud, Wifi, Mic, SearchCode, History, Info, Headphones, Star, Download, Leaf, Mail
 } from 'lucide-react';
 import { Link, useLocation, Outlet, useNavigate } from 'react-router-dom';
 import { useAuth } from '../../contexts/AuthContext';
@@ -22,6 +22,7 @@ interface NavSubItem {
   name: string;
   href: string;
   icon?: React.ElementType;
+  keywords?: string[];
 }
 
 interface NavItem {
@@ -32,6 +33,7 @@ interface NavItem {
   badge?: string | number;
   badgeColor?: string;
   subItems?: NavSubItem[];
+  keywords?: string[];
 }
 
 interface NavSection {
@@ -48,6 +50,13 @@ const AdminLayout: React.FC = () => {
   const [profileMenuOpen, setProfileMenuOpen] = useState(false);
   const [expandedMenus, setExpandedMenus] = useState<Record<string, boolean>>({});
   const profileMenuRef = useRef<HTMLDivElement>(null);
+
+  // Menu Search & Filter State (Requirement 5)
+  const [menuSearchQuery, setMenuSearchQuery] = useState('');
+
+  // Logout Confirmation Modal State (Requirement 6)
+  const [showLogoutConfirmModal, setShowLogoutConfirmModal] = useState(false);
+  const [isLoggingOut, setIsLoggingOut] = useState(false);
 
   // Session Warning State Variables
   const [sessionTimeLeft, setSessionTimeLeft] = useState(60);
@@ -227,12 +236,18 @@ const AdminLayout: React.FC = () => {
           href: '/admin/blood-donors', 
           icon: Droplets, 
           roles: ['super_admin', 'admin'],
+          subItems: [
+            { name: 'রক্তদাতা তালিকা ও ডোনার হাব', href: '/admin/blood-donors', icon: Droplets, keywords: ['রক্ত', 'ডোনার', 'রক্তদাতা', 'ব্লাড'] },
+            { name: '🩸 রক্ত ইনভেন্টরি ট্র্যাকার', href: '/blood-donation?tab=inventory', icon: Activity, keywords: ['রক্ত', 'ইনভেন্টরি', 'ব্লাড স্টক', 'ব্যাগ', 'রক্তদান'] }
+          ],
+          keywords: ['রক্ত', 'ব্লাড', 'blood', 'ডোনার', 'রক্তদাতা', 'ইনভেন্টরি', 'স্টক']
         },
         { 
           name: '৫২টি নাগরিক সেবা ক্যাটালগ', 
           href: '/admin/63-services', 
           icon: Sparkles, 
           roles: ['super_admin', 'admin', 'editor'],
+          keywords: ['সেবা', 'সার্ভিস', 'ক্যাটালগ', 'citizen']
         },
       ]
     },
@@ -245,18 +260,21 @@ const AdminLayout: React.FC = () => {
           href: '/admin/businesses', 
           icon: Store, 
           roles: ['super_admin', 'admin'],
+          keywords: ['ব্যবসা', 'business', 'দোকান', 'shop', 'বাণিজ্য', 'মার্কেট', 'অনুমোদন']
         },
         { 
           name: 'বাসা-ভাড়া ও টু-লেট', 
           href: '/admin/house-rent', 
           icon: Home, 
           roles: ['super_admin', 'admin'],
+          keywords: ['বাসা', 'ভাড়া', 'টু-লেট', 'ফ্ল্যাট', 'বাড়ি']
         },
         { 
           name: 'বিজ্ঞাপন ও স্পন্সরশিপ', 
           href: '/admin/advertisements', 
           icon: Megaphone, 
           roles: ['super_admin', 'admin'],
+          keywords: ['বিজ্ঞাপন', 'বিজ্ঞপ্তি', 'স্পন্সর', 'ব্যানার']
         },
       ]
     },
@@ -269,18 +287,21 @@ const AdminLayout: React.FC = () => {
           href: '/admin/jobs', 
           icon: Briefcase, 
           roles: ['super_admin', 'admin', 'editor'],
+          keywords: ['চাকরি', 'job', 'ক্যারিয়ার', 'সার্কুলার', 'নিয়োগ']
         },
         { 
           name: 'কৃষি তথ্য ও বাজারদর', 
           href: '/admin/agriculture', 
           icon: Sprout, 
           roles: ['super_admin', 'admin', 'editor'],
+          keywords: ['কৃষি', 'বাজারদর', 'ফসল', 'দাম', 'কৃষক']
         },
         { 
           name: 'সিটিজেন ড্রয়ার ও মেনু কন্ট্রোল', 
           href: '/admin/main-menu', 
           icon: Menu, 
           roles: ['super_admin', 'admin'],
+          keywords: ['ড্রয়ার', 'মেনু', 'নেভিগেশন']
         },
       ]
     },
@@ -293,12 +314,21 @@ const AdminLayout: React.FC = () => {
           href: '/admin/audit-logs', 
           icon: History, 
           roles: ['super_admin'],
+          keywords: ['অডিট', 'audit', 'লগ', 'logs', 'ট্রেইল', 'কার্যক্রম']
         },
         { 
           name: 'ওয়েবসাইট ও সাইট সেটিংস', 
           href: '/admin/settings', 
           icon: Settings, 
           roles: ['super_admin'],
+          subItems: [
+            { name: 'সাধারণ সাইট সেটিংস', href: '/admin/settings?tab=site', icon: Sliders, keywords: ['সেটিংস', 'সাইট'] },
+            { name: '📧 স্বাগতম ও ইমেইল সেটিংস', href: '/admin/settings?tab=welcome_email', icon: Mail, keywords: ['ইমেইল', 'email', 'মেইল', 'স্বাগতম', 'বার্তা'] },
+            { name: 'পাসওয়ার্ড রিসেট ইমেইল', href: '/admin/settings?tab=password_reset_email', icon: Key, keywords: ['পাসওয়ার্ড', 'ইমেইল'] },
+            { name: 'নিরাপত্তা অ্যালার্ট ইমেইল', href: '/admin/settings?tab=security_alert_email', icon: Shield, keywords: ['নিরাপত্তা', 'অ্যালার্ট', 'ইমেইল'] },
+            { name: 'ঘোষণা ও আপডেট ইমেইল', href: '/admin/settings?tab=announcement_email', icon: Bell, keywords: ['ঘোষণা', 'আপডেট', 'ইমেইল'] }
+          ],
+          keywords: ['ইমেইল', 'email', 'মেইল', 'settings', 'সেটিংস', 'টেমপ্লেট', 'পাসওয়ার্ড', 'বার্তা']
         },
         { 
           name: 'ফুটার ও সোশ্যাল লিংকস', 
@@ -353,6 +383,7 @@ const AdminLayout: React.FC = () => {
           href: '/admin/reports-moderation', 
           icon: ShieldAlert, 
           roles: ['super_admin', 'admin', 'moderator'],
+          keywords: ['রিপোর্ট', 'report', 'মডারেশন', 'ফ্ল্যাগড', 'অভিযোগ', 'স্প্যাম']
         },
         { 
           name: 'আড্ডা পোস্ট ম্যানেজমেন্ট', 
@@ -437,6 +468,7 @@ const AdminLayout: React.FC = () => {
           href: '/admin/moderation?tab=reports', 
           icon: AlertCircle, 
           roles: ['super_admin', 'admin', 'moderator'],
+          keywords: ['রিপোর্ট', 'report', 'ফ্ল্যাগড', 'অভিযোগ']
         },
         { 
           name: 'স্প্যাম ও অ্যান্টি-স্প্যাম রুলস', 
@@ -472,17 +504,78 @@ const AdminLayout: React.FC = () => {
     }
   ], []);
 
-  // Filter sections and items based on role and activeWing
+  // Filter sections and items based on role, activeWing, and menuSearchQuery (Requirement 5)
   const visibleSections = useMemo(() => {
-    const currentSections = activeWing === 'adda' ? addaNavSections : mainNavSections;
-    return currentSections
+    const q = menuSearchQuery.trim().toLowerCase();
+    
+    // When searching, pool both main and adda sections so admin finds any tool instantly!
+    const poolSections = q ? [...mainNavSections, ...addaNavSections] : (activeWing === 'adda' ? addaNavSections : mainNavSections);
+    
+    // Deduplicate sections if same title appears in pool
+    const uniquePoolSections: NavSection[] = [];
+    const seenTitles = new Set<string>();
+    for (const sec of poolSections) {
+      if (!seenTitles.has(sec.title)) {
+        seenTitles.add(sec.title);
+        uniquePoolSections.push(sec);
+      }
+    }
+
+    const baseSections = uniquePoolSections
       .filter(section => section.roles.includes(effectiveRole))
       .map(section => ({
         ...section,
         items: section.items.filter(item => item.roles.includes(effectiveRole))
       }))
       .filter(section => section.items.length > 0);
-  }, [activeWing, mainNavSections, addaNavSections, effectiveRole]);
+
+    if (!q) return baseSections;
+
+    return baseSections
+      .map(section => {
+        const sectionMatches = section.title.toLowerCase().includes(q);
+
+        const filteredItems = section.items.filter(item => {
+          if (sectionMatches) return true;
+          if (item.name.toLowerCase().includes(q)) return true;
+          if (item.keywords?.some(k => k.toLowerCase().includes(q))) return true;
+          if (item.subItems?.some(sub => 
+            sub.name.toLowerCase().includes(q) || 
+            sub.keywords?.some(k => k.toLowerCase().includes(q))
+          )) return true;
+          return false;
+        });
+
+        if (filteredItems.length === 0) return null;
+
+        return {
+          ...section,
+          items: filteredItems
+        };
+      })
+      .filter((s): s is NavSection => s !== null);
+  }, [activeWing, mainNavSections, addaNavSections, effectiveRole, menuSearchQuery]);
+
+  // Total matched items count when searching
+  const totalMatchedCount = useMemo(() => {
+    if (!menuSearchQuery.trim()) return 0;
+    return visibleSections.reduce((acc, s) => acc + s.items.length, 0);
+  }, [visibleSections, menuSearchQuery]);
+
+  // Auto-expand matched parent menus when search query is entered
+  useEffect(() => {
+    if (menuSearchQuery.trim()) {
+      const autoExpandMap: Record<string, boolean> = {};
+      visibleSections.forEach(section => {
+        section.items.forEach(item => {
+          if (item.subItems && item.subItems.length > 0) {
+            autoExpandMap[item.name] = true;
+          }
+        });
+      });
+      setExpandedMenus(prev => ({ ...prev, ...autoExpandMap }));
+    }
+  }, [menuSearchQuery, visibleSections]);
 
   // Mobile Bottom Navigation depending on role
   const mobileNavItems = useMemo(() => {
@@ -651,18 +744,54 @@ const AdminLayout: React.FC = () => {
             </button>
           </div>
 
-          {/* Dynamic Active Role Pill Card */}
-          <div className="flex items-center justify-between px-3.5 py-2 rounded-2xl border border-emerald-200/80 bg-emerald-50/80 text-[11px] font-bold text-emerald-900 shadow-2xs">
-            <div className="flex items-center gap-2">
-              <ShieldCheck size={14} className="text-[#0B7A3B] shrink-0" />
-              <span className="font-extrabold">{roleConfig.badge}</span>
+          {/* Super Admin Identity & Security Hub Card (Requirement 6) */}
+          <div className="p-3 rounded-2xl border border-emerald-200/80 bg-gradient-to-br from-emerald-50/90 via-teal-50/40 to-white text-emerald-950 shadow-xs space-y-2.5">
+            <div className="flex items-center justify-between gap-2">
+              <div className="flex items-center gap-2.5 min-w-0">
+                <div className="relative shrink-0">
+                  <div className="w-9 h-9 rounded-xl bg-gradient-to-tr from-[#0B7A3B] to-emerald-500 flex items-center justify-center text-white font-black text-sm shadow-xs border border-emerald-300">
+                    {userProfile?.displayName ? userProfile.displayName.charAt(0) : user?.displayName ? user.displayName.charAt(0) : 'A'}
+                  </div>
+                  <span className="absolute -bottom-0.5 -right-0.5 flex h-3 w-3">
+                    <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75"></span>
+                    <span className="relative inline-flex rounded-full h-3 w-3 bg-[#0B7A3B] border-2 border-white"></span>
+                  </span>
+                </div>
+                <div className="min-w-0">
+                  <div className="flex items-center gap-1.5">
+                    <p className="font-black text-xs text-slate-900 truncate">
+                      {userProfile?.displayName || user?.displayName || user?.email?.split('@')[0] || 'সুপার অ্যাডমিন'}
+                    </p>
+                    <span className="inline-flex px-1.5 py-0.2 rounded-md bg-emerald-600 text-white text-[9px] font-extrabold uppercase shadow-2xs">
+                      PRO
+                    </span>
+                  </div>
+                  <p className="text-[10px] font-bold text-slate-500 truncate">{user?.email || 'mdzosimuddin31@gmail.com'}</p>
+                </div>
+              </div>
+
+              {/* Profile Shortcut Button */}
+              <Link
+                to="/admin/profile"
+                onClick={() => setSidebarOpen(false)}
+                className="shrink-0 px-2.5 py-1.5 bg-white hover:bg-emerald-100/60 text-[#0B7A3B] border border-emerald-200 rounded-xl text-[10.5px] font-black shadow-2xs flex items-center gap-1 transition-all active:scale-95 cursor-pointer"
+                title="প্রোফাইল দেখুন"
+              >
+                <User size={12} className="text-[#0B7A3B]" />
+                <span>প্রোফাইল</span>
+              </Link>
             </div>
-            <div className="flex items-center gap-1.5 bg-white px-2 py-0.5 rounded-full border border-emerald-200 shadow-2xs">
-              <span className="text-[10px] font-extrabold text-[#0B7A3B]">অনলাইন</span>
-              <span className="flex h-2 w-2 relative">
-                <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75"></span>
-                <span className="relative inline-flex rounded-full h-2 w-2 bg-[#0B7A3B]"></span>
-              </span>
+
+            {/* Role Badge & Security Status Bar */}
+            <div className="flex items-center justify-between pt-1.5 border-t border-emerald-100/80 text-[10.5px]">
+              <div className="flex items-center gap-1.5 font-black text-emerald-800">
+                <ShieldCheck size={13} className="text-[#0B7A3B]" />
+                <span>{roleConfig.badge}</span>
+              </div>
+              <div className="flex items-center gap-1 bg-white px-2 py-0.5 rounded-full border border-emerald-200 shadow-2xs">
+                <span className="text-[9.5px] font-black text-[#0B7A3B]">এনক্রিপ্টেড সেশন</span>
+                <Lock size={10} className="text-[#0B7A3B]" />
+              </div>
             </div>
           </div>
 
@@ -693,14 +822,104 @@ const AdminLayout: React.FC = () => {
               <span>💬 আড্ডা সোশ্যাল</span>
             </button>
           </div>
+
+          {/* Menu Search Field & Quick Filter Chips (Requirement 5) */}
+          <div className="space-y-1.5 pt-0.5">
+            <div className="relative">
+              <Search size={14} className="absolute left-3 top-1/2 -translate-y-1/2 text-emerald-700/70" />
+              <input
+                type="text"
+                value={menuSearchQuery}
+                onChange={(e) => setMenuSearchQuery(e.target.value)}
+                placeholder="মেনু খুঁজুন... (রক্ত, রিপোর্ট, ব্যবসা, ইমেইল)"
+                className="w-full pl-8 pr-7 py-2 bg-white border border-emerald-200 rounded-xl text-xs font-bold text-slate-800 placeholder:text-slate-400 placeholder:font-medium focus:ring-2 focus:ring-[#0B7A3B]/25 focus:border-[#0B7A3B] focus:outline-none shadow-2xs transition-all"
+              />
+              {menuSearchQuery && (
+                <button
+                  type="button"
+                  onClick={() => setMenuSearchQuery('')}
+                  className="absolute right-2 top-1/2 -translate-y-1/2 p-0.5 text-slate-400 hover:text-slate-700 rounded-full hover:bg-slate-100 transition-colors cursor-pointer"
+                  title="অনুসন্ধান মুছুন"
+                >
+                  <X size={13} />
+                </button>
+              )}
+            </div>
+
+            {/* Quick Suggestion Chips */}
+            <div className="flex items-center gap-1 overflow-x-auto pb-0.5 custom-scrollbar">
+              <span className="text-[9.5px] font-bold text-slate-400 shrink-0 pl-0.5">ফিল্টার:</span>
+              {[
+                { label: '🩸 রক্ত', query: 'রক্ত' },
+                { label: '🛡️ রিপোর্ট', query: 'রিপোর্ট' },
+                { label: '🏪 ব্যবসা', query: 'ব্যবসা' },
+                { label: '📧 ইমেইল', query: 'ইমেইল' },
+                { label: '👥 ইউজার', query: 'ইউজার' },
+                { label: '⚙️ সেটিংস', query: 'সেটিংস' }
+              ].map((chip) => {
+                const isSelected = menuSearchQuery.trim() === chip.query;
+                return (
+                  <button
+                    key={chip.query}
+                    type="button"
+                    onClick={() => setMenuSearchQuery(isSelected ? '' : chip.query)}
+                    className={`px-2 py-0.5 rounded-lg text-[10px] font-extrabold whitespace-nowrap transition-all cursor-pointer ${
+                      isSelected
+                        ? 'bg-[#0B7A3B] text-white shadow-2xs'
+                        : 'bg-white hover:bg-emerald-50 text-slate-600 hover:text-[#0B7A3B] border border-emerald-200/60 shadow-2xs'
+                    }`}
+                  >
+                    {chip.label}
+                  </button>
+                );
+              })}
+            </div>
+
+            {/* Matched Count indicator when searching */}
+            {menuSearchQuery.trim() && (
+              <div className="flex items-center justify-between px-1 text-[10px] font-black text-emerald-800">
+                <span>অনুসন্ধান ফলাফল:</span>
+                <span className="bg-emerald-100 text-[#0B7A3B] px-2 py-0.5 rounded-full font-bold">
+                  {totalMatchedCount}টি মেনু পাওয়া গেছে
+                </span>
+              </div>
+            )}
+          </div>
         </div>
 
         {/* Dynamic Nav Menu */}
         <div className="flex-1 overflow-y-auto py-4 px-3 space-y-5 custom-scrollbar">
-          {/* Admin Quick Actions Widget */}
-          <AdminQuickActionsSidebarWidget onItemClick={() => setSidebarOpen(false)} />
+          {/* Admin Quick Actions Widget (show unless searching for unrelated term) */}
+          {(!menuSearchQuery.trim() || 
+            menuSearchQuery.includes('ব্যবসা') || 
+            menuSearchQuery.includes('রিপোর্ট') || 
+            menuSearchQuery.includes('ইউজার') || 
+            menuSearchQuery.includes('কুইক') ||
+            menuSearchQuery.includes('action')) && (
+            <AdminQuickActionsSidebarWidget onItemClick={() => setSidebarOpen(false)} />
+          )}
 
-          {visibleSections.map((section, sIdx) => (
+          {visibleSections.length === 0 ? (
+            <div className="py-8 px-4 text-center bg-white rounded-2xl border border-dashed border-emerald-200 space-y-3">
+              <div className="w-10 h-10 bg-emerald-50 text-emerald-700 rounded-full flex items-center justify-center mx-auto">
+                <Search size={20} />
+              </div>
+              <div className="space-y-1">
+                <p className="text-xs font-black text-slate-800">কোনো মেনু পাওয়া যায়নি</p>
+                <p className="text-[11px] font-medium text-slate-500">
+                  ‘{menuSearchQuery}’ দিয়ে কোনো অ্যাডমিন মেনু খুঁজে পাওয়া যায়নি।
+                </p>
+              </div>
+              <button
+                type="button"
+                onClick={() => setMenuSearchQuery('')}
+                className="px-3.5 py-2 bg-[#0B7A3B] text-white rounded-xl text-xs font-bold hover:bg-emerald-800 transition-colors shadow-2xs cursor-pointer active:scale-95"
+              >
+                সব মেনু দেখতে ফিল্টার রিসেট করুন
+              </button>
+            </div>
+          ) : (
+            visibleSections.map((section, sIdx) => (
             <div key={sIdx} className="space-y-1">
               {/* Section Header */}
               <div className="flex items-center gap-2 px-3 mb-2">
@@ -853,7 +1072,8 @@ const AdminLayout: React.FC = () => {
                 );
               })}
             </div>
-          ))}
+          ))
+        )}
         </div>
 
         {/* Footer & User Overview */}
@@ -866,8 +1086,8 @@ const AdminLayout: React.FC = () => {
             <span>মূল সাইট দেখুন (Live View)</span>
           </Link>
           <button
-            onClick={handleLogout}
-            className="flex items-center justify-center gap-2 w-full px-3.5 py-2 text-xs font-black text-[#E11D2E] bg-rose-50 hover:bg-rose-100 border border-rose-200 rounded-xl transition-all cursor-pointer shadow-2xs"
+            onClick={() => setShowLogoutConfirmModal(true)}
+            className="flex items-center justify-center gap-2 w-full px-3.5 py-2 text-xs font-black text-[#E11D2E] bg-rose-50 hover:bg-rose-100 border border-rose-200 rounded-xl transition-all cursor-pointer shadow-2xs min-h-[44px] active:scale-98"
           >
             <LogOut size={14} />
             <span>➔ লগ আউট</span>
@@ -915,12 +1135,39 @@ const AdminLayout: React.FC = () => {
             </Link>
           </div>
 
-          {/* Right: Active Role Badge, Notifications Bell & Profile Dropdown */}
+          {/* Right: Super Admin Identity, Role Badge, Profile Shortcut, Notifications & Profile Dropdown */}
           <div className="flex items-center gap-2">
+            {/* Super Admin Identity Pill (Requirement 6) */}
+            <div className="hidden sm:flex items-center gap-2 px-3 py-1.5 bg-emerald-50/90 border border-emerald-200/90 rounded-full text-xs font-black text-emerald-900 shadow-2xs">
+              <span className="flex h-2 w-2 relative">
+                <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75"></span>
+                <span className="relative inline-flex rounded-full h-2 w-2 bg-[#0B7A3B]"></span>
+              </span>
+              <span className="truncate max-w-[130px] font-extrabold text-[#0B7A3B]">
+                {userProfile?.displayName || user?.displayName || user?.email?.split('@')[0] || 'সুপার অ্যাডমিন'}
+              </span>
+            </div>
+
             {/* Role Badge */}
             <span className="hidden xs:inline-flex px-2.5 py-1 rounded-full bg-[#F3E8FF] text-[#7E22CE] border border-purple-200/80 text-[11px] font-black tracking-tight shadow-2xs">
               {roleConfig.badge}
             </span>
+
+            {/* Direct Profile Shortcut Button (Requirement 6) */}
+            <Link
+              to="/admin/profile"
+              className="hidden md:flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-xs font-black text-emerald-800 bg-emerald-50 hover:bg-emerald-100 border border-emerald-200/80 transition-all shadow-2xs active:scale-95 cursor-pointer"
+              title="সুপার অ্যাডমিন প্রোফাইল দেখুন ও ম্যানেজ করুন"
+            >
+              <User size={14} className="text-[#0B7A3B]" />
+              <span>আমার প্রোফাইল</span>
+            </Link>
+
+            {/* Security Clearance Indicator */}
+            <div className="hidden lg:flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-slate-50 border border-slate-200 text-[10px] font-black text-slate-600 shadow-2xs">
+              <ShieldCheck size={12} className="text-[#0B7A3B]" />
+              <span>সুরক্ষিত সেশন</span>
+            </div>
 
             {/* Notification Bell */}
             <Link 
@@ -985,7 +1232,10 @@ const AdminLayout: React.FC = () => {
                       ))}
                       <div className="pt-1 mt-1 border-t border-slate-100">
                         <button 
-                          onClick={handleLogout} 
+                          onClick={() => {
+                            setProfileMenuOpen(false);
+                            setShowLogoutConfirmModal(true);
+                          }} 
                           className="flex items-center gap-2.5 px-3 py-2 text-rose-600 hover:bg-rose-50 rounded-xl text-xs font-bold w-full transition-colors cursor-pointer"
                         >
                           <LogOut size={15} />
@@ -1085,6 +1335,81 @@ const AdminLayout: React.FC = () => {
                   className="w-full py-2.5 bg-slate-100 hover:bg-slate-200 text-rose-600 font-bold text-xs rounded-xl cursor-pointer transition-colors"
                 >
                   লগ আউট করুন
+                </button>
+              </div>
+            </motion.div>
+          </div>
+        )}
+      </AnimatePresence>
+
+      {/* Super Admin Logout Confirmation Modal (Requirement 6) */}
+      <AnimatePresence>
+        {showLogoutConfirmModal && (
+          <div className="fixed inset-0 z-[10000] flex items-center justify-center p-4">
+            {/* Backdrop */}
+            <motion.div
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+              onClick={() => !isLoggingOut && setShowLogoutConfirmModal(false)}
+              className="absolute inset-0 bg-slate-950/70 backdrop-blur-sm cursor-pointer"
+            />
+
+            {/* Dialog Content */}
+            <motion.div
+              initial={{ opacity: 0, scale: 0.94, y: 15 }}
+              animate={{ opacity: 1, scale: 1, y: 0 }}
+              exit={{ opacity: 0, scale: 0.94, y: 15 }}
+              transition={{ type: "spring", damping: 25, stiffness: 350 }}
+              className="bg-white rounded-[28px] p-6 sm:p-7 max-w-sm w-full border border-rose-100 shadow-2xl relative overflow-hidden text-center z-10 space-y-4"
+            >
+              {/* Alert Glow Header */}
+              <div className="relative mx-auto w-16 h-16 flex items-center justify-center">
+                <div className="absolute inset-0 rounded-full bg-rose-500/15 animate-ping" />
+                <div className="relative w-14 h-14 bg-gradient-to-tr from-[#E11D2E] to-rose-400 rounded-2xl flex items-center justify-center text-white shadow-lg shadow-rose-500/30">
+                  <LogOut size={26} />
+                </div>
+              </div>
+
+              <div className="space-y-1.5">
+                <h3 className="text-lg font-black text-slate-900">লগআউট নিশ্চিতকরণ</h3>
+                <p className="text-xs text-slate-600 leading-relaxed font-medium">
+                  আপনি কি নিশ্চিত যে <strong>সুপার অ্যাডমিন প্যানেল</strong> থেকে লগআউট করতে চান? আপনার বর্তমান প্রশাসনিক সেশনটি সুরক্ষিতভাবে বন্ধ হয়ে যাবে।
+                </p>
+              </div>
+
+              {/* Security Hint */}
+              <div className="p-3 bg-amber-50 border border-amber-200/80 rounded-2xl text-[11px] font-bold text-amber-800 text-left flex items-start gap-2">
+                <ShieldCheck size={16} className="text-amber-700 shrink-0 mt-0.5" />
+                <span>নিরাপত্তা পরামর্শ: অননুমোদিত প্রবেশ রোধে কাজ শেষে লগআউট করা নিরাপদ।</span>
+              </div>
+
+              {/* Action Buttons */}
+              <div className="grid grid-cols-2 gap-2.5 pt-1">
+                <button
+                  type="button"
+                  disabled={isLoggingOut}
+                  onClick={() => setShowLogoutConfirmModal(false)}
+                  className="py-2.5 px-4 bg-slate-100 hover:bg-slate-200 text-slate-700 font-extrabold text-xs rounded-xl cursor-pointer transition-colors min-h-[44px] disabled:opacity-50"
+                >
+                  না, প্যানেলে থাকুন
+                </button>
+                <button
+                  type="button"
+                  disabled={isLoggingOut}
+                  onClick={async () => {
+                    setIsLoggingOut(true);
+                    try {
+                      await handleLogout();
+                    } finally {
+                      setIsLoggingOut(false);
+                      setShowLogoutConfirmModal(false);
+                    }
+                  }}
+                  className="py-2.5 px-4 bg-[#E11D2E] hover:bg-rose-700 text-white font-extrabold text-xs rounded-xl shadow-md shadow-rose-600/25 transition-all cursor-pointer min-h-[44px] flex items-center justify-center gap-1.5 active:scale-95 disabled:opacity-50"
+                >
+                  <LogOut size={14} />
+                  <span>{isLoggingOut ? "লগআউট হচ্ছে..." : "হ্যাঁ, লগআউট"}</span>
                 </button>
               </div>
             </motion.div>
