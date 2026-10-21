@@ -19,7 +19,8 @@ import {
   AlertCircle,
   KeyRound,
   Lock,
-  ShieldAlert
+  ShieldAlert,
+  Shield
 } from "lucide-react";
 import { motion, AnimatePresence } from "motion/react";
 import {
@@ -29,21 +30,23 @@ import {
   updateEmailSettings,
   sendWelcomeEmail,
   sendPasswordResetCustomEmail,
+  sendSecurityAlertEmail,
   generateWelcomeEmailHtml,
-  generatePasswordResetEmailHtml
+  generatePasswordResetEmailHtml,
+  generateSecurityAlertEmailHtml
 } from "../../services/emailService";
 import { useAuth } from "../../contexts/AuthContext";
 import toast from "react-hot-toast";
 
 const AdminSettings: React.FC = () => {
   const { user } = useAuth();
-  const [activeMainTab, setActiveMainTab] = useState<"welcome_email" | "password_reset_email" | "site">("welcome_email");
+  const [activeMainTab, setActiveMainTab] = useState<"welcome_email" | "password_reset_email" | "security_alert_email" | "site">("welcome_email");
 
   // Email Configuration State
   const [emailConfig, setEmailConfig] = useState<EmailSettings>(DEFAULT_EMAIL_SETTINGS);
   const [loadingConfig, setLoadingConfig] = useState(true);
   const [isSaving, setIsSaving] = useState(false);
-  const [showPreviewModal, setShowPreviewModal] = useState<"welcome" | "reset" | null>(null);
+  const [showPreviewModal, setShowPreviewModal] = useState<"welcome" | "reset" | "security" | null>(null);
 
   // Test Email State
   const [testEmail, setTestEmail] = useState("");
@@ -84,7 +87,7 @@ const AdminSettings: React.FC = () => {
     }
   };
 
-  const handleSendTestEmail = async (type: "welcome" | "reset") => {
+  const handleSendTestEmail = async (type: "welcome" | "reset" | "security") => {
     if (!testEmail || !testEmail.includes("@")) {
       toast.error("দয়া করে সঠিক টেস্ট ইমেইল ঠিকানা প্রদান করুন");
       return;
@@ -99,15 +102,22 @@ const AdminSettings: React.FC = () => {
           name: testName.trim() || "সম্মানিত নাগরিক",
           stars: emailConfig.welcomeBonusStars || 20
         });
-      } else {
+      } else if (type === "reset") {
         success = await sendPasswordResetCustomEmail({
           to: testEmail.trim(),
           name: testName.trim() || "সম্মানিত ব্যবহারকারী"
         });
+      } else {
+        success = await sendSecurityAlertEmail({
+          to: testEmail.trim(),
+          name: testName.trim() || "সম্মানিত ব্যবহারকারী",
+          device: "Google Chrome (Windows 11)",
+          location: "পুঠিয়া, রাজশাহী (আনুমানিক)"
+        });
       }
 
       if (success) {
-        toast.success(`টেস্ট ${type === "welcome" ? "স্বাগতম" : "পাসওয়ার্ড রিসেট"} ইমেইল সফলভাবে মেইল কিউতে যুক্ত করা হয়েছে (${testEmail})!`);
+        toast.success(`টেস্ট ${type === "welcome" ? "স্বাগতম" : type === "reset" ? "পাসওয়ার্ড রিসেট" : "নিরাপত্তা সতর্কতা"} ইমেইল সফলভাবে মেইল কিউতে যুক্ত করা হয়েছে (${testEmail})!`);
       } else {
         toast.error("ইমেইল সার্ভিস বর্তমানে নিষ্ক্রিয় রয়েছে অথবা ভুল ইমেইল প্রদান করা হয়েছে");
       }
@@ -128,19 +138,19 @@ const AdminSettings: React.FC = () => {
             <div>
               <h1 className="text-xl font-black text-slate-900 flex items-center gap-2">
                 <Settings className="text-emerald-600" size={22} />
-                অ্যাডমিন সেটিংস ও ইমেইল কনফিগারেশন
+                অ্যাডমিন সেটিংস ও ইমেইল নোটিফিকেশন হাব
               </h1>
               <p className="text-xs text-slate-500 font-medium mt-0.5">
-                পোর্টাল সেটিংস, স্বয়ংক্রিয় ওয়েলকাম ইমেইল ও পাসওয়ার্ড রিসেট নোটিফিকেশন ব্যবস্থাপনা
+                পোর্টাল সেটিংস, স্বয়ংক্রিয় ওয়েলকাম ইমেইল, পাসওয়ার্ড রিসেট ও নিরাপত্তা লগইন অ্যালার্ট
               </p>
             </div>
 
             {/* Main Tabs Selector */}
-            <div className="flex items-center gap-1.5 bg-slate-100 p-1 rounded-2xl self-start sm:self-auto border border-slate-200">
+            <div className="flex items-center gap-1 bg-slate-100 p-1 rounded-2xl self-start sm:self-auto border border-slate-200 overflow-x-auto max-w-full">
               <button
                 type="button"
                 onClick={() => setActiveMainTab("welcome_email")}
-                className={`px-3.5 py-2 rounded-xl text-xs font-black transition-all flex items-center gap-1.5 cursor-pointer ${
+                className={`px-3 py-1.5 rounded-xl text-xs font-black transition-all flex items-center gap-1.5 cursor-pointer whitespace-nowrap ${
                   activeMainTab === "welcome_email"
                     ? "bg-white text-emerald-800 shadow-xs ring-1 ring-slate-200"
                     : "text-slate-600 hover:text-slate-900"
@@ -153,7 +163,7 @@ const AdminSettings: React.FC = () => {
               <button
                 type="button"
                 onClick={() => setActiveMainTab("password_reset_email")}
-                className={`px-3.5 py-2 rounded-xl text-xs font-black transition-all flex items-center gap-1.5 cursor-pointer ${
+                className={`px-3 py-1.5 rounded-xl text-xs font-black transition-all flex items-center gap-1.5 cursor-pointer whitespace-nowrap ${
                   activeMainTab === "password_reset_email"
                     ? "bg-white text-emerald-800 shadow-xs ring-1 ring-slate-200"
                     : "text-slate-600 hover:text-slate-900"
@@ -165,8 +175,21 @@ const AdminSettings: React.FC = () => {
 
               <button
                 type="button"
+                onClick={() => setActiveMainTab("security_alert_email")}
+                className={`px-3 py-1.5 rounded-xl text-xs font-black transition-all flex items-center gap-1.5 cursor-pointer whitespace-nowrap ${
+                  activeMainTab === "security_alert_email"
+                    ? "bg-white text-emerald-800 shadow-xs ring-1 ring-slate-200"
+                    : "text-slate-600 hover:text-slate-900"
+                }`}
+              >
+                <Shield size={14} className={activeMainTab === "security_alert_email" ? "text-rose-600" : "text-slate-400"} />
+                <span>নিরাপত্তা অ্যালার্ট</span>
+              </button>
+
+              <button
+                type="button"
                 onClick={() => setActiveMainTab("site")}
-                className={`px-3.5 py-2 rounded-xl text-xs font-black transition-all flex items-center gap-1.5 cursor-pointer ${
+                className={`px-3 py-1.5 rounded-xl text-xs font-black transition-all flex items-center gap-1.5 cursor-pointer whitespace-nowrap ${
                   activeMainTab === "site"
                     ? "bg-white text-emerald-800 shadow-xs ring-1 ring-slate-200"
                     : "text-slate-600 hover:text-slate-900"
@@ -187,42 +210,80 @@ const AdminSettings: React.FC = () => {
         ) : (
           <div className="space-y-6">
             {/* 1. Header Hero Card */}
-            <div className="bg-gradient-to-r from-emerald-900 via-emerald-800 to-teal-950 text-white rounded-3xl p-6 shadow-md border border-emerald-700/50 relative overflow-hidden">
-              <div className="absolute top-0 right-0 w-80 h-80 bg-emerald-500/10 rounded-full blur-3xl pointer-events-none" />
+            <div
+              className={`rounded-3xl p-6 shadow-md border relative overflow-hidden text-white ${
+                activeMainTab === "security_alert_email"
+                  ? "bg-gradient-to-r from-rose-950 via-red-900 to-rose-900 border-rose-800/50"
+                  : "bg-gradient-to-r from-emerald-900 via-emerald-800 to-teal-950 border-emerald-700/50"
+              }`}
+            >
+              <div className="absolute top-0 right-0 w-80 h-80 bg-white/5 rounded-full blur-3xl pointer-events-none" />
               <div className="relative z-10 flex flex-col md:flex-row md:items-center justify-between gap-4">
                 <div className="space-y-2">
                   <div className="flex items-center gap-2">
-                    <span className="px-3 py-1 bg-emerald-500/20 text-emerald-200 border border-emerald-400/30 rounded-full text-[11px] font-black uppercase tracking-wider flex items-center gap-1.5">
-                      {activeMainTab === "welcome_email" ? <Mail size={12} className="text-emerald-300" /> : <KeyRound size={12} className="text-emerald-300" />}
-                      {activeMainTab === "welcome_email" ? "স্বাগতম ইমেইল কনফিগারেশন" : "পাসওয়ার্ড রিসেট ইমেইল কনফিগারেশন"}
+                    <span className="px-3 py-1 bg-white/10 text-white border border-white/20 rounded-full text-[11px] font-black uppercase tracking-wider flex items-center gap-1.5">
+                      {activeMainTab === "welcome_email" ? (
+                        <Mail size={12} className="text-emerald-300" />
+                      ) : activeMainTab === "password_reset_email" ? (
+                        <KeyRound size={12} className="text-emerald-300" />
+                      ) : (
+                        <Shield size={12} className="text-rose-300" />
+                      )}
+                      {activeMainTab === "welcome_email"
+                        ? "স্বাগতম ইমেইল কনফিগারেশন"
+                        : activeMainTab === "password_reset_email"
+                        ? "পাসওয়ার্ড রিসেট ইমেইল কনফিগারেশন"
+                        : "লগইন নিরাপত্তা অ্যালার্ট ইমেইল"}
                     </span>
                     <span
                       className={`px-2.5 py-0.5 rounded-full text-[10px] font-black border ${
-                        (activeMainTab === "welcome_email" ? emailConfig.welcomeEmailEnabled : emailConfig.passwordResetEmailEnabled)
+                        (activeMainTab === "welcome_email"
+                          ? emailConfig.welcomeEmailEnabled
+                          : activeMainTab === "password_reset_email"
+                          ? emailConfig.passwordResetEmailEnabled
+                          : emailConfig.securityAlertEmailEnabled)
                           ? "bg-emerald-400/20 text-emerald-300 border-emerald-400/40"
                           : "bg-rose-500/20 text-rose-300 border-rose-400/40"
                       }`}
                     >
-                      {(activeMainTab === "welcome_email" ? emailConfig.welcomeEmailEnabled : emailConfig.passwordResetEmailEnabled) ? "🟢 সক্রিয়" : "🔴 নিষ্ক্রিয়"}
+                      {(activeMainTab === "welcome_email"
+                        ? emailConfig.welcomeEmailEnabled
+                        : activeMainTab === "password_reset_email"
+                        ? emailConfig.passwordResetEmailEnabled
+                        : emailConfig.securityAlertEmailEnabled)
+                        ? "🟢 সার্ভিস সক্রিয়"
+                        : "🔴 সার্ভিস নিষ্ক্রিয়"}
                     </span>
                   </div>
 
                   <h2 className="text-2xl font-black text-white">
                     {activeMainTab === "welcome_email"
                       ? "নতুন অ্যাকাউন্ট স্বাগতম ইমেইল পরিচালনা"
-                      : "অ্যাকাউন্ট নিরাপত্তা ও পাসওয়ার্ড পরিবর্তন ইমেইল পরিচালনা"}
+                      : activeMainTab === "password_reset_email"
+                      ? "পাসওয়ার্ড পরিবর্তন ও রিসেট ইমেইল পরিচালনা"
+                      : "অস্বাভাবিক বা নতুন লগইন কার্যক্রম শনাক্তকরণ অ্যালার্ট"}
                   </h2>
-                  <p className="text-xs md:text-sm text-emerald-100/90 max-w-2xl font-medium">
+                  <p className="text-xs md:text-sm text-slate-100/90 max-w-2xl font-medium">
                     {activeMainTab === "welcome_email"
                       ? "নতুন ব্যবহারকারী একাউন্ট রেজিস্ট্রেশন করলে তাদের ইনবক্সে পুঠিয়ার আন্তরিক স্বাগতম বার্তা পৌঁছাবে। এখানে বার্তা ও প্রেরকের তথ্য কাস্টমাইজ করুন।"
-                      : "ব্যবহারকারী পাসওয়ার্ড ভুলে গেলে বা পরিবর্তন অনুরোধ করলে তাদের ইনবক্সে পাঠানো সুরক্ষিত রিসেট ইমেইল বার্তা ও বাটন পরিচালনা করুন।"}
+                      : activeMainTab === "password_reset_email"
+                      ? "ব্যবহারকারী পাসওয়ার্ড পরিবর্তন অনুরোধ করলে তাদের ইনবক্সে পাঠানো সুরক্ষিত রিসেট ইমেইল বার্তা ও বোতাম পরিচালনা করুন।"
+                      : "নতুন ডিভাইস বা অপরিচিত অবস্থান থেকে লগইন হলে ব্যবহারকারীকে তাৎক্ষণিক নিরাপত্তা সতর্কবার্তা ও ডিভাইস লগইন বিবরণ পাঠিয়ে অ্যাকাউন্ট সুরক্ষিত রাখুন।"}
                   </p>
                 </div>
 
                 <div className="flex items-center gap-2 self-start md:self-auto shrink-0">
                   <button
                     type="button"
-                    onClick={() => setShowPreviewModal(activeMainTab === "welcome_email" ? "welcome" : "reset")}
+                    onClick={() =>
+                      setShowPreviewModal(
+                        activeMainTab === "welcome_email"
+                          ? "welcome"
+                          : activeMainTab === "password_reset_email"
+                          ? "reset"
+                          : "security"
+                      )
+                    }
                     className="px-4 py-2.5 bg-white/10 hover:bg-white/20 text-white rounded-2xl text-xs font-black transition flex items-center gap-2 border border-white/20 cursor-pointer active:scale-95"
                   >
                     <Eye size={15} />
@@ -245,19 +306,27 @@ const AdminSettings: React.FC = () => {
                   <div className="flex items-start justify-between gap-4">
                     <div className="space-y-1">
                       <div className="flex items-center gap-2">
-                        <span className="w-8 h-8 rounded-xl bg-emerald-50 text-emerald-700 flex items-center justify-center font-bold">
-                          {activeMainTab === "welcome_email" ? "✨" : "🔐"}
+                        <span className="w-8 h-8 rounded-xl bg-slate-100 text-slate-700 flex items-center justify-center font-bold">
+                          {activeMainTab === "welcome_email"
+                            ? "✨"
+                            : activeMainTab === "password_reset_email"
+                            ? "🔐"
+                            : "🛡️"}
                         </span>
                         <h3 className="text-base font-black text-slate-900">
                           {activeMainTab === "welcome_email"
                             ? "স্বয়ংক্রিয় ওয়েলকাম ইমেইল সার্ভিস (Welcome Email Toggle)"
-                            : "স্বয়ংক্রিয় পাসওয়ার্ড রিসেট ইমেইল সার্ভিস (Password Reset Toggle)"}
+                            : activeMainTab === "password_reset_email"
+                            ? "স্বয়ংক্রিয় পাসওয়ার্ড রিসেট ইমেইল সার্ভিস (Password Reset Toggle)"
+                            : "নতুন/অস্বাভাবিক লগইন নিরাপত্তা অ্যালার্ট (Security Alert Toggle)"}
                         </h3>
                       </div>
                       <p className="text-xs text-slate-600 font-medium pl-10 max-w-2xl">
                         {activeMainTab === "welcome_email"
                           ? "সক্রিয় থাকলে কোনো নতুন নাগরিক একাউন্ট রেজিস্ট্রেশন করার সাথে সাথে স্বয়ংক্রিয়ভাবে তার ইনবক্সে সুন্দর একটি পুঠিয়া শুভেচ্ছা ইমেইল চলে যাবে।"
-                          : "সক্রিয় থাকলে কোনো ব্যবহারকারী পাসওয়ার্ড রিসেট করতে চাইলে ফায়ারবেসের মাধ্যমে তার ইনবক্সে এই নির্ধারিত নিরাপত্তা বার্তাটি চলে যাবে।"}
+                          : activeMainTab === "password_reset_email"
+                          ? "সক্রিয় থাকলে কোনো ব্যবহারকারী পাসওয়ার্ড রিসেট করতে চাইলে ফায়ারবেসের মাধ্যমে তার ইনবক্সে এই নির্ধারিত নিরাপত্তা বার্তাটি চলে যাবে।"
+                          : "সক্রিয় থাকলে অ্যাকাউন্টে কোনো নতুন ডিভাইস বা স্থান থেকে লগইন কার্যক্রম শনাক্ত হলে তাৎক্ষণিক সতর্কতা বার্তা পাঠানো হবে।"}
                       </p>
                     </div>
 
@@ -267,13 +336,17 @@ const AdminSettings: React.FC = () => {
                         checked={
                           activeMainTab === "welcome_email"
                             ? emailConfig.welcomeEmailEnabled
-                            : emailConfig.passwordResetEmailEnabled
+                            : activeMainTab === "password_reset_email"
+                            ? emailConfig.passwordResetEmailEnabled
+                            : emailConfig.securityAlertEmailEnabled
                         }
                         onChange={(e) => {
                           if (activeMainTab === "welcome_email") {
                             setEmailConfig({ ...emailConfig, welcomeEmailEnabled: e.target.checked });
-                          } else {
+                          } else if (activeMainTab === "password_reset_email") {
                             setEmailConfig({ ...emailConfig, passwordResetEmailEnabled: e.target.checked });
+                          } else {
+                            setEmailConfig({ ...emailConfig, securityAlertEmailEnabled: e.target.checked });
                           }
                         }}
                         className="sr-only peer"
@@ -350,7 +423,7 @@ const AdminSettings: React.FC = () => {
                       )}
                     </div>
                   </div>
-                ) : (
+                ) : activeMainTab === "password_reset_email" ? (
                   /* Password Reset Specific Customization */
                   <div className="bg-white rounded-3xl p-6 border border-slate-200 shadow-xs space-y-5">
                     <div className="flex items-center gap-2 border-b border-slate-100 pb-3">
@@ -401,6 +474,60 @@ const AdminSettings: React.FC = () => {
                       </p>
                       <p className="text-amber-800 leading-relaxed">
                         ইমেইলে স্বয়ংক্রিয়ভাবে আপনার সাইটের নিরাপদ লিঙ্ক <code>https://our-puthia-app.vercel.app</code> সংযুক্ত থাকে এবং নিরাপত্তার স্বার্থে নির্ধারিত সময় পর লিঙ্কটি মেয়াদোত্তীর্ণ হবে।
+                      </p>
+                    </div>
+                  </div>
+                ) : (
+                  /* Security Alert Specific Customization */
+                  <div className="bg-white rounded-3xl p-6 border border-slate-200 shadow-xs space-y-5">
+                    <div className="flex items-center gap-2 border-b border-slate-100 pb-3">
+                      <Shield className="text-rose-600" size={18} />
+                      <h3 className="text-sm font-black text-slate-900 uppercase tracking-wider">
+                        লগইন নিরাপত্তা অ্যালার্ট কনটেন্ট
+                      </h3>
+                    </div>
+
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                      <div>
+                        <label className="block text-xs font-black text-slate-700 mb-1.5">
+                          নিরাপত্তা সতর্কতা সাবজেক্ট (Subject Line)
+                        </label>
+                        <input
+                          type="text"
+                          value={emailConfig.securityAlertSubject}
+                          onChange={(e) =>
+                            setEmailConfig({ ...emailConfig, securityAlertSubject: e.target.value })
+                          }
+                          placeholder="সতর্কতা: আপনার “আমাদের পুঠিয়া” অ্যাকাউন্টে নতুন বা অস্বাভাবিক লগইন কার্যক্রম শনাক্ত করা হয়েছে 🛡️"
+                          className="w-full px-4 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-xs font-bold focus:ring-2 focus:ring-rose-500/30 focus:outline-none"
+                        />
+                        <p className="text-[10px] text-slate-400 mt-1">ব্যবহারকারীর ইনবক্সে প্রদর্শিত সতর্কতা বিষয়।</p>
+                      </div>
+
+                      <div>
+                        <label className="block text-xs font-black text-slate-700 mb-1.5">
+                          নিরাপত্তা বাটনের টেক্সট (Button Label)
+                        </label>
+                        <input
+                          type="text"
+                          value={emailConfig.securityAlertButtonText}
+                          onChange={(e) =>
+                            setEmailConfig({ ...emailConfig, securityAlertButtonText: e.target.value })
+                          }
+                          placeholder="অ্যাকাউন্টের নিরাপত্তা দেখুন"
+                          className="w-full px-4 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-xs font-bold focus:ring-2 focus:ring-rose-500/30 focus:outline-none"
+                        />
+                        <p className="text-[10px] text-slate-400 mt-1">ইমেইলে প্রদর্শিত সুরক্ষা অ্যাকশন বাটন।</p>
+                      </div>
+                    </div>
+
+                    <div className="p-4 bg-rose-50 rounded-2xl border border-rose-200 text-xs text-rose-900 space-y-1">
+                      <p className="font-bold flex items-center gap-1.5">
+                        <ShieldCheck size={15} className="text-rose-700 shrink-0" />
+                        লগইন ডিটেইলস স্বয়ংক্রিয় সংযোজন:
+                      </p>
+                      <p className="text-rose-800 leading-relaxed">
+                        ইমেইল পাঠানোর সময় সিস্টেম স্বয়ংক্রিয়ভাবে ইউজারের বর্তমান লগইন সময়, ব্রাউজার/ডিভাইসের নাম এবং আনুমানিক অবস্থান (পুঠিয়া, রাজশাহী) ইমেইল বডিতে ছক আকারে সাজিয়ে দেবে।
                       </p>
                     </div>
                   </div>
@@ -582,12 +709,26 @@ const AdminSettings: React.FC = () => {
                 <div className="flex items-center gap-2">
                   <button
                     type="button"
-                    onClick={() => handleSendTestEmail(activeMainTab === "welcome_email" ? "welcome" : "reset")}
+                    onClick={() =>
+                      handleSendTestEmail(
+                        activeMainTab === "welcome_email"
+                          ? "welcome"
+                          : activeMainTab === "password_reset_email"
+                          ? "reset"
+                          : "security"
+                      )
+                    }
                     disabled={isSendingTest}
                     className="w-full py-2.5 bg-slate-900 hover:bg-slate-800 text-white rounded-xl text-xs font-black transition flex items-center justify-center gap-2 cursor-pointer disabled:opacity-50 active:scale-95"
                   >
                     {isSendingTest ? <RefreshCw size={14} className="animate-spin" /> : <Send size={14} />}
-                    <span>{activeMainTab === "welcome_email" ? "টেস্ট ওয়েলকাম" : "টেস্ট রিসেট"}</span>
+                    <span>
+                      {activeMainTab === "welcome_email"
+                        ? "টেস্ট ওয়েলকাম"
+                        : activeMainTab === "password_reset_email"
+                        ? "টেস্ট রিসেট"
+                        : "টেস্ট নিরাপত্তা"}
+                    </span>
                   </button>
                 </div>
               </div>
@@ -610,7 +751,11 @@ const AdminSettings: React.FC = () => {
                 <div className="flex items-center gap-2">
                   <Eye className="text-emerald-600" size={18} />
                   <h3 className="text-base font-black text-slate-900">
-                    {showPreviewModal === "welcome" ? "স্বাগতম ইমেইল লাইভ প্রিভিউ" : "পাসওয়ার্ড রিসেট ইমেইল লাইভ প্রিভিউ"}
+                    {showPreviewModal === "welcome"
+                      ? "স্বাগতম ইমেইল লাইভ প্রিভিউ"
+                      : showPreviewModal === "reset"
+                      ? "পাসওয়ার্ড রিসেট ইমেইল লাইভ প্রিভিউ"
+                      : "লগইন নিরাপত্তা অ্যালার্ট লাইভ প্রিভিউ"}
                   </h3>
                 </div>
                 <button
@@ -623,11 +768,11 @@ const AdminSettings: React.FC = () => {
               </div>
 
               {/* Toggle preview type */}
-              <div className="flex items-center gap-2">
+              <div className="flex items-center gap-2 overflow-x-auto pb-1">
                 <button
                   type="button"
                   onClick={() => setShowPreviewModal("welcome")}
-                  className={`px-3 py-1.5 rounded-xl text-xs font-bold transition cursor-pointer ${
+                  className={`px-3 py-1.5 rounded-xl text-xs font-bold transition cursor-pointer whitespace-nowrap ${
                     showPreviewModal === "welcome"
                       ? "bg-emerald-600 text-white"
                       : "bg-slate-100 text-slate-700 hover:bg-slate-200"
@@ -638,13 +783,24 @@ const AdminSettings: React.FC = () => {
                 <button
                   type="button"
                   onClick={() => setShowPreviewModal("reset")}
-                  className={`px-3 py-1.5 rounded-xl text-xs font-bold transition cursor-pointer ${
+                  className={`px-3 py-1.5 rounded-xl text-xs font-bold transition cursor-pointer whitespace-nowrap ${
                     showPreviewModal === "reset"
                       ? "bg-emerald-600 text-white"
                       : "bg-slate-100 text-slate-700 hover:bg-slate-200"
                   }`}
                 >
                   পাসওয়ার্ড রিসেট ইমেইল
+                </button>
+                <button
+                  type="button"
+                  onClick={() => setShowPreviewModal("security")}
+                  className={`px-3 py-1.5 rounded-xl text-xs font-bold transition cursor-pointer whitespace-nowrap ${
+                    showPreviewModal === "security"
+                      ? "bg-rose-600 text-white"
+                      : "bg-slate-100 text-slate-700 hover:bg-slate-200"
+                  }`}
+                >
+                  নিরাপত্তা অ্যালার্ট ইমেইল
                 </button>
               </div>
 
@@ -662,13 +818,24 @@ const AdminSettings: React.FC = () => {
                           senderName: emailConfig.senderName,
                           supportEmail: emailConfig.supportEmail
                         })
-                      : generatePasswordResetEmailHtml({
+                      : showPreviewModal === "reset"
+                      ? generatePasswordResetEmailHtml({
                           name: "মো: জোসিম উদ্দিন",
                           email: "test@example.com",
                           resetLink: `${emailConfig.websiteUrl}/login?reset=true`,
                           appUrl: emailConfig.websiteUrl,
                           senderName: emailConfig.senderName,
                           buttonText: emailConfig.passwordResetButtonText
+                        })
+                      : generateSecurityAlertEmailHtml({
+                          name: "মো: জোসিম উদ্দিন",
+                          email: "test@example.com",
+                          time: new Date().toLocaleString("bn-BD", { timeZone: "Asia/Dhaka" }),
+                          device: "Google Chrome (Windows 11)",
+                          location: "পুঠিয়া, রাজশাহী (আনুমানিক)",
+                          appUrl: emailConfig.websiteUrl,
+                          securityLink: `${emailConfig.websiteUrl}/profile`,
+                          buttonText: emailConfig.securityAlertButtonText
                         })
                 }}
               />

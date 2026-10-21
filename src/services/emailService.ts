@@ -15,6 +15,15 @@ export interface PasswordResetEmailData {
   resetLink?: string;
 }
 
+export interface SecurityAlertEmailData {
+  to: string;
+  name?: string;
+  time?: string;
+  device?: string;
+  location?: string;
+  securityLink?: string;
+}
+
 export interface EmailSettings {
   welcomeEmailEnabled: boolean;
   senderName: string;
@@ -30,6 +39,11 @@ export interface EmailSettings {
   passwordResetEmailEnabled: boolean;
   passwordResetSubject: string;
   passwordResetButtonText: string;
+
+  // Security Alert / Unusual Login Email Config
+  securityAlertEmailEnabled: boolean;
+  securityAlertSubject: string;
+  securityAlertButtonText: string;
 
   lastUpdated?: string;
   updatedBy?: string;
@@ -48,7 +62,11 @@ export const DEFAULT_EMAIL_SETTINGS: EmailSettings = {
 
   passwordResetEmailEnabled: true,
   passwordResetSubject: "আপনার “আমাদের পুঠিয়া” অ্যাকাউন্টের পাসওয়ার্ড পরিবর্তন করুন 🔐",
-  passwordResetButtonText: "নতুন পাসওয়ার্ড সেট করুন"
+  passwordResetButtonText: "নতুন পাসওয়ার্ড সেট করুন",
+
+  securityAlertEmailEnabled: true,
+  securityAlertSubject: "সতর্কতা: আপনার “আমাদের পুঠিয়া” অ্যাকাউন্টে নতুন বা অস্বাভাবিক লগইন শনাক্ত করা হয়েছে 🛡️",
+  securityAlertButtonText: "অ্যাকাউন্টের নিরাপত্তা দেখুন"
 };
 
 /**
@@ -87,7 +105,7 @@ export async function updateEmailSettings(
 
     await logAuditActivity({
       action: "ইমেইল সেটিংস কনফিগারেশন আপডেট",
-      details: `ওয়েলকাম ইমেইল: ${settings.welcomeEmailEnabled ? "সক্রিয়" : "নিষ্ক্রিয়"}, পাসওয়ার্ড রিসেট: ${settings.passwordResetEmailEnabled ? "সক্রিয়" : "নিষ্ক্রিয়"}, প্রেরক: ${settings.senderName || ""} <${settings.senderEmail || ""}>`,
+      details: `ওয়েলকাম: ${settings.welcomeEmailEnabled ? "অন" : "অফ"}, পাসওয়ার্ড: ${settings.passwordResetEmailEnabled ? "অন" : "অফ"}, নিরাপত্তা অ্যালার্ট: ${settings.securityAlertEmailEnabled ? "অন" : "অফ"}`,
       category: "system",
       severity: "info",
       customUser: adminUser?.name || "অ্যাডমিনিস্ট্রেটর"
@@ -369,6 +387,150 @@ export function generatePasswordResetEmailHtml(data: {
 }
 
 /**
+ * Generates an extraordinarily beautiful, mobile-responsive HTML Security Alert email template
+ * for Unusual/New Login detection, matching the exact wording requested by the user.
+ */
+export function generateSecurityAlertEmailHtml(data: {
+  name?: string;
+  email: string;
+  time?: string;
+  device?: string;
+  location?: string;
+  appUrl?: string;
+  securityLink?: string;
+  senderName?: string;
+  buttonText?: string;
+}): string {
+  const appUrl = data.appUrl || "https://our-puthia-app.vercel.app";
+  const userName = data.name || data.email.split("@")[0] || "ব্যবহারকারী";
+  const securityLink = data.securityLink || `${appUrl}/profile`;
+  const senderName = data.senderName || "আমাদের পুঠিয়া নিরাপত্তা টিম";
+  const buttonText = data.buttonText || "অ্যাকাউন্টের নিরাপত্তা দেখুন";
+  const loginTime = data.time || new Date().toLocaleString("bn-BD", { timeZone: "Asia/Dhaka" });
+  const loginDevice = data.device || (typeof window !== "undefined" ? window.navigator.userAgent.slice(0, 45) : "অজানা ব্রাউজার / মোবাইল");
+  const loginLocation = data.location || "পুঠিয়া, রাজশাহী (আনুমানিক)";
+
+  return `<!DOCTYPE html>
+<html lang="bn">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>লগইন নিরাপত্তা সতর্কতা - আমাদের পুঠিয়া</title>
+</head>
+<body style="margin: 0; padding: 0; background-color: #f1f5f9; font-family: 'SolaimanLipi', 'Hind Siliguri', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif; -webkit-font-smoothing: antialiased; color: #1e293b; line-height: 1.6;">
+  <table role="presentation" width="100%" cellspacing="0" cellpadding="0" style="background-color: #f1f5f9; padding: 32px 12px;">
+    <tr>
+      <td align="center">
+        <!-- Main Container Card -->
+        <table role="presentation" width="100%" style="max-width: 600px; background-color: #ffffff; border-radius: 28px; overflow: hidden; box-shadow: 0 10px 30px rgba(0, 0, 0, 0.06); border: 1px solid #e2e8f0;">
+          
+          <!-- Alert Header Banner -->
+          <tr>
+            <td style="background: linear-gradient(135deg, #991b1b 0%, #b91c1c 50%, #7f1d1d 100%); padding: 38px 30px 34px; text-align: center; color: #ffffff;">
+              <div style="display: inline-block; background-color: #ffffff; width: 68px; height: 68px; border-radius: 22px; line-height: 68px; margin-bottom: 14px; box-shadow: 0 6px 18px rgba(0,0,0,0.2);">
+                <span style="font-size: 34px; line-height: 68px;">🛡️</span>
+              </div>
+              <h1 style="margin: 0; font-size: 26px; font-weight: 900; color: #ffffff; letter-spacing: -0.5px;">আমাদের পুঠিয়া</h1>
+              <p style="margin: 6px 0 0; font-size: 13px; color: #fecaca; font-weight: 600;">অ্যাকাউন্ট নিরাপত্তা ও পর্যবেক্ষণ</p>
+            </td>
+          </tr>
+
+          <!-- Main Email Body -->
+          <tr>
+            <td style="padding: 36px 32px 28px;">
+              
+              <!-- Greeting -->
+              <h2 style="margin: 0 0 16px; font-size: 20px; font-weight: 800; color: #0f172a;">
+                প্রিয় ${userName},
+              </h2>
+
+              <!-- Alert Paragraph 1 -->
+              <p style="margin: 0 0 20px; font-size: 15px; line-height: 1.7; color: #334155;">
+                আপনার <strong>“আমাদের পুঠিয়া”</strong> অ্যাকাউন্টে একটি নতুন বা অস্বাভাবিক লগইন কার্যক্রম শনাক্ত করা হয়েছে।
+              </p>
+
+              <!-- Login Details Box -->
+              <div style="background-color: #f8fafc; border: 1px solid #e2e8f0; border-radius: 18px; padding: 20px 22px; margin-bottom: 24px;">
+                <h3 style="margin: 0 0 14px; font-size: 15px; font-weight: 800; color: #0f172a; border-bottom: 1px solid #e2e8f0; padding-bottom: 8px;">
+                  📋 লগইনের বিবরণ
+                </h3>
+                <table role="presentation" width="100%">
+                  <tr>
+                    <td style="padding: 6px 0; font-size: 14px; color: #475569;">
+                      ⏰ <strong>সময়:</strong> <span style="color: #0f172a; font-weight: 600;">${loginTime}</span>
+                    </td>
+                  </tr>
+                  <tr>
+                    <td style="padding: 6px 0; font-size: 14px; color: #475569;">
+                      📱 <strong>ডিভাইস:</strong> <span style="color: #0f172a; font-weight: 600;">${loginDevice}</span>
+                    </td>
+                  </tr>
+                  <tr>
+                    <td style="padding: 6px 0; font-size: 14px; color: #475569;">
+                      📍 <strong>আনুমানিক অবস্থান:</strong> <span style="color: #0f172a; font-weight: 600;">${loginLocation}</span>
+                    </td>
+                  </tr>
+                </table>
+              </div>
+
+              <!-- Ignore Notice -->
+              <p style="margin: 0 0 16px; font-size: 14px; line-height: 1.7; color: #475569;">
+                আপনি যদি নিজেই লগইন করে থাকেন, তাহলে এই বার্তাটি উপেক্ষা করতে পারেন।
+              </p>
+
+              <!-- Warning Notice -->
+              <p style="margin: 0 0 24px; font-size: 14px; line-height: 1.7; color: #b91c1c; font-weight: 600;">
+                আপনি যদি এই কার্যক্রম চিনতে না পারেন, তাহলে দ্রুত আপনার অ্যাকাউন্টের নিরাপত্তা পরীক্ষা করুন এবং প্রয়োজনে পাসওয়ার্ড পরিবর্তন করুন।
+              </p>
+
+              <!-- Prominent CTA Button -->
+              <table role="presentation" width="100%" style="margin: 24px 0 28px;">
+                <tr>
+                  <td align="center">
+                    <a href="${securityLink}" target="_blank" style="display: inline-block; background: linear-gradient(135deg, #dc2626 0%, #991b1b 100%); color: #ffffff; text-decoration: none; font-size: 15px; font-weight: 800; padding: 16px 38px; border-radius: 50px; box-shadow: 0 6px 18px rgba(220, 38, 38, 0.35); text-align: center; letter-spacing: 0.3px;">
+                      👉 ${buttonText}
+                    </a>
+                  </td>
+                </tr>
+              </table>
+
+              <!-- Commitment text -->
+              <div style="background-color: #ecfdf5; border: 1px solid #a7f3d0; border-radius: 14px; padding: 14px 18px; margin-bottom: 24px;">
+                <p style="margin: 0; font-size: 13px; line-height: 1.6; color: #047857; font-weight: 600;">
+                  🔒 আপনার ব্যক্তিগত তথ্য ও অ্যাকাউন্টের নিরাপত্তা রক্ষায় আমরা সচেষ্ট।
+                </p>
+              </div>
+
+              <!-- Signoff -->
+              <div style="margin-top: 26px; padding-top: 20px; border-top: 1px dashed #cbd5e1;">
+                <p style="margin: 0; font-size: 14px; color: #64748b;">শুভেচ্ছান্তে,</p>
+                <h4 style="margin: 4px 0 0; font-size: 16px; font-weight: 800; color: #991b1b;">${senderName}</h4>
+                <p style="margin: 6px 0 0; font-size: 13px;">
+                  🌐 <a href="${appUrl}" target="_blank" style="color: #007a55; text-decoration: none; font-weight: 600;">${appUrl}</a>
+                </p>
+              </div>
+
+            </td>
+          </tr>
+
+          <!-- Footer Section -->
+          <tr>
+            <td style="background-color: #f8fafc; padding: 22px 28px; text-align: center; border-top: 1px solid #e2e8f0; font-size: 12px; color: #64748b;">
+              <p style="margin: 0; font-weight: 500;">
+                © 2026 আমাদের পুঠিয়া। সর্বস্বত্ব সংরক্ষিত।
+              </p>
+            </td>
+          </tr>
+
+        </table>
+      </td>
+    </tr>
+  </table>
+</body>
+</html>`;
+}
+
+/**
  * Queues a welcome email to the Firestore 'mail' collection with user's exact requested wording.
  * Respects admin toggle settings.
  */
@@ -547,6 +709,105 @@ ${config.senderName}
     return true;
   } catch (error) {
     console.warn("Could not queue password reset email:", error);
+    return false;
+  }
+}
+
+/**
+ * Queues an unusual / new login security alert email to the Firestore 'mail' collection.
+ * Matching the exact wording requested by the user.
+ */
+export async function sendSecurityAlertEmail(data: SecurityAlertEmailData): Promise<boolean> {
+  const recipientEmail = (data.to || "").trim().toLowerCase();
+
+  if (!recipientEmail || recipientEmail.endsWith("@puthiadiary.com")) {
+    return false;
+  }
+
+  const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+  if (!emailRegex.test(recipientEmail)) {
+    return false;
+  }
+
+  try {
+    const config = await getEmailSettings();
+
+    if (!config.securityAlertEmailEnabled) {
+      console.log("Security alert email skipped: Disabled in Admin Settings config.");
+      return false;
+    }
+
+    const userName = data.name || recipientEmail.split("@")[0] || "সম্মানিত ব্যবহারকারী";
+    const appUrl = config.websiteUrl || "https://our-puthia-app.vercel.app";
+    const subject = config.securityAlertSubject || "সতর্কতা: আপনার “আমাদের পুঠিয়া” অ্যাকাউন্টে নতুন বা অস্বাভাবিক লগইন কার্যক্রম শনাক্ত করা হয়েছে 🛡️";
+    const securityLink = data.securityLink || `${appUrl}/profile`;
+    const senderName = "আমাদের পুঠিয়া নিরাপত্তা টিম";
+    const time = data.time || new Date().toLocaleString("bn-BD", { timeZone: "Asia/Dhaka" });
+    const device = data.device || (typeof window !== "undefined" ? window.navigator.userAgent.slice(0, 45) : "অজানা ব্রাউজার / মোবাইল");
+    const location = data.location || "পুঠিয়া, রাজশাহী (আনুমানিক)";
+
+    const htmlContent = generateSecurityAlertEmailHtml({
+      name: userName,
+      email: recipientEmail,
+      time,
+      device,
+      location,
+      appUrl,
+      securityLink,
+      senderName,
+      buttonText: config.securityAlertButtonText || "অ্যাকাউন্টের নিরাপত্তা দেখুন"
+    });
+
+    const plainText = `প্রিয় ${userName},
+
+আপনার “আমাদের পুঠিয়া” অ্যাকাউন্টে একটি নতুন বা অস্বাভাবিক লগইন কার্যক্রম শনাক্ত করা হয়েছে।
+
+লগইনের বিবরণ
+
+- সময়: ${time}
+- ডিভাইস: ${device}
+- আনুমানিক অবস্থান: ${location}
+
+আপনি যদি নিজেই লগইন করে থাকেন, তাহলে এই বার্তাটি উপেক্ষা করতে পারেন।
+
+আপনি যদি এই কার্যক্রম চিনতে না পারেন, তাহলে দ্রুত আপনার অ্যাকাউন্টের নিরাপত্তা পরীক্ষা করুন এবং প্রয়োজনে পাসওয়ার্ড পরিবর্তন করুন।
+
+👉 অ্যাকাউন্টের নিরাপত্তা দেখুন: ${securityLink}
+
+আপনার ব্যক্তিগত তথ্য ও অ্যাকাউন্টের নিরাপত্তা রক্ষায় আমরা সচেষ্ট।
+
+শুভেচ্ছান্তে,
+${senderName}
+
+🌐 ${appUrl}`;
+
+    await addDoc(collection(db, "mail"), {
+      to: [recipientEmail],
+      from: config.senderEmail ? `"${senderName}" <${config.senderEmail}>` : undefined,
+      replyTo: config.replyToEmail || config.senderEmail,
+      message: {
+        subject,
+        text: plainText,
+        html: htmlContent
+      },
+      type: "security_alert_email",
+      recipientName: userName,
+      recipientEmail,
+      createdAt: serverTimestamp(),
+      status: "pending"
+    });
+
+    await logAuditActivity({
+      action: `নিরাপত্তা সতর্কতা ইমেইল কিউতে যুক্ত করা হয়েছে (${recipientEmail})`,
+      details: `প্রাপক: ${userName}, ডিভাইস: ${device}, সময়: ${time}`,
+      category: "security",
+      severity: "warning",
+      customUser: "নিরাপত্তা ইঞ্জিন"
+    });
+
+    return true;
+  } catch (error) {
+    console.warn("Could not queue security alert email:", error);
     return false;
   }
 }
