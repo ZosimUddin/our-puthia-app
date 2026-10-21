@@ -311,6 +311,76 @@ service cloud.firestore {
     }
 
     // ==========================================
+    // ⚽ FOOTBALL TOURNAMENT AUTOMATION MODULE
+    // ==========================================
+    match /footballTournaments/{id} {
+      allow read: if true;
+      allow create, update, delete: if isAdmin();
+    }
+
+    match /footballClubs/{id} {
+      allow read: if true;
+      allow create: if isStaff() || isSignedIn();
+      allow update: if isStaff() || isDocOwner();
+      allow delete: if isAdmin();
+    }
+
+    match /footballTeams/{id} {
+      allow read: if true;
+      allow create: if isStaff() || isSignedIn();
+      allow update: if isStaff() || isDocOwner();
+      allow delete: if isAdmin();
+    }
+
+    match /footballPlayers/{id} {
+      allow read: if true;
+      allow create: if isStaff() || isSignedIn();
+      allow update: if isStaff() || isDocOwner();
+      allow delete: if isAdmin();
+    }
+
+    match /footballMatches/{id} {
+      allow read: if true;
+      allow create, update, delete: if isStaff();
+
+      match /events/{eventId} {
+        allow read: if true;
+        allow create, update, delete: if isStaff();
+      }
+    }
+
+    match /footballStandings/{id} {
+      allow read: if true;
+      allow create, update, delete: if isStaff();
+    }
+
+    match /footballVenues/{id} {
+      allow read: if true;
+      allow create, update, delete: if isAdmin();
+    }
+
+    match /footballSponsors/{id} {
+      allow read: if true;
+      allow create, update, delete: if isAdmin();
+    }
+
+    match /footballPosters/{id} {
+      allow read: if true;
+      allow create, update, delete: if isStaff();
+    }
+
+    match /footballActivityLogs/{id} {
+      allow read: if isAdmin();
+      allow create: if isSignedIn() || isStaff();
+      allow update, delete: if isSuperAdmin();
+    }
+
+    match /footballSettings/{id} {
+      allow read: if true;
+      allow create, update, delete: if isSuperAdmin();
+    }
+
+    // ==========================================
     // 6. GENERAL DIRECTORIES & FALLBACK
     // ==========================================
     match /api_rate_limits/{docId} {

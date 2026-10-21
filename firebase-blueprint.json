@@ -1852,6 +1852,247 @@
         "broadcastAlert": { "type": "string", "description": "Live flash notice sent to session" }
       },
       "required": ["id", "status", "lastSeenAt", "currentPath"]
+    },
+    "FootballTournament": {
+      "title": "Football Tournament",
+      "description": "Football tournament specification, rules, format, timeline and prize pool",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string" },
+        "name": { "type": "string" },
+        "nameBn": { "type": "string" },
+        "season": { "type": "string" },
+        "year": { "type": "number" },
+        "edition": { "type": "string" },
+        "format": { "type": "string", "enum": ["knockout", "round_robin", "group_knockout"] },
+        "status": { "type": "string", "enum": ["draft", "registration_open", "upcoming", "ongoing", "completed", "cancelled", "archived"] },
+        "description": { "type": "string" },
+        "logoUrl": { "type": "string" },
+        "bannerUrl": { "type": "string" },
+        "startDate": { "type": "string" },
+        "endDate": { "type": "string" },
+        "registrationDeadline": { "type": "string" },
+        "venue": { "type": "string" },
+        "organizer": { "type": "string" },
+        "sponsor": { "type": "string" },
+        "rules": { "type": "string" },
+        "teamCount": { "type": "number" },
+        "teamIds": { "type": "array", "items": { "type": "string" } },
+        "championTeamId": { "type": "string" },
+        "runnerUpTeamId": { "type": "string" },
+        "createdAt": { "type": "string", "format": "date-time" },
+        "updatedAt": { "type": "string", "format": "date-time" }
+      },
+      "required": ["id", "name", "nameBn", "season", "year", "format", "status"]
+    },
+    "FootballClub": {
+      "title": "Football Club & Academy",
+      "description": "Registered sports club, youth academy or community football team",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string" },
+        "name": { "type": "string" },
+        "nameBn": { "type": "string" },
+        "shortCode": { "type": "string" },
+        "logoUrl": { "type": "string" },
+        "union": { "type": "string" },
+        "village": { "type": "string" },
+        "establishedYear": { "type": "number" },
+        "coachName": { "type": "string" },
+        "captainName": { "type": "string" },
+        "contactPhone": { "type": "string" },
+        "contactEmail": { "type": "string" },
+        "status": { "type": "string", "enum": ["active", "pending", "suspended"] },
+        "verified": { "type": "boolean" },
+        "createdAt": { "type": "string", "format": "date-time" },
+        "updatedAt": { "type": "string", "format": "date-time" }
+      },
+      "required": ["id", "name", "nameBn", "shortCode", "status"]
+    },
+    "FootballTeam": {
+      "title": "Football Tournament Team Entry",
+      "description": "Squad instance registered in a specific tournament edition",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string" },
+        "clubId": { "type": "string" },
+        "tournamentId": { "type": "string" },
+        "name": { "type": "string" },
+        "nameBn": { "type": "string" },
+        "shortCode": { "type": "string" },
+        "logoUrl": { "type": "string" },
+        "group": { "type": "string" },
+        "status": { "type": "string", "enum": ["registered", "approved", "rejected", "withdrawn"] },
+        "createdAt": { "type": "string", "format": "date-time" }
+      },
+      "required": ["id", "clubId", "tournamentId", "name", "nameBn", "status"]
+    },
+    "FootballPlayer": {
+      "title": "Football Player Profile",
+      "description": "Registered athlete roster entry with position, jersey number and stats",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string" },
+        "clubId": { "type": "string" },
+        "tournamentId": { "type": "string" },
+        "name": { "type": "string" },
+        "nameBn": { "type": "string" },
+        "jerseyNumber": { "type": "number" },
+        "position": { "type": "string", "enum": ["GK", "DF", "MF", "FW"] },
+        "photoUrl": { "type": "string" },
+        "phone": { "type": "string" },
+        "nidOrBirthCert": { "type": "string" },
+        "isCaptain": { "type": "boolean" },
+        "goals": { "type": "number" },
+        "yellowCards": { "type": "number" },
+        "redCards": { "type": "number" },
+        "status": { "type": "string", "enum": ["active", "suspended", "injured"] },
+        "createdAt": { "type": "string", "format": "date-time" }
+      },
+      "required": ["id", "clubId", "name", "nameBn", "jerseyNumber", "position"]
+    },
+    "FootballMatch": {
+      "title": "Football Match Fixture",
+      "description": "Scheduled or completed match between two teams in a tournament",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string" },
+        "tournamentId": { "type": "string" },
+        "tournamentName": { "type": "string" },
+        "matchNumber": { "type": "number" },
+        "matchLabelBn": { "type": "string" },
+        "stage": { "type": "string" },
+        "teamAId": { "type": "string" },
+        "teamAName": { "type": "string" },
+        "teamANameBn": { "type": "string" },
+        "teamALogo": { "type": "string" },
+        "teamBId": { "type": "string" },
+        "teamBName": { "type": "string" },
+        "teamBNameBn": { "type": "string" },
+        "teamBLogo": { "type": "string" },
+        "date": { "type": "string" },
+        "time": { "type": "string" },
+        "timeBangla": { "type": "string" },
+        "dayOfWeekBangla": { "type": "string" },
+        "venue": { "type": "string" },
+        "venueBn": { "type": "string" },
+        "status": { "type": "string", "enum": ["scheduled", "live", "half_time", "completed", "postponed", "cancelled"] },
+        "scoreA": { "type": "number" },
+        "scoreB": { "type": "number" },
+        "minute": { "type": "number" },
+        "period": { "type": "string" },
+        "winnerTeamId": { "type": "string" },
+        "posterUrl": { "type": "string" },
+        "createdAt": { "type": "string", "format": "date-time" },
+        "updatedAt": { "type": "string", "format": "date-time" }
+      },
+      "required": ["id", "tournamentId", "teamAId", "teamBId", "date", "status"]
+    },
+    "FootballStandings": {
+      "title": "Football Tournament Standings Record",
+      "description": "Computed points table row (P, W, D, L, GF, GA, GD, PTS)",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string" },
+        "tournamentId": { "type": "string" },
+        "teamId": { "type": "string" },
+        "teamName": { "type": "string" },
+        "teamNameBn": { "type": "string" },
+        "teamLogo": { "type": "string" },
+        "played": { "type": "number" },
+        "won": { "type": "number" },
+        "drawn": { "type": "number" },
+        "lost": { "type": "number" },
+        "goalsFor": { "type": "number" },
+        "goalsAgainst": { "type": "number" },
+        "goalDifference": { "type": "number" },
+        "points": { "type": "number" },
+        "rank": { "type": "number" },
+        "updatedAt": { "type": "string", "format": "date-time" }
+      },
+      "required": ["id", "tournamentId", "teamId", "played", "points"]
+    },
+    "FootballVenue": {
+      "title": "Football Field & Stadium Venue",
+      "description": "Venues with floodlight status, location map pin and capacity",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string" },
+        "name": { "type": "string" },
+        "nameBn": { "type": "string" },
+        "address": { "type": "string" },
+        "capacity": { "type": "number" },
+        "hasFloodlights": { "type": "boolean" },
+        "imageUrl": { "type": "string" },
+        "status": { "type": "string", "enum": ["available", "maintenance", "unavailable"] }
+      },
+      "required": ["id", "name", "nameBn", "status"]
+    },
+    "FootballSponsor": {
+      "title": "Football Sponsor & Partner",
+      "description": "Sponsor tier, logo and banner branding for tournaments",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string" },
+        "name": { "type": "string" },
+        "nameBn": { "type": "string" },
+        "logoUrl": { "type": "string" },
+        "tier": { "type": "string", "enum": ["title", "platinum", "gold", "silver", "co_sponsor"] },
+        "websiteUrl": { "type": "string" },
+        "status": { "type": "string", "enum": ["active", "inactive"] }
+      },
+      "required": ["id", "name", "nameBn", "logoUrl", "tier"]
+    },
+    "FootballPoster": {
+      "title": "Football Match Poster Configuration",
+      "description": "Generated stadium night floodlight match day banner metadata",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string" },
+        "matchId": { "type": "string" },
+        "tournamentName": { "type": "string" },
+        "teamAName": { "type": "string" },
+        "teamBName": { "type": "string" },
+        "dateFormatted": { "type": "string" },
+        "venue": { "type": "string" },
+        "aspectRatio": { "type": "string" },
+        "dataUrl": { "type": "string" },
+        "createdAt": { "type": "string", "format": "date-time" }
+      },
+      "required": ["id", "matchId", "tournamentName", "teamAName", "teamBName"]
+    },
+    "FootballActivityLog": {
+      "title": "Football Audit & Activity Record",
+      "description": "Audit trail of administrator actions inside football automation system",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string" },
+        "actorUid": { "type": "string" },
+        "actorName": { "type": "string" },
+        "actorRole": { "type": "string" },
+        "action": { "type": "string" },
+        "details": { "type": "string" },
+        "targetType": { "type": "string" },
+        "targetId": { "type": "string" },
+        "timestamp": { "type": "string", "format": "date-time" }
+      },
+      "required": ["id", "actorName", "action", "details", "timestamp"]
+    },
+    "FootballSettings": {
+      "title": "Football System Rules & Configuration",
+      "description": "Global points rules, match durations and automated conflict guards",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string" },
+        "winPoints": { "type": "number" },
+        "drawPoints": { "type": "number" },
+        "lossPoints": { "type": "number" },
+        "defaultMatchDurationMinutes": { "type": "number" },
+        "enableAutomatedConflictDetection": { "type": "boolean" },
+        "enableAutoPostToNews": { "type": "boolean" },
+        "updatedAt": { "type": "string", "format": "date-time" }
+      },
+      "required": ["id", "winPoints", "drawPoints", "lossPoints"]
     }
   },
   "firestore": {
@@ -2293,6 +2534,64 @@
         }
       },
       "description": "Outbox mail queue for Firebase Trigger Email extension and citizen notifications"
+    },
+    "/footballTournaments/{id}": {
+      "schema": { "$ref": "#/entities/FootballTournament" },
+      "description": "Master football tournaments specification, rules, format, and prizes"
+    },
+    "/footballClubs/{id}": {
+      "schema": { "$ref": "#/entities/FootballClub" },
+      "description": "Registered local sports clubs, youth academies and football teams"
+    },
+    "/footballTeams/{id}": {
+      "schema": { "$ref": "#/entities/FootballTeam" },
+      "description": "Tournament team entries and participant rosters"
+    },
+    "/footballPlayers/{id}": {
+      "schema": { "$ref": "#/entities/FootballPlayer" },
+      "description": "Individual player profiles, positions, jersey numbers, and match performance stats"
+    },
+    "/footballMatches/{id}": {
+      "schema": { "$ref": "#/entities/FootballMatch" },
+      "description": "Scheduled, live and finished tournament matches and fixtures"
+    },
+    "/footballMatches/{matchId}/events/{id}": {
+      "schema": {
+        "title": "MatchEvent",
+        "type": "object",
+        "properties": {
+          "id": { "type": "string" },
+          "type": { "type": "string" },
+          "minute": { "type": "number" },
+          "teamId": { "type": "string" },
+          "playerName": { "type": "string" }
+        }
+      },
+      "description": "Real-time match events timeline (goals, yellow/red cards, substitutions)"
+    },
+    "/footballStandings/{id}": {
+      "schema": { "$ref": "#/entities/FootballStandings" },
+      "description": "Tournament standings and points table (P, W, D, L, GF, GA, GD, PTS)"
+    },
+    "/footballVenues/{id}": {
+      "schema": { "$ref": "#/entities/FootballVenue" },
+      "description": "Stadium grounds, field conditions, floodlights and seating capacity"
+    },
+    "/footballSponsors/{id}": {
+      "schema": { "$ref": "#/entities/FootballSponsor" },
+      "description": "Tournament partners, title sponsors and visual brandings"
+    },
+    "/footballPosters/{id}": {
+      "schema": { "$ref": "#/entities/FootballPoster" },
+      "description": "Exported match day posters and banner design assets"
+    },
+    "/footballActivityLogs/{id}": {
+      "schema": { "$ref": "#/entities/FootballActivityLog" },
+      "description": "Audit trails for football tournament administration actions"
+    },
+    "/footballSettings/{id}": {
+      "schema": { "$ref": "#/entities/FootballSettings" },
+      "description": "System-wide football tournament point formulas and automated conflict rules"
     }
   }
 }

@@ -313,6 +313,33 @@ const SitemapPage = lazyWithRetry(() => import("./pages/modules/SitemapPage"));
 const AdminCommandCenter = lazyWithRetry(() => import("./pages/modules/AdminCommandCenter"));
 const BankingFinance = lazyWithRetry(() => import("./components/BankingFinance").then(m => ({ default: m.BankingFinance })));
 
+// ⚽ Football Tournament Automation Module Lazy Imports
+const FootballAdminLayout = lazyWithRetry(() => import("./pages/admin/football/FootballAdminLayout").then(m => ({ default: m.FootballAdminLayout })));
+const FootballDashboardPage = lazyWithRetry(() => import("./pages/admin/football/FootballDashboardPage").then(m => ({ default: m.FootballDashboardPage })));
+const FootballTournamentsPage = lazyWithRetry(() => import("./pages/admin/football/FootballTournamentsPage").then(m => ({ default: m.FootballTournamentsPage })));
+const FootballClubsPage = lazyWithRetry(() => import("./pages/admin/football/FootballClubsPage").then(m => ({ default: m.FootballClubsPage })));
+const FootballPlayersPage = lazyWithRetry(() => import("./pages/admin/football/FootballPlayersPage").then(m => ({ default: m.FootballPlayersPage })));
+const FootballMatchesPage = lazyWithRetry(() => import("./pages/admin/football/FootballMatchesPage").then(m => ({ default: m.FootballMatchesPage })));
+const FootballBannerDesignerPage = lazyWithRetry(() => import("./pages/admin/football/FootballBannerDesignerPage").then(m => ({ default: m.FootballBannerDesignerPage })));
+const FootballLiveScorePage = lazyWithRetry(() => import("./pages/admin/football/FootballLiveScorePage").then(m => ({ default: m.FootballLiveScorePage })));
+const FootballResultsPage = lazyWithRetry(() => import("./pages/admin/football/FootballResultsPage").then(m => ({ default: m.FootballResultsPage })));
+const FootballStandingsPage = lazyWithRetry(() => import("./pages/admin/football/FootballStandingsPage").then(m => ({ default: m.FootballStandingsPage })));
+const FootballNotificationsPage = lazyWithRetry(() => import("./pages/admin/football/FootballNotificationsPage").then(m => ({ default: m.FootballNotificationsPage })));
+const FootballVenuesPage = lazyWithRetry(() => import("./pages/admin/football/FootballVenuesPage").then(m => ({ default: m.FootballVenuesPage })));
+const FootballSponsorsPage = lazyWithRetry(() => import("./pages/admin/football/FootballSponsorsPage").then(m => ({ default: m.FootballSponsorsPage })));
+const FootballTemplatesPage = lazyWithRetry(() => import("./pages/admin/football/FootballTemplatesPage").then(m => ({ default: m.FootballTemplatesPage })));
+const FootballReportsPage = lazyWithRetry(() => import("./pages/admin/football/FootballReportsPage").then(m => ({ default: m.FootballReportsPage })));
+const FootballActivityLogsPage = lazyWithRetry(() => import("./pages/admin/football/FootballActivityLogsPage").then(m => ({ default: m.FootballActivityLogsPage })));
+const FootballSettingsPage = lazyWithRetry(() => import("./pages/admin/football/FootballSettingsPage").then(m => ({ default: m.FootballSettingsPage })));
+
+// ⚽ Football Public Portal Pages
+const FootballPublicHub = lazyWithRetry(() => import("./pages/football/FootballPublicHub").then(m => ({ default: m.FootballPublicHub })));
+const FootballPublicLiveCenter = lazyWithRetry(() => import("./pages/football/FootballPublicLiveCenter").then(m => ({ default: m.FootballPublicLiveCenter })));
+const FootballPublicMatches = lazyWithRetry(() => import("./pages/football/FootballPublicMatches").then(m => ({ default: m.FootballPublicMatches })));
+const FootballPublicTournaments = lazyWithRetry(() => import("./pages/football/FootballPublicTournaments").then(m => ({ default: m.FootballPublicTournaments })));
+const FootballPublicStandings = lazyWithRetry(() => import("./pages/football/FootballPublicStandings").then(m => ({ default: m.FootballPublicStandings })));
+const FootballPublicPosters = lazyWithRetry(() => import("./pages/football/FootballPublicPosters").then(m => ({ default: m.FootballPublicPosters })));
+
 import { ProgressiveModuleSkeleton } from "./components/common/ProgressiveModuleSkeleton";
 import { initGlobalHapticFeedback } from "./utils/hapticFeedback";
 
@@ -817,6 +844,19 @@ const MainAppContent = () => {
                 <Route path="/p/ambulance" element={<AmbulanceServices />} />
                 <Route path="/p/:slug" element={<GenericSubMenuPage />} />
                 
+                {/* ⚽ Football Tournament Public Routes */}
+                <Route path="/football" element={<FootballPublicHub />} />
+                <Route path="/football/tournaments" element={<FootballPublicTournaments />} />
+                <Route path="/football/tournaments/:tournamentId" element={<FootballPublicTournaments />} />
+                <Route path="/football/matches" element={<FootballPublicMatches />} />
+                <Route path="/football/matches/:matchId" element={<FootballPublicLiveCenter />} />
+                <Route path="/football/live" element={<FootballPublicLiveCenter />} />
+                <Route path="/football/standings" element={<FootballPublicStandings />} />
+                <Route path="/football/standings/:tournamentId" element={<FootballPublicStandings />} />
+                <Route path="/football/results" element={<FootballPublicMatches />} />
+                <Route path="/football/posters" element={<FootballPublicPosters />} />
+                <Route path="/football/posters/:posterId" element={<FootballPublicPosters />} />
+
                 {/* Admin Routes */}
                 <Route path="/admin" element={<AdminRoute><AdminLayout /></AdminRoute>}>
                   <Route index element={<AdminDashboard />} />
@@ -910,6 +950,26 @@ const MainAppContent = () => {
                   <Route path="security" element={<AdminSettings />} />
                   <Route path="footer-settings" element={<SuperAdminRoute><FooterSettingsPage /></SuperAdminRoute>} />
                   <Route path="footer" element={<SuperAdminRoute><FooterSettingsPage /></SuperAdminRoute>} />
+
+                  {/* ⚽ Football Tournament Admin Submodules */}
+                  <Route path="football" element={<FootballAdminLayout />}>
+                    <Route index element={<FootballDashboardPage />} />
+                    <Route path="tournaments" element={<FootballTournamentsPage />} />
+                    <Route path="clubs" element={<FootballClubsPage />} />
+                    <Route path="players" element={<FootballPlayersPage />} />
+                    <Route path="matches" element={<FootballMatchesPage />} />
+                    <Route path="banner-designer" element={<FootballBannerDesignerPage />} />
+                    <Route path="live-score" element={<FootballLiveScorePage />} />
+                    <Route path="results" element={<FootballResultsPage />} />
+                    <Route path="standings" element={<FootballStandingsPage />} />
+                    <Route path="notifications" element={<FootballNotificationsPage />} />
+                    <Route path="venues" element={<FootballVenuesPage />} />
+                    <Route path="sponsors" element={<FootballSponsorsPage />} />
+                    <Route path="templates" element={<FootballTemplatesPage />} />
+                    <Route path="reports" element={<FootballReportsPage />} />
+                    <Route path="activity-logs" element={<FootballActivityLogsPage />} />
+                    <Route path="settings" element={<FootballSettingsPage />} />
+                  </Route>
                 </Route>
 
                 <Route path="/super-admin/direct" element={<Navigate to="/super-admin/login" replace />} />
@@ -927,6 +987,25 @@ const MainAppContent = () => {
                   <Route path="footer-settings" element={<FooterSettingsPage />} />
                   <Route path="footer" element={<FooterSettingsPage />} />
                   <Route path="universal" element={<UniversalAdminManager />} />
+                  {/* ⚽ Football Tournament routes also accessible via /super-admin/football */}
+                  <Route path="football" element={<FootballAdminLayout />}>
+                    <Route index element={<FootballDashboardPage />} />
+                    <Route path="tournaments" element={<FootballTournamentsPage />} />
+                    <Route path="clubs" element={<FootballClubsPage />} />
+                    <Route path="players" element={<FootballPlayersPage />} />
+                    <Route path="matches" element={<FootballMatchesPage />} />
+                    <Route path="banner-designer" element={<FootballBannerDesignerPage />} />
+                    <Route path="live-score" element={<FootballLiveScorePage />} />
+                    <Route path="results" element={<FootballResultsPage />} />
+                    <Route path="standings" element={<FootballStandingsPage />} />
+                    <Route path="notifications" element={<FootballNotificationsPage />} />
+                    <Route path="venues" element={<FootballVenuesPage />} />
+                    <Route path="sponsors" element={<FootballSponsorsPage />} />
+                    <Route path="templates" element={<FootballTemplatesPage />} />
+                    <Route path="reports" element={<FootballReportsPage />} />
+                    <Route path="activity-logs" element={<FootballActivityLogsPage />} />
+                    <Route path="settings" element={<FootballSettingsPage />} />
+                  </Route>
                 </Route>
 
                 <Route path="/moderator" element={<ModeratorRoute><AdminLayout /></ModeratorRoute>}>

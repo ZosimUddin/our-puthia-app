@@ -10,7 +10,8 @@ import {
   Phone, PhoneCall, Share2, Search, Wrench, Clock, AlertCircle, AlertTriangle, FileCheck, CheckSquare,
   Tag, ShoppingBag, Truck, MapPin, Stethoscope, GraduationCap, Sprout, Briefcase,
   Video, FolderKanban, Sliders, Layers, UserCheck, UserX, UserPlus, BarChart2, MessageSquare, Flame, Smartphone,
-  Database, HardDrive, UploadCloud, Wifi, Mic, SearchCode, History, Info, Headphones, Star, Download, Leaf, Mail
+  Database, HardDrive, UploadCloud, Wifi, Mic, SearchCode, History, Info, Headphones, Star, Download, Leaf, Mail,
+  Palette, Radio, FileCheck2, Table, BarChart3
 } from 'lucide-react';
 import { Link, useLocation, Outlet, useNavigate } from 'react-router-dom';
 import { useAuth } from '../../contexts/AuthContext';
@@ -188,6 +189,130 @@ const AdminLayout: React.FC = () => {
           href: '/admin/profiles', 
           icon: User, 
           roles: ['super_admin', 'admin', 'moderator'],
+        },
+      ]
+    },
+    {
+      title: '⚽ ফুটবল টুর্নামেন্ট অটোমেশন',
+      roles: ['super_admin', 'admin', 'editor', 'moderator'],
+      items: [
+        {
+          name: 'ফুটবল ড্যাশবোর্ড',
+          href: '/admin/football',
+          icon: LayoutDashboard,
+          roles: ['super_admin', 'admin', 'editor', 'moderator'],
+          badge: 'PRO',
+          badgeColor: 'bg-emerald-600 text-white',
+          keywords: ['ফুটবল', 'football', 'ড্যাশবোর্ড', 'টুর্নামেন্ট', 'সারসংক্ষেপ']
+        },
+        {
+          name: 'টুর্নামেন্ট ব্যবস্থাপনা',
+          href: '/admin/football/tournaments',
+          icon: Trophy,
+          roles: ['super_admin', 'admin'],
+          keywords: ['টুর্নামেন্ট', 'tournament', 'ম্যানেজমেন্ট', 'তৈরি', 'আয়োজন']
+        },
+        {
+          name: 'ক্লাব ও দল',
+          href: '/admin/football/clubs',
+          icon: Shield,
+          roles: ['super_admin', 'admin', 'editor'],
+          keywords: ['ক্লাব', 'দল', 'club', 'team', 'একাডেমি']
+        },
+        {
+          name: 'খেলোয়াড় ব্যবস্থাপনা',
+          href: '/admin/football/players',
+          icon: Users,
+          roles: ['super_admin', 'admin', 'editor'],
+          keywords: ['খেলোয়াড়', 'প্লেয়ার', 'player', 'জার্সি', 'স্কোয়াড']
+        },
+        {
+          name: 'ম্যাচ শিডিউল',
+          href: '/admin/football/matches',
+          icon: Calendar,
+          roles: ['super_admin', 'admin', 'editor'],
+          keywords: ['ম্যাচ', 'শিডিউল', 'match', 'ফিক্সচার', 'সময়সূচি']
+        },
+        {
+          name: 'ব্যানার ডিজাইনার',
+          href: '/admin/football/banner-designer',
+          icon: Palette,
+          roles: ['super_admin', 'admin', 'editor'],
+          badge: 'স্টুডিও',
+          badgeColor: 'bg-indigo-600 text-white',
+          keywords: ['ব্যানার', 'পোস্টার', 'ডিজাইন', 'banner', 'poster', 'designer', 'ফ্লাডলাইট', 'ট্রফি']
+        },
+        {
+          name: 'লাইভ স্কোর',
+          href: '/admin/football/live-score',
+          icon: Radio,
+          roles: ['super_admin', 'admin'],
+          badge: 'Live',
+          badgeColor: 'bg-rose-600 text-white animate-pulse',
+          keywords: ['লাইভ', 'স্কোর', 'live', 'score', 'গোল', 'কার্ড']
+        },
+        {
+          name: 'ফলাফল',
+          href: '/admin/football/results',
+          icon: FileCheck2,
+          roles: ['super_admin', 'admin'],
+          keywords: ['ফলাফল', 'result', 'অনুমোদন', 'বিজয়ী']
+        },
+        {
+          name: 'পয়েন্ট টেবিল',
+          href: '/admin/football/standings',
+          icon: Table,
+          roles: ['super_admin', 'admin', 'editor'],
+          keywords: ['পয়েন্ট', 'টেবিল', 'স্ট্যান্ডিংস', 'standings', 'points']
+        },
+        {
+          name: 'নোটিফিকেশন',
+          href: '/admin/football/notifications',
+          icon: Bell,
+          roles: ['super_admin', 'admin'],
+          keywords: ['নোটিফিকেশন', 'বার্তা', 'notification', 'অ্যালার্ট']
+        },
+        {
+          name: 'মাঠ ও ভেন্যু',
+          href: '/admin/football/venues',
+          icon: MapPin,
+          roles: ['super_admin', 'admin'],
+          keywords: ['মাঠ', 'ভেন্যু', 'venue', 'stadium', 'স্টেডিয়াম']
+        },
+        {
+          name: 'স্পনসর',
+          href: '/admin/football/sponsors',
+          icon: Sparkles,
+          roles: ['super_admin', 'admin'],
+          keywords: ['স্পনসর', 'sponsor', 'পার্টনার']
+        },
+        {
+          name: 'ডিজাইন টেমপ্লেট',
+          href: '/admin/football/templates',
+          icon: Layers,
+          roles: ['super_admin', 'admin', 'editor'],
+          keywords: ['টেমপ্লেট', 'template', 'ডিজাইন']
+        },
+        {
+          name: 'রিপোর্ট ও পরিসংখ্যান',
+          href: '/admin/football/reports',
+          icon: BarChart3,
+          roles: ['super_admin', 'admin'],
+          keywords: ['রিপোর্ট', 'পরিসংখ্যান', 'analytics', 'গোলদাতা']
+        },
+        {
+          name: 'অ্যাক্টিভিটি লগ',
+          href: '/admin/football/activity-logs',
+          icon: History,
+          roles: ['super_admin'],
+          keywords: ['অ্যাক্টিভিটি', 'লগ', 'activity', 'audit']
+        },
+        {
+          name: 'ফুটবল সিস্টেম সেটিংস',
+          href: '/admin/football/settings',
+          icon: Settings,
+          roles: ['super_admin'],
+          keywords: ['সেটিংস', 'রুলস', 'settings', 'কনফিগারেশন']
         },
       ]
     },
@@ -850,6 +975,7 @@ const AdminLayout: React.FC = () => {
             <div className="flex items-center gap-1 overflow-x-auto pb-0.5 custom-scrollbar">
               <span className="text-[9.5px] font-bold text-slate-400 shrink-0 pl-0.5">ফিল্টার:</span>
               {[
+                { label: '⚽ ফুটবল', query: 'ফুটবল' },
                 { label: '🩸 রক্ত', query: 'রক্ত' },
                 { label: '🛡️ রিপোর্ট', query: 'রিপোর্ট' },
                 { label: '🏪 ব্যবসা', query: 'ব্যবসা' },
