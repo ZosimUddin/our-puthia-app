@@ -9,6 +9,12 @@ export interface WelcomeEmailData {
   stars?: number;
 }
 
+export interface PasswordResetEmailData {
+  to: string;
+  name?: string;
+  resetLink?: string;
+}
+
 export interface EmailSettings {
   welcomeEmailEnabled: boolean;
   senderName: string;
@@ -19,6 +25,12 @@ export interface EmailSettings {
   subjectTemplate: string;
   includeStarBonus: boolean;
   welcomeBonusStars: number;
+
+  // Password Reset Email Config
+  passwordResetEmailEnabled: boolean;
+  passwordResetSubject: string;
+  passwordResetButtonText: string;
+
   lastUpdated?: string;
   updatedBy?: string;
 }
@@ -32,7 +44,11 @@ export const DEFAULT_EMAIL_SETTINGS: EmailSettings = {
   websiteUrl: "https://our-puthia-app.vercel.app",
   subjectTemplate: "আমাদের পুঠিয়া পরিবারে আপনাকে স্বাগতম! 💚",
   includeStarBonus: true,
-  welcomeBonusStars: 20
+  welcomeBonusStars: 20,
+
+  passwordResetEmailEnabled: true,
+  passwordResetSubject: "আপনার “আমাদের পুঠিয়া” অ্যাকাউন্টের পাসওয়ার্ড পরিবর্তন করুন 🔐",
+  passwordResetButtonText: "নতুন পাসওয়ার্ড সেট করুন"
 };
 
 /**
@@ -71,7 +87,7 @@ export async function updateEmailSettings(
 
     await logAuditActivity({
       action: "ইমেইল সেটিংস কনফিগারেশন আপডেট",
-      details: `ওয়েলকাম ইমেইল: ${settings.welcomeEmailEnabled ? "সক্রিয়" : "নিষ্ক্রিয়"}, প্রেরক: ${settings.senderName || ""} <${settings.senderEmail || ""}>`,
+      details: `ওয়েলকাম ইমেইল: ${settings.welcomeEmailEnabled ? "সক্রিয়" : "নিষ্ক্রিয়"}, পাসওয়ার্ড রিসেট: ${settings.passwordResetEmailEnabled ? "সক্রিয়" : "নিষ্ক্রিয়"}, প্রেরক: ${settings.senderName || ""} <${settings.senderEmail || ""}>`,
       category: "system",
       severity: "info",
       customUser: adminUser?.name || "অ্যাডমিনিস্ট্রেটর"
@@ -225,19 +241,145 @@ export function generateWelcomeEmailHtml(data: {
 }
 
 /**
+ * Generates an elegant, high-security HTML Password Reset email matching user's exact requested wording.
+ */
+export function generatePasswordResetEmailHtml(data: {
+  name?: string;
+  email: string;
+  resetLink?: string;
+  appUrl?: string;
+  senderName?: string;
+  buttonText?: string;
+}): string {
+  const appUrl = data.appUrl || "https://our-puthia-app.vercel.app";
+  const userName = data.name || data.email.split("@")[0] || "ব্যবহারকারী";
+  const resetLink = data.resetLink || `${appUrl}/login?reset=true&email=${encodeURIComponent(data.email)}`;
+  const senderName = data.senderName || "আমাদের পুঠিয়া টিম";
+  const buttonText = data.buttonText || "নতুন পাসওয়ার্ড সেট করুন";
+
+  return `<!DOCTYPE html>
+<html lang="bn">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>পাসওয়ার্ড রিসেট - আমাদের পুঠিয়া</title>
+</head>
+<body style="margin: 0; padding: 0; background-color: #f1f5f9; font-family: 'SolaimanLipi', 'Hind Siliguri', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif; -webkit-font-smoothing: antialiased; color: #1e293b; line-height: 1.6;">
+  <table role="presentation" width="100%" cellspacing="0" cellpadding="0" style="background-color: #f1f5f9; padding: 32px 12px;">
+    <tr>
+      <td align="center">
+        <!-- Main Container Card -->
+        <table role="presentation" width="100%" style="max-width: 600px; background-color: #ffffff; border-radius: 28px; overflow: hidden; box-shadow: 0 10px 30px rgba(0, 0, 0, 0.06); border: 1px solid #e2e8f0;">
+          
+          <!-- Header Banner -->
+          <tr>
+            <td style="background: linear-gradient(135deg, #005a3e 0%, #007a55 50%, #004d33 100%); padding: 36px 30px 32px; text-align: center; color: #ffffff;">
+              <div style="display: inline-block; background-color: #ffffff; width: 68px; height: 68px; border-radius: 22px; line-height: 68px; margin-bottom: 14px; box-shadow: 0 6px 18px rgba(0,0,0,0.18);">
+                <span style="font-size: 32px; line-height: 68px;">🔐</span>
+              </div>
+              <h1 style="margin: 0; font-size: 26px; font-weight: 900; color: #ffffff; letter-spacing: -0.5px;">আমাদের পুঠিয়া</h1>
+              <p style="margin: 6px 0 0; font-size: 13px; color: #a7f3d0; font-weight: 600;">অ্যাকাউন্ট নিরাপত্তা ও পাসওয়ার্ড পরিবর্তন</p>
+            </td>
+          </tr>
+
+          <!-- Main Email Body -->
+          <tr>
+            <td style="padding: 36px 32px 28px;">
+              
+              <!-- Greeting -->
+              <h2 style="margin: 0 0 16px; font-size: 20px; font-weight: 800; color: #0f172a;">
+                প্রিয় ${userName},
+              </h2>
+
+              <!-- Paragraph 1 -->
+              <p style="margin: 0 0 16px; font-size: 15px; line-height: 1.7; color: #334155;">
+                আপনি আপনার <strong>“আমাদের পুঠিয়া”</strong> অ্যাকাউন্টের পাসওয়ার্ড পরিবর্তন করার অনুরোধ করেছেন।
+              </p>
+
+              <!-- Paragraph 2 -->
+              <p style="margin: 0 0 26px; font-size: 15px; line-height: 1.7; color: #334155;">
+                আপনার অ্যাকাউন্টে আবার নিরাপদে প্রবেশ করতে নিচের বাটনে ক্লিক করে নতুন পাসওয়ার্ড সেট করুন।
+              </p>
+
+              <!-- Prominent CTA Button -->
+              <table role="presentation" width="100%" style="margin: 24px 0 28px;">
+                <tr>
+                  <td align="center">
+                    <a href="${resetLink}" target="_blank" style="display: inline-block; background: linear-gradient(135deg, #007a55 0%, #005a3e 100%); color: #ffffff; text-decoration: none; font-size: 15px; font-weight: 800; padding: 16px 38px; border-radius: 50px; box-shadow: 0 6px 18px rgba(0, 122, 85, 0.35); text-align: center; letter-spacing: 0.3px;">
+                      👉 ${buttonText}
+                    </a>
+                  </td>
+                </tr>
+              </table>
+
+              <!-- Expiry Alert Box -->
+              <table role="presentation" width="100%" style="background-color: #fefce8; border-left: 4px solid #eab308; border-radius: 12px; margin: 20px 0 24px;">
+                <tr>
+                  <td style="padding: 14px 18px;">
+                    <p style="margin: 0; font-size: 13px; line-height: 1.6; color: #854d0e; font-weight: 600;">
+                      ⏱️ <strong>মনে রাখবেন:</strong> নিরাপত্তার জন্য এই লিংকটি সীমিত সময়ের জন্য কার্যকর থাকবে।
+                    </p>
+                  </td>
+                </tr>
+              </table>
+
+              <!-- Ignore Notice -->
+              <p style="margin: 0 0 18px; font-size: 14px; line-height: 1.7; color: #475569;">
+                আপনি যদি পাসওয়ার্ড পরিবর্তনের অনুরোধ না করে থাকেন, তাহলে এই ইমেইলটি উপেক্ষা করুন। আপনার বর্তমান পাসওয়ার্ড পরিবর্তন হবে না।
+              </p>
+
+              <!-- Security Caution Card -->
+              <table role="presentation" width="100%" style="background-color: #f8fafc; border: 1px solid #e2e8f0; border-radius: 16px; margin: 20px 0 26px;">
+                <tr>
+                  <td style="padding: 16px 20px;">
+                    <p style="margin: 0; font-size: 13px; line-height: 1.6; color: #334155;">
+                      🛡️ <strong>নিরাপত্তা পরামর্শ:</strong> আপনার অ্যাকাউন্টের নিরাপত্তা আমাদের কাছে গুরুত্বপূর্ণ। কখনোই আপনার পাসওয়ার্ড বা নিরাপত্তা কোড অন্য কারও সঙ্গে শেয়ার করবেন না।
+                    </p>
+                  </td>
+                </tr>
+              </table>
+
+              <!-- Signoff -->
+              <div style="margin-top: 26px; padding-top: 20px; border-top: 1px dashed #cbd5e1;">
+                <p style="margin: 0; font-size: 14px; color: #64748b;">শুভেচ্ছান্তে,</p>
+                <h4 style="margin: 4px 0 0; font-size: 16px; font-weight: 800; color: #007a55;">${senderName}</h4>
+                <p style="margin: 6px 0 0; font-size: 13px;">
+                  🌐 <a href="${appUrl}" target="_blank" style="color: #007a55; text-decoration: none; font-weight: 600;">${appUrl}</a>
+                </p>
+              </div>
+
+            </td>
+          </tr>
+
+          <!-- Footer Section -->
+          <tr>
+            <td style="background-color: #f8fafc; padding: 22px 28px; text-align: center; border-top: 1px solid #e2e8f0; font-size: 12px; color: #64748b;">
+              <p style="margin: 0; font-weight: 500;">
+                © 2026 আমাদের পুঠিয়া। সর্বস্বত্ব সংরক্ষিত।
+              </p>
+            </td>
+          </tr>
+
+        </table>
+      </td>
+    </tr>
+  </table>
+</body>
+</html>`;
+}
+
+/**
  * Queues a welcome email to the Firestore 'mail' collection with user's exact requested wording.
  * Respects admin toggle settings.
  */
 export async function sendWelcomeEmail(data: WelcomeEmailData): Promise<boolean> {
   const recipientEmail = (data.to || "").trim().toLowerCase();
 
-  // If empty or dummy phone-based email (e.g., 017...@puthiadiary.com), do not send SMTP
   if (!recipientEmail || recipientEmail.endsWith("@puthiadiary.com")) {
     console.log("Welcome email skipped: User registered with phone or dummy email:", recipientEmail);
     return false;
   }
 
-  // Validate email format
   const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
   if (!emailRegex.test(recipientEmail)) {
     console.warn("Invalid email address for welcome email:", recipientEmail);
@@ -247,7 +389,6 @@ export async function sendWelcomeEmail(data: WelcomeEmailData): Promise<boolean>
   try {
     const config = await getEmailSettings();
 
-    // Check if admin has enabled or disabled welcome emails
     if (!config.welcomeEmailEnabled) {
       console.log("Welcome email skipped: Disabled in Admin Settings config.");
       return false;
@@ -290,7 +431,6 @@ ${config.senderName}
 
 © 2026 আমাদের পুঠিয়া। সর্বস্বত্ব সংরক্ষিত।`;
 
-    // Write to Firestore 'mail' collection for Firebase Trigger Email extension
     await addDoc(collection(db, "mail"), {
       to: [recipientEmail],
       from: config.senderEmail ? `"${config.senderName}" <${config.senderEmail}>` : undefined,
@@ -308,7 +448,6 @@ ${config.senderName}
       status: "pending"
     });
 
-    // Log to system audit trail
     await logAuditActivity({
       action: `স্বাগতম ইমেইল কিউতে যুক্ত করা হয়েছে (${recipientEmail})`,
       details: `প্রাপক: ${userName}, ইমেইল: ${recipientEmail}, প্রেরক: ${config.senderName}`,
@@ -317,10 +456,97 @@ ${config.senderName}
       customUser: "সিস্টেম বট"
     });
 
-    console.log("Welcome email successfully queued in Firestore for:", recipientEmail);
     return true;
   } catch (error) {
     console.warn("Could not queue welcome email in Firestore:", error);
+    return false;
+  }
+}
+
+/**
+ * Queues a customized password reset email to the Firestore 'mail' collection.
+ * Matching the exact wording requested by the user.
+ */
+export async function sendPasswordResetCustomEmail(data: PasswordResetEmailData): Promise<boolean> {
+  const recipientEmail = (data.to || "").trim().toLowerCase();
+
+  if (!recipientEmail || recipientEmail.endsWith("@puthiadiary.com")) {
+    return false;
+  }
+
+  const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+  if (!emailRegex.test(recipientEmail)) {
+    return false;
+  }
+
+  try {
+    const config = await getEmailSettings();
+
+    if (!config.passwordResetEmailEnabled) {
+      console.log("Password reset custom email skipped: Disabled in Admin Settings config.");
+      return false;
+    }
+
+    const userName = data.name || recipientEmail.split("@")[0] || "সম্মানিত ব্যবহারকারী";
+    const appUrl = config.websiteUrl || "https://our-puthia-app.vercel.app";
+    const subject = config.passwordResetSubject || "আপনার “আমাদের পুঠিয়া” অ্যাকাউন্টের পাসওয়ার্ড পরিবর্তন করুন 🔐";
+    const resetLink = data.resetLink || `${appUrl}/login?reset=true&email=${encodeURIComponent(recipientEmail)}`;
+
+    const htmlContent = generatePasswordResetEmailHtml({
+      name: userName,
+      email: recipientEmail,
+      resetLink,
+      appUrl,
+      senderName: config.senderName,
+      buttonText: config.passwordResetButtonText || "নতুন পাসওয়ার্ড সেট করুন"
+    });
+
+    const plainText = `প্রিয় ${userName},
+
+আপনি আপনার “আমাদের পুঠিয়া” অ্যাকাউন্টের পাসওয়ার্ড পরিবর্তন করার অনুরোধ করেছেন।
+
+আপনার অ্যাকাউন্টে আবার নিরাপদে প্রবেশ করতে নিচের বাটনে ক্লিক করে নতুন পাসওয়ার্ড সেট করুন।
+
+👉 নতুন পাসওয়ার্ড সেট করুন: ${resetLink}
+
+নিরাপত্তার জন্য এই লিংকটি সীমিত সময়ের জন্য কার্যকর থাকবে।
+
+আপনি যদি পাসওয়ার্ড পরিবর্তনের অনুরোধ না করে থাকেন, তাহলে এই ইমেইলটি উপেক্ষা করুন। আপনার বর্তমান পাসওয়ার্ড পরিবর্তন হবে না।
+
+আপনার অ্যাকাউন্টের নিরাপত্তা আমাদের কাছে গুরুত্বপূর্ণ। কখনোই আপনার পাসওয়ার্ড অন্য কারও সঙ্গে শেয়ার করবেন না।
+
+শুভেচ্ছান্তে,
+${config.senderName}
+
+🌐 ${appUrl}`;
+
+    await addDoc(collection(db, "mail"), {
+      to: [recipientEmail],
+      from: config.senderEmail ? `"${config.senderName}" <${config.senderEmail}>` : undefined,
+      replyTo: config.replyToEmail || config.senderEmail,
+      message: {
+        subject,
+        text: plainText,
+        html: htmlContent
+      },
+      type: "password_reset_email",
+      recipientName: userName,
+      recipientEmail,
+      createdAt: serverTimestamp(),
+      status: "pending"
+    });
+
+    await logAuditActivity({
+      action: `পাসওয়ার্ড রিসেট ইমেইল কিউতে যুক্ত করা হয়েছে (${recipientEmail})`,
+      details: `প্রাপক: ${userName}, ইমেইল: ${recipientEmail}`,
+      category: "security",
+      severity: "info",
+      customUser: "সিস্টেম বট"
+    });
+
+    return true;
+  } catch (error) {
+    console.warn("Could not queue password reset email:", error);
     return false;
   }
 }

@@ -21,7 +21,7 @@ import { logAuditEvent } from "../utils/audit";
 import { AdminRole } from "../types/admin";
 import { cleanWardFromText } from "../utils/cleanWard";
 import { toast } from "sonner";
-import { sendWelcomeEmail } from "../services/emailService";
+import { sendWelcomeEmail, sendPasswordResetCustomEmail } from "../services/emailService";
 
 export interface UserProfile {
   uid: string;
@@ -593,6 +593,15 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     setLoading(true);
     try {
       await sendPasswordResetEmail(auth, email);
+      // Also queue custom formatted password reset notification
+      try {
+        await sendPasswordResetCustomEmail({
+          to: email,
+          name: email.split("@")[0]
+        });
+      } catch (customErr) {
+        console.warn("Custom password reset email queue notice:", customErr);
+      }
     } catch (error) {
       console.error("Password reset error:", error);
       throw error;
