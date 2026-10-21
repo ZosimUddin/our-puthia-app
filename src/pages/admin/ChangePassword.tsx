@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { updatePassword } from 'firebase/auth';
 import { auth } from '../../firebase';
 import { useNavigate } from 'react-router-dom';
-import { getFriendlyAuthErrorMessage } from '../../utils/authErrors';
+import { getFriendlyAuthErrorMessage } from '../../utils/authMessages';
 import { AlertCircle, CheckCircle2, Loader2 } from 'lucide-react';
 
 export const ChangePassword: React.FC = () => {

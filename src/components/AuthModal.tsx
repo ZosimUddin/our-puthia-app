@@ -2,7 +2,7 @@ import React, { useState, useEffect } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { motion } from "motion/react";
 import { useAuth } from "../contexts/AuthContext";
-import { getFriendlyAuthErrorMessage } from "../utils/authErrors";
+import { getFriendlyAuthErrorMessage } from "../utils/authMessages";
 import { X, Lock, Mail, Phone, User, Home, Droplet, ArrowRight, Eye, EyeOff, Loader2 } from "lucide-react";
 import { VILLAGES_DATABASE } from "../data/villageData";
 

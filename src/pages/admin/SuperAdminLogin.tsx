@@ -2,7 +2,7 @@ import React, { useState, useEffect } from "react";
 import { motion } from "motion/react";
 import { useAuth } from "../../contexts/AuthContext";
 import { useNavigate } from "react-router-dom";
-import { getFriendlyAuthErrorMessage } from "../../utils/authErrors";
+import { getFriendlyAuthErrorMessage } from "../../utils/authMessages";
 import { Lock, Mail, Eye, EyeOff, Loader2, ShieldCheck, AlertTriangle } from "lucide-react";
 
 export const SuperAdminLogin: React.FC = () => {

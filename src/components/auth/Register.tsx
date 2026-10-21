@@ -17,7 +17,7 @@ import {
 } from "lucide-react";
 import { useNavigate, Link } from "react-router-dom";
 import { useAuth } from "../../contexts/AuthContext";
-import { getFriendlyAuthErrorMessage } from "../../utils/authErrors";
+import { getFriendlyAuthErrorMessage } from "../../utils/authMessages";
 // @ts-ignore
 import templeBg from "../../assets/images/puthia_temple_bg_1783616072369.jpg";
 

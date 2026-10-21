@@ -3,7 +3,7 @@ import { Link, useNavigate } from 'react-router-dom';
 import { motion } from 'motion/react';
 import { Mail, ArrowLeft, Send, CheckCircle2, Phone, User, AlertCircle, Info } from 'lucide-react';
 import { useAuth } from '../contexts/AuthContext';
-import { getFriendlyAuthErrorMessage } from '../utils/authErrors';
+import { getFriendlyAuthErrorMessage } from '../utils/authMessages';
 // @ts-ignore
 import templeBg from "../assets/images/puthia_temple_bg_1783616072369.jpg";
 
