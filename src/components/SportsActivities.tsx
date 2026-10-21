@@ -180,6 +180,28 @@ export const SportsActivities: React.FC<Props> = ({ onGoBack, hideHeader }) => {
       )}
 
       <div className={`${!hideHeader ? 'px-4 ' : ''}space-y-4`}>
+        {/* Direct Gateway to Football Automation Hub */}
+        <div className="bg-linear-to-r from-emerald-950 via-emerald-900 to-slate-900 text-white p-4 rounded-2xl border border-emerald-600/40 shadow-sm flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3">
+          <div className="flex items-center gap-3">
+            <div className="w-10 h-10 rounded-xl bg-emerald-500/20 text-emerald-300 flex items-center justify-center shrink-0 text-xl border border-emerald-400/30">
+              ⚽
+            </div>
+            <div>
+              <div className="flex items-center gap-2">
+                <h4 className="text-sm font-black text-white">ফুটবল টুর্নামেন্ট ও লাইভ স্কোর হাব</h4>
+                <span className="px-2 py-0.5 rounded-full text-[10px] font-black bg-rose-600 text-white animate-pulse">লাইভ</span>
+              </div>
+              <p className="text-xs text-emerald-100/80 mt-0.5">টুর্নামেন্ট, ম্যাচ শিডিউল, লাইভ স্কোরবোর্ড, পয়েন্ট টেবিল ও এইচডি ম্যাচ পোস্টার</p>
+            </div>
+          </div>
+          <button
+            onClick={() => window.location.href = "/football"}
+            className="px-4 py-2 rounded-xl bg-emerald-500 hover:bg-emerald-400 text-slate-950 font-black text-xs transition-all shadow-sm active:scale-95 shrink-0 cursor-pointer"
+          >
+            সরাসরি প্রবেশ করুন →
+          </button>
+        </div>
+
         {/* Actions bar */}
         <div className="flex flex-col sm:flex-row gap-3 items-stretch sm:items-center justify-between">
           <div className="grid grid-cols-2 gap-3 flex-1">

@@ -374,6 +374,17 @@ const Header: React.FC<HeaderProps> = ({
 
           {/* Right Section: Actions */}
           <div className="flex items-center gap-1 sm:gap-2 shrink-0 ml-1">
+            {/* Football Hub Shortcut Chip */}
+            <Link
+              to="/football"
+              className="inline-flex items-center gap-1.5 px-2.5 sm:px-3.5 py-1.5 sm:py-2 rounded-full bg-linear-to-r from-emerald-600 to-emerald-700 hover:from-emerald-700 hover:to-emerald-800 text-white font-black text-[11px] sm:text-xs shadow-xs transition-all active:scale-95 shrink-0"
+              title="পুঠিয়া ফুটবল টুর্নামেন্ট ও লাইভ স্কোর"
+            >
+              <span className="text-xs sm:text-sm">⚽</span>
+              <span className="hidden xs:inline">ফুটবল</span>
+              <span className="w-1.5 h-1.5 rounded-full bg-emerald-200 animate-pulse" />
+            </Link>
+
             {/* Search Icon Button */}
             <button
               onClick={() => {

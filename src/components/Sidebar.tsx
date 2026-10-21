@@ -18,7 +18,7 @@ import {
   Compass, BedDouble, Utensils, Cloud, CloudRain, Clock, Megaphone, Sparkles, Percent, Church, Moon,
   Stethoscope, Pill, PhoneCall, MessageSquare, FileSignature, Download, AlertTriangle, CalendarClock, FileCheck2, Wrench, Vote, Lock, Headset,
   Activity, Syringe, UserCheck, BookOpen, School, Award, FileSpreadsheet, Library, Store, ShoppingBag, Plus, Mic, MicOff,
-  Headphones, Shield, Globe, ExternalLink, Leaf, AlertCircle, LogOut, LogIn, Gift
+  Headphones, Shield, Globe, ExternalLink, Leaf, AlertCircle, LogOut, LogIn, Gift, Trophy
 } from 'lucide-react';
 
 interface SidebarProps {
@@ -53,7 +53,7 @@ const ICON_MAP: Record<string, any> = {
   Building, Smartphone, ShieldCheck, CreditCard, Receipt,
   Compass, BedDouble, Utensils, Cloud, CloudRain, Clock, Megaphone, Sparkles, Percent, Church, Moon,
   Stethoscope, Pill, PhoneCall, MessageSquare, FileSignature, Download, AlertTriangle, CalendarClock, FileCheck2, Wrench, Vote, Lock, Headset,
-  Activity, Syringe, UserCheck, BookOpen, School, Award, FileSpreadsheet, Library, Store, ShoppingBag
+  Activity, Syringe, UserCheck, BookOpen, School, Award, FileSpreadsheet, Library, Store, ShoppingBag, Trophy
 };
 
 export function Sidebar({

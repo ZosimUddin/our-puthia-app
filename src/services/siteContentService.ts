@@ -100,6 +100,7 @@ export interface CitizenComplaint {
 
 // Default Drawer Menu Items matching the citizen drawer
 export const DEFAULT_DRAWER_ITEMS: CitizenDrawerMenuItem[] = [
+  { id: 'football', label: 'ফুটবল টুর্নামেন্ট', subtitle: 'লাইভ স্কোর, ফিক্সচার, পয়েন্ট ও ব্যানার', path: '/football', iconName: 'Trophy', enabled: true, order: 0.5, badge: '⚽ লাইভ', badgeColor: 'bg-emerald-600' },
   { id: 'about', label: 'পুঠিয়া সম্পর্কে', subtitle: 'ইতিহাস, পরিচিতি, মানচিত্র', path: '/about', iconName: 'Info', enabled: true, order: 1 },
   { id: 'guide', label: 'ব্যবহার নির্দেশিকা', subtitle: 'কিভাবে ব্যবহার করবেন', path: '/guide', iconName: 'ShieldCheck', enabled: true, order: 2 },
   { id: 'support', label: 'সাপোর্ট সেন্টার', subtitle: 'সহায়তা ও যোগাযোগ', path: '/support', iconName: 'Headphones', enabled: true, order: 3, badge: '২৪/৭', badgeColor: 'bg-[#0B7A3B]' },

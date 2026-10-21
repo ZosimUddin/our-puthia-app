@@ -18,6 +18,7 @@ import BottomNavigation from "./BottomNavigation";
 
 import HomepageAdSection from "./HomepageAdSection";
 import AppDownloadBanner from "./AppDownloadBanner";
+import { FootballHomeBanner } from "../football/FootballHomeBanner";
 
 const ServicesGrid = React.lazy(() => import("./ServicesGrid"));
 const LatestNoticeSection = React.lazy(() => import("./LatestNoticeSection"));
@@ -198,6 +199,7 @@ const Home: React.FC = () => {
         { id: "transport", label: "পরিবহন তথ্য", type: "transport", keywords: ["transport", "bus", "train", "পরিবহন", "বাস", "ট্রেন", "ভাড়া"] },
         { id: "volunteer", label: "স্বেচ্ছাসেবক নেটওয়ার্ক", type: "volunteer", keywords: ["volunteer", "help", "social", "স্বেচ্ছাসেবক", "সাহায্য", "কল্যাণ"] },
         { id: "lost-found", label: "হারানো ও পাওয়া", type: "lost-found", keywords: ["lost", "found", "help", "হারানো", "পাওয়া", "নিখোঁজ"] },
+        { id: "football", label: "ফুটবল টুর্নামেন্ট ও লাইভ স্কোর", type: "football", keywords: ["football", "match", "score", "tournament", "পোস্টার", "লাইভ", "ম্যাচ", "ফুটবল", "টুর্নামেন্ট", "পয়েন্ট", "খেলা"] },
         { id: "emergency", label: "জরুরি সহায়তা", type: "emergency", keywords: ["emergency", "ambulance", "hospital", "blood", "জরুরি", "অ্যাম্বুলেন্স", "হাসপাতাল", "রক্ত"] },
         { id: "adda", label: "আড্ডা (Social Hub)", type: "adda", keywords: ["adda", "discussion", "forum", "opinion", "আড্ডা", "মতামত", "আলোচনা", "ফোরাম"] },
         { id: "social-humanitarian", label: "সামাজিক প্রতিষ্ঠান", type: "social", keywords: ["social", "institution", "organization", "club", "humanitarian", "সামাজিক", "প্রতিষ্ঠান", "সংগঠন", "সেবামূলক"] },
@@ -326,6 +328,8 @@ const Home: React.FC = () => {
                   navigate("/notice");
                 } else if (item.type === "discussion" || item.type === "adda" || item.type === "user_posts") {
                   navigate("/adda");
+                } else if (item.type === "football") {
+                  navigate("/football");
                 } else if (item.type === "blood-donor" || item.type === "blood_donors") {
                   navigate("/blood-donor");
                 } else {
@@ -355,6 +359,7 @@ const Home: React.FC = () => {
           
           <NoticeTickerBar />
           <HeroBannerSlider />
+          <FootballHomeBanner />
           <Suspense fallback={<ServicesGridSkeleton />}><ServicesGrid /></Suspense>
           <HomepageAdSection />
 
