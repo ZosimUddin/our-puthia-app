@@ -24,6 +24,12 @@ export interface SecurityAlertEmailData {
   securityLink?: string;
 }
 
+export interface ProfileReminderEmailData {
+  to: string;
+  name?: string;
+  profileLink?: string;
+}
+
 export interface EmailSettings {
   welcomeEmailEnabled: boolean;
   senderName: string;
@@ -45,6 +51,11 @@ export interface EmailSettings {
   securityAlertSubject: string;
   securityAlertButtonText: string;
 
+  // Profile Completion Reminder Email Config
+  profileReminderEmailEnabled: boolean;
+  profileReminderSubject: string;
+  profileReminderButtonText: string;
+
   lastUpdated?: string;
   updatedBy?: string;
 }
@@ -65,8 +76,12 @@ export const DEFAULT_EMAIL_SETTINGS: EmailSettings = {
   passwordResetButtonText: "নতুন পাসওয়ার্ড সেট করুন",
 
   securityAlertEmailEnabled: true,
-  securityAlertSubject: "সতর্কতা: আপনার “আমাদের পুঠিয়া” অ্যাকাউন্টে নতুন বা অস্বাভাবিক লগইন শনাক্ত করা হয়েছে 🛡️",
-  securityAlertButtonText: "অ্যাকাউন্টের নিরাপত্তা দেখুন"
+  securityAlertSubject: "সতর্কতা: আপনার “আমাদের পুঠিয়া” অ্যাকাউন্টে নতুন বা অস্বাভাবিক লগইন কার্যক্রম শনাক্ত করা হয়েছে 🛡️",
+  securityAlertButtonText: "অ্যাকাউন্টের নিরাপত্তা দেখুন",
+
+  profileReminderEmailEnabled: true,
+  profileReminderSubject: "আপনার “আমাদের পুঠিয়া” প্রোফাইল সম্পূর্ণ করুন 👤💚",
+  profileReminderButtonText: "আমার প্রোফাইল সম্পূর্ণ করুন"
 };
 
 /**
@@ -105,7 +120,7 @@ export async function updateEmailSettings(
 
     await logAuditActivity({
       action: "ইমেইল সেটিংস কনফিগারেশন আপডেট",
-      details: `ওয়েলকাম: ${settings.welcomeEmailEnabled ? "অন" : "অফ"}, পাসওয়ার্ড: ${settings.passwordResetEmailEnabled ? "অন" : "অফ"}, নিরাপত্তা অ্যালার্ট: ${settings.securityAlertEmailEnabled ? "অন" : "অফ"}`,
+      details: `ওয়েলকাম: ${settings.welcomeEmailEnabled ? "অন" : "অফ"}, পাসওয়ার্ড: ${settings.passwordResetEmailEnabled ? "অন" : "অফ"}, নিরাপত্তা: ${settings.securityAlertEmailEnabled ? "অন" : "অফ"}, প্রোফাইল রিমাইন্ডার: ${settings.profileReminderEmailEnabled ? "অন" : "অফ"}`,
       category: "system",
       severity: "info",
       customUser: adminUser?.name || "অ্যাডমিনিস্ট্রেটর"
@@ -531,6 +546,148 @@ export function generateSecurityAlertEmailHtml(data: {
 }
 
 /**
+ * Generates an extraordinarily beautiful, mobile-responsive HTML Profile Completion Reminder email template
+ * matching the user's exact wording and high-fidelity emerald community styling.
+ */
+export function generateProfileReminderEmailHtml(data: {
+  name?: string;
+  email: string;
+  appUrl?: string;
+  profileLink?: string;
+  senderName?: string;
+  buttonText?: string;
+}): string {
+  const appUrl = data.appUrl || "https://our-puthia-app.vercel.app";
+  const userName = data.name || data.email.split("@")[0] || "ব্যবহারকারী";
+  const profileLink = data.profileLink || `${appUrl}/profile?edit=true`;
+  const senderName = data.senderName || "আমাদের পুঠিয়া টিম";
+  const buttonText = data.buttonText || "আমার প্রোফাইল সম্পূর্ণ করুন";
+
+  return `<!DOCTYPE html>
+<html lang="bn">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>প্রোফাইল সম্পূর্ণ করুন - আমাদের পুঠিয়া</title>
+</head>
+<body style="margin: 0; padding: 0; background-color: #f1f5f9; font-family: 'SolaimanLipi', 'Hind Siliguri', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif; -webkit-font-smoothing: antialiased; color: #1e293b; line-height: 1.6;">
+  <table role="presentation" width="100%" cellspacing="0" cellpadding="0" style="background-color: #f1f5f9; padding: 32px 12px;">
+    <tr>
+      <td align="center">
+        <!-- Main Container Card -->
+        <table role="presentation" width="100%" style="max-width: 600px; background-color: #ffffff; border-radius: 28px; overflow: hidden; box-shadow: 0 10px 30px rgba(0, 0, 0, 0.06); border: 1px solid #e2e8f0;">
+          
+          <!-- Emerald Header Banner -->
+          <tr>
+            <td style="background: linear-gradient(135deg, #005a3e 0%, #007a55 50%, #004d33 100%); padding: 38px 30px 34px; text-align: center; color: #ffffff;">
+              <div style="display: inline-block; background-color: #ffffff; width: 68px; height: 68px; border-radius: 22px; line-height: 68px; margin-bottom: 14px; box-shadow: 0 6px 18px rgba(0,0,0,0.18);">
+                <span style="font-size: 34px; line-height: 68px;">👤</span>
+              </div>
+              <h1 style="margin: 0; font-size: 26px; font-weight: 900; color: #ffffff; letter-spacing: -0.5px;">আমাদের পুঠিয়া</h1>
+              <p style="margin: 6px 0 0; font-size: 13px; color: #a7f3d0; font-weight: 600;">নাগরিক প্রোফাইল ও কমিউনিটি পরিচিতি</p>
+            </td>
+          </tr>
+
+          <!-- Main Email Body -->
+          <tr>
+            <td style="padding: 36px 32px 28px;">
+              
+              <!-- Greeting -->
+              <h2 style="margin: 0 0 14px; font-size: 20px; font-weight: 800; color: #0f172a;">
+                প্রিয় ${userName},
+              </h2>
+
+              <!-- Paragraph 1 -->
+              <p style="margin: 0 0 18px; font-size: 15px; line-height: 1.7; color: #334155;">
+                “আমাদের পুঠিয়া” পরিবারের সঙ্গে থাকার জন্য ধন্যবাদ! 💚
+              </p>
+
+              <!-- Paragraph 2 -->
+              <p style="margin: 0 0 22px; font-size: 15px; line-height: 1.7; color: #334155;">
+                আপনার প্রোফাইলের কিছু তথ্য এখনো যোগ করা বাকি রয়েছে। প্রোফাইলটি সম্পূর্ণ করলে অন্যরা আপনাকে সহজে চিনতে পারবেন এবং আমাদের কমিউনিটিতে আপনার পরিচিতি আরও সুন্দরভাবে তুলে ধরতে পারবেন।
+              </p>
+
+              <!-- Suggestions List Box -->
+              <div style="background-color: #f8fafc; border: 1px solid #e2e8f0; border-radius: 18px; padding: 20px 22px; margin-bottom: 26px;">
+                <h4 style="margin: 0 0 12px; font-size: 14px; font-weight: 800; color: #0f172a;">
+                  আপনি চাইলে যোগ করতে পারেন:
+                </h4>
+                <table role="presentation" width="100%">
+                  <tr>
+                    <td style="padding: 6px 0; font-size: 14px; color: #475569;">
+                      🖼️ আপনার প্রোফাইল ছবি
+                    </td>
+                  </tr>
+                  <tr>
+                    <td style="padding: 6px 0; font-size: 14px; color: #475569;">
+                      ✍️ আপনার পরিচিতি ও সংক্ষিপ্ত বিবরণ
+                    </td>
+                  </tr>
+                  <tr>
+                    <td style="padding: 6px 0; font-size: 14px; color: #475569;">
+                      ✨ আপনার পছন্দসই অন্যান্য প্রোফাইল তথ্য
+                    </td>
+                  </tr>
+                </table>
+              </div>
+
+              <!-- Prominent CTA Button -->
+              <table role="presentation" width="100%" style="margin: 24px 0 28px;">
+                <tr>
+                  <td align="center">
+                    <a href="${profileLink}" target="_blank" style="display: inline-block; background: linear-gradient(135deg, #007a55 0%, #005a3e 100%); color: #ffffff; text-decoration: none; font-size: 15px; font-weight: 800; padding: 16px 38px; border-radius: 50px; box-shadow: 0 6px 18px rgba(0, 122, 85, 0.35); text-align: center; letter-spacing: 0.3px;">
+                      👉 ${buttonText}
+                    </a>
+                  </td>
+                </tr>
+              </table>
+
+              <!-- Privacy Assurance Card -->
+              <table role="presentation" width="100%" style="background-color: #f0fdf4; border: 1px solid #bbf7d0; border-radius: 14px; margin-bottom: 22px;">
+                <tr>
+                  <td style="padding: 14px 18px;">
+                    <p style="margin: 0; font-size: 13px; line-height: 1.6; color: #166534; font-weight: 600;">
+                      🔒 আপনার ব্যক্তিগত তথ্যের নিয়ন্ত্রণ আপনার হাতেই থাকবে। শুধু যে তথ্যগুলো শেয়ার করতে স্বাচ্ছন্দ্যবোধ করেন, সেগুলোই যোগ করুন।
+                    </p>
+                  </td>
+                </tr>
+              </table>
+
+              <!-- Paragraph 3 -->
+              <p style="margin: 0 0 24px; font-size: 15px; line-height: 1.7; color: #334155; font-weight: 600;">
+                আপনার অংশগ্রহণে আমাদের পুঠিয়া আরও প্রাণবন্ত হয়ে উঠুক!
+              </p>
+
+              <!-- Signoff -->
+              <div style="margin-top: 26px; padding-top: 20px; border-top: 1px dashed #cbd5e1;">
+                <p style="margin: 0; font-size: 14px; color: #64748b;">শুভেচ্ছান্তে,</p>
+                <h4 style="margin: 4px 0 0; font-size: 16px; font-weight: 800; color: #007a55;">${senderName}</h4>
+                <p style="margin: 6px 0 0; font-size: 13px;">
+                  🌐 <a href="${appUrl}" target="_blank" style="color: #007a55; text-decoration: none; font-weight: 600;">${appUrl}</a>
+                </p>
+              </div>
+
+            </td>
+          </tr>
+
+          <!-- Footer Section -->
+          <tr>
+            <td style="background-color: #f8fafc; padding: 22px 28px; text-align: center; border-top: 1px solid #e2e8f0; font-size: 12px; color: #64748b;">
+              <p style="margin: 0; font-weight: 500;">
+                © 2026 আমাদের পুঠিয়া। সর্বস্বত্ব সংরক্ষিত।
+              </p>
+            </td>
+          </tr>
+
+        </table>
+      </td>
+    </tr>
+  </table>
+</body>
+</html>`;
+}
+
+/**
  * Queues a welcome email to the Firestore 'mail' collection with user's exact requested wording.
  * Respects admin toggle settings.
  */
@@ -808,6 +965,98 @@ ${senderName}
     return true;
   } catch (error) {
     console.warn("Could not queue security alert email:", error);
+    return false;
+  }
+}
+
+/**
+ * Queues a profile completion reminder email to the Firestore 'mail' collection.
+ * Matching the user's exact wording.
+ */
+export async function sendProfileReminderEmail(data: ProfileReminderEmailData): Promise<boolean> {
+  const recipientEmail = (data.to || "").trim().toLowerCase();
+
+  if (!recipientEmail || recipientEmail.endsWith("@puthiadiary.com")) {
+    return false;
+  }
+
+  const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+  if (!emailRegex.test(recipientEmail)) {
+    return false;
+  }
+
+  try {
+    const config = await getEmailSettings();
+
+    if (!config.profileReminderEmailEnabled) {
+      console.log("Profile reminder email skipped: Disabled in Admin Settings config.");
+      return false;
+    }
+
+    const userName = data.name || recipientEmail.split("@")[0] || "সম্মানিত ব্যবহারকারী";
+    const appUrl = config.websiteUrl || "https://our-puthia-app.vercel.app";
+    const subject = config.profileReminderSubject || "আপনার “আমাদের পুঠিয়া” প্রোফাইল সম্পূর্ণ করুন 👤💚";
+    const profileLink = data.profileLink || `${appUrl}/profile?edit=true`;
+
+    const htmlContent = generateProfileReminderEmailHtml({
+      name: userName,
+      email: recipientEmail,
+      appUrl,
+      profileLink,
+      senderName: config.senderName,
+      buttonText: config.profileReminderButtonText || "আমার প্রোফাইল সম্পূর্ণ করুন"
+    });
+
+    const plainText = `প্রিয় ${userName},
+
+“আমাদের পুঠিয়া” পরিবারের সঙ্গে থাকার জন্য ধন্যবাদ! 💚
+
+আপনার প্রোফাইলের কিছু তথ্য এখনো যোগ করা বাকি রয়েছে। প্রোফাইলটি সম্পূর্ণ করলে অন্যরা আপনাকে সহজে চিনতে পারবেন এবং আমাদের কমিউনিটিতে আপনার পরিচিতি আরও সুন্দরভাবে তুলে ধরতে পারবেন।
+
+আপনি চাইলে যোগ করতে পারেন:
+
+- আপনার প্রোফাইল ছবি
+- আপনার পরিচিতি ও সংক্ষিপ্ত বিবরণ
+- আপনার পছন্দসই অন্যান্য প্রোফাইল তথ্য
+
+👉 আমার প্রোফাইল সম্পূর্ণ করুন: ${profileLink}
+
+আপনার ব্যক্তিগত তথ্যের নিয়ন্ত্রণ আপনার হাতেই থাকবে। শুধু যে তথ্যগুলো শেয়ার করতে স্বাচ্ছন্দ্যবোধ করেন, সেগুলোই যোগ করুন।
+
+আপনার অংশগ্রহণে আমাদের পুঠিয়া আরও প্রাণবন্ত হয়ে উঠুক!
+
+শুভেচ্ছান্তে,
+${config.senderName}
+
+🌐 ${appUrl}`;
+
+    await addDoc(collection(db, "mail"), {
+      to: [recipientEmail],
+      from: config.senderEmail ? `"${config.senderName}" <${config.senderEmail}>` : undefined,
+      replyTo: config.replyToEmail || config.senderEmail,
+      message: {
+        subject,
+        text: plainText,
+        html: htmlContent
+      },
+      type: "profile_reminder_email",
+      recipientName: userName,
+      recipientEmail,
+      createdAt: serverTimestamp(),
+      status: "pending"
+    });
+
+    await logAuditActivity({
+      action: `প্রোফাইল সম্পূর্ণকরণ রিমাইন্ডার ইমেইল কিউতে যুক্ত করা হয়েছে (${recipientEmail})`,
+      details: `প্রাপক: ${userName}`,
+      category: "user",
+      severity: "info",
+      customUser: "সিস্টেম বট"
+    });
+
+    return true;
+  } catch (error) {
+    console.warn("Could not queue profile reminder email:", error);
     return false;
   }
 }
