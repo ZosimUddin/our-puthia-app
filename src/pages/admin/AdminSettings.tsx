@@ -21,7 +21,8 @@ import {
   Lock,
   ShieldAlert,
   Shield,
-  UserCheck
+  UserCheck,
+  Bell
 } from "lucide-react";
 import { motion, AnimatePresence } from "motion/react";
 import {
@@ -33,10 +34,12 @@ import {
   sendPasswordResetCustomEmail,
   sendSecurityAlertEmail,
   sendProfileReminderEmail,
+  sendAnnouncementEmail,
   generateWelcomeEmailHtml,
   generatePasswordResetEmailHtml,
   generateSecurityAlertEmailHtml,
-  generateProfileReminderEmailHtml
+  generateProfileReminderEmailHtml,
+  generateAnnouncementEmailHtml
 } from "../../services/emailService";
 import { useAuth } from "../../contexts/AuthContext";
 import toast from "react-hot-toast";
@@ -44,14 +47,14 @@ import toast from "react-hot-toast";
 const AdminSettings: React.FC = () => {
   const { user } = useAuth();
   const [activeMainTab, setActiveMainTab] = useState<
-    "welcome_email" | "profile_reminder_email" | "password_reset_email" | "security_alert_email" | "site"
+    "welcome_email" | "profile_reminder_email" | "password_reset_email" | "security_alert_email" | "announcement_email" | "site"
   >("welcome_email");
 
   // Email Configuration State
   const [emailConfig, setEmailConfig] = useState<EmailSettings>(DEFAULT_EMAIL_SETTINGS);
   const [loadingConfig, setLoadingConfig] = useState(true);
   const [isSaving, setIsSaving] = useState(false);
-  const [showPreviewModal, setShowPreviewModal] = useState<"welcome" | "profile" | "reset" | "security" | null>(null);
+  const [showPreviewModal, setShowPreviewModal] = useState<"welcome" | "profile" | "reset" | "security" | "announcement" | null>(null);
 
   // Test Email State
   const [testEmail, setTestEmail] = useState("");
@@ -92,7 +95,7 @@ const AdminSettings: React.FC = () => {
     }
   };
 
-  const handleSendTestEmail = async (type: "welcome" | "profile" | "reset" | "security") => {
+  const handleSendTestEmail = async (type: "welcome" | "profile" | "reset" | "security" | "announcement") => {
     if (!testEmail || !testEmail.includes("@")) {
       toast.error("দয়া করে সঠিক টেস্ট ইমেইল ঠিকানা প্রদান করুন");
       return;
@@ -117,12 +120,21 @@ const AdminSettings: React.FC = () => {
           to: testEmail.trim(),
           name: testName.trim() || "সম্মানিত ব্যবহারকারী"
         });
-      } else {
+      } else if (type === "security") {
         success = await sendSecurityAlertEmail({
           to: testEmail.trim(),
           name: testName.trim() || "সম্মানিত ব্যবহারকারী",
           device: "Google Chrome (Windows 11)",
           location: "পুঠিয়া, রাজশাহী (আনুমানিক)"
+        });
+      } else {
+        success = await sendAnnouncementEmail({
+          to: testEmail.trim(),
+          name: testName.trim() || "সম্মানিত নাগরিক",
+          title: emailConfig.announcementDefaultTitle || "ওয়েবসাইটের গুরুত্বপূর্ণ আপডেট",
+          details:
+            emailConfig.announcementDefaultDetails ||
+            "আমাদের পুঠিয়া ওয়েবসাইটের নতুন সুযোগ-সুবিধা ও সেবা সম্পর্কে বিস্তারিত জানতে নিয়মিত ভিজিট করুন।"
         });
       }
 
@@ -134,7 +146,9 @@ const AdminSettings: React.FC = () => {
             ? "প্রোফাইল রিমাইন্ডার"
             : type === "reset"
             ? "পাসওয়ার্ড রিসেট"
-            : "নিরাপত্তা সতর্কতা";
+            : type === "security"
+            ? "নিরাপত্তা সতর্কতা"
+            : "ঘোষণা ও আপডেট";
         toast.success(`টেস্ট ${typeLabel} ইমেইল সফলভাবে মেইল কিউতে যুক্ত করা হয়েছে (${testEmail})!`);
       } else {
         toast.error("ইমেইল সার্ভিস বর্তমানে নিষ্ক্রিয় রয়েছে অথবা ভুল ইমেইল প্রদান করা হয়েছে");
@@ -219,6 +233,19 @@ const AdminSettings: React.FC = () => {
 
               <button
                 type="button"
+                onClick={() => setActiveMainTab("announcement_email")}
+                className={`px-3 py-1.5 rounded-xl text-xs font-black transition-all flex items-center gap-1.5 cursor-pointer whitespace-nowrap ${
+                  activeMainTab === "announcement_email"
+                    ? "bg-white text-emerald-800 shadow-xs ring-1 ring-slate-200"
+                    : "text-slate-600 hover:text-slate-900"
+                }`}
+              >
+                <Bell size={14} className={activeMainTab === "announcement_email" ? "text-amber-500" : "text-slate-400"} />
+                <span>ঘোষণা ও আপডেট</span>
+              </button>
+
+              <button
+                type="button"
                 onClick={() => setActiveMainTab("site")}
                 className={`px-3 py-1.5 rounded-xl text-xs font-black transition-all flex items-center gap-1.5 cursor-pointer whitespace-nowrap ${
                   activeMainTab === "site"
@@ -245,6 +272,8 @@ const AdminSettings: React.FC = () => {
               className={`rounded-3xl p-6 shadow-md border relative overflow-hidden text-white ${
                 activeMainTab === "security_alert_email"
                   ? "bg-gradient-to-r from-rose-950 via-red-900 to-rose-900 border-rose-800/50"
+                  : activeMainTab === "announcement_email"
+                  ? "bg-gradient-to-r from-amber-950 via-amber-900 to-emerald-950 border-amber-700/50"
                   : "bg-gradient-to-r from-emerald-900 via-emerald-800 to-teal-950 border-emerald-700/50"
               }`}
             >
@@ -259,8 +288,10 @@ const AdminSettings: React.FC = () => {
                         <UserCheck size={12} className="text-emerald-300" />
                       ) : activeMainTab === "password_reset_email" ? (
                         <KeyRound size={12} className="text-emerald-300" />
-                      ) : (
+                      ) : activeMainTab === "security_alert_email" ? (
                         <Shield size={12} className="text-rose-300" />
+                      ) : (
+                        <Bell size={12} className="text-amber-300" />
                       )}
                       {activeMainTab === "welcome_email"
                         ? "স্বাগতম ইমেইল কনফিগারেশন"
@@ -268,7 +299,9 @@ const AdminSettings: React.FC = () => {
                         ? "প্রোফাইল রিমাইন্ডার কনফিগারেশন"
                         : activeMainTab === "password_reset_email"
                         ? "পাসওয়ার্ড রিসেট ইমেইল কনফিগারেশন"
-                        : "লগইন নিরাপত্তা অ্যালার্ট ইমেইল"}
+                        : activeMainTab === "security_alert_email"
+                        ? "লগইন নিরাপত্তা অ্যালার্ট ইমেইল"
+                        : "ঘোষণা ও আপডেট ইমেইল কনফিগারেশন"}
                     </span>
                     <span
                       className={`px-2.5 py-0.5 rounded-full text-[10px] font-black border ${
@@ -278,7 +311,9 @@ const AdminSettings: React.FC = () => {
                           ? emailConfig.profileReminderEmailEnabled
                           : activeMainTab === "password_reset_email"
                           ? emailConfig.passwordResetEmailEnabled
-                          : emailConfig.securityAlertEmailEnabled)
+                          : activeMainTab === "security_alert_email"
+                          ? emailConfig.securityAlertEmailEnabled
+                          : emailConfig.announcementEmailEnabled)
                           ? "bg-emerald-400/20 text-emerald-300 border-emerald-400/40"
                           : "bg-rose-500/20 text-rose-300 border-rose-400/40"
                       }`}
@@ -289,7 +324,9 @@ const AdminSettings: React.FC = () => {
                         ? emailConfig.profileReminderEmailEnabled
                         : activeMainTab === "password_reset_email"
                         ? emailConfig.passwordResetEmailEnabled
-                        : emailConfig.securityAlertEmailEnabled)
+                        : activeMainTab === "security_alert_email"
+                        ? emailConfig.securityAlertEmailEnabled
+                        : emailConfig.announcementEmailEnabled)
                         ? "🟢 সার্ভিস সক্রিয়"
                         : "🔴 সার্ভিস নিষ্ক্রিয়"}
                     </span>
@@ -302,7 +339,9 @@ const AdminSettings: React.FC = () => {
                       ? "অসম্পূর্ণ প্রোফাইল সম্পন্নকরণ রিমাইন্ডার ইমেইল পরিচালনা"
                       : activeMainTab === "password_reset_email"
                       ? "পাসওয়ার্ড পরিবর্তন ও রিসেট ইমেইল পরিচালনা"
-                      : "অস্বাভাবিক বা নতুন লগইন কার্যক্রম শনাক্তকরণ অ্যালার্ট"}
+                      : activeMainTab === "security_alert_email"
+                      ? "অস্বাভাবিক বা নতুন লগইন কার্যক্রম শনাক্তকরণ অ্যালার্ট"
+                      : "অফিসিয়াল ঘোষণা ও ওয়েবসাইটের নতুন আপডেট ইমেইল"}
                   </h2>
                   <p className="text-xs md:text-sm text-slate-100/90 max-w-2xl font-medium">
                     {activeMainTab === "welcome_email"
@@ -311,7 +350,9 @@ const AdminSettings: React.FC = () => {
                       ? "যেসব নাগরিকের প্রোফাইল ছবি বা তথ্য এখনো অসম্পূর্ণ রয়েছে, তাদের পুঠিয়া কমিউনিটিতে যুক্ত হওয়ার জন্য প্রোফাইল আপডেট রিমাইন্ডার পাঠান।"
                       : activeMainTab === "password_reset_email"
                       ? "ব্যবহারকারী পাসওয়ার্ড পরিবর্তন অনুরোধ করলে তাদের ইনবক্সে পাঠানো সুরক্ষিত রিসেট ইমেইল বার্তা ও বোতাম পরিচালনা করুন।"
-                      : "নতুন ডিভাইস বা অপরিচিত অবস্থান থেকে লগইন হলে ব্যবহারকারীকে তাৎক্ষণিক নিরাপত্তা সতর্কবার্তা ও ডিভাইস লগইন বিবরণ পাঠিয়ে অ্যাকাউন্ট সুরক্ষিত রাখুন।"}
+                      : activeMainTab === "security_alert_email"
+                      ? "নতুন ডিভাইস বা অপরিচিত অবস্থান থেকে লগইন হলে ব্যবহারকারীকে তাৎক্ষণিক নিরাপত্তা সতর্কবার্তা ও ডিভাইস লগইন বিবরণ পাঠিয়ে অ্যাকাউন্ট সুরক্ষিত রাখুন।"
+                      : "ওয়েবসাইটের গুরুত্বপূর্ণ ঘোষণা, নতুন ফিচার ও জরুরি বার্তা সকল নিবন্ধিত নাগরিকের কাছে সরাসরি ইমেইলে পৌঁছে দিন।"}
                   </p>
                 </div>
 
@@ -326,7 +367,9 @@ const AdminSettings: React.FC = () => {
                           ? "profile"
                           : activeMainTab === "password_reset_email"
                           ? "reset"
-                          : "security"
+                          : activeMainTab === "security_alert_email"
+                          ? "security"
+                          : "announcement"
                       )
                     }
                     className="px-4 py-2.5 bg-white/10 hover:bg-white/20 text-white rounded-2xl text-xs font-black transition flex items-center gap-2 border border-white/20 cursor-pointer active:scale-95"
@@ -358,7 +401,9 @@ const AdminSettings: React.FC = () => {
                             ? "👤"
                             : activeMainTab === "password_reset_email"
                             ? "🔐"
-                            : "🛡️"}
+                            : activeMainTab === "security_alert_email"
+                            ? "🛡️"
+                            : "📢"}
                         </span>
                         <h3 className="text-base font-black text-slate-900">
                           {activeMainTab === "welcome_email"
@@ -367,7 +412,9 @@ const AdminSettings: React.FC = () => {
                             ? "প্রোফাইল সম্পূর্ণকরণ রিমাইন্ডার সার্ভিস (Profile Reminder Toggle)"
                             : activeMainTab === "password_reset_email"
                             ? "স্বয়ংক্রিয় পাসওয়ার্ড রিসেট ইমেইল সার্ভিস (Password Reset Toggle)"
-                            : "নতুন/অস্বাভাবিক লগইন নিরাপত্তা অ্যালার্ট (Security Alert Toggle)"}
+                            : activeMainTab === "security_alert_email"
+                            ? "নতুন/অস্বাভাবিক লগইন নিরাপত্তা অ্যালার্ট (Security Alert Toggle)"
+                            : "অফিসিয়াল ঘোষণা ও আপডেট ইমেইল সার্ভিস (Announcement Email Toggle)"}
                         </h3>
                       </div>
                       <p className="text-xs text-slate-600 font-medium pl-10 max-w-2xl">
@@ -377,7 +424,9 @@ const AdminSettings: React.FC = () => {
                           ? "সক্রিয় থাকলে প্রোফাইল অসম্পূর্ণ থাকা নাগরিকদের সহজে তথ্য যুক্ত করার জন্য উৎসাহমূলক রিমাইন্ডার ইমেইল পাঠানো যাবে।"
                           : activeMainTab === "password_reset_email"
                           ? "সক্রিয় থাকলে কোনো ব্যবহারকারী পাসওয়ার্ড রিসেট করতে চাইলে ফায়ারবেসের মাধ্যমে তার ইনবক্সে এই নির্ধারিত নিরাপত্তা বার্তাটি চলে যাবে।"
-                          : "সক্রিয় থাকলে অ্যাকাউন্টে কোনো নতুন ডিভাইস বা স্থান থেকে লগইন কার্যক্রম শনাক্ত হলে তাৎক্ষণিক সতর্কতা বার্তা পাঠানো হবে।"}
+                          : activeMainTab === "security_alert_email"
+                          ? "সক্রিয় থাকলে অ্যাকাউন্টে কোনো নতুন ডিভাইস বা স্থান থেকে লগইন কার্যক্রম শনাক্ত হলে তাৎক্ষণিক সতর্কতা বার্তা পাঠানো হবে।"
+                          : "সক্রিয় থাকলে অ্যাডমিন প্যানেল থেকে পুঠিয়ার সকল নিবন্ধিত নাগরিকের কাছে গুরুত্বপূর্ণ ঘোষণা ও আপডেট ইমেইল পাঠানো যাবে।"}
                       </p>
                     </div>
 
@@ -391,7 +440,9 @@ const AdminSettings: React.FC = () => {
                             ? emailConfig.profileReminderEmailEnabled
                             : activeMainTab === "password_reset_email"
                             ? emailConfig.passwordResetEmailEnabled
-                            : emailConfig.securityAlertEmailEnabled
+                            : activeMainTab === "security_alert_email"
+                            ? emailConfig.securityAlertEmailEnabled
+                            : emailConfig.announcementEmailEnabled
                         }
                         onChange={(e) => {
                           if (activeMainTab === "welcome_email") {
@@ -400,8 +451,10 @@ const AdminSettings: React.FC = () => {
                             setEmailConfig({ ...emailConfig, profileReminderEmailEnabled: e.target.checked });
                           } else if (activeMainTab === "password_reset_email") {
                             setEmailConfig({ ...emailConfig, passwordResetEmailEnabled: e.target.checked });
-                          } else {
+                          } else if (activeMainTab === "security_alert_email") {
                             setEmailConfig({ ...emailConfig, securityAlertEmailEnabled: e.target.checked });
+                          } else {
+                            setEmailConfig({ ...emailConfig, announcementEmailEnabled: e.target.checked });
                           }
                         }}
                         className="sr-only peer"
@@ -586,7 +639,7 @@ const AdminSettings: React.FC = () => {
                       </p>
                     </div>
                   </div>
-                ) : (
+                ) : activeMainTab === "security_alert_email" ? (
                   /* Security Alert Specific Customization */
                   <div className="bg-white rounded-3xl p-6 border border-slate-200 shadow-xs space-y-5">
                     <div className="flex items-center gap-2 border-b border-slate-100 pb-3">
@@ -637,6 +690,76 @@ const AdminSettings: React.FC = () => {
                       </p>
                       <p className="text-rose-800 leading-relaxed">
                         ইমেইল পাঠানোর সময় সিস্টেম স্বয়ংক্রিয়ভাবে ইউজারের বর্তমান লগইন সময়, ব্রাউজার/ডিভাইসের নাম এবং আনুমানিক অবস্থান (পুঠিয়া, রাজশাহী) ইমেইল বডিতে ছক আকারে সাজিয়ে দেবে।
+                      </p>
+                    </div>
+                  </div>
+                ) : (
+                  /* Announcement & Update Specific Customization */
+                  <div className="bg-white rounded-3xl p-6 border border-slate-200 shadow-xs space-y-5">
+                    <div className="flex items-center gap-2 border-b border-slate-100 pb-3">
+                      <Bell className="text-amber-500" size={18} />
+                      <h3 className="text-sm font-black text-slate-900 uppercase tracking-wider">
+                        ঘোষণা ও আপডেট ইমেইল কনটেন্ট
+                      </h3>
+                    </div>
+
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                      <div>
+                        <label className="block text-xs font-black text-slate-700 mb-1.5">
+                          ডিফল্ট ঘোষণার শিরোনাম (Announcement Title)
+                        </label>
+                        <input
+                          type="text"
+                          value={emailConfig.announcementDefaultTitle}
+                          onChange={(e) =>
+                            setEmailConfig({ ...emailConfig, announcementDefaultTitle: e.target.value })
+                          }
+                          placeholder="আমাদের ওয়েবসাইটের গুরুত্বপূর্ণ আপডেট ও নতুন সেবা"
+                          className="w-full px-4 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-xs font-bold focus:ring-2 focus:ring-amber-500/30 focus:outline-none"
+                        />
+                        <p className="text-[10px] text-slate-400 mt-1">ব্যবহারকারীকে পাঠানো ঘোষণার প্রধান শিরোনাম।</p>
+                      </div>
+
+                      <div>
+                        <label className="block text-xs font-black text-slate-700 mb-1.5">
+                          অ্যাকশন বাটনের টেক্সট (Button Label)
+                        </label>
+                        <input
+                          type="text"
+                          value={emailConfig.announcementButtonText}
+                          onChange={(e) =>
+                            setEmailConfig({ ...emailConfig, announcementButtonText: e.target.value })
+                          }
+                          placeholder="ওয়েবসাইটে দেখুন"
+                          className="w-full px-4 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-xs font-bold focus:ring-2 focus:ring-amber-500/30 focus:outline-none"
+                        />
+                        <p className="text-[10px] text-slate-400 mt-1">ইমেইলে দৃশ্যমান ওয়েবসাইটের লিংক বোতাম।</p>
+                      </div>
+                    </div>
+
+                    <div>
+                      <label className="block text-xs font-black text-slate-700 mb-1.5">
+                        ডিফল্ট ঘোষণার বিস্তারিত বিবরণ (Details & Description)
+                      </label>
+                      <textarea
+                        rows={3}
+                        value={emailConfig.announcementDefaultDetails}
+                        onChange={(e) =>
+                          setEmailConfig({ ...emailConfig, announcementDefaultDetails: e.target.value })
+                        }
+                        placeholder="এখানে আপডেট বা ঘোষণার বিস্তারিত বিবরণ লিখুন..."
+                        className="w-full px-4 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-xs font-bold focus:ring-2 focus:ring-amber-500/30 focus:outline-none"
+                      />
+                      <p className="text-[10px] text-slate-400 mt-1">ইমেইল বডিতে বিস্তারিত অনুচ্ছেদ হিসেবে প্রদর্শিত হবে।</p>
+                    </div>
+
+                    <div className="p-4 bg-amber-50 rounded-2xl border border-amber-200 text-xs text-amber-900 space-y-1">
+                      <p className="font-bold flex items-center gap-1.5">
+                        <CheckCircle2 size={15} className="text-amber-700 shrink-0" />
+                        কার্যকর হওয়ার তারিখ ও ওয়েবসাইট লিংক:
+                      </p>
+                      <p className="text-amber-800 leading-relaxed">
+                        ইমেইলে স্বয়ংক্রিয়ভাবে প্রেরণের তারিখ ও ওয়েবসাইটের অফিসিয়াল ভিজিট বোতাম যুক্ত থাকবে।
                       </p>
                     </div>
                   </div>
@@ -826,7 +949,9 @@ const AdminSettings: React.FC = () => {
                           ? "profile"
                           : activeMainTab === "password_reset_email"
                           ? "reset"
-                          : "security"
+                          : activeMainTab === "security_alert_email"
+                          ? "security"
+                          : "announcement"
                       )
                     }
                     disabled={isSendingTest}
@@ -840,7 +965,9 @@ const AdminSettings: React.FC = () => {
                         ? "টেস্ট রিমাইন্ডার"
                         : activeMainTab === "password_reset_email"
                         ? "টেস্ট রিসেট"
-                        : "টেস্ট নিরাপত্তা"}
+                        : activeMainTab === "security_alert_email"
+                        ? "টেস্ট নিরাপত্তা"
+                        : "টেস্ট ঘোষণা"}
                     </span>
                   </button>
                 </div>
@@ -870,7 +997,9 @@ const AdminSettings: React.FC = () => {
                       ? "প্রোফাইল রিমাইন্ডার লাইভ প্রিভিউ"
                       : showPreviewModal === "reset"
                       ? "পাসওয়ার্ড রিসেট ইমেইল লাইভ প্রিভিউ"
-                      : "লগইন নিরাপত্তা অ্যালার্ট লাইভ প্রিভিউ"}
+                      : showPreviewModal === "security"
+                      ? "লগইন নিরাপত্তা অ্যালার্ট লাইভ প্রিভিউ"
+                      : "ঘোষণা ও আপডেট ইমেইল লাইভ প্রিভিউ"}
                   </h3>
                 </div>
                 <button
@@ -926,7 +1055,18 @@ const AdminSettings: React.FC = () => {
                       : "bg-slate-100 text-slate-700 hover:bg-slate-200"
                   }`}
                 >
-                  নিরাপত্তা অ্যালার্ট ইমেইল
+                  নিরাপত্তা অ্যালার্ট
+                </button>
+                <button
+                  type="button"
+                  onClick={() => setShowPreviewModal("announcement")}
+                  className={`px-3 py-1.5 rounded-xl text-xs font-bold transition cursor-pointer whitespace-nowrap ${
+                    showPreviewModal === "announcement"
+                      ? "bg-amber-600 text-white"
+                      : "bg-slate-100 text-slate-700 hover:bg-slate-200"
+                  }`}
+                >
+                  ঘোষণা ও আপডেট
                 </button>
               </div>
 
@@ -961,7 +1101,8 @@ const AdminSettings: React.FC = () => {
                           senderName: emailConfig.senderName,
                           buttonText: emailConfig.passwordResetButtonText
                         })
-                      : generateSecurityAlertEmailHtml({
+                      : showPreviewModal === "security"
+                      ? generateSecurityAlertEmailHtml({
                           name: "মো: জোসিম উদ্দিন",
                           email: "test@example.com",
                           time: new Date().toLocaleString("bn-BD", { timeZone: "Asia/Dhaka" }),
@@ -970,6 +1111,19 @@ const AdminSettings: React.FC = () => {
                           appUrl: emailConfig.websiteUrl,
                           securityLink: `${emailConfig.websiteUrl}/profile`,
                           buttonText: emailConfig.securityAlertButtonText
+                        })
+                      : generateAnnouncementEmailHtml({
+                          name: "মো: জোসিম উদ্দিন",
+                          email: "test@example.com",
+                          title: emailConfig.announcementDefaultTitle || "ওয়েবসাইটের গুরুত্বপূর্ণ আপডেট",
+                          details:
+                            emailConfig.announcementDefaultDetails ||
+                            "আমাদের পুঠিয়া ওয়েবসাইটের নতুন সুযোগ-সুবিধা ও সেবা সম্পর্কে বিস্তারিত জানতে নিয়মিত ভিজিট করুন।",
+                          effectiveDate: new Date().toLocaleDateString("bn-BD"),
+                          appUrl: emailConfig.websiteUrl,
+                          websiteLink: emailConfig.websiteUrl,
+                          senderName: emailConfig.senderName,
+                          buttonText: emailConfig.announcementButtonText || "ওয়েবসাইটে দেখুন"
                         })
                 }}
               />

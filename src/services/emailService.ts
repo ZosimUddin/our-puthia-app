@@ -30,6 +30,15 @@ export interface ProfileReminderEmailData {
   profileLink?: string;
 }
 
+export interface AnnouncementEmailData {
+  to: string;
+  name?: string;
+  title: string;
+  details: string;
+  effectiveDate?: string;
+  websiteLink?: string;
+}
+
 export interface EmailSettings {
   welcomeEmailEnabled: boolean;
   senderName: string;
@@ -56,6 +65,12 @@ export interface EmailSettings {
   profileReminderSubject: string;
   profileReminderButtonText: string;
 
+  // Announcement & Website Update Email Config
+  announcementEmailEnabled: boolean;
+  announcementDefaultTitle: string;
+  announcementDefaultDetails: string;
+  announcementButtonText: string;
+
   lastUpdated?: string;
   updatedBy?: string;
 }
@@ -81,7 +96,12 @@ export const DEFAULT_EMAIL_SETTINGS: EmailSettings = {
 
   profileReminderEmailEnabled: true,
   profileReminderSubject: "আপনার “আমাদের পুঠিয়া” প্রোফাইল সম্পূর্ণ করুন 👤💚",
-  profileReminderButtonText: "আমার প্রোফাইল সম্পূর্ণ করুন"
+  profileReminderButtonText: "আমার প্রোফাইল সম্পূর্ণ করুন",
+
+  announcementEmailEnabled: true,
+  announcementDefaultTitle: "আমাদের পুঠিয়া পোর্টালে নতুন নাগরিক সেবা ও ফিচার সংযোজন",
+  announcementDefaultDetails: "সম্মানিত নাগরিকগণের সুবিধার জন্য 'আমাদের পুঠিয়া' প্ল্যাটফর্মে রিয়েল-টাইম ব্লাড ইনভেন্টরি ট্র্যাকার ও জরুরি হটলাইন সেবা যুক্ত করা হয়েছে।",
+  announcementButtonText: "ওয়েবসাইটে দেখুন"
 };
 
 /**
@@ -120,7 +140,7 @@ export async function updateEmailSettings(
 
     await logAuditActivity({
       action: "ইমেইল সেটিংস কনফিগারেশন আপডেট",
-      details: `ওয়েলকাম: ${settings.welcomeEmailEnabled ? "অন" : "অফ"}, পাসওয়ার্ড: ${settings.passwordResetEmailEnabled ? "অন" : "অফ"}, নিরাপত্তা: ${settings.securityAlertEmailEnabled ? "অন" : "অফ"}, প্রোফাইল রিমাইন্ডার: ${settings.profileReminderEmailEnabled ? "অন" : "অফ"}`,
+      details: `ওয়েলকাম: ${settings.welcomeEmailEnabled ? "অন" : "অফ"}, ঘোষণা: ${settings.announcementEmailEnabled ? "অন" : "অফ"}`,
       category: "system",
       severity: "info",
       customUser: adminUser?.name || "অ্যাডমিনিস্ট্রেটর"
@@ -166,7 +186,6 @@ export function generateWelcomeEmailHtml(data: {
           <!-- Premium Header Banner -->
           <tr>
             <td style="background: linear-gradient(135deg, #005a3e 0%, #007a55 50%, #004d33 100%); padding: 42px 30px 36px; text-align: center; color: #ffffff; position: relative;">
-              <!-- Circle Icon Badge -->
               <div style="display: inline-block; background-color: #ffffff; width: 72px; height: 72px; border-radius: 24px; line-height: 72px; margin-bottom: 16px; box-shadow: 0 8px 20px rgba(0,0,0,0.2);">
                 <span style="font-size: 36px; line-height: 72px;">🏛️</span>
               </div>
@@ -178,7 +197,6 @@ export function generateWelcomeEmailHtml(data: {
           <!-- Main Email Body -->
           <tr>
             <td style="padding: 36px 32px 28px;">
-              <!-- Greeting Headline -->
               <div style="margin-bottom: 22px;">
                 <h2 style="margin: 0 0 6px; font-size: 22px; font-weight: 800; color: #0f172a;">
                   প্রিয় ${userName},
@@ -188,12 +206,10 @@ export function generateWelcomeEmailHtml(data: {
                 </div>
               </div>
 
-              <!-- Paragraph 1 -->
               <p style="margin: 0 0 18px; font-size: 15px; line-height: 1.7; color: #334155;">
                 আমাদের সঙ্গে যুক্ত হওয়ার জন্য আপনাকে অসংখ্য ধন্যবাদ। পুঠিয়ার মানুষ, ঐতিহ্য, সংস্কৃতি ও কমিউনিটির সঙ্গে সংযুক্ত থাকার এই যাত্রায় আপনাকে পাশে পেয়ে আমরা আনন্দিত।
               </p>
 
-              <!-- Special Highlight Callout Box -->
               <table role="presentation" width="100%" style="background: linear-gradient(135deg, #f0fdf4 0%, #ecfdf5 100%); border-left: 4px solid #007a55; border-radius: 14px; margin: 20px 0 24px; box-shadow: 0 2px 6px rgba(0,0,0,0.02);">
                 <tr>
                   <td style="padding: 16px 20px;">
@@ -204,12 +220,10 @@ export function generateWelcomeEmailHtml(data: {
                 </tr>
               </table>
 
-              <!-- Paragraph 2 -->
               <p style="margin: 0 0 28px; font-size: 15px; line-height: 1.7; color: #334155;">
                 আশা করি, আমাদের এই প্ল্যাটফর্ম আপনার ভালো লাগবে এবং আপনি এখানকার বিভিন্ন সুবিধা উপভোগ করবেন।
               </p>
 
-              <!-- Prominent CTA Button -->
               <table role="presentation" width="100%" style="margin: 28px 0 32px;">
                 <tr>
                   <td align="center">
@@ -220,18 +234,15 @@ export function generateWelcomeEmailHtml(data: {
                 </tr>
               </table>
 
-              <!-- Paragraph 3 -->
               <p style="margin: 0 0 24px; font-size: 15px; line-height: 1.7; color: #334155;">
                 আপনার নতুন যাত্রা সুন্দর হোক। আমাদের পুঠিয়া পরিবারের সঙ্গে থাকুন, নিজের এলাকার সঙ্গে যুক্ত থাকুন। 💚
               </p>
 
-              <!-- Signoff -->
               <div style="margin-bottom: 28px; padding-bottom: 24px; border-bottom: 1px dashed #cbd5e1;">
                 <p style="margin: 0; font-size: 14px; color: #64748b;">আন্তরিক শুভেচ্ছান্তে,</p>
                 <h4 style="margin: 4px 0 0; font-size: 16px; font-weight: 800; color: #007a55;">${senderName}</h4>
               </div>
 
-              <!-- Contact & Support Section -->
               <div style="background-color: #f8fafc; border: 1px solid #e2e8f0; border-radius: 18px; padding: 20px 22px;">
                 <p style="margin: 0 0 12px; font-size: 13px; font-weight: 700; color: #334155;">
                   যেকোনো মতামত, অভিযোগ বা প্রয়োজনে আমাদের সাথে যোগাযোগ করতে পারেন:
@@ -252,11 +263,9 @@ export function generateWelcomeEmailHtml(data: {
                   🌿 সুস্থ থাকুন, সুন্দর থাকুন, পুঠিয়ার সাথেই থাকুন।
                 </div>
               </div>
-
             </td>
           </tr>
 
-          <!-- Footer Section -->
           <tr>
             <td style="background-color: #f8fafc; padding: 22px 28px; text-align: center; border-top: 1px solid #e2e8f0; font-size: 12px; color: #64748b;">
               <p style="margin: 0; font-weight: 500;">
@@ -264,7 +273,6 @@ export function generateWelcomeEmailHtml(data: {
               </p>
             </td>
           </tr>
-
         </table>
       </td>
     </tr>
@@ -301,10 +309,7 @@ export function generatePasswordResetEmailHtml(data: {
   <table role="presentation" width="100%" cellspacing="0" cellpadding="0" style="background-color: #f1f5f9; padding: 32px 12px;">
     <tr>
       <td align="center">
-        <!-- Main Container Card -->
         <table role="presentation" width="100%" style="max-width: 600px; background-color: #ffffff; border-radius: 28px; overflow: hidden; box-shadow: 0 10px 30px rgba(0, 0, 0, 0.06); border: 1px solid #e2e8f0;">
-          
-          <!-- Header Banner -->
           <tr>
             <td style="background: linear-gradient(135deg, #005a3e 0%, #007a55 50%, #004d33 100%); padding: 36px 30px 32px; text-align: center; color: #ffffff;">
               <div style="display: inline-block; background-color: #ffffff; width: 68px; height: 68px; border-radius: 22px; line-height: 68px; margin-bottom: 14px; box-shadow: 0 6px 18px rgba(0,0,0,0.18);">
@@ -315,26 +320,20 @@ export function generatePasswordResetEmailHtml(data: {
             </td>
           </tr>
 
-          <!-- Main Email Body -->
           <tr>
             <td style="padding: 36px 32px 28px;">
-              
-              <!-- Greeting -->
               <h2 style="margin: 0 0 16px; font-size: 20px; font-weight: 800; color: #0f172a;">
                 প্রিয় ${userName},
               </h2>
 
-              <!-- Paragraph 1 -->
               <p style="margin: 0 0 16px; font-size: 15px; line-height: 1.7; color: #334155;">
                 আপনি আপনার <strong>“আমাদের পুঠিয়া”</strong> অ্যাকাউন্টের পাসওয়ার্ড পরিবর্তন করার অনুরোধ করেছেন।
               </p>
 
-              <!-- Paragraph 2 -->
               <p style="margin: 0 0 26px; font-size: 15px; line-height: 1.7; color: #334155;">
                 আপনার অ্যাকাউন্টে আবার নিরাপদে প্রবেশ করতে নিচের বাটনে ক্লিক করে নতুন পাসওয়ার্ড সেট করুন।
               </p>
 
-              <!-- Prominent CTA Button -->
               <table role="presentation" width="100%" style="margin: 24px 0 28px;">
                 <tr>
                   <td align="center">
@@ -345,7 +344,6 @@ export function generatePasswordResetEmailHtml(data: {
                 </tr>
               </table>
 
-              <!-- Expiry Alert Box -->
               <table role="presentation" width="100%" style="background-color: #fefce8; border-left: 4px solid #eab308; border-radius: 12px; margin: 20px 0 24px;">
                 <tr>
                   <td style="padding: 14px 18px;">
@@ -356,12 +354,10 @@ export function generatePasswordResetEmailHtml(data: {
                 </tr>
               </table>
 
-              <!-- Ignore Notice -->
               <p style="margin: 0 0 18px; font-size: 14px; line-height: 1.7; color: #475569;">
                 আপনি যদি পাসওয়ার্ড পরিবর্তনের অনুরোধ না করে থাকেন, তাহলে এই ইমেইলটি উপেক্ষা করুন। আপনার বর্তমান পাসওয়ার্ড পরিবর্তন হবে না।
               </p>
 
-              <!-- Security Caution Card -->
               <table role="presentation" width="100%" style="background-color: #f8fafc; border: 1px solid #e2e8f0; border-radius: 16px; margin: 20px 0 26px;">
                 <tr>
                   <td style="padding: 16px 20px;">
@@ -372,7 +368,6 @@ export function generatePasswordResetEmailHtml(data: {
                 </tr>
               </table>
 
-              <!-- Signoff -->
               <div style="margin-top: 26px; padding-top: 20px; border-top: 1px dashed #cbd5e1;">
                 <p style="margin: 0; font-size: 14px; color: #64748b;">শুভেচ্ছান্তে,</p>
                 <h4 style="margin: 4px 0 0; font-size: 16px; font-weight: 800; color: #007a55;">${senderName}</h4>
@@ -380,11 +375,9 @@ export function generatePasswordResetEmailHtml(data: {
                   🌐 <a href="${appUrl}" target="_blank" style="color: #007a55; text-decoration: none; font-weight: 600;">${appUrl}</a>
                 </p>
               </div>
-
             </td>
           </tr>
 
-          <!-- Footer Section -->
           <tr>
             <td style="background-color: #f8fafc; padding: 22px 28px; text-align: center; border-top: 1px solid #e2e8f0; font-size: 12px; color: #64748b;">
               <p style="margin: 0; font-weight: 500;">
@@ -392,7 +385,6 @@ export function generatePasswordResetEmailHtml(data: {
               </p>
             </td>
           </tr>
-
         </table>
       </td>
     </tr>
@@ -403,7 +395,6 @@ export function generatePasswordResetEmailHtml(data: {
 
 /**
  * Generates an extraordinarily beautiful, mobile-responsive HTML Security Alert email template
- * for Unusual/New Login detection, matching the exact wording requested by the user.
  */
 export function generateSecurityAlertEmailHtml(data: {
   name?: string;
@@ -436,10 +427,7 @@ export function generateSecurityAlertEmailHtml(data: {
   <table role="presentation" width="100%" cellspacing="0" cellpadding="0" style="background-color: #f1f5f9; padding: 32px 12px;">
     <tr>
       <td align="center">
-        <!-- Main Container Card -->
         <table role="presentation" width="100%" style="max-width: 600px; background-color: #ffffff; border-radius: 28px; overflow: hidden; box-shadow: 0 10px 30px rgba(0, 0, 0, 0.06); border: 1px solid #e2e8f0;">
-          
-          <!-- Alert Header Banner -->
           <tr>
             <td style="background: linear-gradient(135deg, #991b1b 0%, #b91c1c 50%, #7f1d1d 100%); padding: 38px 30px 34px; text-align: center; color: #ffffff;">
               <div style="display: inline-block; background-color: #ffffff; width: 68px; height: 68px; border-radius: 22px; line-height: 68px; margin-bottom: 14px; box-shadow: 0 6px 18px rgba(0,0,0,0.2);">
@@ -450,21 +438,16 @@ export function generateSecurityAlertEmailHtml(data: {
             </td>
           </tr>
 
-          <!-- Main Email Body -->
           <tr>
             <td style="padding: 36px 32px 28px;">
-              
-              <!-- Greeting -->
               <h2 style="margin: 0 0 16px; font-size: 20px; font-weight: 800; color: #0f172a;">
                 প্রিয় ${userName},
               </h2>
 
-              <!-- Alert Paragraph 1 -->
               <p style="margin: 0 0 20px; font-size: 15px; line-height: 1.7; color: #334155;">
                 আপনার <strong>“আমাদের পুঠিয়া”</strong> অ্যাকাউন্টে একটি নতুন বা অস্বাভাবিক লগইন কার্যক্রম শনাক্ত করা হয়েছে।
               </p>
 
-              <!-- Login Details Box -->
               <div style="background-color: #f8fafc; border: 1px solid #e2e8f0; border-radius: 18px; padding: 20px 22px; margin-bottom: 24px;">
                 <h3 style="margin: 0 0 14px; font-size: 15px; font-weight: 800; color: #0f172a; border-bottom: 1px solid #e2e8f0; padding-bottom: 8px;">
                   📋 লগইনের বিবরণ
@@ -488,17 +471,14 @@ export function generateSecurityAlertEmailHtml(data: {
                 </table>
               </div>
 
-              <!-- Ignore Notice -->
               <p style="margin: 0 0 16px; font-size: 14px; line-height: 1.7; color: #475569;">
                 আপনি যদি নিজেই লগইন করে থাকেন, তাহলে এই বার্তাটি উপেক্ষা করতে পারেন।
               </p>
 
-              <!-- Warning Notice -->
               <p style="margin: 0 0 24px; font-size: 14px; line-height: 1.7; color: #b91c1c; font-weight: 600;">
                 আপনি যদি এই কার্যক্রম চিনতে না পারেন, তাহলে দ্রুত আপনার অ্যাকাউন্টের নিরাপত্তা পরীক্ষা করুন এবং প্রয়োজনে পাসওয়ার্ড পরিবর্তন করুন।
               </p>
 
-              <!-- Prominent CTA Button -->
               <table role="presentation" width="100%" style="margin: 24px 0 28px;">
                 <tr>
                   <td align="center">
@@ -509,14 +489,12 @@ export function generateSecurityAlertEmailHtml(data: {
                 </tr>
               </table>
 
-              <!-- Commitment text -->
               <div style="background-color: #ecfdf5; border: 1px solid #a7f3d0; border-radius: 14px; padding: 14px 18px; margin-bottom: 24px;">
                 <p style="margin: 0; font-size: 13px; line-height: 1.6; color: #047857; font-weight: 600;">
                   🔒 আপনার ব্যক্তিগত তথ্য ও অ্যাকাউন্টের নিরাপত্তা রক্ষায় আমরা সচেষ্ট।
                 </p>
               </div>
 
-              <!-- Signoff -->
               <div style="margin-top: 26px; padding-top: 20px; border-top: 1px dashed #cbd5e1;">
                 <p style="margin: 0; font-size: 14px; color: #64748b;">শুভেচ্ছান্তে,</p>
                 <h4 style="margin: 4px 0 0; font-size: 16px; font-weight: 800; color: #991b1b;">${senderName}</h4>
@@ -524,11 +502,9 @@ export function generateSecurityAlertEmailHtml(data: {
                   🌐 <a href="${appUrl}" target="_blank" style="color: #007a55; text-decoration: none; font-weight: 600;">${appUrl}</a>
                 </p>
               </div>
-
             </td>
           </tr>
 
-          <!-- Footer Section -->
           <tr>
             <td style="background-color: #f8fafc; padding: 22px 28px; text-align: center; border-top: 1px solid #e2e8f0; font-size: 12px; color: #64748b;">
               <p style="margin: 0; font-weight: 500;">
@@ -536,7 +512,6 @@ export function generateSecurityAlertEmailHtml(data: {
               </p>
             </td>
           </tr>
-
         </table>
       </td>
     </tr>
@@ -547,7 +522,6 @@ export function generateSecurityAlertEmailHtml(data: {
 
 /**
  * Generates an extraordinarily beautiful, mobile-responsive HTML Profile Completion Reminder email template
- * matching the user's exact wording and high-fidelity emerald community styling.
  */
 export function generateProfileReminderEmailHtml(data: {
   name?: string;
@@ -574,10 +548,7 @@ export function generateProfileReminderEmailHtml(data: {
   <table role="presentation" width="100%" cellspacing="0" cellpadding="0" style="background-color: #f1f5f9; padding: 32px 12px;">
     <tr>
       <td align="center">
-        <!-- Main Container Card -->
         <table role="presentation" width="100%" style="max-width: 600px; background-color: #ffffff; border-radius: 28px; overflow: hidden; box-shadow: 0 10px 30px rgba(0, 0, 0, 0.06); border: 1px solid #e2e8f0;">
-          
-          <!-- Emerald Header Banner -->
           <tr>
             <td style="background: linear-gradient(135deg, #005a3e 0%, #007a55 50%, #004d33 100%); padding: 38px 30px 34px; text-align: center; color: #ffffff;">
               <div style="display: inline-block; background-color: #ffffff; width: 68px; height: 68px; border-radius: 22px; line-height: 68px; margin-bottom: 14px; box-shadow: 0 6px 18px rgba(0,0,0,0.18);">
@@ -588,26 +559,20 @@ export function generateProfileReminderEmailHtml(data: {
             </td>
           </tr>
 
-          <!-- Main Email Body -->
           <tr>
             <td style="padding: 36px 32px 28px;">
-              
-              <!-- Greeting -->
               <h2 style="margin: 0 0 14px; font-size: 20px; font-weight: 800; color: #0f172a;">
                 প্রিয় ${userName},
               </h2>
 
-              <!-- Paragraph 1 -->
               <p style="margin: 0 0 18px; font-size: 15px; line-height: 1.7; color: #334155;">
                 “আমাদের পুঠিয়া” পরিবারের সঙ্গে থাকার জন্য ধন্যবাদ! 💚
               </p>
 
-              <!-- Paragraph 2 -->
               <p style="margin: 0 0 22px; font-size: 15px; line-height: 1.7; color: #334155;">
                 আপনার প্রোফাইলের কিছু তথ্য এখনো যোগ করা বাকি রয়েছে। প্রোফাইলটি সম্পূর্ণ করলে অন্যরা আপনাকে সহজে চিনতে পারবেন এবং আমাদের কমিউনিটিতে আপনার পরিচিতি আরও সুন্দরভাবে তুলে ধরতে পারবেন।
               </p>
 
-              <!-- Suggestions List Box -->
               <div style="background-color: #f8fafc; border: 1px solid #e2e8f0; border-radius: 18px; padding: 20px 22px; margin-bottom: 26px;">
                 <h4 style="margin: 0 0 12px; font-size: 14px; font-weight: 800; color: #0f172a;">
                   আপনি চাইলে যোগ করতে পারেন:
@@ -631,7 +596,6 @@ export function generateProfileReminderEmailHtml(data: {
                 </table>
               </div>
 
-              <!-- Prominent CTA Button -->
               <table role="presentation" width="100%" style="margin: 24px 0 28px;">
                 <tr>
                   <td align="center">
@@ -642,7 +606,6 @@ export function generateProfileReminderEmailHtml(data: {
                 </tr>
               </table>
 
-              <!-- Privacy Assurance Card -->
               <table role="presentation" width="100%" style="background-color: #f0fdf4; border: 1px solid #bbf7d0; border-radius: 14px; margin-bottom: 22px;">
                 <tr>
                   <td style="padding: 14px 18px;">
@@ -653,14 +616,157 @@ export function generateProfileReminderEmailHtml(data: {
                 </tr>
               </table>
 
-              <!-- Paragraph 3 -->
               <p style="margin: 0 0 24px; font-size: 15px; line-height: 1.7; color: #334155; font-weight: 600;">
                 আপনার অংশগ্রহণে আমাদের পুঠিয়া আরও প্রাণবন্ত হয়ে উঠুক!
               </p>
 
-              <!-- Signoff -->
               <div style="margin-top: 26px; padding-top: 20px; border-top: 1px dashed #cbd5e1;">
                 <p style="margin: 0; font-size: 14px; color: #64748b;">শুভেচ্ছান্তে,</p>
+                <h4 style="margin: 4px 0 0; font-size: 16px; font-weight: 800; color: #007a55;">${senderName}</h4>
+                <p style="margin: 6px 0 0; font-size: 13px;">
+                  🌐 <a href="${appUrl}" target="_blank" style="color: #007a55; text-decoration: none; font-weight: 600;">${appUrl}</a>
+                </p>
+              </div>
+            </td>
+          </tr>
+
+          <tr>
+            <td style="background-color: #f8fafc; padding: 22px 28px; text-align: center; border-top: 1px solid #e2e8f0; font-size: 12px; color: #64748b;">
+              <p style="margin: 0; font-weight: 500;">
+                © 2026 আমাদের পুঠিয়া। সর্বস্বত্ব সংরক্ষিত।
+              </p>
+            </td>
+          </tr>
+        </table>
+      </td>
+    </tr>
+  </table>
+</body>
+</html>`;
+}
+
+/**
+ * Generates an extraordinarily beautiful, mobile-responsive HTML Official Announcement / Website Update email template
+ * matching user's exact requested wording.
+ */
+export function generateAnnouncementEmailHtml(data: {
+  name?: string;
+  email: string;
+  title: string;
+  details: string;
+  effectiveDate?: string;
+  appUrl?: string;
+  websiteLink?: string;
+  senderName?: string;
+  buttonText?: string;
+}): string {
+  const appUrl = data.appUrl || "https://our-puthia-app.vercel.app";
+  const userName = data.name || data.email.split("@")[0] || "সম্মানিত ব্যবহারকারী";
+  const websiteLink = data.websiteLink || appUrl;
+  const senderName = data.senderName || "আমাদের পুঠিয়া টিম";
+  const buttonText = data.buttonText || "ওয়েবসাইটে দেখুন";
+  const effectiveDate = data.effectiveDate || new Date().toLocaleDateString("bn-BD");
+
+  return `<!DOCTYPE html>
+<html lang="bn">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>${data.title} - আমাদের পুঠিয়া</title>
+</head>
+<body style="margin: 0; padding: 0; background-color: #f1f5f9; font-family: 'SolaimanLipi', 'Hind Siliguri', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif; -webkit-font-smoothing: antialiased; color: #1e293b; line-height: 1.6;">
+  <table role="presentation" width="100%" cellspacing="0" cellpadding="0" style="background-color: #f1f5f9; padding: 32px 12px;">
+    <tr>
+      <td align="center">
+        <!-- Main Container Card -->
+        <table role="presentation" width="100%" style="max-width: 600px; background-color: #ffffff; border-radius: 28px; overflow: hidden; box-shadow: 0 10px 30px rgba(0, 0, 0, 0.06); border: 1px solid #e2e8f0;">
+          
+          <!-- Emerald Header Banner -->
+          <tr>
+            <td style="background: linear-gradient(135deg, #005a3e 0%, #007a55 50%, #004d33 100%); padding: 38px 30px 34px; text-align: center; color: #ffffff;">
+              <div style="display: inline-block; background-color: #ffffff; width: 68px; height: 68px; border-radius: 22px; line-height: 68px; margin-bottom: 14px; box-shadow: 0 6px 18px rgba(0,0,0,0.18);">
+                <span style="font-size: 34px; line-height: 68px;">📢</span>
+              </div>
+              <h1 style="margin: 0; font-size: 26px; font-weight: 900; color: #ffffff; letter-spacing: -0.5px;">আমাদের পুঠিয়া</h1>
+              <p style="margin: 6px 0 0; font-size: 13px; color: #a7f3d0; font-weight: 600;">গুরুত্বপূর্ণ ওয়েবসাইট আপডেট ও ঘোষণা</p>
+            </td>
+          </tr>
+
+          <!-- Main Email Body -->
+          <tr>
+            <td style="padding: 36px 32px 28px;">
+              
+              <!-- Greeting -->
+              <h2 style="margin: 0 0 14px; font-size: 20px; font-weight: 800; color: #0f172a;">
+                প্রিয় ${userName},
+              </h2>
+
+              <!-- Paragraph 1 -->
+              <p style="margin: 0 0 16px; font-size: 15px; line-height: 1.7; color: #334155;">
+                “আমাদের পুঠিয়া” ওয়েবসাইটের পক্ষ থেকে আপনাকে জানাই আন্তরিক শুভেচ্ছা।
+              </p>
+
+              <!-- Paragraph 2 -->
+              <p style="margin: 0 0 24px; font-size: 15px; line-height: 1.7; color: #334155;">
+                আমাদের ওয়েবসাইটের গুরুত্বপূর্ণ আপডেট, নতুন সুবিধা এবং প্রয়োজনীয় পরিবর্তন সম্পর্কে আপনাকে অবহিত রাখতে এই বার্তাটি পাঠানো হয়েছে।
+              </p>
+
+              <!-- Announcement Details Card -->
+              <div style="background-color: #f8fafc; border: 1px solid #e2e8f0; border-radius: 20px; padding: 24px 22px; margin-bottom: 26px; box-shadow: 0 2px 8px rgba(0,0,0,0.02);">
+                
+                <!-- Title Header -->
+                <div style="margin-bottom: 16px; padding-bottom: 12px; border-bottom: 1px solid #e2e8f0;">
+                  <span style="font-size: 11px; font-weight: 800; text-transform: uppercase; color: #007a55; letter-spacing: 0.5px; display: block; margin-bottom: 4px;">
+                    ঘোষণার শিরোনাম:
+                  </span>
+                  <h3 style="margin: 0; font-size: 18px; font-weight: 800; color: #0f172a; line-height: 1.5;">
+                    ${data.title}
+                  </h3>
+                </div>
+
+                <!-- Details body -->
+                <div style="margin-bottom: 16px;">
+                  <span style="font-size: 11px; font-weight: 800; text-transform: uppercase; color: #64748b; letter-spacing: 0.5px; display: block; margin-bottom: 6px;">
+                    বিস্তারিত তথ্য:
+                  </span>
+                  <div style="font-size: 14px; line-height: 1.8; color: #334155; white-space: pre-line;">
+                    ${data.details}
+                  </div>
+                </div>
+
+                <!-- Effective Date -->
+                <div style="background-color: #ecfdf5; border: 1px solid #a7f3d0; border-radius: 12px; padding: 10px 14px; display: inline-block;">
+                  <span style="font-size: 12px; font-weight: 700; color: #047857;">
+                    📅 <strong>কার্যকর হওয়ার তারিখ:</strong> ${effectiveDate}
+                  </span>
+                </div>
+
+              </div>
+
+              <!-- Notice -->
+              <p style="margin: 0 0 22px; font-size: 14px; line-height: 1.7; color: #475569;">
+                বিস্তারিত জানতে আমাদের ওয়েবসাইট ভিজিট করুন।
+              </p>
+
+              <!-- Prominent CTA Button -->
+              <table role="presentation" width="100%" style="margin: 24px 0 28px;">
+                <tr>
+                  <td align="center">
+                    <a href="${websiteLink}" target="_blank" style="display: inline-block; background: linear-gradient(135deg, #007a55 0%, #005a3e 100%); color: #ffffff; text-decoration: none; font-size: 15px; font-weight: 800; padding: 16px 40px; border-radius: 50px; box-shadow: 0 6px 18px rgba(0, 122, 85, 0.35); text-align: center; letter-spacing: 0.3px;">
+                      👉 ${buttonText}
+                    </a>
+                  </td>
+                </tr>
+              </table>
+
+              <!-- Appreciation message -->
+              <p style="margin: 0 0 24px; font-size: 14px; line-height: 1.7; color: #334155; font-weight: 600;">
+                আপনাদের সহযোগিতা ও ভালোবাসাই আমাদের এগিয়ে যাওয়ার অনুপ্রেরণা।
+              </p>
+
+              <!-- Signoff -->
+              <div style="margin-top: 26px; padding-top: 20px; border-top: 1px dashed #cbd5e1;">
+                <p style="margin: 0; font-size: 14px; color: #64748b;">ধন্যবাদান্তে,</p>
                 <h4 style="margin: 4px 0 0; font-size: 16px; font-weight: 800; color: #007a55;">${senderName}</h4>
                 <p style="margin: 6px 0 0; font-size: 13px;">
                   🌐 <a href="${appUrl}" target="_blank" style="color: #007a55; text-decoration: none; font-weight: 600;">${appUrl}</a>
@@ -673,7 +779,10 @@ export function generateProfileReminderEmailHtml(data: {
           <!-- Footer Section -->
           <tr>
             <td style="background-color: #f8fafc; padding: 22px 28px; text-align: center; border-top: 1px solid #e2e8f0; font-size: 12px; color: #64748b;">
-              <p style="margin: 0; font-weight: 500;">
+              <p style="margin: 0 0 6px; font-weight: 500;">
+                এই ইমেইলটি ওয়েবসাইটের গুরুত্বপূর্ণ তথ্য জানানোর জন্য পাঠানো হয়েছে।
+              </p>
+              <p style="margin: 0; font-size: 11px; color: #94a3b8;">
                 © 2026 আমাদের পুঠিয়া। সর্বস্বত্ব সংরক্ষিত।
               </p>
             </td>
@@ -689,7 +798,6 @@ export function generateProfileReminderEmailHtml(data: {
 
 /**
  * Queues a welcome email to the Firestore 'mail' collection with user's exact requested wording.
- * Respects admin toggle settings.
  */
 export async function sendWelcomeEmail(data: WelcomeEmailData): Promise<boolean> {
   const recipientEmail = (data.to || "").trim().toLowerCase();
@@ -784,7 +892,6 @@ ${config.senderName}
 
 /**
  * Queues a customized password reset email to the Firestore 'mail' collection.
- * Matching the exact wording requested by the user.
  */
 export async function sendPasswordResetCustomEmail(data: PasswordResetEmailData): Promise<boolean> {
   const recipientEmail = (data.to || "").trim().toLowerCase();
@@ -872,7 +979,6 @@ ${config.senderName}
 
 /**
  * Queues an unusual / new login security alert email to the Firestore 'mail' collection.
- * Matching the exact wording requested by the user.
  */
 export async function sendSecurityAlertEmail(data: SecurityAlertEmailData): Promise<boolean> {
   const recipientEmail = (data.to || "").trim().toLowerCase();
@@ -971,7 +1077,6 @@ ${senderName}
 
 /**
  * Queues a profile completion reminder email to the Firestore 'mail' collection.
- * Matching the user's exact wording.
  */
 export async function sendProfileReminderEmail(data: ProfileReminderEmailData): Promise<boolean> {
   const recipientEmail = (data.to || "").trim().toLowerCase();
@@ -1057,6 +1162,106 @@ ${config.senderName}
     return true;
   } catch (error) {
     console.warn("Could not queue profile reminder email:", error);
+    return false;
+  }
+}
+
+/**
+ * Queues an official announcement / website update email to the Firestore 'mail' collection.
+ * Matching the exact wording requested by the user.
+ */
+export async function sendAnnouncementEmail(data: AnnouncementEmailData): Promise<boolean> {
+  const recipientEmail = (data.to || "").trim().toLowerCase();
+
+  if (!recipientEmail || recipientEmail.endsWith("@puthiadiary.com")) {
+    return false;
+  }
+
+  const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+  if (!emailRegex.test(recipientEmail)) {
+    return false;
+  }
+
+  try {
+    const config = await getEmailSettings();
+
+    if (!config.announcementEmailEnabled) {
+      console.log("Announcement email skipped: Disabled in Admin Settings config.");
+      return false;
+    }
+
+    const userName = data.name || recipientEmail.split("@")[0] || "সম্মানিত ব্যবহারকারী";
+    const appUrl = config.websiteUrl || "https://our-puthia-app.vercel.app";
+    const subject = `📢 ঘোষণা: ${data.title} — আমাদের পুঠিয়া`;
+    const websiteLink = data.websiteLink || appUrl;
+    const effectiveDate = data.effectiveDate || new Date().toLocaleDateString("bn-BD");
+
+    const htmlContent = generateAnnouncementEmailHtml({
+      name: userName,
+      email: recipientEmail,
+      title: data.title,
+      details: data.details,
+      effectiveDate,
+      appUrl,
+      websiteLink,
+      senderName: config.senderName,
+      buttonText: config.announcementButtonText || "ওয়েবসাইটে দেখুন"
+    });
+
+    const plainText = `প্রিয় ${userName},
+
+“আমাদের পুঠিয়া” ওয়েবসাইটের পক্ষ থেকে আপনাকে জানাই আন্তরিক শুভেচ্ছা।
+
+আমাদের ওয়েবসাইটের গুরুত্বপূর্ণ আপডেট, নতুন সুবিধা এবং প্রয়োজনীয় পরিবর্তন সম্পর্কে আপনাকে অবহিত রাখতে এই বার্তাটি পাঠানো হয়েছে।
+
+ঘোষণার শিরোনাম: ${data.title}
+
+বিস্তারিত তথ্য:
+
+${data.details}
+
+কার্যকর হওয়ার তারিখ: ${effectiveDate}
+
+বিস্তারিত জানতে আমাদের ওয়েবসাইট ভিজিট করুন।
+
+👉 ${config.announcementButtonText || "ওয়েবসাইটে দেখুন"}: ${websiteLink}
+
+আপনাদের সহযোগিতা ও ভালোবাসাই আমাদের এগিয়ে যাওয়ার অনুপ্রেরণা।
+
+ধন্যবাদান্তে,
+${config.senderName}
+
+🌐 ${appUrl}
+
+এই ইমেইলটি ওয়েবসাইটের গুরুত্বপূর্ণ তথ্য জানানোর জন্য পাঠানো হয়েছে।`;
+
+    await addDoc(collection(db, "mail"), {
+      to: [recipientEmail],
+      from: config.senderEmail ? `"${config.senderName}" <${config.senderEmail}>` : undefined,
+      replyTo: config.replyToEmail || config.senderEmail,
+      message: {
+        subject,
+        text: plainText,
+        html: htmlContent
+      },
+      type: "announcement_email",
+      recipientName: userName,
+      recipientEmail,
+      createdAt: serverTimestamp(),
+      status: "pending"
+    });
+
+    await logAuditActivity({
+      action: `ঘোষণা ও আপডেট ইমেইল কিউতে যুক্ত করা হয়েছে (${recipientEmail})`,
+      details: `শিরোনাম: ${data.title}, প্রাপক: ${userName}`,
+      category: "content",
+      severity: "info",
+      customUser: "অ্যাডমিনিস্ট্রেটর"
+    });
+
+    return true;
+  } catch (error) {
+    console.warn("Could not queue announcement email:", error);
     return false;
   }
 }
