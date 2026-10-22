@@ -18,7 +18,6 @@ import BottomNavigation from "./BottomNavigation";
 
 import HomepageAdSection from "./HomepageAdSection";
 import AppDownloadBanner from "./AppDownloadBanner";
-import { FootballHomeBanner } from "../football/FootballHomeBanner";
 
 const ServicesGrid = React.lazy(() => import("./ServicesGrid"));
 const LatestNoticeSection = React.lazy(() => import("./LatestNoticeSection"));
@@ -359,7 +358,6 @@ const Home: React.FC = () => {
           
           <NoticeTickerBar />
           <HeroBannerSlider />
-          <FootballHomeBanner />
           <Suspense fallback={<ServicesGridSkeleton />}><ServicesGrid /></Suspense>
           <HomepageAdSection />
 
