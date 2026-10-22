@@ -126,13 +126,19 @@ export default defineConfig(() => {
       dedupe: ['react', 'react-dom'],
       alias: {
         '@': path.resolve(import.meta.dirname, './src'),
-        
+        'react': path.resolve(import.meta.dirname, './node_modules/react'),
+        'react-dom': path.resolve(import.meta.dirname, './node_modules/react-dom'),
+        'react/jsx-runtime': path.resolve(import.meta.dirname, './node_modules/react/jsx-runtime.js'),
+        'react/jsx-dev-runtime': path.resolve(import.meta.dirname, './node_modules/react/jsx-dev-runtime.js'),
       },
     },
     optimizeDeps: {
       include: [
         'react',
         'react-dom',
+        'react-dom/client',
+        'react/jsx-runtime',
+        'react/jsx-dev-runtime',
         'react-router-dom',
         'motion/react',
         'lucide-react',

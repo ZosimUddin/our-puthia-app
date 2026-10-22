@@ -18,14 +18,6 @@ import BottomNavigation from "./BottomNavigation";
 
 import HomepageAdSection from "./HomepageAdSection";
 import AppDownloadBanner from "./AppDownloadBanner";
-
-const ServicesGrid = React.lazy(() => import("./ServicesGrid"));
-const LatestNoticeSection = React.lazy(() => import("./LatestNoticeSection"));
-const TrainingSection = React.lazy(() => import("./TrainingSection"));
-const AdvertisementSection = React.lazy(() => import("./AdvertisementSection"));
-const Footer = React.lazy(() => import("./Footer"));
-const SearchResults = React.lazy(() => import("./SearchResults"));
-
 import {
   ServicesGridSkeleton,
   BloodDonationSectionSkeleton,
@@ -36,10 +28,15 @@ import { useAuth } from "../../contexts/AuthContext";
 import { useSearchParams } from "react-router-dom";
 import { getGenericCollection } from "../../api";
 import { smartSearchMatch } from "../../utils/searchUtils";
-
 import PullToRefresh from "./PullToRefresh";
-
 import { useSiteSettings } from "../../context/SiteSettingsContext";
+
+const ServicesGrid = React.lazy(() => import("./ServicesGrid"));
+const LatestNoticeSection = React.lazy(() => import("./LatestNoticeSection"));
+const TrainingSection = React.lazy(() => import("./TrainingSection"));
+const AdvertisementSection = React.lazy(() => import("./AdvertisementSection"));
+const Footer = React.lazy(() => import("./Footer"));
+const SearchResults = React.lazy(() => import("./SearchResults"));
 
 const Home: React.FC = () => {
   const { user } = useAuth();
