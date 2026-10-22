@@ -194,12 +194,20 @@ export const SportsActivities: React.FC<Props> = ({ onGoBack, hideHeader }) => {
               <p className="text-xs text-emerald-100/80 mt-0.5">টুর্নামেন্ট, ম্যাচ শিডিউল, লাইভ স্কোরবোর্ড, পয়েন্ট টেবিল ও এইচডি ম্যাচ পোস্টার</p>
             </div>
           </div>
-          <button
-            onClick={() => window.location.href = "/football"}
-            className="px-4 py-2 rounded-xl bg-emerald-500 hover:bg-emerald-400 text-slate-950 font-black text-xs transition-all shadow-sm active:scale-95 shrink-0 cursor-pointer"
-          >
-            সরাসরি প্রবেশ করুন →
-          </button>
+          <div className="flex items-center gap-2 shrink-0">
+            <button
+              onClick={() => window.location.href = "/football/posters"}
+              className="px-3.5 py-2 rounded-xl bg-white/10 hover:bg-white/20 text-white font-bold text-xs transition-all border border-white/20 active:scale-95 cursor-pointer"
+            >
+              🖼️ পোস্টার গ্যালারি
+            </button>
+            <button
+              onClick={() => window.location.href = "/football"}
+              className="px-4 py-2 rounded-xl bg-emerald-500 hover:bg-emerald-400 text-slate-950 font-black text-xs transition-all shadow-sm active:scale-95 cursor-pointer"
+            >
+              সরাসরি প্রবেশ করুন →
+            </button>
+          </div>
         </div>
 
         {/* Actions bar */}

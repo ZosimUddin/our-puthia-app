@@ -113,6 +113,13 @@ export const FootballPublicHub: React.FC = () => {
               <Trophy size={14} />
               <span>টুর্নামেন্টসমূহ</span>
             </Link>
+            <Link
+              to="/football/posters"
+              className="px-4 py-2 bg-amber-500 hover:bg-amber-600 text-slate-950 rounded-xl text-xs font-black shadow-md flex items-center gap-2 transition-all active:scale-95"
+            >
+              <Palette size={14} />
+              <span>ম্যাচ পোস্টার গ্যালারি</span>
+            </Link>
           </div>
         </div>
       </div>
