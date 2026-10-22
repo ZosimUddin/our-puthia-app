@@ -51,6 +51,10 @@ export function getFriendlyAuthErrorMessage(err: any): string {
     return "অতিরিক্ত ভুল চেষ্টার কারণে সাময়িকভাবে সেবা স্থগিত করা হয়েছে। কিছুক্ষণ পর পুনরায় চেষ্টা করুন।";
   }
 
+  if (code === "auth/requires-recent-login" || message.includes("requires-recent-login")) {
+    return "নিরাপত্তাজনিত কারণে এই কাজের জন্য আপনার বর্তমান পাসওয়ার্ড প্রদান করতে হবে অথবা পুনরায় লগইন করতে হবে।";
+  }
+
   if (code === "auth/popup-closed-by-user" || message.includes("popup-closed-by-user")) {
     return "গুগল সাইন-ইন পপআপ উইন্ডোটি বন্ধ করা হয়েছে।";
   }

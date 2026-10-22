@@ -924,6 +924,7 @@ const MainAppContent = () => {
                   <Route path="profile" element={<MyProfile />} />
                   <Route path="profile/edit" element={<EditProfile />} />
                   <Route path="password" element={<ChangePassword />} />
+                  <Route path="change-password" element={<ChangePassword />} />
                   <Route path="settings/language" element={<LanguageSettings />} />
                   <Route path="support" element={<Support />} />
                   <Route path="banners" element={<HeroSliderManagement />} />
@@ -988,6 +989,10 @@ const MainAppContent = () => {
                   <Route path="footer-settings" element={<FooterSettingsPage />} />
                   <Route path="footer" element={<FooterSettingsPage />} />
                   <Route path="universal" element={<UniversalAdminManager />} />
+                  <Route path="profile" element={<MyProfile />} />
+                  <Route path="profile/edit" element={<EditProfile />} />
+                  <Route path="password" element={<ChangePassword />} />
+                  <Route path="change-password" element={<ChangePassword />} />
                   {/* ⚽ Football Tournament routes also accessible via /super-admin/football */}
                   <Route path="football" element={<FootballAdminLayout />}>
                     <Route index element={<FootballDashboardPage />} />

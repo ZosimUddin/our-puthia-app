@@ -400,6 +400,16 @@ export const MyProfile: React.FC = () => {
                     নিরাপদ
                   </span>
                 </div>
+
+                <div className="pt-2">
+                  <Link
+                    to="/admin/password"
+                    className="w-full p-3.5 bg-emerald-600 hover:bg-emerald-700 text-white rounded-2xl text-xs font-black flex items-center justify-center gap-2 shadow-sm transition"
+                  >
+                    <Key size={16} />
+                    <span>পাসওয়ার্ড পরিবর্তন করুন</span>
+                  </Link>
+                </div>
               </div>
             </div>
 
