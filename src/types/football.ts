@@ -272,6 +272,10 @@ export interface FootballPosterConfig {
   themeColor: 'emerald' | 'crimson' | 'royal_blue' | 'gold' | 'custom';
   backgroundStyle: 'stadium_night' | 'floodlight_classic' | 'modern_dark' | 'gradient_vector';
   customBackgroundUrl?: string;
+  vsStyle?: 'fiery' | 'neon' | 'golden' | 'comic';
+  showTrophies?: boolean;
+  showBallAndPlayer?: boolean;
+  showMotto?: boolean;
   status: 'draft' | 'approved' | 'published';
   version: number;
   publishedImageUrl?: string;

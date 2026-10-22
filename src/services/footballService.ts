@@ -929,6 +929,22 @@ export async function savePoster(data: Partial<FootballPosterConfig>): Promise<s
   }
 }
 
+export async function deletePoster(id: string): Promise<void> {
+  try {
+    await deleteDoc(doc(db, POSTERS_COL, id));
+    await logFootballActivity(
+      'DELETE_POSTER',
+      'poster',
+      id,
+      'ব্যানার পোস্টার',
+      'পোস্টার কনফিগারেশন মুছে ফেলা হয়েছে'
+    );
+  } catch (err) {
+    handleFirestoreError(err, OperationType.DELETE, `${POSTERS_COL}/${id}`);
+    throw err;
+  }
+}
+
 // ==========================================
 // 9. VENUES & SPONSORS
 // ==========================================
