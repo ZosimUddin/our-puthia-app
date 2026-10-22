@@ -1,8 +1,10 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
+import { Link, useNavigate } from "react-router-dom";
 import { motion } from "motion/react";
 import { useAuth } from "../contexts/AuthContext";
 import { getFriendlyAuthErrorMessage } from "../utils/authMessages";
-import { X, Lock, Mail, Phone, ArrowRight, Eye, EyeOff, Loader2 } from "lucide-react";
+import { X, Lock, Mail, Phone, User, Home, Droplet, ArrowRight, Eye, EyeOff, Loader2 } from "lucide-react";
+import { VILLAGES_DATABASE } from "../data/villageData";
 
 interface AuthModalProps {
   isOpen: boolean;
@@ -10,17 +12,202 @@ interface AuthModalProps {
 }
 
 export const AuthModal: React.FC<AuthModalProps> = ({ isOpen, onClose }) => {
-  const { loginWithEmail, resetPassword } = useAuth();
+  const navigate = useNavigate();
+  const { registerWithEmail, loginWithEmail, resetPassword } = useAuth();
+  const [isRegister, setIsRegister] = useState(false);
   const [isForgotPassword, setIsForgotPassword] = useState(false);
   const [error, setError] = useState("");
   const [successMessage, setSuccessMessage] = useState("");
   const [loading, setLoading] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
+  const [showConfirmPassword, setShowConfirmPassword] = useState(false);
   const [rememberMe, setRememberMe] = useState(true);
+  const [agreedToTerms, setAgreedToTerms] = useState(true);
 
   // Form Fields
-  const [emailOrPhone, setEmailOrPhone] = useState("");
+  const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [confirmPassword, setConfirmPassword] = useState("");
+  const [name, setName] = useState("");
+  const [phone, setPhone] = useState("");
+  const [upazila, setUpazila] = useState("পুঠিয়া উপজেলা");
+  const [union, setUnion] = useState("বানেশ্বর ইউনিয়ন");
+  const [village, setVillage] = useState("");
+  const [customVillage, setCustomVillage] = useState("");
+  const [gender, setGender] = useState("");
+  const [bloodGroup, setBloodGroup] = useState("");
+  const [isBloodDonor, setIsBloodDonor] = useState(false);
+  const [isReadyToDonate, setIsReadyToDonate] = useState(true);
+  const [receiveBloodAlerts, setReceiveBloodAlerts] = useState(true);
+
+  const upazilas = [
+    "পুঠিয়া উপজেলা",
+    "পবা উপজেলা",
+    "চারঘাট উপজেলা",
+    "বাঘা উপজেলা",
+    "তানোর উপজেলা",
+    "মোহনপুর উপজেলা",
+    "দুর্গাপুর উপজেলা",
+    "বাগমারা উপজেলা",
+    "গোদাগাড়ী উপজেলা"
+  ];
+
+  const unionMapping: Record<string, string[]> = {
+    "পুঠিয়া উপজেলা": [
+      "বানেশ্বর ইউনিয়ন",
+      "বেলপুকুর ইউনিয়ন",
+      "পুঠিয়া পৌরসভা",
+      "জিউপাড়া ইউনিয়ন",
+      "ভালুকগাছী ইউনিয়ন",
+      "শিলমাড়িয়া ইউনিয়ন",
+      "১নং পুঠিয়া সদর ইউনিয়ন"
+    ],
+    "পবা উপজেলা": [
+      "হরিয়ান ইউনিয়ন",
+      "পারিলা ইউনিয়ন",
+      "দর্শনপাড়া ইউনিয়ন",
+      "বড়গাছী ইউনিয়ন",
+      "দামকুড়া ইউনিয়ন",
+      "হুজুরীপাড়া ইউনিয়ন",
+      "নওহাটা পৌরসভা",
+      "কাটাখালী পৌরসভা"
+    ],
+    "চারঘাট উপজেলা": [
+      "চারঘাট ইউনিয়ন",
+      "ইউসুফপুর ইউনিয়ন",
+      "শলুয়া ইউনিয়ন",
+      "সারদা ইউনিয়ন",
+      "ভায়ালক্ষীপুর ইউনিয়ন",
+      "নিমপাড়া ইউনিয়ন",
+      "চারঘাট পৌরসভা"
+    ],
+    "বাঘা উপজেলা": [
+      "বাজুবাঘা ইউনিয়ন",
+      "গড়গড়ি ইউনিয়ন",
+      "পাকুড়িয়া ইউনিয়ন",
+      "মনিগ্রাম ইউনিয়ন",
+      "আড়ানী পৌরসভা",
+      "বাঘা পৌরসভা"
+    ],
+    "তানোর উপজেলা": [
+      "কলমা ইউনিয়ন",
+      "বাধাইড় ইউনিয়ন",
+      "পাঁচন্দর ইউনিয়ন",
+      "সরনজাই ইউনিয়ন",
+      "তালন্দ ইউনিয়ন",
+      "কামারগাঁ ইউনিয়ন",
+      "চান্দুড়িয়া ইউনিয়ন",
+      "তানোর পৌরসভা",
+      "মুণ্ডুমালা পৌরসভা"
+    ],
+    "মোহনপুর উপজেলা": [
+      "ধুরইল ইউনিয়ন",
+      "ঘাসিগ্রাম ইউনিয়ন",
+      "রায়ঘাটি ইউনিয়ন",
+      "মৌগাছী ইউনিয়ন",
+      "বাকশিমইল ইউনিয়ন",
+      "জাহানাবাদ ইউনিয়ন"
+    ],
+    "দুর্গাপুর উপজেলা": [
+      "নওপাড়া ইউনিয়ন",
+      "কিসমত গণকৈড় ইউনিয়ন",
+      "পানানগর ইউনিয়ন",
+      "দেলুয়াবাড়ী ইউনিয়ন",
+      "মাড়িয়া ইউনিয়ন",
+      "জয়নগর ইউনিয়ন",
+      "দুর্গাপুর পৌরসভা"
+    ],
+    "বাগমারা উপজেলা": [
+      "গোবিন্দপাড়া ইউনিয়ন",
+      "নরদাশ ইউনিয়ন",
+      "দ্বীপপুর ইউনিয়ন",
+      "কাচারী কোয়ালীপাড়া ইউনিয়ন",
+      "শ্রীপুর ইউনিয়ন",
+      "গনিপুর ইউনিয়ন",
+      "আউচপাড়া ইউনিয়ন",
+      "শুভডাঙ্গা ইউনিয়ন",
+      "মাড়িয়া ইউনিয়ন",
+      "বাসুপাড়া ইউনিয়ন",
+      "ঝিকরা ইউনিয়ন",
+      "গোয়ালকান্দি ইউনিয়ন",
+      "হামিরকুৎসা ইউনিয়ন",
+      "যোগীপাড়া ইউনিয়ন",
+      "সোনাডাঙ্গা ইউনিয়ন",
+      "ভবানীগঞ্জ পৌরসভা"
+    ],
+    "গোদাগাড়ী উপজেলা": [
+      "গোদাগাড়ী ইউনিয়ন",
+      "মোহনপুর ইউনিয়ন",
+      "পাকড়ী ইউনিয়ন",
+      "ঋষিকুল ইউনিয়ন",
+      "গোগ্রাম ইউনিয়ন",
+      "মাটিকাটা ইউনিয়ন",
+      "দেওপাড়া ইউনিয়ন",
+      "চব্বিশনগর ইউনিয়ন",
+      "গোদাগাড়ী পৌরসভা",
+      "কাঁকনহাট পৌরসভা"
+    ]
+  };
+
+  const getVillagesForUnion = (upazilaName: string, unionName: string): string[] => {
+    if (upazilaName === "পুঠিয়া উপজেলা") {
+      let dbUnionName = unionName;
+      if (unionName === "পুঠিয়া সদর ইউনিয়ন") dbUnionName = "১নং পুঠিয়া সদর ইউনিয়ন";
+      
+      const filtered = VILLAGES_DATABASE.filter(
+        (v) => v.union === dbUnionName
+      ).map((v) => v.name.replace(/\s*\([^\)]*ওয়ার্ড[^\)]*\)/g, '').replace(/\s*\([^\)]*ওয়ার্ড[^\)]*\)/g, '').trim());
+
+      if (unionName === "পুঠিয়া পৌরসভা") {
+        return ["পুঠিয়া বাজার", "রাজবাড়ী", "উপজেলা চত্বর", "কান্দ্রা", "কাঁচুপাড়া", "গোপালপুর", "অন্যান্য (নিজে লিখুন)"];
+      }
+
+      if (filtered.length > 0) {
+        return [...new Set(filtered)].sort().concat("অন্যান্য (নিজে লিখুন)");
+      }
+    }
+
+    return ["অন্যান্য (নিজে লিখুন)"];
+  };
+
+  const handleUpazilaChange = (newUpazila: string) => {
+    setUpazila(newUpazila);
+    const unionsForUpazila = unionMapping[newUpazila] || [];
+    const firstUnion = unionsForUpazila[0] || "";
+    setUnion(firstUnion);
+    
+    if (firstUnion) {
+      const villagesForUnion = getVillagesForUnion(newUpazila, firstUnion);
+      const firstVillage = villagesForUnion[0] || "";
+      setVillage(firstVillage);
+      if (firstVillage !== "অন্যান্য (নিজে লিখুন)") {
+        setCustomVillage("");
+      }
+    } else {
+      setVillage("");
+      setCustomVillage("");
+    }
+  };
+
+  const handleUnionChange = (newUnion: string) => {
+    setUnion(newUnion);
+    const villagesForUnion = getVillagesForUnion(upazila, newUnion);
+    const firstVillage = villagesForUnion[0] || "";
+    setVillage(firstVillage);
+    if (firstVillage !== "অন্যান্য (নিজে লিখুন)") {
+      setCustomVillage("");
+    }
+  };
+
+  // Ensure dynamic village initialization on registry view toggle
+  useEffect(() => {
+    if (isRegister) {
+      const initialVillages = getVillagesForUnion("পুঠিয়া উপজেলা", "বানেশ্বর ইউনিয়ন");
+      if (initialVillages.length > 0 && !village) {
+        setVillage(initialVillages[0]);
+      }
+    }
+  }, [isRegister]);
 
   if (!isOpen) return null;
 
@@ -32,16 +219,41 @@ export const AuthModal: React.FC<AuthModalProps> = ({ isOpen, onClose }) => {
 
     try {
       if (isForgotPassword) {
-        if (!emailOrPhone.trim()) {
+        if (!email) {
           throw new Error("দয়া করে আপনার ইমেইল ঠিকানাটি প্রদান করুন।");
         }
-        await resetPassword(emailOrPhone.trim());
+        await resetPassword(email);
         setSuccessMessage("আপনার ইমেইলে পাসওয়ার্ড রিসেট করার লিঙ্ক পাঠানো হয়েছে। অনুগ্রহ করে আপনার ইনবক্স (বা স্প্যাম ফোল্ডার) চেক করুন।");
+      } else if (isRegister) {
+        // Validation
+        const finalVillage = (village === "অন্যান্য (নিজে লিখুন)" ? customVillage.trim() : village) || union || upazila || "পুঠিয়া";
+        if (!email || !password || !name || !phone || !gender) {
+          throw new Error("দয়া করে সব বাধ্যতামূলক তথ্য প্রদান করুন।");
+        }
+        if (phone.length < 11) {
+          throw new Error("সঠিক ১১ ডিজিটের মোবাইল নম্বর প্রদান করুন।");
+        }
+        if (password.length < 6) {
+          throw new Error("পাসওয়ার্ড অন্তত ৬ অক্ষরের হতে হবে।");
+        }
+        if (password !== confirmPassword) {
+          throw new Error("⚠️ পাসওয়ার্ড মিলছে না");
+        }
+        if (isBloodDonor && (!bloodGroup || bloodGroup === "")) {
+          throw new Error("রক্তদাতা হিসেবে যুক্ত হতে অনুগ্রহ করে আপনার সঠিক রক্তের গ্রুপ নির্বাচন করুন।");
+        }
+        if (!agreedToTerms) {
+          throw new Error("অনুগ্রহ করে ব্যবহারের শর্তাবলি ও গোপনীয়তা নীতি মেনে অ্যাকাউন্ট তৈরি করতে সম্মত হন।");
+        }
+        await registerWithEmail(email, password, name, phone, finalVillage, union, gender, bloodGroup, isBloodDonor, upazila);
+        sessionStorage.setItem("just_registered", "true");
+        onClose();
+        navigate("/profile?edit=true", { state: { openEdit: true, justRegistered: true } });
       } else {
-        if (!emailOrPhone.trim() || !password) {
+        if (!email || !password) {
           throw new Error("মোবাইল নম্বর বা ইমেইল এবং পাসওয়ার্ড প্রদান করুন।");
         }
-        await loginWithEmail(emailOrPhone.trim(), password, rememberMe);
+        await loginWithEmail(email, password, rememberMe);
         onClose();
       }
     } catch (err: any) {
@@ -60,18 +272,21 @@ export const AuthModal: React.FC<AuthModalProps> = ({ isOpen, onClose }) => {
     }
   };
 
+
+  const bloodGroups = ["A+", "A-", "B+", "B-", "O+", "O-", "AB+", "AB-"];
+
   return (
-    <div className="fixed inset-0 z-[110] flex items-center justify-center p-4 bg-gradient-to-b from-[#f2fcf9] via-[#f7fcfb] to-[#eaf5f2] sm:bg-black/60 sm:backdrop-blur-sm overflow-y-auto">
+    <div className="fixed inset-0 z-[110] flex items-start justify-center p-0 sm:p-4 bg-gradient-to-b from-[#f2fcf9] via-[#f7fcfb] to-[#eaf5f2] sm:bg-black/60 sm:backdrop-blur-sm overflow-y-auto">
       {/* Backdrop (desktop only) */}
       <div className="hidden sm:block absolute inset-0" onClick={onClose} />
       
       {/* Modal Box */}
       <motion.div 
-        initial={{ opacity: 0, y: 10, scale: 0.98 }}
-        animate={{ opacity: 1, y: 0, scale: 1 }}
-        exit={{ opacity: 0, y: 10, scale: 0.98 }}
+        initial={{ opacity: 0, y: 10 }}
+        animate={{ opacity: 1, y: 0 }}
+        exit={{ opacity: 0, y: 10 }}
         transition={{ duration: 0.2, ease: "easeOut" }}
-        className="bg-gradient-to-b from-[#f2fcf9] via-[#f7fcfb] to-[#eaf5f2] border-0 sm:border sm:border-emerald-100 rounded-3xl sm:rounded-[32px] w-full max-w-md relative shadow-none sm:shadow-2xl overflow-hidden flex flex-col z-10 font-sans select-none my-auto"
+        className="bg-gradient-to-b from-[#f2fcf9] via-[#f7fcfb] to-[#eaf5f2] border-0 sm:border sm:border-emerald-100 rounded-none sm:rounded-[32px] w-full min-h-screen sm:min-h-0 sm:h-auto sm:max-w-lg relative shadow-none sm:shadow-2xl overflow-y-auto flex flex-col z-10 font-sans select-none my-0 sm:my-auto"
       >
         {/* Close Button */}
         <button 
@@ -83,27 +298,32 @@ export const AuthModal: React.FC<AuthModalProps> = ({ isOpen, onClose }) => {
         </button>
 
         {/* Central Lock Emblem Header */}
-        <div className="pt-8 pb-3 px-6 text-center relative z-10 flex flex-col items-center">
-          <div className="w-[84px] h-[84px] rounded-full bg-emerald-50/80 border border-emerald-100 flex items-center justify-center shadow-[0_8px_30px_rgba(16,185,129,0.12)] mb-3">
-            <div className="w-[68px] h-[68px] rounded-full bg-[#E5FDF6] border-[2px] border-emerald-300/40 flex items-center justify-center shadow-inner">
-              <div className="w-[54px] h-[54px] rounded-full bg-white flex items-center justify-center shadow-[0_4px_16px_rgba(16,185,129,0.06)] border border-white">
-                <Lock className="w-6 h-6 text-emerald-600 stroke-[2.5]" />
+        <div className="pt-7 pb-2 px-6 text-center relative z-10 flex flex-col items-center">
+          <div className="w-[90px] h-[90px] rounded-full bg-emerald-50/80 border border-emerald-100 flex items-center justify-center shadow-[0_8px_30px_rgba(16,185,129,0.12)] mb-3">
+            <div className="w-[72px] h-[72px] rounded-full bg-[#E5FDF6] border-[2px] border-emerald-300/40 flex items-center justify-center shadow-inner">
+              <div className="w-[58px] h-[58px] rounded-full bg-white flex items-center justify-center shadow-[0_4px_16px_rgba(16,185,129,0.06)] border border-white">
+                <svg className="w-7 h-7 text-emerald-600" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+                  <rect x="3" y="11" width="18" height="11" rx="2" ry="2" />
+                  <path d="M7 11V7a5 5 0 0 1 10 0v4" />
+                </svg>
               </div>
             </div>
           </div>
 
           <h2 className="text-2xl font-black text-[#01412F] tracking-tight">
-            {isForgotPassword ? "পাসওয়ার্ড ভুলে গেছেন?" : "স্বাগতম! ফিরে এসেছেন?"}
+            {isForgotPassword ? "পাসওয়ার্ড ভুলে গেছেন?" : isRegister ? "নতুন অ্যাকাউন্ট তৈরি করুন" : "স্বাগতম! ফিরে এসেছেন?"}
           </h2>
           <p className="text-xs font-bold text-slate-400 mt-1 max-w-xs mx-auto leading-relaxed">
             {isForgotPassword 
               ? "আপনার ইমেইল ঠিকানা দিলে রিসেট লিঙ্ক পাঠানো হবে" 
+              : isRegister 
+              ? "সহজেই অ্যাকাউন্ট তৈরি করে সকল নাগরিক সেবা উপভোগ করুন" 
               : "আপনার অ্যাকাউন্ট লগইন করে সেবাগুলো উপভোগ করুন"}
           </p>
         </div>
 
         {/* Form area */}
-        <div className="px-6 pb-7 pt-2 space-y-4">
+        <div className="flex-1 overflow-y-auto px-6 pb-6 pt-2 space-y-4 no-scrollbar">
           {error && (
             <motion.div 
               initial={{ opacity: 0, scale: 0.95 }}
@@ -129,35 +349,269 @@ export const AuthModal: React.FC<AuthModalProps> = ({ isOpen, onClose }) => {
           )}
 
           <form onSubmit={handleSubmit} className="space-y-4 text-left">
-            {/* Email / Mobile Field */}
-            <div className="space-y-1.5 text-left">
-              <label className="block text-left text-xs font-black text-[#01412F]/80 ml-2">
-                {isForgotPassword ? "আপনার ইমেইল ঠিকানা *" : "মোবাইল নম্বর বা ইমেইল *"}
-              </label>
-              <div className="relative">
-                <div className="absolute left-4 top-1/2 -translate-y-1/2 text-emerald-600">
-                  {isForgotPassword ? (
-                    <Mail size={18} className="stroke-[2.5]" />
-                  ) : (
-                    <Phone size={18} className="stroke-[2.5]" />
+            
+            {isRegister && !isForgotPassword && (
+              <>
+                {/* Full Name */}
+                <div className="space-y-1.5 text-left">
+                  <label className="block text-left text-xs font-black text-[#01412F]/80 ml-2">
+                    পুরো নাম *
+                  </label>
+                  <div className="relative">
+                    <div className="absolute left-4 top-1/2 -translate-y-1/2 text-emerald-600">
+                      <User size={18} className="stroke-[2.5]" />
+                    </div>
+                    <input
+                      type="text"
+                      required
+                      placeholder="যেমন: মোঃ জসিম উদ্দিন"
+                      value={name || ""}
+                      onChange={(e) => setName(e.target.value)}
+                      className="w-full pl-11 pr-4 py-3.5 bg-white border border-slate-100 rounded-[20px] focus:outline-none focus:ring-2 focus:ring-emerald-300 focus:border-emerald-500 transition-all font-bold text-slate-700 placeholder-slate-300 text-xs sm:text-sm shadow-sm"
+                    />
+                  </div>
+                </div>
+
+                {/* Mobile Number */}
+                <div className="space-y-1.5 text-left">
+                  <label className="block text-left text-xs font-black text-[#01412F]/80 ml-2">
+                    মোবাইল নম্বর *
+                  </label>
+                  <div className="relative">
+                    <div className="absolute left-4 top-1/2 -translate-y-1/2 text-emerald-600">
+                      <Phone size={18} className="stroke-[2.5]" />
+                    </div>
+                    <input
+                      type="tel"
+                      required
+                      placeholder="যেমন: 01711XXXXXX"
+                      value={phone || ""}
+                      onChange={(e) => setPhone(e.target.value)}
+                      className="w-full pl-11 pr-4 py-3.5 bg-white border border-slate-100 rounded-[20px] focus:outline-none focus:ring-2 focus:ring-emerald-300 focus:border-emerald-500 transition-all font-bold text-slate-700 placeholder-slate-300 text-xs sm:text-sm shadow-sm"
+                    />
+                  </div>
+                </div>
+
+                {/* Email Address (Right below Mobile Number) */}
+                <div className="space-y-1.5 text-left">
+                  <label className="block text-left text-xs font-black text-[#01412F]/80 ml-2">
+                    ইমেইল ঠিকানা (ঐচ্ছিক)
+                  </label>
+                  <div className="relative">
+                    <div className="absolute left-4 top-1/2 -translate-y-1/2 text-emerald-600">
+                      <Mail size={18} className="stroke-[2.5]" />
+                    </div>
+                    <input
+                      type="email"
+                      placeholder="example@mail.com"
+                      value={email || ""}
+                      onChange={(e) => setEmail(e.target.value)}
+                      className="w-full pl-11 pr-4 py-3.5 bg-white border border-slate-100 rounded-[20px] focus:outline-none focus:ring-2 focus:ring-emerald-300 focus:border-emerald-500 transition-all font-bold text-slate-700 placeholder-slate-400 text-xs sm:text-sm shadow-sm"
+                    />
+                  </div>
+                </div>
+
+                {/* Upazila */}
+                <div className="space-y-1.5 text-left">
+                  <label className="block text-left text-xs font-black text-[#01412F]/80 ml-2">
+                    উপজেলা *
+                  </label>
+                  <div className="relative">
+                    <select
+                      value={upazila}
+                      onChange={(e) => handleUpazilaChange(e.target.value)}
+                      className="w-full px-4 py-3.5 bg-white border border-slate-100 rounded-[20px] focus:outline-none focus:ring-2 focus:ring-emerald-300 transition-all font-bold text-slate-700 text-xs sm:text-sm cursor-pointer shadow-sm appearance-none"
+                    >
+                      {upazilas.map((upz) => (
+                        <option key={upz} value={upz}>{upz}</option>
+                      ))}
+                    </select>
+                    <div className="absolute right-4 top-1/2 -translate-y-1/2 pointer-events-none text-emerald-600">
+                      <svg className="w-4 h-4" fill="none" stroke="currentColor" strokeWidth="2.5" viewBox="0 0 24 24">
+                        <path strokeLinecap="round" strokeLinejoin="round" d="M19 9l-7 7-7-7" />
+                      </svg>
+                    </div>
+                  </div>
+                </div>
+
+                {/* Union */}
+                <div className="space-y-1.5 text-left">
+                  <label className="block text-left text-xs font-black text-[#01412F]/80 ml-2">ইউনিয়ন *</label>
+                  <div className="relative">
+                    <select
+                      value={union}
+                      onChange={(e) => handleUnionChange(e.target.value)}
+                      className="w-full px-4 py-3.5 bg-white border border-slate-100 rounded-[20px] focus:outline-none focus:ring-2 focus:ring-emerald-300 transition-all font-bold text-slate-700 text-xs sm:text-sm cursor-pointer shadow-sm appearance-none"
+                    >
+                      {(unionMapping[upazila] || []).map((u) => (
+                        <option key={u} value={u}>{u}</option>
+                      ))}
+                    </select>
+                    <div className="absolute right-4 top-1/2 -translate-y-1/2 pointer-events-none text-emerald-600">
+                      <svg className="w-4 h-4" fill="none" stroke="currentColor" strokeWidth="2.5" viewBox="0 0 24 24">
+                        <path strokeLinecap="round" strokeLinejoin="round" d="M19 9l-7 7-7-7" />
+                      </svg>
+                    </div>
+                  </div>
+                </div>
+
+                {/* Gender */}
+                <div className="space-y-1.5 text-left">
+                  <label className="block text-left text-xs font-black text-[#01412F]/80 ml-2">লিঙ্গ *</label>
+                  <div className="flex gap-4 px-2">
+                    <label className="flex items-center gap-2 cursor-pointer font-bold text-xs text-slate-700">
+                      <input
+                        type="radio"
+                        name="gender"
+                        value="পুরুষ"
+                        checked={gender === "পুরুষ"}
+                        onChange={(e) => setGender(e.target.value)}
+                        className="w-4 h-4 text-emerald-600 focus:ring-emerald-500 cursor-pointer"
+                      />
+                      <span>পুরুষ</span>
+                    </label>
+                    <label className="flex items-center gap-2 cursor-pointer font-bold text-xs text-slate-700">
+                      <input
+                        type="radio"
+                        name="gender"
+                        value="মহিলা"
+                        checked={gender === "মহিলা"}
+                        onChange={(e) => setGender(e.target.value)}
+                        className="w-4 h-4 text-emerald-600 focus:ring-emerald-500 cursor-pointer"
+                      />
+                      <span>মহিলা</span>
+                    </label>
+                  </div>
+                </div>
+
+                {/* Voluntary Blood Donor Option Card */}
+                <div className="bg-emerald-50/60 border border-emerald-100/80 rounded-[20px] p-3.5 space-y-3 text-left">
+                  <label className="flex items-center gap-2.5 cursor-pointer select-none">
+                    <input
+                      type="checkbox"
+                      id="bloodDonorCheckModal"
+                      checked={isBloodDonor}
+                      onChange={(e) => {
+                        setIsBloodDonor(e.target.checked);
+                      }}
+                      className="w-4.5 h-4.5 rounded text-emerald-600 focus:ring-emerald-500 cursor-pointer"
+                    />
+                    <span className="text-xs font-black text-[#01412F] flex items-center gap-1.5">
+                      <Droplet size={16} className="text-rose-500 fill-rose-500 shrink-0" />
+                      আমি স্বেচ্ছায় রক্তদাতা হিসেবে যুক্ত হতে চাই
+                    </span>
+                  </label>
+
+                  {/* Donor-Specific Information Options */}
+                  {isBloodDonor && (
+                    <motion.div
+                      initial={{ opacity: 0, height: 0 }}
+                      animate={{ opacity: 1, height: "auto" }}
+                      exit={{ opacity: 0, height: 0 }}
+                      className="space-y-3 pt-2.5 border-t border-emerald-200/50 text-left"
+                    >
+                      {/* Blood Group Select for Donor */}
+                      <div className="space-y-1.5 text-left">
+                        <label className="block text-left text-[11px] font-black text-slate-700 flex items-center gap-1">
+                          <Droplet className="w-3.5 h-3.5 text-rose-500 fill-rose-500" /> আপনার রক্তের গ্রুপ নির্বাচন করুন *
+                        </label>
+                        <div className="relative">
+                          <select
+                            value={bloodGroup}
+                            onChange={(e) => setBloodGroup(e.target.value)}
+                            className={`w-full px-3.5 py-2.5 bg-white border rounded-xl focus:outline-none focus:ring-2 focus:ring-emerald-300 font-bold text-slate-700 text-xs cursor-pointer shadow-xs appearance-none ${
+                              !bloodGroup ? "border-rose-300" : "border-slate-200"
+                            }`}
+                          >
+                            <option value="">রক্তের গ্রুপ নির্বাচন করুন</option>
+                            {bloodGroups.map((bg) => (
+                              <option key={bg} value={bg}>{bg}</option>
+                            ))}
+                          </select>
+                          <div className="absolute right-3 top-1/2 -translate-y-1/2 pointer-events-none text-emerald-600">
+                            <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" strokeWidth="2.5" viewBox="0 0 24 24">
+                              <path strokeLinecap="round" strokeLinejoin="round" d="M19 9l-7 7-7-7" />
+                            </svg>
+                          </div>
+                        </div>
+                      </div>
+
+                      {/* Ready to donate status */}
+                      <div className="space-y-1.5 text-left">
+                        <label className="block text-left text-[11px] font-black text-slate-600">
+                          রক্তদানের জন্য প্রস্তুত? *
+                        </label>
+                        <div className="flex items-center gap-2">
+                          <button
+                            type="button"
+                            onClick={() => setIsReadyToDonate(true)}
+                            className={`flex-1 py-2 px-2.5 rounded-xl text-xs font-bold transition-all border cursor-pointer ${
+                              isReadyToDonate 
+                                ? "bg-emerald-600 text-white border-emerald-600 shadow-xs" 
+                                : "bg-white text-slate-600 border-slate-200 hover:bg-slate-50"
+                            }`}
+                          >
+                            হ্যাঁ, প্রস্তুত
+                          </button>
+                          <button
+                            type="button"
+                            onClick={() => setIsReadyToDonate(false)}
+                            className={`flex-1 py-2 px-2.5 rounded-xl text-xs font-bold transition-all border cursor-pointer ${
+                              !isReadyToDonate 
+                                ? "bg-amber-500 text-white border-amber-500 shadow-xs" 
+                                : "bg-white text-slate-600 border-slate-200 hover:bg-slate-50"
+                            }`}
+                          >
+                            সাময়িক বিরতি
+                          </button>
+                        </div>
+                      </div>
+
+                      {/* Nearby Blood Notification */}
+                      <label className="flex items-center gap-2 cursor-pointer select-none pt-0.5 text-left">
+                        <input
+                          type="checkbox"
+                          checked={receiveBloodAlerts}
+                          onChange={(e) => setReceiveBloodAlerts(e.target.checked)}
+                          className="w-4 h-4 rounded text-emerald-600 focus:ring-emerald-500 cursor-pointer"
+                        />
+                        <span className="text-[11px] font-bold text-slate-700">
+                          কাছাকাছি রক্তের অনুরোধের Notification পাবেন?
+                        </span>
+                      </label>
+                    </motion.div>
                   )}
                 </div>
-                <input
-                  type={isForgotPassword ? "email" : "text"}
-                  required
-                  placeholder={isForgotPassword ? "example@mail.com" : "মোবাইল নম্বর বা ইমেইল"}
-                  value={emailOrPhone}
-                  onChange={(e) => setEmailOrPhone(e.target.value)}
-                  className="w-full pl-11 pr-4 py-3.5 bg-white border border-slate-100 rounded-[20px] focus:outline-none focus:ring-2 focus:ring-emerald-300 focus:border-emerald-500 transition-all font-bold text-slate-700 placeholder-slate-400 text-xs sm:text-sm shadow-sm"
-                />
-              </div>
-            </div>
+              </>
+            )}
 
-            {/* Password Field (Only in Login Mode) */}
+            {/* Email / Mobile Field for Login Mode */}
+            {!isRegister && (
+              <div className="space-y-1.5 text-left">
+                <label className="block text-left text-xs font-black text-[#01412F]/80 ml-2">
+                  মোবাইল নম্বর বা ইমেইল
+                </label>
+                <div className="relative">
+                  <div className="absolute left-4 top-1/2 -translate-y-1/2 text-emerald-600">
+                    <Phone size={18} className="stroke-[2.5]" />
+                  </div>
+                  <input
+                    type="text"
+                    required
+                    placeholder="মোবাইল নম্বর বা ইমেইল"
+                    value={email || ""}
+                    onChange={(e) => setEmail(e.target.value)}
+                    className="w-full pl-11 pr-4 py-3.5 bg-white border border-slate-100 rounded-[20px] focus:outline-none focus:ring-2 focus:ring-emerald-300 focus:border-emerald-500 transition-all font-bold text-slate-700 placeholder-slate-400 text-xs sm:text-sm shadow-sm"
+                  />
+                </div>
+              </div>
+            )}
+
+            {/* Password Field */}
             {!isForgotPassword && (
               <div className="space-y-1.5 text-left">
                 <label className="block text-left text-xs font-black text-[#01412F]/80 ml-2">
-                  পাসওয়ার্ড *
+                  পাসওয়ার্ড {isRegister && "(অন্তত ৮ অক্ষর) *"}
                 </label>
                 <div className="relative">
                   <div className="absolute left-4 top-1/2 -translate-y-1/2 text-emerald-600">
@@ -167,7 +621,7 @@ export const AuthModal: React.FC<AuthModalProps> = ({ isOpen, onClose }) => {
                     type={showPassword ? "text" : "password"}
                     required
                     placeholder="পাসওয়ার্ড"
-                    value={password}
+                    value={password || ""}
                     onChange={(e) => setPassword(e.target.value)}
                     className="w-full pl-11 pr-12 py-3.5 bg-white border border-slate-100 rounded-[20px] focus:outline-none focus:ring-2 focus:ring-emerald-300 focus:border-emerald-500 transition-all font-bold text-slate-700 placeholder-slate-400 text-xs sm:text-sm shadow-sm"
                   />
@@ -182,8 +636,46 @@ export const AuthModal: React.FC<AuthModalProps> = ({ isOpen, onClose }) => {
               </div>
             )}
 
+            {/* Confirm Password Field (Register Mode) */}
+            {isRegister && (
+              <div className="space-y-1.5 text-left">
+                <label className="block text-left text-xs font-black text-[#01412F]/80 ml-2">
+                  পাসওয়ার্ড নিশ্চিত করুন *
+                </label>
+                <div className="relative">
+                  <div className="absolute left-4 top-1/2 -translate-y-1/2 text-emerald-600">
+                    <Lock size={18} className="stroke-[2.5]" />
+                  </div>
+                  <input
+                    type={showConfirmPassword ? "text" : "password"}
+                    required
+                    placeholder="পাসওয়ার্ডটি আবার লিখুন"
+                    value={confirmPassword || ""}
+                    onChange={(e) => setConfirmPassword(e.target.value)}
+                    className={`w-full pl-11 pr-12 py-3.5 bg-white border rounded-[20px] focus:outline-none focus:ring-2 transition-all font-bold text-slate-700 placeholder-slate-400 text-xs sm:text-sm shadow-sm ${
+                      confirmPassword && password !== confirmPassword
+                        ? "border-rose-300 focus:ring-rose-200 focus:border-rose-500"
+                        : "border-slate-100 focus:ring-emerald-300 focus:border-emerald-500"
+                    }`}
+                  />
+                  <button
+                    type="button"
+                    onClick={() => setShowConfirmPassword(!showConfirmPassword)}
+                    className="absolute right-4 top-1/2 -translate-y-1/2 text-slate-400 hover:text-emerald-600 transition-colors cursor-pointer"
+                  >
+                    {showConfirmPassword ? <EyeOff size={18} /> : <Eye size={18} />}
+                  </button>
+                </div>
+                {confirmPassword && password !== confirmPassword && (
+                  <p className="text-xs font-bold text-rose-500 ml-2 mt-1 flex items-center gap-1">
+                    ⚠️ পাসওয়ার্ড মিলছে না
+                  </p>
+                )}
+              </div>
+            )}
+
             {/* Remember me & Forgot password link for Login state */}
-            {!isForgotPassword && (
+            {!isRegister && !isForgotPassword && (
               <div className="flex justify-between items-center px-1 pt-1">
                 <label className="flex items-center gap-2 cursor-pointer select-none">
                   <div className="relative flex items-center justify-center">
@@ -216,6 +708,52 @@ export const AuthModal: React.FC<AuthModalProps> = ({ isOpen, onClose }) => {
               </div>
             )}
 
+            {/* Terms & Privacy Checkbox for Registration */}
+            {isRegister && (
+              <div className="flex items-start gap-2.5 px-1 pt-2 pb-1">
+                <label className="flex items-start gap-2.5 cursor-pointer group select-none">
+                  <div className="relative flex items-center justify-center mt-0.5">
+                    <input
+                      type="checkbox"
+                      checked={agreedToTerms}
+                      onChange={(e) => setAgreedToTerms(e.target.checked)}
+                      className="peer sr-only"
+                    />
+                    <div className="w-[18px] h-[18px] border-2 border-slate-300 rounded-[6px] peer-checked:bg-emerald-600 peer-checked:border-emerald-600 transition-all flex items-center justify-center shrink-0">
+                      <svg className="w-3 h-3 text-white opacity-0 peer-checked:opacity-100 transition-opacity pointer-events-none" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="4" strokeLinecap="round" strokeLinejoin="round">
+                        <polyline points="20 6 9 17 4 12"></polyline>
+                      </svg>
+                    </div>
+                  </div>
+                  <span className="text-xs font-bold text-slate-600 leading-snug">
+                    আমি{" "}
+                    <Link 
+                      to="/terms" 
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        if (onClose) onClose();
+                      }}
+                      className="text-[#009664] font-black hover:underline cursor-pointer"
+                    >
+                      ব্যবহারের শর্তাবলি
+                    </Link>
+                    {" "}ও{" "}
+                    <Link 
+                      to="/privacy" 
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        if (onClose) onClose();
+                      }}
+                      className="text-[#009664] font-black hover:underline cursor-pointer"
+                    >
+                      গোপনীয়তা নীতি
+                    </Link>
+                    {" "}মেনে অ্যাকাউন্ট তৈরি করতে সম্মত।
+                  </span>
+                </label>
+              </div>
+            )}
+
             {/* Submit Button */}
             <button
               type="submit"
@@ -226,21 +764,40 @@ export const AuthModal: React.FC<AuthModalProps> = ({ isOpen, onClose }) => {
                 <Loader2 className="animate-spin" size={20} />
               ) : (
                 <>
-                  <span>{isForgotPassword ? "রিসেট লিঙ্ক পাঠান" : "লগইন করুন"}</span>
+                  <span>{isForgotPassword ? "রিসেট লিঙ্ক পাঠান" : isRegister ? "নিবন্ধন সম্পন্ন করুন" : "লগইন করুন"}</span>
                   <ArrowRight size={18} className="group-hover:translate-x-0.5 transition-transform stroke-[2.5]" />
                 </>
               )}
             </button>
           </form>
 
-          {/* Back to Login Link when in Forgot Password Mode */}
-          {isForgotPassword && (
-            <div className="text-center pt-2">
+
+
+          {/* Footer Toggle */}
+          <div className="text-center pt-2">
+            {isForgotPassword ? (
               <p className="text-xs sm:text-sm font-bold text-slate-400">
                 মনে পড়েছে?{" "}
                 <button 
                   type="button"
                   onClick={() => {
+                    setIsForgotPassword(false);
+                    setIsRegister(false);
+                    setError("");
+                    setSuccessMessage("");
+                  }}
+                  className="text-[#009664] font-black hover:underline cursor-pointer"
+                >
+                  লগইন করুন
+                </button>
+              </p>
+            ) : isRegister ? (
+              <p className="text-xs sm:text-sm font-bold text-slate-400">
+                ইতিমধ্যে অ্যাকাউন্ট আছে?{" "}
+                <button 
+                  type="button"
+                  onClick={() => {
+                    setIsRegister(false);
                     setIsForgotPassword(false);
                     setError("");
                     setSuccessMessage("");
@@ -250,12 +807,28 @@ export const AuthModal: React.FC<AuthModalProps> = ({ isOpen, onClose }) => {
                   লগইন করুন
                 </button>
               </p>
-            </div>
-          )}
+            ) : (
+              <p className="text-xs sm:text-sm font-bold text-slate-400">
+                অ্যাকাউন্ট নেই?{" "}
+                <button 
+                  type="button"
+                  onClick={() => {
+                    setIsRegister(true);
+                    setIsForgotPassword(false);
+                    setError("");
+                    setSuccessMessage("");
+                  }}
+                  className="text-[#009664] font-black hover:underline cursor-pointer"
+                >
+                  নতুন অ্যাকাউন্ট তৈরি করুন
+                </button>
+              </p>
+            )}
+          </div>
+
         </div>
+
       </motion.div>
     </div>
   );
 };
-
-export default AuthModal;
