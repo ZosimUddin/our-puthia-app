@@ -1517,9 +1517,9 @@ const PublicProfilePage: React.FC = () => {
               className="flex-1 text-center border-0 bg-transparent cursor-pointer py-1 hover:opacity-80 transition active:scale-95"
             >
               <p className="text-lg sm:text-xl font-black text-slate-900 dark:text-white leading-tight">
-                {userPostsCount}
+                {toBengali(userPostsCount)}
               </p>
-              <p className="text-xs font-bold text-slate-600 dark:text-slate-400 mt-0.5">Posts</p>
+              <p className="text-xs font-bold text-slate-600 dark:text-slate-400 mt-0.5">পোস্ট</p>
             </button>
 
             <div className="w-px h-7 bg-slate-200 dark:bg-slate-800 shrink-0" />
@@ -1531,9 +1531,9 @@ const PublicProfilePage: React.FC = () => {
               className="flex-1 text-center border-0 bg-transparent cursor-pointer py-1 hover:opacity-80 transition active:scale-95"
             >
               <p className="text-lg sm:text-xl font-black text-slate-900 dark:text-white leading-tight">
-                {friendsCount}
+                {toBengali(friendsCount)}
               </p>
-              <p className="text-xs font-bold text-slate-600 dark:text-slate-400 mt-0.5">Friends</p>
+              <p className="text-xs font-bold text-slate-600 dark:text-slate-400 mt-0.5">বন্ধু</p>
             </button>
 
             <div className="w-px h-7 bg-slate-200 dark:bg-slate-800 shrink-0" />
@@ -1545,9 +1545,9 @@ const PublicProfilePage: React.FC = () => {
               className="flex-1 text-center border-0 bg-transparent cursor-pointer py-1 hover:opacity-80 transition active:scale-95 group"
             >
               <p className="text-lg sm:text-xl font-black text-slate-900 dark:text-white leading-tight group-hover:text-[#059669] transition-colors">
-                {followersCount}
+                {toBengali(followersCount)}
               </p>
-              <p className="text-xs font-bold text-slate-600 dark:text-slate-400 mt-0.5 group-hover:text-[#059669] transition-colors">Followers</p>
+              <p className="text-xs font-bold text-slate-600 dark:text-slate-400 mt-0.5 group-hover:text-[#059669] transition-colors">অনুসারী</p>
             </button>
 
             <div className="w-px h-7 bg-slate-200 dark:bg-slate-800 shrink-0" />
@@ -1559,9 +1559,9 @@ const PublicProfilePage: React.FC = () => {
               className="flex-1 text-center border-0 bg-transparent cursor-pointer py-1 hover:opacity-80 transition active:scale-95 group"
             >
               <p className="text-lg sm:text-xl font-black text-slate-900 dark:text-white leading-tight group-hover:text-[#059669] transition-colors">
-                {followingCount}
+                {toBengali(followingCount)}
               </p>
-              <p className="text-xs font-bold text-slate-600 dark:text-slate-400 mt-0.5 group-hover:text-[#059669] transition-colors">Following</p>
+              <p className="text-xs font-bold text-slate-600 dark:text-slate-400 mt-0.5 group-hover:text-[#059669] transition-colors">ফলোয়িং</p>
             </button>
           </div>
         </div>
@@ -1576,15 +1576,15 @@ const PublicProfilePage: React.FC = () => {
                 className="flex-1 py-2.5 px-4 bg-[#f0f2f5] hover:bg-[#e4e6eb] active:bg-[#d8dadf] text-[#050505] font-bold text-xs sm:text-sm rounded-xl flex items-center justify-center gap-2 border border-slate-200/80 shadow-2xs transition active:scale-[0.98] cursor-pointer"
               >
                 <Edit2 size={16} className="text-slate-800 shrink-0" />
-                <span>Edit Profile</span>
+                <span>প্রোফাইল এডিট</span>
               </button>
 
               {/* 2. Share Icon Button */}
               <button 
                 onClick={handleShare}
                 className="w-11 h-11 bg-[#f0f2f5] hover:bg-[#e4e6eb] active:bg-[#d8dadf] text-[#050505] rounded-xl flex items-center justify-center border border-slate-200/80 shadow-2xs transition active:scale-[0.98] cursor-pointer shrink-0"
-                title="Share Profile"
-                aria-label="Share Profile"
+                title="প্রোফাইল শেয়ার করুন"
+                aria-label="প্রোফাইল শেয়ার করুন"
               >
                 <Share2 size={18} className="text-slate-800" />
               </button>
@@ -1593,8 +1593,8 @@ const PublicProfilePage: React.FC = () => {
               <button 
                 onClick={() => setShowMoreMenu(true)}
                 className="w-11 h-11 bg-[#f0f2f5] hover:bg-[#e4e6eb] active:bg-[#d8dadf] text-[#050505] rounded-xl flex items-center justify-center border border-slate-200/80 shadow-2xs transition active:scale-[0.98] cursor-pointer shrink-0"
-                title="More Options"
-                aria-label="More Options"
+                title="আরও অপশন"
+                aria-label="আরও অপশন"
               >
                 <MoreHorizontal size={20} className="text-slate-800" />
               </button>
@@ -1607,7 +1607,7 @@ const PublicProfilePage: React.FC = () => {
                 className="flex-1 py-2.5 px-4 bg-[#059669] text-white hover:bg-emerald-700 font-bold text-xs sm:text-sm rounded-xl flex items-center justify-center gap-2 shadow-xs transition cursor-pointer border-none"
               >
                 <MessageCircle size={15} />
-                <span>Message</span>
+                <span>মেসেজ</span>
               </button>
 
               {/* Add/Accept Friend / Unfriend Actions */}
@@ -1619,12 +1619,12 @@ const PublicProfilePage: React.FC = () => {
                 <Users size={15} />
                 <span>
                   {isFriend 
-                    ? "✓ Friends" 
+                    ? "✓ ফ্রেন্ড" 
                     : hasPendingRequest 
-                    ? "Accept Request" 
+                    ? "অনুরোধ গ্রহণ" 
                     : isRequested 
-                    ? "Request Sent" 
-                    : "Add Friend"}
+                    ? "অনুরোধ পাঠানো হয়েছে" 
+                    : "ফ্রেন্ড রিকোয়েস্ট"}
                 </span>
               </button>
 
@@ -1632,8 +1632,8 @@ const PublicProfilePage: React.FC = () => {
               <button 
                 onClick={handleShare}
                 className="w-11 h-11 bg-[#f0f2f5] hover:bg-[#e4e6eb] active:bg-[#d8dadf] text-[#050505] rounded-xl flex items-center justify-center border border-slate-200/80 shadow-2xs transition active:scale-[0.98] cursor-pointer shrink-0"
-                title="Share Profile"
-                aria-label="Share Profile"
+                title="প্রোফাইল শেয়ার করুন"
+                aria-label="প্রোফাইল শেয়ার করুন"
               >
                 <Share2 size={18} className="text-slate-800" />
               </button>
@@ -1642,8 +1642,8 @@ const PublicProfilePage: React.FC = () => {
               <button 
                 onClick={() => setShowMoreMenu(true)}
                 className="w-11 h-11 bg-[#f0f2f5] hover:bg-[#e4e6eb] active:bg-[#d8dadf] text-[#050505] rounded-xl flex items-center justify-center border border-slate-200/80 shadow-2xs transition active:scale-[0.98] cursor-pointer shrink-0"
-                title="More Options"
-                aria-label="More Options"
+                title="আরও অপশন"
+                aria-label="আরও অপশন"
               >
                 <MoreHorizontal size={20} className="text-slate-800" />
               </button>
@@ -1654,11 +1654,11 @@ const PublicProfilePage: React.FC = () => {
         {/* 6. Tabs Section: Posts | About | Friends | Scrolle | Photos */}
         <div className="mt-4 border-t border-b border-slate-200/80 bg-white flex relative z-10 justify-between items-center px-1">
           {[
-            { id: "posts", label: "Posts", icon: LayoutGrid },
-            { id: "about", label: "About", icon: Info },
-            { id: "friends", label: "Friends", icon: Users },
-            { id: "scrolle", label: "Scrolle", icon: PlaySquare },
-            { id: "photos", label: "Photos", icon: ImageIcon }
+            { id: "posts", label: "পোস্ট", icon: LayoutGrid },
+            { id: "about", label: "সম্পর্কে", icon: Info },
+            { id: "friends", label: "বন্ধু", icon: Users },
+            { id: "scrolle", label: "রিলস", icon: PlaySquare },
+            { id: "photos", label: "ছবি", icon: ImageIcon }
           ].map((tab) => {
             const Icon = tab.icon;
             const isActive = activeTab === tab.id;
@@ -2630,7 +2630,7 @@ const PublicProfilePage: React.FC = () => {
                 <div className="flex flex-wrap items-center justify-between gap-2 mb-3.5">
                   <div>
                     <h3 className="text-slate-900 font-black text-base flex items-center gap-2">
-                      <span>Friends</span>
+                      <span>বন্ধুরা</span>
                       <span className="text-xs px-2 py-0.5 rounded-full bg-emerald-50 text-[#059669] font-black border border-emerald-100">
                         {toBengali(friendsCount)}
                       </span>
@@ -2642,7 +2642,7 @@ const PublicProfilePage: React.FC = () => {
                             const id = typeof fId === 'string' ? fId : fId?.uid;
                             return (targetUserProfile.friends || []).includes(id);
                           }).length
-                        )} mutual friends
+                        )} জন মিউচুয়াল ফ্রেন্ড
                       </p>
                     )}
                   </div>
