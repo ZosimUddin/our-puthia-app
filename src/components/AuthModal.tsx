@@ -251,7 +251,7 @@ export const AuthModal: React.FC<AuthModalProps> = ({ isOpen, onClose }) => {
         navigate("/profile?edit=true", { state: { openEdit: true, justRegistered: true } });
       } else {
         if (!email || !password) {
-          throw new Error("ইমেইল এবং পাসওয়ার্ড প্রদান করুন।");
+          throw new Error("মোবাইল নম্বর বা ইমেইল এবং পাসওয়ার্ড প্রদান করুন।");
         }
         await loginWithEmail(email, password, rememberMe);
         onClose();

@@ -461,7 +461,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     setLoading(true);
     try {
       // If no email is provided, generate a dummy one based on phone number
-      const registrationEmail = email || `${phone}@puthiadiary.com`;
+      const registrationEmail = (email && email.trim()) ? email.trim() : `${phone.trim()}@puthiadiary.com`;
       const result = await createUserWithEmailAndPassword(auth, registrationEmail, password);
       
       const locVillage = village ? cleanWardFromText(village) : "";
@@ -472,6 +472,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
       // Save custom profile directly
       const initialProfile: UserProfile = {
         uid: result.user.uid,
+        email: registrationEmail,
         name: name.trim(),
         phone: phone.trim(),
         village: locVillage,
@@ -530,48 +531,108 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
       const normalized = rawInput.replace(/[০-৯]/g, (d) => bengaliDigits.indexOf(d).toString());
       
       // Clean up punctuation, spaces and international prefix for BD numbers
-      let cleanDigits = normalized.replace(/[\s\-\(\)]/g, '');
-      if (cleanDigits.startsWith('+8801')) {
-        cleanDigits = cleanDigits.slice(3);
-      } else if (cleanDigits.startsWith('8801')) {
+      let cleanDigits = normalized.replace(/[\s\-\(\)\+]/g, '');
+      if (cleanDigits.startsWith('8801')) {
+        cleanDigits = cleanDigits.slice(2);
+      } else if (cleanDigits.startsWith('88')) {
         cleanDigits = cleanDigits.slice(2);
       }
+      if (/^1\d{9}$/.test(cleanDigits)) {
+        cleanDigits = '0' + cleanDigits;
+      }
       
-      let loginEmail = rawInput;
       const isPhonePattern = /^01\d{9}$/.test(cleanDigits);
+      const isEmail = rawInput.includes('@');
+
       if (isPhonePattern) {
         try { localStorage.setItem('auth_registered_phone', cleanDigits); } catch {}
-        loginEmail = `${cleanDigits}@puthiadiary.com`;
       }
 
-      try {
-        const result = await signInWithEmailAndPassword(auth, loginEmail, password);
-        await logAuditEvent("login", "users", result.user.uid, { method: "email" });
-        return;
-      } catch (firstErr: any) {
-        // If phone-based synthetic email failed, check if user registered with a real email in Firestore
-        if (
-          isPhonePattern &&
-          (firstErr?.code === 'auth/invalid-credential' || firstErr?.code === 'auth/user-not-found')
-        ) {
-          try {
-            const usersRef = collection(db, "users");
-            const q = query(usersRef, where("phone", "==", cleanDigits), limit(1));
-            const snap = await getDocs(q);
+      // Build ordered list of candidate auth emails to try
+      const candidateEmails: string[] = [];
+
+      if (isEmail) {
+        candidateEmails.push(rawInput.toLowerCase());
+        if (rawInput !== rawInput.toLowerCase()) {
+          candidateEmails.push(rawInput);
+        }
+      }
+
+      if (isPhonePattern) {
+        // Query Firestore users collection for phone number match across all formats
+        try {
+          const usersRef = collection(db, "users");
+          const phoneVariants = [cleanDigits, `+88${cleanDigits}`, `88${cleanDigits}`];
+          const queryPromises = phoneVariants.map(v => 
+            getDocs(query(usersRef, where("phone", "==", v), limit(1)))
+          );
+          const snaps = await Promise.all(queryPromises);
+          
+          for (const snap of snaps) {
             if (!snap.empty) {
-              const userData = snap.docs[0].data();
-              if (userData?.email && userData.email !== loginEmail) {
-                const secondResult = await signInWithEmailAndPassword(auth, userData.email, password);
-                await logAuditEvent("login", "users", secondResult.user.uid, { method: "email_by_phone" });
-                return;
+              const uData = snap.docs[0].data();
+              if (uData?.email && typeof uData.email === 'string') {
+                const foundEmail = uData.email.trim();
+                if (foundEmail && !candidateEmails.includes(foundEmail)) {
+                  candidateEmails.push(foundEmail);
+                }
               }
+              break;
             }
-          } catch (lookupErr) {
-            console.warn("Phone-to-email lookup notice:", lookupErr);
+          }
+        } catch (lookupErr) {
+          console.warn("Firestore phone lookup notice:", lookupErr);
+        }
+
+        // Add standard synthetic phone emails
+        const syntheticVariants = [
+          `${cleanDigits}@puthiadiary.com`,
+          `+88${cleanDigits}@puthiadiary.com`,
+          `${cleanDigits}@ourputhia.com`
+        ];
+        for (const syn of syntheticVariants) {
+          if (!candidateEmails.includes(syn)) {
+            candidateEmails.push(syn);
           }
         }
-        
-        throw firstErr;
+      }
+
+      // Fallback for non-standard inputs
+      if (candidateEmails.length === 0) {
+        candidateEmails.push(rawInput);
+      }
+
+      let lastError: any = null;
+      let authenticated = false;
+
+      for (const candidate of candidateEmails) {
+        try {
+          const result = await signInWithEmailAndPassword(auth, candidate, password);
+          await logAuditEvent("login", "users", result.user.uid, { 
+            method: isPhonePattern ? "phone_resolved" : "email",
+            identifier: isPhonePattern ? cleanDigits : candidate
+          });
+          
+          // If Firestore user doc had no email, update it with authenticated email
+          if (result.user.uid && candidate.includes('@') && !candidate.endsWith('@puthiadiary.com')) {
+            try {
+              updateDoc(doc(db, "users", result.user.uid), { email: candidate });
+            } catch {}
+          }
+
+          authenticated = true;
+          return;
+        } catch (err: any) {
+          lastError = err;
+          // If password was wrong on an exact match email, don't keep guessing
+          if (err?.code === 'auth/wrong-password') {
+            throw err;
+          }
+        }
+      }
+
+      if (!authenticated && lastError) {
+        throw lastError;
       }
     } catch (error: any) {
       if (
