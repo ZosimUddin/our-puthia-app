@@ -51,7 +51,6 @@ export const DEFAULT_64_SERVICES_GRID: HomepageGridServiceItem[] = [
   { id: "journalists", label: "সাংবাদিক", iconName: "Mic", bgColor: "bg-emerald-50 text-emerald-700", path: "/journalists", enabled: true, order: 32, category: "মিডিয়া" },
   { id: "content-creator", label: "কনটেন্ট ক্রিয়েটর", iconName: "Video", bgColor: "bg-emerald-50 text-emerald-700", path: "/content-creators", enabled: true, order: 33, category: "মিডিয়া" },
   { id: "mela", label: "মেলা ও উৎসব", iconName: "Tent", bgColor: "bg-emerald-50 text-emerald-700", path: "/mela", enabled: true, order: 34, category: "অন্যান্য" },
-  { id: "football", label: "ফুটবল টুর্নামেন্ট", iconName: "Trophy", bgColor: "bg-emerald-50 text-emerald-700", path: "/football", enabled: true, order: 34.5, category: "খেলাধুলা", badge: "⚽ লাইভ", badgeColor: "bg-emerald-600 text-white" },
   { id: "sports", label: "খেলাধুলা", iconName: "Trophy", bgColor: "bg-emerald-50 text-emerald-700", path: "/sports", enabled: true, order: 35, category: "অন্যান্য" },
   { id: "ngo", label: "এনজিও", iconName: "Globe", bgColor: "bg-emerald-50 text-emerald-700", path: "/ngo", enabled: true, order: 36, category: "সামাজিক" },
   { id: "orphanage", label: "এতিমখানা", iconName: "Heart", bgColor: "bg-emerald-50 text-emerald-700", path: "/orphanages", enabled: true, order: 37, category: "সামাজিক" },
@@ -94,7 +93,7 @@ export const isExcludedHomepageService = (item: HomepageGridServiceItem): boolea
 
   // Excluded service IDs
   const excludedIds = new Set([
-    'insurance', 'graveyard', 'agriculture', 'smart-map',
+    'insurance', 'graveyard', 'agriculture', 'smart-map', 'football',
     'news', 'news-card', 'news-portals', 'news-portal', 'news_portal',
     'newspaper', 'newspapers', 'news_card', 'newscard'
   ]);
