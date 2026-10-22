@@ -608,6 +608,12 @@ const PublicProfilePage: React.FC = () => {
     return () => unsubscribe();
   }, [userId, user, currentUserProfile]);
 
+  // Reset tab to posts and scroll to top when viewing another user's profile
+  useEffect(() => {
+    setActiveTab("posts");
+    window.scrollTo({ top: 0, behavior: 'instant' });
+  }, [userId]);
+
   // Load user businesses if any
   useEffect(() => {
     if (!targetUserProfile?.uid) return;
@@ -2723,7 +2729,7 @@ const PublicProfilePage: React.FC = () => {
                         return (
                           <div
                             key={friend.uid || idx}
-                            onClick={() => navigate(`/citizen/${friend.uid || friend.id}`)}
+                            onClick={() => navigate(`/profile/${friend.uid || friend.id}`)}
                             className="group relative bg-slate-50/70 hover:bg-emerald-50/40 border border-slate-200/80 hover:border-blue-300 rounded-2xl p-3 flex flex-col items-center text-center transition-all duration-200 cursor-pointer shadow-2xs hover:shadow-xs"
                           >
                             {/* Avatar */}

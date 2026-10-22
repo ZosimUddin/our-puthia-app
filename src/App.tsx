@@ -483,6 +483,7 @@ const MainAppContent = () => {
                 <Route path="/admin/verification" element={<AdminRoute><UniversalAdminManager /></AdminRoute>} />
                 <Route path="/admin/verification-system" element={<AdminRoute><UniversalAdminManager /></AdminRoute>} />
                 <Route path="/profile/:userId" element={<PublicProfilePage />} />
+                <Route path="/citizen/:userId" element={<PublicProfilePage />} />
                 <Route path="/login" element={<Login />} />
                 <Route path="/register" element={<Register />} />
 
