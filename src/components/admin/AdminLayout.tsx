@@ -17,7 +17,6 @@ import { Link, useLocation, Outlet, useNavigate } from 'react-router-dom';
 import { useAuth } from '../../contexts/AuthContext';
 import toast from 'react-hot-toast';
 import puthiaIconLogo from '../../assets/images/puthia_official_icon_logo.jpg';
-import { AdminQuickActionsSidebarWidget } from './AdminQuickActionsSidebarWidget';
 
 interface NavSubItem {
   name: string;
@@ -52,9 +51,6 @@ const AdminLayout: React.FC = () => {
   const [expandedMenus, setExpandedMenus] = useState<Record<string, boolean>>({});
   const profileMenuRef = useRef<HTMLDivElement>(null);
 
-  // Menu Search & Filter State (Requirement 5)
-  const [menuSearchQuery, setMenuSearchQuery] = useState('');
-
   // Logout Confirmation Modal State (Requirement 6)
   const [showLogoutConfirmModal, setShowLogoutConfirmModal] = useState(false);
   const [isLoggingOut, setIsLoggingOut] = useState(false);
@@ -63,19 +59,6 @@ const AdminLayout: React.FC = () => {
   const [sessionTimeLeft, setSessionTimeLeft] = useState(60);
   const [showWarningModal, setShowWarningModal] = useState(false);
   const lastActiveRef = useRef<number>(Date.now());
-
-  // Master 2-Wing Architecture: 'main' (Main Portal & Citizen Services) vs 'adda' (Adda Social & Community Hub)
-  const isAddaRoute = location.pathname.includes('moderation') || 
-                      location.pathname.includes('trust-safety') || 
-                      location.pathname.includes('monetization') ||
-                      location.pathname.includes('adda');
-  const [activeWing, setActiveWing] = useState<'main' | 'adda'>(isAddaRoute ? 'adda' : 'main');
-
-  useEffect(() => {
-    if (isAddaRoute) {
-      setActiveWing('adda');
-    }
-  }, [location.pathname, isAddaRoute]);
 
   // Determine effective role
   const effectiveRole: 'super_admin' | 'admin' | 'editor' | 'moderator' = useMemo(() => {
@@ -629,12 +612,9 @@ const AdminLayout: React.FC = () => {
     }
   ], []);
 
-  // Filter sections and items based on role, activeWing, and menuSearchQuery (Requirement 5)
+  // Filter sections and items based on role
   const visibleSections = useMemo(() => {
-    const q = menuSearchQuery.trim().toLowerCase();
-    
-    // When searching, pool both main and adda sections so admin finds any tool instantly!
-    const poolSections = q ? [...mainNavSections, ...addaNavSections] : (activeWing === 'adda' ? addaNavSections : mainNavSections);
+    const poolSections = [...mainNavSections, ...addaNavSections];
     
     // Deduplicate sections if same title appears in pool
     const uniquePoolSections: NavSection[] = [];
@@ -646,61 +626,14 @@ const AdminLayout: React.FC = () => {
       }
     }
 
-    const baseSections = uniquePoolSections
+    return uniquePoolSections
       .filter(section => section.roles.includes(effectiveRole))
       .map(section => ({
         ...section,
         items: section.items.filter(item => item.roles.includes(effectiveRole))
       }))
       .filter(section => section.items.length > 0);
-
-    if (!q) return baseSections;
-
-    return baseSections
-      .map(section => {
-        const sectionMatches = section.title.toLowerCase().includes(q);
-
-        const filteredItems = section.items.filter(item => {
-          if (sectionMatches) return true;
-          if (item.name.toLowerCase().includes(q)) return true;
-          if (item.keywords?.some(k => k.toLowerCase().includes(q))) return true;
-          if (item.subItems?.some(sub => 
-            sub.name.toLowerCase().includes(q) || 
-            sub.keywords?.some(k => k.toLowerCase().includes(q))
-          )) return true;
-          return false;
-        });
-
-        if (filteredItems.length === 0) return null;
-
-        return {
-          ...section,
-          items: filteredItems
-        };
-      })
-      .filter((s): s is NavSection => s !== null);
-  }, [activeWing, mainNavSections, addaNavSections, effectiveRole, menuSearchQuery]);
-
-  // Total matched items count when searching
-  const totalMatchedCount = useMemo(() => {
-    if (!menuSearchQuery.trim()) return 0;
-    return visibleSections.reduce((acc, s) => acc + s.items.length, 0);
-  }, [visibleSections, menuSearchQuery]);
-
-  // Auto-expand matched parent menus when search query is entered
-  useEffect(() => {
-    if (menuSearchQuery.trim()) {
-      const autoExpandMap: Record<string, boolean> = {};
-      visibleSections.forEach(section => {
-        section.items.forEach(item => {
-          if (item.subItems && item.subItems.length > 0) {
-            autoExpandMap[item.name] = true;
-          }
-        });
-      });
-      setExpandedMenus(prev => ({ ...prev, ...autoExpandMap }));
-    }
-  }, [menuSearchQuery, visibleSections]);
+  }, [mainNavSections, addaNavSections, effectiveRole]);
 
   // Mobile Bottom Navigation depending on role
   const mobileNavItems = useMemo(() => {
@@ -869,183 +802,11 @@ const AdminLayout: React.FC = () => {
             </button>
           </div>
 
-          {/* Super Admin Identity & Security Hub Card (Requirement 6) */}
-          <div className="p-3 rounded-2xl border border-emerald-200/80 bg-gradient-to-br from-emerald-50/90 via-teal-50/40 to-white text-emerald-950 shadow-xs space-y-2.5">
-            <div className="flex items-center justify-between gap-2">
-              <div className="flex items-center gap-2.5 min-w-0">
-                <div className="relative shrink-0">
-                  <div className="w-9 h-9 rounded-xl bg-gradient-to-tr from-[#0B7A3B] to-emerald-500 flex items-center justify-center text-white font-black text-sm shadow-xs border border-emerald-300">
-                    {userProfile?.displayName ? userProfile.displayName.charAt(0) : user?.displayName ? user.displayName.charAt(0) : 'A'}
-                  </div>
-                  <span className="absolute -bottom-0.5 -right-0.5 flex h-3 w-3">
-                    <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75"></span>
-                    <span className="relative inline-flex rounded-full h-3 w-3 bg-[#0B7A3B] border-2 border-white"></span>
-                  </span>
-                </div>
-                <div className="min-w-0">
-                  <div className="flex items-center gap-1.5">
-                    <p className="font-black text-xs text-slate-900 truncate">
-                      {userProfile?.displayName || user?.displayName || user?.email?.split('@')[0] || 'সুপার অ্যাডমিন'}
-                    </p>
-                    <span className="inline-flex px-1.5 py-0.2 rounded-md bg-emerald-600 text-white text-[9px] font-extrabold uppercase shadow-2xs">
-                      PRO
-                    </span>
-                  </div>
-                  <p className="text-[10px] font-bold text-slate-500 truncate">{user?.email || 'mdzosimuddin31@gmail.com'}</p>
-                </div>
-              </div>
-
-              {/* Profile Shortcut Button */}
-              <Link
-                to="/admin/profile"
-                onClick={() => setSidebarOpen(false)}
-                className="shrink-0 px-2.5 py-1.5 bg-white hover:bg-emerald-100/60 text-[#0B7A3B] border border-emerald-200 rounded-xl text-[10.5px] font-black shadow-2xs flex items-center gap-1 transition-all active:scale-95 cursor-pointer"
-                title="প্রোফাইল দেখুন"
-              >
-                <User size={12} className="text-[#0B7A3B]" />
-                <span>প্রোফাইল</span>
-              </Link>
-            </div>
-
-            {/* Role Badge & Security Status Bar */}
-            <div className="flex items-center justify-between pt-1.5 border-t border-emerald-100/80 text-[10.5px]">
-              <div className="flex items-center gap-1.5 font-black text-emerald-800">
-                <ShieldCheck size={13} className="text-[#0B7A3B]" />
-                <span>{roleConfig.badge}</span>
-              </div>
-              <div className="flex items-center gap-1 bg-white px-2 py-0.5 rounded-full border border-emerald-200 shadow-2xs">
-                <span className="text-[9.5px] font-black text-[#0B7A3B]">এনক্রিপ্টেড সেশন</span>
-                <Lock size={10} className="text-[#0B7A3B]" />
-              </div>
-            </div>
-          </div>
-
-          {/* Master 2-Wing Switcher: Main Site Portal vs Adda Social Hub */}
-          <div className="grid grid-cols-2 gap-1.5 p-1 bg-emerald-50/80 rounded-2xl border border-emerald-200/60">
-            <button
-              type="button"
-              onClick={() => setActiveWing('main')}
-              className={`flex items-center justify-center gap-1.5 py-2 px-2 rounded-xl text-[11px] font-black transition-all cursor-pointer ${
-                activeWing === 'main'
-                  ? 'bg-[#0B7A3B] text-white shadow-sm shadow-[#0B7A3B]/30'
-                  : 'text-slate-600 hover:text-[#0B7A3B] hover:bg-white/80'
-              }`}
-            >
-              <Globe size={13} />
-              <span>🌐 মেইন সাইট</span>
-            </button>
-            <button
-              type="button"
-              onClick={() => setActiveWing('adda')}
-              className={`flex items-center justify-center gap-1.5 py-2 px-2 rounded-xl text-[11px] font-black transition-all cursor-pointer ${
-                activeWing === 'adda'
-                  ? 'bg-[#01412F] text-white shadow-sm shadow-[#01412F]/30'
-                  : 'text-slate-600 hover:text-[#01412F] hover:bg-white/80'
-              }`}
-            >
-              <MessageSquare size={13} />
-              <span>💬 আড্ডা সোশ্যাল</span>
-            </button>
-          </div>
-
-          {/* Menu Search Field & Quick Filter Chips (Requirement 5) */}
-          <div className="space-y-1.5 pt-0.5">
-            <div className="relative">
-              <Search size={14} className="absolute left-3 top-1/2 -translate-y-1/2 text-emerald-700/70" />
-              <input
-                type="text"
-                value={menuSearchQuery}
-                onChange={(e) => setMenuSearchQuery(e.target.value)}
-                placeholder="মেনু খুঁজুন... (রক্ত, রিপোর্ট, ব্যবসা, ইমেইল)"
-                className="w-full pl-8 pr-7 py-2 bg-white border border-emerald-200 rounded-xl text-xs font-bold text-slate-800 placeholder:text-slate-400 placeholder:font-medium focus:ring-2 focus:ring-[#0B7A3B]/25 focus:border-[#0B7A3B] focus:outline-none shadow-2xs transition-all"
-              />
-              {menuSearchQuery && (
-                <button
-                  type="button"
-                  onClick={() => setMenuSearchQuery('')}
-                  className="absolute right-2 top-1/2 -translate-y-1/2 p-0.5 text-slate-400 hover:text-slate-700 rounded-full hover:bg-slate-100 transition-colors cursor-pointer"
-                  title="অনুসন্ধান মুছুন"
-                >
-                  <X size={13} />
-                </button>
-              )}
-            </div>
-
-            {/* Quick Suggestion Chips */}
-            <div className="flex items-center gap-1 overflow-x-auto pb-0.5 custom-scrollbar">
-              <span className="text-[9.5px] font-bold text-slate-400 shrink-0 pl-0.5">ফিল্টার:</span>
-              {[
-                { label: '⚽ ফুটবল', query: 'ফুটবল' },
-                { label: '🩸 রক্ত', query: 'রক্ত' },
-                { label: '🛡️ রিপোর্ট', query: 'রিপোর্ট' },
-                { label: '🏪 ব্যবসা', query: 'ব্যবসা' },
-                { label: '📧 ইমেইল', query: 'ইমেইল' },
-                { label: '👥 ইউজার', query: 'ইউজার' },
-                { label: '⚙️ সেটিংস', query: 'সেটিংস' }
-              ].map((chip) => {
-                const isSelected = menuSearchQuery.trim() === chip.query;
-                return (
-                  <button
-                    key={chip.query}
-                    type="button"
-                    onClick={() => setMenuSearchQuery(isSelected ? '' : chip.query)}
-                    className={`px-2 py-0.5 rounded-lg text-[10px] font-extrabold whitespace-nowrap transition-all cursor-pointer ${
-                      isSelected
-                        ? 'bg-[#0B7A3B] text-white shadow-2xs'
-                        : 'bg-white hover:bg-emerald-50 text-slate-600 hover:text-[#0B7A3B] border border-emerald-200/60 shadow-2xs'
-                    }`}
-                  >
-                    {chip.label}
-                  </button>
-                );
-              })}
-            </div>
-
-            {/* Matched Count indicator when searching */}
-            {menuSearchQuery.trim() && (
-              <div className="flex items-center justify-between px-1 text-[10px] font-black text-emerald-800">
-                <span>অনুসন্ধান ফলাফল:</span>
-                <span className="bg-emerald-100 text-[#0B7A3B] px-2 py-0.5 rounded-full font-bold">
-                  {totalMatchedCount}টি মেনু পাওয়া গেছে
-                </span>
-              </div>
-            )}
-          </div>
         </div>
 
         {/* Dynamic Nav Menu */}
         <div className="flex-1 overflow-y-auto py-4 px-3 space-y-5 custom-scrollbar">
-          {/* Admin Quick Actions Widget (show unless searching for unrelated term) */}
-          {(!menuSearchQuery.trim() || 
-            menuSearchQuery.includes('ব্যবসা') || 
-            menuSearchQuery.includes('রিপোর্ট') || 
-            menuSearchQuery.includes('ইউজার') || 
-            menuSearchQuery.includes('কুইক') ||
-            menuSearchQuery.includes('action')) && (
-            <AdminQuickActionsSidebarWidget onItemClick={() => setSidebarOpen(false)} />
-          )}
-
-          {visibleSections.length === 0 ? (
-            <div className="py-8 px-4 text-center bg-white rounded-2xl border border-dashed border-emerald-200 space-y-3">
-              <div className="w-10 h-10 bg-emerald-50 text-emerald-700 rounded-full flex items-center justify-center mx-auto">
-                <Search size={20} />
-              </div>
-              <div className="space-y-1">
-                <p className="text-xs font-black text-slate-800">কোনো মেনু পাওয়া যায়নি</p>
-                <p className="text-[11px] font-medium text-slate-500">
-                  ‘{menuSearchQuery}’ দিয়ে কোনো অ্যাডমিন মেনু খুঁজে পাওয়া যায়নি।
-                </p>
-              </div>
-              <button
-                type="button"
-                onClick={() => setMenuSearchQuery('')}
-                className="px-3.5 py-2 bg-[#0B7A3B] text-white rounded-xl text-xs font-bold hover:bg-emerald-800 transition-colors shadow-2xs cursor-pointer active:scale-95"
-              >
-                সব মেনু দেখতে ফিল্টার রিসেট করুন
-              </button>
-            </div>
-          ) : (
-            visibleSections.map((section, sIdx) => (
+          {visibleSections.map((section, sIdx) => (
             <div key={sIdx} className="space-y-1">
               {/* Section Header */}
               <div className="flex items-center gap-2 px-3 mb-2">
@@ -1198,8 +959,7 @@ const AdminLayout: React.FC = () => {
                 );
               })}
             </div>
-          ))
-        )}
+          ))}
         </div>
 
         {/* Footer & User Overview */}
