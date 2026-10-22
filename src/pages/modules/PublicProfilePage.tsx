@@ -2360,59 +2360,7 @@ const PublicProfilePage: React.FC = () => {
                 </div>
               </div>
 
-              {/* 6. 🏢 ব্যবসা ও প্রতিষ্ঠান (Businesses) */}
-              <div className="bg-white rounded-2xl p-4 sm:p-5 border border-slate-200/80 shadow-xs">
-                <div className="flex items-center justify-between mb-3.5 border-b border-slate-100 pb-3">
-                  <div className="flex items-center gap-2">
-                    <div className="w-8 h-8 rounded-xl bg-teal-50 text-teal-600 flex items-center justify-center font-bold">
-                      <Building2 size={18} />
-                    </div>
-                    <div>
-                      <h3 className="text-slate-900 font-extrabold text-base leading-tight">আমার ব্যবসা ও প্রতিষ্ঠান</h3>
-                      <p className="text-[11px] text-slate-500 font-medium">নিবন্ধিত ব্যবসায়িক প্রতিষ্ঠানসমূহ</p>
-                    </div>
-                  </div>
-                  {isOwnProfile && (
-                    <button 
-                      type="button"
-                      onClick={() => navigate("/businesses")}
-                      className="px-3 py-1.5 bg-teal-50 hover:bg-teal-100 text-teal-700 rounded-xl text-xs font-bold transition flex items-center gap-1 cursor-pointer border-0"
-                    >
-                      <Plus size={13} />
-                      <span>ব্যবসা যোগ করুন</span>
-                    </button>
-                  )}
-                </div>
 
-                {userBusinesses.length > 0 ? (
-                  <div className="space-y-2.5">
-                    {userBusinesses.map((b) => (
-                      <div key={b.id} className="p-3 bg-slate-50 rounded-xl border border-slate-100 flex items-center justify-between gap-3">
-                        <div className="flex items-center gap-3 min-w-0">
-                          <div className="w-10 h-10 rounded-xl bg-teal-100 text-teal-800 font-black flex items-center justify-center shrink-0">
-                            🏢
-                          </div>
-                          <div className="min-w-0">
-                            <h4 className="text-sm font-extrabold text-slate-900 truncate">{b.title || b.name}</h4>
-                            <p className="text-[11px] text-slate-500 font-semibold">{b.category} • {b.address || "পুঠিয়া"}</p>
-                          </div>
-                        </div>
-                        <button
-                          type="button"
-                          onClick={() => navigate(`/businesses/${b.id}`)}
-                          className="px-2.5 py-1 bg-teal-600 text-white rounded-lg text-xs font-bold hover:bg-teal-700 shrink-0 border-0 cursor-pointer"
-                        >
-                          প্রোফাইল
-                        </button>
-                      </div>
-                    ))}
-                  </div>
-                ) : (
-                  <div className="text-center py-5 text-slate-400 text-xs font-semibold bg-slate-50 rounded-xl border border-dashed border-slate-200">
-                    <p>এখনো কোনো ব্যবসা তালিকাভুক্ত করা হয়নি</p>
-                  </div>
-                )}
-              </div>
 
               {/* 7. 🛠️ দক্ষতা ও সেবা (Skills & Services) */}
               <div className="bg-white rounded-2xl p-4 sm:p-5 border border-slate-200/80 shadow-xs">
@@ -2543,81 +2491,7 @@ const PublicProfilePage: React.FC = () => {
                 </div>
               </div>
 
-              {/* 9. 🏆 অর্জন ও সামাজিক সংগঠন (Achievements & Organizations) */}
-              <div className="bg-white rounded-2xl p-4 sm:p-5 border border-slate-200/80 shadow-xs">
-                <div className="flex items-center justify-between mb-3.5 border-b border-slate-100 pb-3">
-                  <div className="flex items-center gap-2">
-                    <div className="w-8 h-8 rounded-xl bg-amber-50 text-amber-600 flex items-center justify-center font-bold">
-                      <Award size={18} />
-                    </div>
-                    <div>
-                      <h3 className="text-slate-900 font-extrabold text-base leading-tight">অর্জন ও সামাজিক সংগঠন</h3>
-                      <p className="text-[11px] text-slate-500 font-medium">পুরস্কার, পদক ও সামাজিক কাজের স্বীকৃতি</p>
-                    </div>
-                  </div>
-                  {isOwnProfile && (
-                    <button 
-                      type="button"
-                      onClick={handleEditDetailsClick}
-                      className="px-3 py-1.5 bg-amber-50 hover:bg-amber-100 text-amber-700 rounded-xl text-xs font-bold transition flex items-center gap-1 cursor-pointer border-0"
-                    >
-                      <Edit2 size={13} />
-                      <span>এডিট করুন</span>
-                    </button>
-                  )}
-                </div>
 
-                <div className="space-y-2 text-xs sm:text-sm font-semibold text-slate-800">
-                  <div className="flex items-center gap-2.5 p-3 bg-slate-50 rounded-xl border border-slate-100">
-                    <Award size={18} className="text-amber-500 shrink-0" />
-                    <div>
-                      <p className="font-extrabold text-slate-900">স্মার্ট পুঠিয়া নাগরিক অ্যাওয়ার্ড</p>
-                      <p className="text-[11px] text-slate-500">পোর্টাল সক্রিয় অংশগ্রহণের বিশেষ স্বীকৃতি</p>
-                    </div>
-                  </div>
-                </div>
-              </div>
-
-              {/* 10. 📅 পোর্টাল সদস্যতা ও এক্টিভিটি তথ্য (Profile Meta & Activity) */}
-              <div className="bg-gradient-to-r from-slate-900 via-slate-800 to-slate-900 rounded-2xl p-4.5 text-white shadow-md">
-                <div className="flex items-center justify-between mb-3 border-b border-white/10 pb-2.5">
-                  <div className="flex items-center gap-2">
-                    <ShieldCheck size={18} className="text-emerald-400" />
-                    <h3 className="font-extrabold text-sm sm:text-base text-white">পোর্টাল সদস্যতা স্ট্যাটাস</h3>
-                  </div>
-                  {targetUserProfile.isVerified && (
-                    <span className="px-2.5 py-0.5 rounded-full bg-emerald-500/20 text-emerald-300 border border-emerald-500/40 text-[11px] font-bold">
-                      Verified ✓
-                    </span>
-                  )}
-                </div>
-
-                <div className="grid grid-cols-2 sm:grid-cols-4 gap-2 text-center text-xs font-bold">
-                  <div className="p-2 bg-white/10 rounded-xl border border-white/10">
-                    <p className="text-[10px] text-slate-300 font-medium">যোগদানের সময়</p>
-                    <p className="text-emerald-300 font-extrabold mt-0.5">
-                      {targetUserProfile.createdAt
-                        ? (typeof targetUserProfile.createdAt === 'string' ? targetUserProfile.createdAt : 'জানুয়ারি ২০২৬')
-                        : 'জানুয়ারি ২০২৬'}
-                    </p>
-                  </div>
-
-                  <div className="p-2 bg-white/10 rounded-xl border border-white/10">
-                    <p className="text-[10px] text-slate-300 font-medium">মোট পোস্ট</p>
-                    <p className="text-white font-extrabold mt-0.5">{toBengali(userPostsCount)}টি</p>
-                  </div>
-
-                  <div className="p-2 bg-white/10 rounded-xl border border-white/10">
-                    <p className="text-[10px] text-slate-300 font-medium">মোট বন্ধু</p>
-                    <p className="text-white font-extrabold mt-0.5">{toBengali(friendsCount)} জন</p>
-                  </div>
-
-                  <div className="p-2 bg-white/10 rounded-xl border border-white/10">
-                    <p className="text-[10px] text-slate-300 font-medium">Followers</p>
-                    <p className="text-white font-extrabold mt-0.5">{toBengali(followersCount)} জন</p>
-                  </div>
-                </div>
-              </div>
 
             </div>
           )}
