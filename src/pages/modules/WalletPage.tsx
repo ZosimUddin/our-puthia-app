@@ -287,7 +287,7 @@ export const WalletPage: React.FC = () => {
           </button>
 
           <h1 className="text-xl font-black text-slate-950 tracking-tight">
-            Wallet
+            ওয়ালেট
           </h1>
 
           <button
@@ -315,7 +315,7 @@ export const WalletPage: React.FC = () => {
           {/* Top Row: Available Balance + BDT Badge */}
           <div className="flex items-center justify-between">
             <span className="text-sm font-semibold text-white/90">
-              Available Balance
+              বর্তমান ব্যালেন্স
             </span>
             <span className="px-3 py-1 rounded-full bg-white/20 backdrop-blur-xs text-white text-xs font-black shadow-2xs">
               ৳ BDT
@@ -333,7 +333,7 @@ export const WalletPage: React.FC = () => {
           <div className="border-t border-white/20 pt-3.5 flex items-center justify-between">
             {/* Total In */}
             <div>
-              <p className="text-xs text-white/80 font-medium">Total In</p>
+              <p className="text-xs text-white/80 font-medium">মোট জমা (In)</p>
               <p className="text-sm sm:text-base font-black text-white mt-0.5">
                 ৳ {totalIn.toFixed(2)}
               </p>
@@ -341,7 +341,7 @@ export const WalletPage: React.FC = () => {
 
             {/* Total Out */}
             <div className="text-right">
-              <p className="text-xs text-white/80 font-medium">Total Out</p>
+              <p className="text-xs text-white/80 font-medium">মোট খরচ (Out)</p>
               <p className="text-sm sm:text-base font-black text-white mt-0.5">
                 ৳ {totalOut.toFixed(2)}
               </p>
@@ -363,7 +363,7 @@ export const WalletPage: React.FC = () => {
               <Plus size={24} className="stroke-[2.5]" />
             </div>
             <span className="text-[13px] font-black text-slate-900 leading-tight">
-              Recharge
+              রিচার্জ
             </span>
           </button>
 
@@ -377,7 +377,7 @@ export const WalletPage: React.FC = () => {
               <CreditCard size={22} className="stroke-[2.3]" />
             </div>
             <span className="text-[13px] font-black text-slate-900 leading-tight">
-              Withdraw
+              উইথড্র
             </span>
           </button>
 
@@ -391,26 +391,26 @@ export const WalletPage: React.FC = () => {
               <History size={22} className="stroke-[2.3]" />
             </div>
             <span className="text-[12.5px] font-black text-slate-900 leading-tight">
-              Transaction History
+              লেনদেন ইতিহাস
             </span>
           </button>
         </div>
 
         {/* ========================================================================= */}
-        {/* 4. TRANSACTIONS LIST SECTION (Matching Screenshot 2)                      */}
+        {/* 4. TRANSACTIONS LIST SECTION                                              */}
         {/* ========================================================================= */}
         <div className="pt-2 space-y-3">
           {/* Header Row */}
           <div className="flex items-center justify-between px-1">
             <h3 className="text-[15px] font-black text-slate-950">
-              Transactions
+              সর্বশেষ লেনদেন
             </h3>
             <button
               type="button"
               onClick={() => setShowHistoryModal(true)}
               className="text-emerald-700 hover:text-emerald-800 text-xs font-black cursor-pointer border-none bg-transparent"
             >
-              See All
+              সবগুলো দেখুন
             </button>
           </div>
 
@@ -425,7 +425,7 @@ export const WalletPage: React.FC = () => {
               <div className="py-10 flex flex-col items-center justify-center text-center">
                 <ReceiptText size={48} className="text-slate-300 stroke-[1.4] mb-3" />
                 <p className="text-slate-400 font-medium text-[13px]">
-                  No transactions yet
+                  এখনো কোনো লেনদেন হয়নি
                 </p>
               </div>
             ) : (
