@@ -41,9 +41,8 @@ const TABS = [
   { id: "education", label: "৪. শিক্ষা জীবন", icon: GraduationCap },
   { id: "skills", label: "৫. দক্ষতা ও সেবা", icon: Wrench },
   { id: "contact", label: "৬. যোগাযোগ ও সোশ্যাল", icon: Phone },
-  { id: "business", label: "৭. আমার ব্যবসা", icon: Store },
-  { id: "privacy", label: "৮. তথ্য গোপনীয়তা", icon: Lock },
-  { id: "status", label: "৯. প্রোফাইল স্ট্যাটাস", icon: Shield },
+  { id: "privacy", label: "৭. তথ্য গোপনীয়তা", icon: Lock },
+  { id: "status", label: "৮. প্রোফাইল স্ট্যাটাস", icon: Shield },
 ] as const;
 
 export const EditProfileModal: React.FC<EditProfileModalProps> = ({
@@ -59,8 +58,9 @@ export const EditProfileModal: React.FC<EditProfileModalProps> = ({
   isOpen,
   isJustRegistered = false,
 }) => {
+  const { user, userProfile } = useAuth();
   const [activeTab, setActiveTab] = useState<
-    "basic" | "details" | "work" | "education" | "skills" | "contact" | "business" | "privacy" | "status"
+    "basic" | "details" | "work" | "education" | "skills" | "contact" | "privacy" | "status"
   >("basic");
 
   const currentTabIndex = TABS.findIndex((t) => t.id === activeTab);
@@ -106,106 +106,6 @@ export const EditProfileModal: React.FC<EditProfileModalProps> = ({
   // Skill Tag Input state
   const [skillInput, setSkillInput] = useState("");
   const [serviceInput, setServiceInput] = useState("");
-
-  // Business State inside Tab 7
-  const { user, userProfile } = useAuth();
-  const [showAddBizForm, setShowAddBizForm] = useState(false);
-  const [bizLoading, setBizLoading] = useState(false);
-  const [bizSuccess, setBizSuccess] = useState("");
-  const [bizError, setBizError] = useState("");
-  const [userBizList, setUserBizList] = useState<any[]>([]);
-  const [fetchingBiz, setFetchingBiz] = useState(false);
-  const [newBiz, setNewBiz] = useState({
-    title: "",
-    category: "দোকান / শপ",
-    phone: "",
-    address: "",
-    description: ""
-  });
-
-  // Fetch user businesses when modal opens or tab 7 is active
-  useEffect(() => {
-    if (isOpen && activeTab === "business" && user?.uid) {
-      setFetchingBiz(true);
-      const fetchUserBiz = async () => {
-        try {
-          const q1 = query(collection(db, "businesses"), where("ownerId", "==", user.uid));
-          const snap1 = await getDocs(q1);
-          const list: any[] = [];
-          snap1.forEach(d => list.push({ id: d.id, ...d.data() }));
-          setUserBizList(list);
-        } catch (e) {
-          console.warn("Fetch biz error:", e);
-        } finally {
-          setFetchingBiz(false);
-        }
-      };
-      fetchUserBiz();
-    }
-  }, [isOpen, activeTab, user?.uid]);
-
-  const handleSaveBusiness = async (e: React.FormEvent) => {
-    if (e) e.preventDefault();
-    if (!newBiz.title.trim() || !user) {
-      setBizError("দয়া করে ব্যবসার নাম লিখুন");
-      return;
-    }
-    setBizLoading(true);
-    setBizError("");
-    setBizSuccess("");
-    try {
-      const bizTitle = newBiz.title.trim();
-      const bizPhone = newBiz.phone.trim() || formData.phone || "";
-      const bizAddr = newBiz.address.trim() || formData.location || "পুঠিয়া, রাজশাহী";
-
-      const docRef = await addDoc(collection(db, "businesses"), {
-        name: bizTitle,
-        title: bizTitle,
-        category: newBiz.category || "দোকান / শপ",
-        phone: bizPhone,
-        address: bizAddr,
-        location: bizAddr,
-        description: newBiz.description.trim() || "",
-        ownerId: user.uid,
-        userId: user.uid,
-        ownerName: formData.name || user.displayName || "সম্মানিত নাগরিক",
-        ownerPhone: bizPhone,
-        status: "approved",
-        createdAt: serverTimestamp(),
-        updatedAt: Date.now()
-      });
-
-      const newBizObj = {
-        id: docRef.id,
-        name: bizTitle,
-        title: bizTitle,
-        category: newBiz.category || "দোকান / শপ",
-        phone: bizPhone,
-        address: bizAddr,
-        description: newBiz.description.trim()
-      };
-
-      setUserBizList(prev => [...prev, newBizObj]);
-      setBizSuccess("ব্যবসা সফলভাবে পুঠিয়া ডিরেক্টরিতে যোগ হয়েছে!");
-      setNewBiz({ title: "", category: "দোকান / শপ", phone: "", address: "", description: "" });
-      setShowAddBizForm(false);
-    } catch (e: any) {
-      console.error("Save biz error:", e);
-      setBizError("ব্যবসা যোগ করতে সমস্যা হয়েছে। আবার চেষ্টা করুন।");
-    } finally {
-      setBizLoading(false);
-    }
-  };
-
-  const handleDeleteBusiness = async (bizId: string) => {
-    
-    try {
-      await deleteDoc(doc(db, "businesses", bizId));
-      setUserBizList(prev => prev.filter(b => b.id !== bizId));
-    } catch (e) {
-      console.error("Delete biz error:", e);
-    }
-  };
 
   // Ensure username is never blank if name exists
   React.useEffect(() => {
@@ -1124,195 +1024,7 @@ export const EditProfileModal: React.FC<EditProfileModalProps> = ({
               </div>
             )}
 
-            {/* TAB 7: MY BUSINESS */}
-            {activeTab === "business" && (
-              <div className="space-y-4 animate-in fade-in duration-150">
-                <div className="bg-white rounded-2xl border border-slate-200/90 p-4 sm:p-5 space-y-4 shadow-xs">
-                  <div className="flex items-center justify-between border-b border-slate-100 pb-3">
-                    <div className="flex items-center gap-2.5">
-                      <div className="w-10 h-10 bg-teal-100 text-teal-700 rounded-xl flex items-center justify-center font-black text-lg shrink-0">
-                        🏢
-                      </div>
-                      <div>
-                        <h4 className="text-sm font-extrabold text-slate-900">ব্যবসা প্রোফাইল ও ডিরেক্টরি</h4>
-                        <p className="text-[11px] text-slate-500 font-medium">আপনার দোকান বা প্রতিষ্ঠান তালিকাভুক্ত করুন</p>
-                      </div>
-                    </div>
-
-                    {!showAddBizForm && (
-                      <button
-                        type="button"
-                        onClick={() => {
-                          setShowAddBizForm(true);
-                          setBizSuccess("");
-                          setBizError("");
-                        }}
-                        className="px-3 py-2 bg-teal-600 hover:bg-teal-700 text-white font-bold text-xs rounded-xl transition flex items-center gap-1.5 border-0 cursor-pointer shadow-xs active:scale-95"
-                      >
-                        <Plus size={14} />
-                        <span>নতুন ব্যবসা যোগ</span>
-                      </button>
-                    )}
-                  </div>
-
-                  {/* Feedback Banners */}
-                  {bizSuccess && (
-                    <div className="p-3 bg-emerald-50 border border-emerald-200 text-emerald-800 text-xs font-bold rounded-xl flex items-center gap-2">
-                      <CheckCircle2 size={16} className="text-emerald-600 shrink-0" />
-                      <span>{bizSuccess}</span>
-                    </div>
-                  )}
-
-                  {bizError && (
-                    <div className="p-3 bg-rose-50 border border-rose-200 text-rose-800 text-xs font-bold rounded-xl flex items-center gap-2">
-                      <AlertCircle size={16} className="text-rose-600 shrink-0" />
-                      <span>{bizError}</span>
-                    </div>
-                  )}
-
-                  {/* Existing Businesses List */}
-                  {userBizList.length > 0 && !showAddBizForm && (
-                    <div className="space-y-2">
-                      <p className="text-xs font-bold text-slate-700 mb-1">আপনার তালিকাভুক্ত ব্যবসাসমূহ ({userBizList.length}):</p>
-                      {userBizList.map((biz) => (
-                        <div key={biz.id} className="p-3 bg-slate-50 border border-slate-200/80 rounded-xl flex items-center justify-between gap-2">
-                          <div className="min-w-0">
-                            <h5 className="text-xs font-extrabold text-slate-900 truncate">{biz.title || biz.name}</h5>
-                            <p className="text-[11px] text-slate-500 font-semibold">{biz.category} • {biz.address || biz.location || "পুঠিয়া"}</p>
-                          </div>
-                          <button
-                            type="button"
-                            onClick={() => handleDeleteBusiness(biz.id)}
-                            className="p-1.5 text-slate-400 hover:text-rose-600 hover:bg-rose-50 rounded-lg transition border-0 cursor-pointer"
-                            title="মুছে ফেলুন"
-                          >
-                            <Trash2 size={15} />
-                          </button>
-                        </div>
-                      ))}
-                    </div>
-                  )}
-
-                  {/* Inline Add Business Form */}
-                  {showAddBizForm ? (
-                    <form onSubmit={handleSaveBusiness} className="space-y-3 bg-slate-50/90 p-4 rounded-xl border border-slate-200 animate-in fade-in duration-150">
-                      <div className="flex items-center justify-between border-b border-slate-200 pb-2">
-                        <h5 className="text-xs font-extrabold text-slate-900 flex items-center gap-1.5">
-                          <Store size={15} className="text-teal-600" />
-                          <span>নতুন ব্যবসা / দোকানের বিবরণ দিন</span>
-                        </h5>
-                        <button
-                          type="button"
-                          onClick={() => setShowAddBizForm(false)}
-                          className="text-xs font-bold text-slate-400 hover:text-slate-600 border-0 bg-transparent cursor-pointer"
-                        >
-                          ✕ বন্ধ
-                        </button>
-                      </div>
-
-                      <div>
-                        <label className="text-xs font-bold text-slate-700 block mb-1">ব্যবসা বা দোকানের নাম *</label>
-                        <input
-                          type="text"
-                          required
-                          value={newBiz.title}
-                          onChange={(e) => setNewBiz(prev => ({ ...prev, title: e.target.value }))}
-                          placeholder="যেমন: মেসার্স রনি ট্রেডার্স"
-                          className="w-full px-3 py-2 bg-white border border-slate-200 rounded-xl text-xs font-bold text-slate-900 focus:outline-none focus:border-teal-600"
-                        />
-                      </div>
-
-                      <div className="grid grid-cols-1 sm:grid-cols-2 gap-2.5">
-                        <div>
-                          <label className="text-xs font-bold text-slate-700 block mb-1">ক্যাটাগরি</label>
-                          <select
-                            value={newBiz.category}
-                            onChange={(e) => setNewBiz(prev => ({ ...prev, category: e.target.value }))}
-                            className="w-full px-3 py-2 bg-white border border-slate-200 rounded-xl text-xs font-bold text-slate-900 focus:outline-none focus:border-teal-600"
-                          >
-                            <option value="দোকান / শপ">দোকান / শপ</option>
-                            <option value="কম্পিউটার ও আইটি">কম্পিউটার ও আইটি</option>
-                            <option value="রেস্তোরাঁ ও হোটেল">রেস্তোরাঁ ও হোটেল</option>
-                            <option value="ফার্মেসি ও ক্লিনিক">ফার্মেসি ও ক্লিনিক</option>
-                            <option value="অটো সার্ভিস ও গ্যারেজ">অটো সার্ভিস ও গ্যারেজ</option>
-                            <option value="নির্মাণ ও ইলেকট্রিশিয়ান">নির্মাণ ও ইলেকট্রিশিয়ান</option>
-                            <option value="বিউটি ও ফ্যাশন">বিউটি ও ফ্যাশন</option>
-                            <option value="অন্যান্য সেবা">অন্যান্য সেবা</option>
-                          </select>
-                        </div>
-
-                        <div>
-                          <label className="text-xs font-bold text-slate-700 block mb-1">যোগাযোগের ফোন নম্বর</label>
-                          <input
-                            type="tel"
-                            value={newBiz.phone}
-                            onChange={(e) => setNewBiz(prev => ({ ...prev, phone: e.target.value }))}
-                            placeholder={formData.phone || "017XXXXXXXX"}
-                            className="w-full px-3 py-2 bg-white border border-slate-200 rounded-xl text-xs font-bold text-slate-900 focus:outline-none focus:border-teal-600"
-                          />
-                        </div>
-                      </div>
-
-                      <div>
-                        <label className="text-xs font-bold text-slate-700 block mb-1">ঠিকানা / অবস্থান</label>
-                        <input
-                          type="text"
-                          value={newBiz.address}
-                          onChange={(e) => setNewBiz(prev => ({ ...prev, address: e.target.value }))}
-                          placeholder={formData.location || "যেমন: বানেশ্বর বাজার, পুঠিয়া"}
-                          className="w-full px-3 py-2 bg-white border border-slate-200 rounded-xl text-xs font-bold text-slate-900 focus:outline-none focus:border-teal-600"
-                        />
-                      </div>
-
-                      <div>
-                        <label className="text-xs font-bold text-slate-700 block mb-1">সংক্ষিপ্ত বিবরণ (ঐচ্ছিক)</label>
-                        <textarea
-                          rows={2}
-                          value={newBiz.description}
-                          onChange={(e) => setNewBiz(prev => ({ ...prev, description: e.target.value }))}
-                          placeholder="আপনার ব্যবসার সেবা সম্পর্কে বিস্তারিত তথ্য..."
-                          className="w-full p-2.5 bg-white border border-slate-200 rounded-xl text-xs font-medium text-slate-900 focus:outline-none focus:border-teal-600 resize-none"
-                        />
-                      </div>
-
-                      <div className="flex items-center gap-2 pt-1">
-                        <button
-                          type="submit"
-                          disabled={bizLoading}
-                          className="flex-1 py-2 bg-teal-600 hover:bg-teal-700 text-white font-bold text-xs rounded-xl transition flex items-center justify-center gap-1.5 border-0 cursor-pointer disabled:opacity-50"
-                        >
-                          {bizLoading ? <Loader2 size={14} className="animate-spin" /> : <Plus size={14} />}
-                          <span>{bizLoading ? "সংরক্ষণ হচ্ছে..." : "ব্যবসা সংরক্ষণ করুন"}</span>
-                        </button>
-                        <button
-                          type="button"
-                          onClick={() => setShowAddBizForm(false)}
-                          className="px-4 py-2 bg-slate-200 hover:bg-slate-300 text-slate-700 font-bold text-xs rounded-xl border-0 cursor-pointer"
-                        >
-                          বাতিল
-                        </button>
-                      </div>
-                    </form>
-                  ) : userBizList.length === 0 && (
-                    <div className="text-center py-4 space-y-2">
-                      <p className="text-xs text-slate-500">
-                        আমাদের পুঠিয়া ডিরেক্টরিতে আপনার দোকান বা ব্যবসা ফ্রিতে তালিকাভুক্ত করুন।
-                      </p>
-                      <button
-                        type="button"
-                        onClick={() => setShowAddBizForm(true)}
-                        className="inline-flex items-center gap-1.5 px-4 py-2 bg-teal-600 hover:bg-teal-700 text-white font-bold text-xs rounded-xl transition border-0 cursor-pointer shadow-xs active:scale-95"
-                      >
-                        <Plus size={14} />
-                        <span>+ নতুন ব্যবসা তালিকাভুক্ত করুন</span>
-                      </button>
-                    </div>
-                  )}
-                </div>
-              </div>
-            )}
-
-            {/* TAB 8: PRIVACY */}
+            {/* TAB 7: PRIVACY */}
             {activeTab === "privacy" && (
               <div className="space-y-4 animate-in fade-in duration-150">
                 <div className="bg-white rounded-2xl border border-slate-200/90 p-4 space-y-3 shadow-xs">
