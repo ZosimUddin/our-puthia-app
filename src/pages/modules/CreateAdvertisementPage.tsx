@@ -299,7 +299,7 @@ export const CreateAdvertisementPage: React.FC = () => {
             <ArrowLeft size={22} className="stroke-[2.5]" />
           </button>
           <h1 className="text-xl font-black text-slate-950 tracking-tight">
-            Create Advertisement
+            বিজ্ঞাপন তৈরি করুন
           </h1>
         </div>
       </header>
@@ -317,7 +317,7 @@ export const CreateAdvertisementPage: React.FC = () => {
                 <Wallet size={20} className="stroke-[2.2]" />
               </div>
               <div>
-                <p className="text-[12px] font-bold text-[#8A5002]">Wallet Balance</p>
+                <p className="text-[12px] font-bold text-[#8A5002]">ওয়ালেট ব্যালেন্স</p>
                 <p className="text-[17px] font-black text-[#5C3200] mt-0.5">
                   ৳ {walletBalance.toFixed(2)}
                 </p>
@@ -339,7 +339,7 @@ export const CreateAdvertisementPage: React.FC = () => {
           {/* ========================================================================= */}
           <div className="space-y-2.5">
             <h2 className="text-[13px] font-bold text-slate-500 uppercase tracking-wide px-1">
-              Ad Content
+              বিজ্ঞাপনের বিষয়বস্তু
             </h2>
 
             {/* 3.1 Ad Title */}
@@ -352,7 +352,7 @@ export const CreateAdvertisementPage: React.FC = () => {
                 required
                 value={adTitle}
                 onChange={(e) => setAdTitle(e.target.value)}
-                placeholder="Ad Title *"
+                placeholder="বিজ্ঞাপনের শিরোনাম *"
                 className="w-full pl-11 pr-4 py-3.5 bg-white border border-slate-100 rounded-3xl text-xs sm:text-sm font-bold text-slate-900 placeholder:text-slate-400 outline-none focus:border-emerald-600 focus:ring-1 focus:ring-emerald-500 shadow-2xs"
               />
             </div>
@@ -366,7 +366,7 @@ export const CreateAdvertisementPage: React.FC = () => {
                 rows={3}
                 value={description}
                 onChange={(e) => setDescription(e.target.value)}
-                placeholder="Description"
+                placeholder="বিস্তারিত বিবরণ"
                 className="w-full pl-11 pr-4 py-3 bg-white border border-slate-100 rounded-3xl text-xs sm:text-sm font-medium text-slate-900 placeholder:text-slate-400 outline-none focus:border-emerald-600 focus:ring-1 focus:ring-emerald-500 shadow-2xs"
               />
             </div>
@@ -381,7 +381,7 @@ export const CreateAdvertisementPage: React.FC = () => {
                 required
                 value={clickUrl}
                 onChange={(e) => setClickUrl(e.target.value)}
-                placeholder="Click URL *"
+                placeholder="ক্লিক ইউআরএল *"
                 className="w-full pl-11 pr-4 py-3.5 bg-white border border-slate-100 rounded-3xl text-xs sm:text-sm font-medium text-slate-900 placeholder:text-slate-400 outline-none focus:border-emerald-600 focus:ring-1 focus:ring-emerald-500 shadow-2xs"
               />
             </div>
@@ -392,7 +392,7 @@ export const CreateAdvertisementPage: React.FC = () => {
           {/* ========================================================================= */}
           <div className="bg-white rounded-3xl p-5 shadow-2xs border border-slate-100 space-y-3.5">
             <h3 className="text-sm font-black text-slate-950">
-              Action Button Type
+              অ্যাকশন বাটন টাইপ
             </h3>
 
             <div className="space-y-2.5">
@@ -407,7 +407,7 @@ export const CreateAdvertisementPage: React.FC = () => {
                 />
                 <div className="flex items-center gap-2 text-slate-800 text-xs sm:text-sm font-bold">
                   <LinkIcon size={16} className="text-emerald-700" />
-                  <span>Website Link</span>
+                  <span>ওয়েবসাইট লিঙ্ক</span>
                 </div>
               </label>
 
@@ -422,7 +422,7 @@ export const CreateAdvertisementPage: React.FC = () => {
                 />
                 <div className="flex items-center gap-2 text-slate-800 text-xs sm:text-sm font-bold">
                   <MessageCircle size={16} className="text-[#25D366]" />
-                  <span>WhatsApp</span>
+                  <span>হোয়াটসঅ্যাপ</span>
                 </div>
               </label>
 
@@ -437,7 +437,7 @@ export const CreateAdvertisementPage: React.FC = () => {
                 />
                 <div className="flex items-center gap-2 text-slate-800 text-xs sm:text-sm font-bold">
                   <Phone size={16} className="text-[#00C853]" />
-                  <span>Phone Call</span>
+                  <span>ফোন কল</span>
                 </div>
               </label>
 
@@ -452,7 +452,7 @@ export const CreateAdvertisementPage: React.FC = () => {
                 />
                 <div className="flex items-center gap-2 text-slate-800 text-xs sm:text-sm font-bold">
                   <MessageSquare size={16} className="text-[#FF9800]" />
-                  <span>In-App Chat</span>
+                  <span>ইন-অ্যাপ চ্যাট</span>
                 </div>
               </label>
             </div>
@@ -467,7 +467,7 @@ export const CreateAdvertisementPage: React.FC = () => {
                   type="text"
                   value={buttonText}
                   onChange={(e) => setButtonText(e.target.value)}
-                  placeholder="Button Text (optional)"
+                  placeholder="বাটন টেক্সট (ঐচ্ছিক)"
                   className="w-full pl-10 pr-3.5 py-2.5 bg-slate-50 border border-slate-200 rounded-2xl text-xs sm:text-sm font-medium outline-none focus:border-emerald-600 focus:ring-1 focus:ring-emerald-500"
                 />
               </div>
@@ -498,7 +498,7 @@ export const CreateAdvertisementPage: React.FC = () => {
                   <ImageIcon size={24} />
                 </div>
                 <p className="text-[12px] font-bold text-slate-500">
-                  Tap to add image or video *
+                  ছবি বা ভিডিও যোগ করতে ট্যাপ করুন *
                 </p>
               </>
             )}
@@ -509,7 +509,7 @@ export const CreateAdvertisementPage: React.FC = () => {
           {/* ========================================================================= */}
           <div className="space-y-1.5">
             <h2 className="text-[13px] font-bold text-slate-500 uppercase tracking-wide px-1">
-              Placement
+              বিজ্ঞাপনের অবস্থান
             </h2>
 
             <div className="bg-white rounded-3xl p-4 shadow-2xs border border-slate-100 flex items-center justify-between">
@@ -518,16 +518,16 @@ export const CreateAdvertisementPage: React.FC = () => {
                   <MapPin size={16} />
                 </div>
                 <div>
-                  <p className="text-[10px] text-slate-400 font-bold uppercase">Ad Placement</p>
+                  <p className="text-[10px] text-slate-400 font-bold uppercase">বিজ্ঞাপনের স্থান</p>
                   <select
                     value={placement}
                     onChange={(e) => setPlacement(e.target.value)}
                     className="text-[14px] font-black text-slate-950 bg-transparent outline-none cursor-pointer mt-0.5 border-none"
                   >
-                    <option value="Home Feed">Home Feed</option>
-                    <option value="Reels Feed">Reels Feed</option>
-                    <option value="Search & Categories">Search & Categories</option>
-                    <option value="Story Banner">Story Banner</option>
+                    <option value="Home Feed">হোম ফিড</option>
+                    <option value="Reels Feed">রিলস ফিড</option>
+                    <option value="Search & Categories">সার্চ ও ক্যাটাগরি</option>
+                    <option value="Story Banner">স্টোরি ব্যানার</option>
                   </select>
                 </div>
               </div>
@@ -539,7 +539,7 @@ export const CreateAdvertisementPage: React.FC = () => {
           {/* ========================================================================= */}
           <div className="space-y-2">
             <h2 className="text-[13px] font-bold text-slate-500 uppercase tracking-wide px-1">
-              Budget & Billing
+              বাজেট ও বিলিং
             </h2>
 
             <div className="space-y-2">
@@ -550,14 +550,14 @@ export const CreateAdvertisementPage: React.FC = () => {
                     <Landmark size={16} />
                   </div>
                   <div>
-                    <p className="text-[10px] text-slate-400 font-bold uppercase">Budget Type</p>
+                    <p className="text-[10px] text-slate-400 font-bold uppercase">বাজেটের ধরন</p>
                     <select
                       value={budgetType}
                       onChange={(e) => setBudgetType(e.target.value)}
                       className="text-[14px] font-black text-slate-950 bg-transparent outline-none cursor-pointer mt-0.5 border-none"
                     >
-                      <option value="Total Budget">Total Budget</option>
-                      <option value="Daily Budget">Daily Budget</option>
+                      <option value="Total Budget">মোট বাজেট</option>
+                      <option value="Daily Budget">দৈনিক বাজেট</option>
                     </select>
                   </div>
                 </div>
@@ -570,7 +570,7 @@ export const CreateAdvertisementPage: React.FC = () => {
                     <Banknote size={16} />
                   </div>
                   <div className="flex-1">
-                    <p className="text-[10px] text-slate-400 font-bold uppercase">Total Budget (৳) *</p>
+                    <p className="text-[10px] text-slate-400 font-bold uppercase">মোট বাজেট (৳) *</p>
                     <input
                       type="number"
                       required
@@ -590,14 +590,14 @@ export const CreateAdvertisementPage: React.FC = () => {
                     <Receipt size={16} />
                   </div>
                   <div>
-                    <p className="text-[10px] text-slate-400 font-bold uppercase">Billing Type</p>
+                    <p className="text-[10px] text-slate-400 font-bold uppercase">বিলিং টাইপ</p>
                     <select
                       value={billingType}
                       onChange={(e) => setBillingType(e.target.value)}
                       className="text-[14px] font-black text-slate-950 bg-transparent outline-none cursor-pointer mt-0.5 border-none"
                     >
-                      <option value="CPM (Per 1000 Impressions)">CPM (Per 1000 Impressions)</option>
-                      <option value="CPC (Per Click)">CPC (Per Click)</option>
+                      <option value="CPM (Per 1000 Impressions)">সিপিএম (প্রতি ১০০০ ভিউ)</option>
+                      <option value="CPC (Per Click)">সিপিসি (প্রতি ক্লিক)</option>
                     </select>
                   </div>
                 </div>
@@ -610,14 +610,14 @@ export const CreateAdvertisementPage: React.FC = () => {
           {/* ========================================================================= */}
           <div className="space-y-1.5">
             <h2 className="text-[13px] font-bold text-slate-500 uppercase tracking-wide px-1">
-              Duration (Optional)
+              সময়সীমা (ঐচ্ছিক)
             </h2>
 
             <div className="grid grid-cols-2 gap-2">
               <div className="bg-white rounded-3xl p-3 shadow-2xs border border-slate-100 flex items-center gap-2.5">
                 <Calendar size={18} className="text-slate-400 shrink-0" />
                 <div className="min-w-0 flex-1">
-                  <p className="text-[9px] text-slate-400 font-bold uppercase">Start Date</p>
+                  <p className="text-[9px] text-slate-400 font-bold uppercase">শুরুর তারিখ</p>
                   <input
                     type="date"
                     value={startDate}
@@ -630,7 +630,7 @@ export const CreateAdvertisementPage: React.FC = () => {
               <div className="bg-white rounded-3xl p-3 shadow-2xs border border-slate-100 flex items-center gap-2.5">
                 <Calendar size={18} className="text-slate-400 shrink-0" />
                 <div className="min-w-0 flex-1">
-                  <p className="text-[9px] text-slate-400 font-bold uppercase">End Date</p>
+                  <p className="text-[9px] text-slate-400 font-bold uppercase">শেষের তারিখ</p>
                   <input
                     type="date"
                     value={endDate}
@@ -647,7 +647,7 @@ export const CreateAdvertisementPage: React.FC = () => {
           {/* ========================================================================= */}
           <div className="space-y-2">
             <h2 className="text-[13px] font-bold text-slate-500 uppercase tracking-wide px-1">
-              Audience Targeting
+              টার্গেট অডিয়েন্স
             </h2>
 
             {/* Target Gender */}
@@ -657,15 +657,15 @@ export const CreateAdvertisementPage: React.FC = () => {
                   <Users size={16} />
                 </div>
                 <div>
-                  <p className="text-[10px] text-slate-400 font-bold uppercase">Target Gender</p>
+                  <p className="text-[10px] text-slate-400 font-bold uppercase">টার্গেট লিঙ্গ</p>
                   <select
                     value={targetGender}
                     onChange={(e) => setTargetGender(e.target.value)}
                     className="text-[14px] font-black text-slate-950 bg-transparent outline-none cursor-pointer mt-0.5 border-none"
                   >
-                    <option value="All">All</option>
-                    <option value="Male">Male</option>
-                    <option value="Female">Female</option>
+                    <option value="All">সবাই (All)</option>
+                    <option value="Male">পুরুষ (Male)</option>
+                    <option value="Female">নারী (Female)</option>
                   </select>
                 </div>
               </div>
@@ -674,7 +674,7 @@ export const CreateAdvertisementPage: React.FC = () => {
             {/* Min Age / Max Age */}
             <div className="grid grid-cols-2 gap-2">
               <div className="bg-white rounded-3xl p-3.5 shadow-2xs border border-slate-100">
-                <p className="text-[10px] text-slate-400 font-bold uppercase">Min Age</p>
+                <p className="text-[10px] text-slate-400 font-bold uppercase">সর্বনিম্ন বয়স</p>
                 <input
                   type="number"
                   value={minAge}
@@ -684,7 +684,7 @@ export const CreateAdvertisementPage: React.FC = () => {
               </div>
 
               <div className="bg-white rounded-3xl p-3.5 shadow-2xs border border-slate-100">
-                <p className="text-[10px] text-slate-400 font-bold uppercase">Max Age</p>
+                <p className="text-[10px] text-slate-400 font-bold uppercase">সর্বোচ্চ বয়স</p>
                 <input
                   type="number"
                   value={maxAge}
@@ -700,7 +700,7 @@ export const CreateAdvertisementPage: React.FC = () => {
           {/* ========================================================================= */}
           <div className="space-y-2">
             <h2 className="text-[13px] font-bold text-slate-500 uppercase tracking-wide px-1">
-              Location Targeting
+              লোকেশন টার্গেটিং
             </h2>
 
             {/* Default Country */}
@@ -709,16 +709,16 @@ export const CreateAdvertisementPage: React.FC = () => {
                 <Flag size={16} />
               </div>
               <div>
-                <p className="text-[14px] font-black text-slate-950">Bangladesh</p>
-                <p className="text-[11px] text-slate-500">Default country</p>
+                <p className="text-[14px] font-black text-slate-950">বাংলাদেশ</p>
+                <p className="text-[11px] text-slate-500">ডিফল্ট দেশ</p>
               </div>
             </div>
 
             {/* Whole Bangladesh Toggle Card */}
             <div className="bg-white rounded-3xl p-4 shadow-2xs border border-slate-100 flex items-center justify-between">
               <div>
-                <p className="text-[14px] font-black text-slate-950">Whole Bangladesh</p>
-                <p className="text-[11px] text-slate-500 mt-0.5">Ad will show to all regions</p>
+                <p className="text-[14px] font-black text-slate-950">সমগ্র বাংলাদেশ</p>
+                <p className="text-[11px] text-slate-500 mt-0.5">সমগ্র বাংলাদেশে বিজ্ঞাপন প্রদর্শিত হবে</p>
               </div>
 
               <button
@@ -747,11 +747,11 @@ export const CreateAdvertisementPage: React.FC = () => {
               className="w-full py-4 bg-emerald-600 hover:bg-emerald-700 active:scale-[0.99] text-white font-black text-sm rounded-2xl flex items-center justify-center gap-2 transition shadow-md cursor-pointer disabled:opacity-50"
             >
               <Megaphone size={18} />
-              <span>{isCreatingAd ? "বিজ্ঞাপন তৈরি হচ্ছে..." : "Create Advertisement"}</span>
+              <span>{isCreatingAd ? "বিজ্ঞাপন তৈরি হচ্ছে..." : "বিজ্ঞাপন তৈরি করুন"}</span>
             </button>
 
             <p className="text-center text-[11px] text-slate-400">
-              Budget will be deducted from your wallet upon creation.
+              বিজ্ঞাপন তৈরি করলে আপনার ওয়ালেট থেকে বাজেট কেটে নেওয়া হবে।
             </p>
           </div>
 
@@ -771,7 +771,7 @@ export const CreateAdvertisementPage: React.FC = () => {
               className="bg-white rounded-3xl w-full max-w-md p-6 shadow-2xl border border-slate-100 space-y-4"
             >
               <div className="flex items-center justify-between border-b border-slate-100 pb-3">
-                <h3 className="font-black text-slate-950 text-base">Recharge Wallet for Ads</h3>
+                <h3 className="font-black text-slate-950 text-base">বিজ্ঞাপনের জন্য ওয়ালেট রিচার্জ করুন</h3>
                 <button
                   type="button"
                   onClick={() => setShowRechargeModal(false)}
