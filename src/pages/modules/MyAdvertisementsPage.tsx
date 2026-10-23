@@ -155,10 +155,10 @@ export const MyAdvertisementsPage: React.FC = () => {
   });
 
   const emptyText = 
-    activeTab === "running" ? "No running ads" :
-    activeTab === "paused" ? "No paused ads" :
-    activeTab === "pending" ? "No pending ads" :
-    "No completed ads";
+    activeTab === "running" ? "কোনো চলমান বিজ্ঞাপন নেই" :
+    activeTab === "paused" ? "কোনো স্থগিত বিজ্ঞাপন নেই" :
+    activeTab === "pending" ? "কোনো অপেক্ষমাণ বিজ্ঞাপন নেই" :
+    "কোনো সম্পন্ন বিজ্ঞাপন নেই";
 
   return (
     <div className="min-h-screen bg-[#F8F9FA] font-sans pb-24 select-none text-slate-900 relative">
@@ -183,7 +183,7 @@ export const MyAdvertisementsPage: React.FC = () => {
             <ArrowLeft size={22} className="stroke-[2.5]" />
           </button>
           <h1 className="text-xl font-black text-slate-950 tracking-tight">
-            My Advertisements
+            আমার বিজ্ঞাপনসমূহ
           </h1>
         </div>
 
@@ -192,10 +192,10 @@ export const MyAdvertisementsPage: React.FC = () => {
         {/* ========================================================================= */}
         <div className="max-w-md mx-auto px-4 flex items-center justify-between border-t border-slate-50 text-xs sm:text-sm font-bold text-slate-500 overflow-x-auto no-scrollbar">
           {[
-            { id: "running", label: "Running" },
-            { id: "paused", label: "Paused" },
-            { id: "pending", label: "Pending" },
-            { id: "completed", label: "Completed" }
+            { id: "running", label: "চলমান" },
+            { id: "paused", label: "স্থগিত" },
+            { id: "pending", label: "অপেক্ষমাণ" },
+            { id: "completed", label: "সম্পন্ন" }
           ].map((tab) => {
             const isActive = activeTab === tab.id;
             return (
@@ -292,7 +292,7 @@ export const MyAdvertisementsPage: React.FC = () => {
                             ? "bg-blue-50 text-[#0091FF] border border-blue-200/60"
                             : "bg-slate-100 text-slate-600"
                         }`}>
-                          {isRunning ? "Running" : ad.status === "paused" ? "Paused" : ad.status === "pending" ? "Pending Approval" : "Completed"}
+                          {isRunning ? "চলমান" : ad.status === "paused" ? "স্থগিত" : ad.status === "pending" ? "অনুমোদনের অপেক্ষায়" : "সম্পন্ন"}
                         </span>
                       </div>
                     </div>
@@ -326,11 +326,11 @@ export const MyAdvertisementsPage: React.FC = () => {
                   <div className="grid grid-cols-2 gap-2 pt-2 border-t border-slate-100 text-[11px] text-slate-500">
                     <div className="flex items-center gap-1.5">
                       <Eye size={14} className="text-slate-400" />
-                      <span>{ad.impressions || 0} Impressions</span>
+                      <span>{ad.impressions || 0} ভিউ (Impressions)</span>
                     </div>
                     <div className="flex items-center gap-1.5 justify-end">
                       <MousePointer size={14} className="text-slate-400" />
-                      <span>{ad.clicks || 0} Clicks</span>
+                      <span>{ad.clicks || 0} ক্লিক (Clicks)</span>
                     </div>
                   </div>
                 </div>
