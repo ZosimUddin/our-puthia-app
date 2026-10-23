@@ -56,6 +56,7 @@ export const ProfessionalDashboardPage: React.FC = () => {
       return;
     }
 
+    // 1. User doc listener for Followers & Account Age
     const userDocRef = doc(db, "users", user.uid);
     const unsubscribeUser = onSnapshot(userDocRef, (docSnap) => {
       if (docSnap.exists()) {
@@ -79,20 +80,15 @@ export const ProfessionalDashboardPage: React.FC = () => {
     const initFollowers = Number((userProfile as any)?.followersCount || (userProfile as any)?.followers?.length || 0);
     if (initFollowers) setFollowersCount(initFollowers);
 
-    // 2. Real-time Posts Query Listener (Count & Views)
-    const postsQuery = query(
-      collection(db, "posts"),
-      where("userId", "==", user.uid)
-    );
-    const unsubscribePosts = onSnapshot(postsQuery, (snapshot) => {
-      setPostsCount(snapshot.size);
+    // 2. Posts & Discussions listeners (using authorId and userId)
+    const postsMap = new Map<string, any>();
+    const updatePostsMetrics = () => {
       let pViews = 0;
       let pMonthlyViews = 0;
       const now = new Date();
       const startOfMonth = new Date(now.getFullYear(), now.getMonth(), 1);
 
-      snapshot.forEach((docSnap) => {
-        const pData = docSnap.data();
+      postsMap.forEach((pData) => {
         const views = Number(pData.viewsCount || pData.views || pData.viewCount || 0);
         pViews += views;
 
@@ -101,28 +97,43 @@ export const ProfessionalDashboardPage: React.FC = () => {
           pMonthlyViews += views;
         }
       });
+
+      setPostsCount(postsMap.size);
       setPostViews(pViews);
       setMonthlyPostViews(pMonthlyViews);
       setLoading(false);
-    }, (err) => {
-      console.warn("Posts listener error:", err);
-      setLoading(false);
-    });
+    };
 
-    // 3. Real-time Reels / Scrolle Query Listener (Count & Views)
-    const reelsQuery = query(
-      collection(db, "reels"),
-      where("userId", "==", user.uid)
-    );
-    const unsubscribeReels = onSnapshot(reelsQuery, (snapshot) => {
-      setReelsCount(snapshot.size);
+    // Query posts by authorId
+    const qPostsAuthor = query(collection(db, "posts"), where("authorId", "==", user.uid));
+    const unsubPostsAuthor = onSnapshot(qPostsAuthor, (snap) => {
+      snap.forEach((d) => postsMap.set(d.id, d.data()));
+      updatePostsMetrics();
+    }, (err) => console.warn("Posts authorId error:", err));
+
+    // Query posts by userId
+    const qPostsUser = query(collection(db, "posts"), where("userId", "==", user.uid));
+    const unsubPostsUser = onSnapshot(qPostsUser, (snap) => {
+      snap.forEach((d) => postsMap.set(d.id, d.data()));
+      updatePostsMetrics();
+    }, (err) => console.warn("Posts userId error:", err));
+
+    // Query discussions by authorId
+    const qDiscAuthor = query(collection(db, "discussions"), where("authorId", "==", user.uid));
+    const unsubDiscAuthor = onSnapshot(qDiscAuthor, (snap) => {
+      snap.forEach((d) => postsMap.set(d.id, d.data()));
+      updatePostsMetrics();
+    }, (err) => console.warn("Discussions authorId error:", err));
+
+    // 3. Reels / Scrolle listeners (using authorId and userId)
+    const reelsMap = new Map<string, any>();
+    const updateReelsMetrics = () => {
       let rViews = 0;
       let rMonthlyViews = 0;
       const now = new Date();
       const startOfMonth = new Date(now.getFullYear(), now.getMonth(), 1);
 
-      snapshot.forEach((docSnap) => {
-        const rData = docSnap.data();
+      reelsMap.forEach((rData) => {
         const views = Number(rData.viewsCount || rData.views || rData.viewCount || 0);
         rViews += views;
 
@@ -131,16 +142,33 @@ export const ProfessionalDashboardPage: React.FC = () => {
           rMonthlyViews += views;
         }
       });
+
+      setReelsCount(reelsMap.size);
       setReelViews(rViews);
       setMonthlyReelViews(rMonthlyViews);
-    }, (err) => {
-      console.warn("Reels listener error:", err);
-    });
+    };
+
+    // Query reels by authorId
+    const qReelsAuthor = query(collection(db, "reels"), where("authorId", "==", user.uid));
+    const unsubReelsAuthor = onSnapshot(qReelsAuthor, (snap) => {
+      snap.forEach((d) => reelsMap.set(d.id, d.data()));
+      updateReelsMetrics();
+    }, (err) => console.warn("Reels authorId error:", err));
+
+    // Query reels by userId
+    const qReelsUser = query(collection(db, "reels"), where("userId", "==", user.uid));
+    const unsubReelsUser = onSnapshot(qReelsUser, (snap) => {
+      snap.forEach((d) => reelsMap.set(d.id, d.data()));
+      updateReelsMetrics();
+    }, (err) => console.warn("Reels userId error:", err));
 
     return () => {
       unsubscribeUser();
-      unsubscribePosts();
-      unsubscribeReels();
+      unsubPostsAuthor();
+      unsubPostsUser();
+      unsubDiscAuthor();
+      unsubReelsAuthor();
+      unsubReelsUser();
     };
   }, [user, userProfile]);
 
