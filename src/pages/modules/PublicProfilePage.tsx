@@ -2950,7 +2950,7 @@ const PublicProfilePage: React.FC = () => {
 
               {/* Title */}
               <h3 className="text-base font-bold text-center text-slate-900 mb-4 select-none">
-                Share Profile
+                প্রোফাইল শেয়ার করুন
               </h3>
 
               {/* Options List */}
@@ -2965,8 +2965,8 @@ const PublicProfilePage: React.FC = () => {
                     <Link2 size={20} className="stroke-[2.2]" />
                   </div>
                   <div className="flex-1 min-w-0">
-                    <h4 className="text-[15px] font-semibold text-slate-900 leading-tight">Share Link</h4>
-                    <p className="text-xs text-slate-500 mt-0.5">Copy profile link or share via apps</p>
+                    <h4 className="text-[15px] font-semibold text-slate-900 leading-tight">লিংক শেয়ার করুন</h4>
+                    <p className="text-xs text-slate-500 mt-0.5">প্রোফাইল লিংক কপি করুন বা অন্য অ্যাপে শেয়ার করুন</p>
                   </div>
                 </button>
 
@@ -2980,8 +2980,8 @@ const PublicProfilePage: React.FC = () => {
                     <MessageSquare size={20} className="stroke-[2.2]" />
                   </div>
                   <div className="flex-1 min-w-0">
-                    <h4 className="text-[15px] font-semibold text-slate-900 leading-tight">Send via Chat</h4>
-                    <p className="text-xs text-slate-500 mt-0.5">Share profile in a conversation</p>
+                    <h4 className="text-[15px] font-semibold text-slate-900 leading-tight">মেসেজ ও চ্যাটে পাঠান</h4>
+                    <p className="text-xs text-slate-500 mt-0.5">ইনবক্স বা চ্যাট মেসেজে শেয়ার করুন</p>
                   </div>
                 </button>
               </div>
