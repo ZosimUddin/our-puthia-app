@@ -1834,9 +1834,28 @@ export const compressImageToBase64 = async (file: File): Promise<string> => {
 };
 
 export const uploadFileToStorage = async (file: File, path: string): Promise<string> => {
-  const storageRef = ref(storage, path);
-  const snapshot = await uploadBytes(storageRef, file);
-  return getDownloadURL(snapshot.ref);
+  try {
+    // Attempt Firebase Storage with a 3.5 second timeout
+    const storagePromise = (async () => {
+      const storageRef = ref(storage, path);
+      const snapshot = await uploadBytes(storageRef, file);
+      return await getDownloadURL(snapshot.ref);
+    })();
+
+    const timeoutPromise = new Promise<string>((_, reject) =>
+      setTimeout(() => reject(new Error("Storage upload timeout")), 3500)
+    );
+
+    return await Promise.race([storagePromise, timeoutPromise]);
+  } catch (err) {
+    console.warn("Firebase Storage upload unaccessible or timed out, falling back to compressed base64 image:", err);
+    try {
+      return await compressImageToBase64(file);
+    } catch (base64Err) {
+      console.error("Base64 compression failed:", base64Err);
+      throw err;
+    }
+  }
 };
 
 export const addToLetAd = async (ad: Omit<ToLetAd, 'id' | 'createdAt' | 'status'>): Promise<string> => {

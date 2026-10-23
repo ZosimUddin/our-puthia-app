@@ -42,7 +42,7 @@ import { HeroSlide } from "../../types";
 import { useSiteSettings } from "../../context/SiteSettingsContext";
 import { doc, updateDoc } from "firebase/firestore";
 import { db } from "../../firebase";
-import { uploadFileToStorage } from "../../api";
+import { uploadFileToStorage, compressImageToBase64 } from "../../api";
 
 const SAMPLE_IMAGES = [
   {
@@ -217,18 +217,20 @@ export const HeroSliderManagement: React.FC = () => {
 
     setUploadingImage(true);
     try {
-      // Local instant preview
-      const localPreview = URL.createObjectURL(file);
-      setFormData(prev => ({ ...prev, image: localPreview }));
-
       const path = `hero_banners/${Date.now()}_${file.name.replace(/[^a-zA-Z0-9.]/g, '_')}`;
       const uploadedUrl = await uploadFileToStorage(file, path);
       
       setFormData(prev => ({ ...prev, image: uploadedUrl }));
-      showNotification("📸 ব্যানার ছবি সফলভাবে আপলোড হয়েছে!");
+      showNotification("📸 ব্যানার ছবি সফলভাবে প্রসেস ও আপলোড হয়েছে!");
     } catch (err: any) {
       console.error("Upload error:", err);
-      showNotification("ছবি আপলোড ব্যর্থ হয়েছে। ছবির সরাসরি লিংক ব্যবহার করতে পারেন।", "error");
+      try {
+        const base64 = await compressImageToBase64(file);
+        setFormData(prev => ({ ...prev, image: base64 }));
+        showNotification("📸 ব্যানার ছবি সফলভাবে প্রসেস করা হয়েছে!");
+      } catch (bErr) {
+        showNotification("ছবি আপলোড ব্যর্থ হয়েছে। ছবির সরাসরি লিংক ব্যবহার করতে পারেন।", "error");
+      }
     } finally {
       setUploadingImage(false);
       if (fileInputRef.current) fileInputRef.current.value = "";
