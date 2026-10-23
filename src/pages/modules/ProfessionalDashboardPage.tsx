@@ -62,7 +62,8 @@ export const ProfessionalDashboardPage: React.FC = () => {
       if (docSnap.exists()) {
         const data = docSnap.data();
         const fCount = Number(data.followersCount || (Array.isArray(data.followers) ? data.followers.length : 0));
-        setFollowersCount(fCount);
+        const friendsCnt = Number(data.friendsCount || (Array.isArray(data.friends) ? data.friends.length : 0));
+        setFollowersCount(prev => Math.max(prev, fCount, friendsCnt));
 
         const createdAt = data.createdAt || (userProfile as any)?.createdAt || (user as any)?.metadata?.creationTime;
         if (createdAt) {
@@ -76,9 +77,16 @@ export const ProfessionalDashboardPage: React.FC = () => {
       console.warn("User doc listener error:", err);
     });
 
+    // 1.2 Follows collection listener for Followers
+    const qFollows = query(collection(db, "user_follows"), where("targetUserId", "==", user.uid));
+    const unsubFollows = onSnapshot(qFollows, (snap) => {
+      const followsSize = snap.size;
+      setFollowersCount(prev => Math.max(prev, followsSize));
+    }, (err) => console.warn("Follows listener error:", err));
+
     // Initial fallback if user profile is already in AuthContext
-    const initFollowers = Number((userProfile as any)?.followersCount || (userProfile as any)?.followers?.length || 0);
-    if (initFollowers) setFollowersCount(initFollowers);
+    const initFollowers = Number((userProfile as any)?.followersCount || (Array.isArray((userProfile as any)?.followers) ? (userProfile as any)?.followers.length : 0));
+    if (initFollowers) setFollowersCount(prev => Math.max(prev, initFollowers));
 
     // 2. Posts & Discussions listeners (using authorId and userId)
     const postsMap = new Map<string, any>();
@@ -164,6 +172,7 @@ export const ProfessionalDashboardPage: React.FC = () => {
 
     return () => {
       unsubscribeUser();
+      unsubFollows();
       unsubPostsAuthor();
       unsubPostsUser();
       unsubDiscAuthor();
@@ -176,12 +185,17 @@ export const ProfessionalDashboardPage: React.FC = () => {
   const totalViews = postViews + reelViews;
   const monthlyViews = monthlyPostViews + monthlyReelViews;
 
-  // Requirements Check
+  // Requirements Check & Percentages
   const reqFollowersMet = followersCount >= 1000;
   const reqPostsMet = postsCount >= 10;
   const reqReelsMet = reelsCount >= 7;
   const reqAgeMet = accountAgeDays >= 180;
   const allReqsMet = reqFollowersMet && reqPostsMet && reqReelsMet && reqAgeMet;
+
+  const followersPercent = Math.min(100, Math.round((followersCount / 1000) * 100));
+  const postsPercent = Math.min(100, Math.round((postsCount / 10) * 100));
+  const reelsPercent = Math.min(100, Math.round((reelsCount / 7) * 100));
+  const agePercent = Math.min(100, Math.round((accountAgeDays / 180) * 100));
 
   const handleBack = () => {
     if (window.history.length > 1) {
@@ -236,7 +250,7 @@ export const ProfessionalDashboardPage: React.FC = () => {
         <div className="space-y-3">
           <h2 className="text-[17px] font-black text-slate-950 tracking-tight flex items-center justify-between">
             <span>পারফর্মেন্স ওভারভিউ</span>
-            <span className="text-[11px] font-bold text-emerald-600 bg-emerald-50 px-2 py-0.5 rounded-full border border-emerald-200/60">
+            <span className="text-[11px] font-bold text-emerald-600 bg-emerald-50 px-2.5 py-0.5 rounded-full border border-emerald-200/60">
               ● রিয়েল-টাইম
             </span>
           </h2>
@@ -329,88 +343,124 @@ export const ProfessionalDashboardPage: React.FC = () => {
             </div>
 
             {/* Checklist Items */}
-            <div className="space-y-3 pt-1">
+            <div className="space-y-3.5 pt-1">
               {/* 3.1 Followers */}
-              <div className="flex items-center justify-between">
-                <div className="flex items-center gap-3 min-w-0">
-                  <div className="w-9 h-9 rounded-2xl bg-amber-50 text-[#F59E0B] flex items-center justify-center shrink-0">
-                    <Users size={18} className="stroke-[2.2]" />
+              <div className="space-y-1.5">
+                <div className="flex items-center justify-between">
+                  <div className="flex items-center gap-3 min-w-0">
+                    <div className="w-9 h-9 rounded-2xl bg-amber-50 text-[#F59E0B] flex items-center justify-center shrink-0">
+                      <Users size={18} className="stroke-[2.2]" />
+                    </div>
+                    <div className="min-w-0">
+                      <p className="text-[13px] font-black text-slate-900">ফলোয়ার (Followers)</p>
+                      <p className="text-[11px] text-slate-500 font-semibold mt-0.5">
+                        {toBengaliNumber(followersCount)} / ১,০০০ ({toBengaliNumber(followersPercent)}%)
+                      </p>
+                    </div>
                   </div>
-                  <div className="min-w-0">
-                    <p className="text-[13px] font-black text-slate-900">ফলোয়ার (Followers)</p>
-                    <p className="text-[11px] text-slate-400 mt-0.5">
-                      {toBengaliNumber(followersCount)} / ১,০০০
-                    </p>
+
+                  <div className={`w-5.5 h-5.5 rounded-full border-2 flex items-center justify-center transition shrink-0 ${
+                    reqFollowersMet ? "border-emerald-500 bg-emerald-500 text-white" : "border-slate-300 bg-transparent"
+                  }`}>
+                    {reqFollowersMet && <CheckCircle2 size={15} className="fill-current text-white" />}
                   </div>
                 </div>
 
-                <div className={`w-5.5 h-5.5 rounded-full border-2 flex items-center justify-center transition ${
-                  reqFollowersMet ? "border-emerald-500 bg-emerald-500 text-white" : "border-slate-300 bg-transparent"
-                }`}>
-                  {reqFollowersMet && <CheckCircle2 size={15} className="fill-current text-white" />}
+                <div className="w-full bg-slate-100 h-1.5 rounded-full overflow-hidden">
+                  <div 
+                    className="bg-amber-500 h-full transition-all duration-500 rounded-full" 
+                    style={{ width: `${followersPercent}%` }} 
+                  />
                 </div>
               </div>
 
               {/* 3.2 Posts */}
-              <div className="flex items-center justify-between">
-                <div className="flex items-center gap-3 min-w-0">
-                  <div className="w-9 h-9 rounded-2xl bg-amber-50 text-[#F59E0B] flex items-center justify-center shrink-0">
-                    <FileText size={18} className="stroke-[2.2]" />
+              <div className="space-y-1.5">
+                <div className="flex items-center justify-between">
+                  <div className="flex items-center gap-3 min-w-0">
+                    <div className="w-9 h-9 rounded-2xl bg-amber-50 text-[#F59E0B] flex items-center justify-center shrink-0">
+                      <FileText size={18} className="stroke-[2.2]" />
+                    </div>
+                    <div className="min-w-0">
+                      <p className="text-[13px] font-black text-slate-900">পোস্ট (Posts)</p>
+                      <p className="text-[11px] text-slate-500 font-semibold mt-0.5">
+                        {toBengaliNumber(postsCount)} / ১০ ({toBengaliNumber(postsPercent)}%)
+                      </p>
+                    </div>
                   </div>
-                  <div className="min-w-0">
-                    <p className="text-[13px] font-black text-slate-900">পোস্ট (Posts)</p>
-                    <p className="text-[11px] text-slate-400 mt-0.5">
-                      {toBengaliNumber(postsCount)} / ১০
-                    </p>
+
+                  <div className={`w-5.5 h-5.5 rounded-full border-2 flex items-center justify-center transition shrink-0 ${
+                    reqPostsMet ? "border-emerald-500 bg-emerald-500 text-white" : "border-slate-300 bg-transparent"
+                  }`}>
+                    {reqPostsMet && <CheckCircle2 size={15} className="fill-current text-white" />}
                   </div>
                 </div>
 
-                <div className={`w-5.5 h-5.5 rounded-full border-2 flex items-center justify-center transition ${
-                  reqPostsMet ? "border-emerald-500 bg-emerald-500 text-white" : "border-slate-300 bg-transparent"
-                }`}>
-                  {reqPostsMet && <CheckCircle2 size={15} className="fill-current text-white" />}
+                <div className="w-full bg-slate-100 h-1.5 rounded-full overflow-hidden">
+                  <div 
+                    className="bg-amber-500 h-full transition-all duration-500 rounded-full" 
+                    style={{ width: `${postsPercent}%` }} 
+                  />
                 </div>
               </div>
 
               {/* 3.3 Scrolle */}
-              <div className="flex items-center justify-between">
-                <div className="flex items-center gap-3 min-w-0">
-                  <div className="w-9 h-9 rounded-2xl bg-amber-50 text-[#F59E0B] flex items-center justify-center shrink-0">
-                    <Play size={18} className="stroke-[2.2] fill-current" />
+              <div className="space-y-1.5">
+                <div className="flex items-center justify-between">
+                  <div className="flex items-center gap-3 min-w-0">
+                    <div className="w-9 h-9 rounded-2xl bg-amber-50 text-[#F59E0B] flex items-center justify-center shrink-0">
+                      <Play size={18} className="stroke-[2.2] fill-current" />
+                    </div>
+                    <div className="min-w-0">
+                      <p className="text-[13px] font-black text-slate-900">স্ক্স্রোল (Scrolle)</p>
+                      <p className="text-[11px] text-slate-500 font-semibold mt-0.5">
+                        {toBengaliNumber(reelsCount)} / ৭ ({toBengaliNumber(reelsPercent)}%)
+                      </p>
+                    </div>
                   </div>
-                  <div className="min-w-0">
-                    <p className="text-[13px] font-black text-slate-900">স্ক্স্রোল (Scrolle)</p>
-                    <p className="text-[11px] text-slate-400 mt-0.5">
-                      {toBengaliNumber(reelsCount)} / ৭
-                    </p>
+
+                  <div className={`w-5.5 h-5.5 rounded-full border-2 flex items-center justify-center transition shrink-0 ${
+                    reqReelsMet ? "border-emerald-500 bg-emerald-500 text-white" : "border-slate-300 bg-transparent"
+                  }`}>
+                    {reqReelsMet && <CheckCircle2 size={15} className="fill-current text-white" />}
                   </div>
                 </div>
 
-                <div className={`w-5.5 h-5.5 rounded-full border-2 flex items-center justify-center transition ${
-                  reqReelsMet ? "border-emerald-500 bg-emerald-500 text-white" : "border-slate-300 bg-transparent"
-                }`}>
-                  {reqReelsMet && <CheckCircle2 size={15} className="fill-current text-white" />}
+                <div className="w-full bg-slate-100 h-1.5 rounded-full overflow-hidden">
+                  <div 
+                    className="bg-amber-500 h-full transition-all duration-500 rounded-full" 
+                    style={{ width: `${reelsPercent}%` }} 
+                  />
                 </div>
               </div>
 
               {/* 3.4 Account Age */}
-              <div className="flex items-center justify-between">
-                <div className="flex items-center gap-3 min-w-0">
-                  <div className="w-9 h-9 rounded-2xl bg-amber-50 text-[#F59E0B] flex items-center justify-center shrink-0">
-                    <Calendar size={18} className="stroke-[2.2]" />
+              <div className="space-y-1.5">
+                <div className="flex items-center justify-between">
+                  <div className="flex items-center gap-3 min-w-0">
+                    <div className="w-9 h-9 rounded-2xl bg-amber-50 text-[#F59E0B] flex items-center justify-center shrink-0">
+                      <Calendar size={18} className="stroke-[2.2]" />
+                    </div>
+                    <div className="min-w-0">
+                      <p className="text-[13px] font-black text-slate-900">অ্যাকাউন্টের বয়স</p>
+                      <p className="text-[11px] text-slate-500 font-semibold mt-0.5">
+                        {toBengaliNumber(accountAgeDays)} / ১৮০ দিন ({toBengaliNumber(agePercent)}%)
+                      </p>
+                    </div>
                   </div>
-                  <div className="min-w-0">
-                    <p className="text-[13px] font-black text-slate-900">অ্যাকাউন্টের বয়স</p>
-                    <p className="text-[11px] text-slate-400 mt-0.5">
-                      {toBengaliNumber(accountAgeDays)} / ১৮০ দিন
-                    </p>
+
+                  <div className={`w-5.5 h-5.5 rounded-full border-2 flex items-center justify-center transition shrink-0 ${
+                    reqAgeMet ? "border-emerald-500 bg-emerald-500 text-white" : "border-slate-300 bg-transparent"
+                  }`}>
+                    {reqAgeMet && <CheckCircle2 size={15} className="fill-current text-white" />}
                   </div>
                 </div>
 
-                <div className={`w-5.5 h-5.5 rounded-full border-2 flex items-center justify-center transition ${
-                  reqAgeMet ? "border-emerald-500 bg-emerald-500 text-white" : "border-slate-300 bg-transparent"
-                }`}>
-                  {reqAgeMet && <CheckCircle2 size={15} className="fill-current text-white" />}
+                <div className="w-full bg-slate-100 h-1.5 rounded-full overflow-hidden">
+                  <div 
+                    className="bg-amber-500 h-full transition-all duration-500 rounded-full" 
+                    style={{ width: `${agePercent}%` }} 
+                  />
                 </div>
               </div>
             </div>
