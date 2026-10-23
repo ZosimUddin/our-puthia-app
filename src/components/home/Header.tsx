@@ -175,25 +175,98 @@ const Header: React.FC<HeaderProps> = ({
       return;
     }
 
+    let unreadFromChats = 0;
+    let unreadFromConversations = 0;
+    let unreadFromNotifications = 0;
+
+    const updateTotal = () => {
+      setUnreadMsgCount(unreadFromChats + unreadFromConversations + unreadFromNotifications);
+    };
+
+    // 1. Listen to 'chats' collection
+    let unsub1 = () => {};
     try {
-      const q = query(
+      const q1 = query(
         collection(db, 'chats'),
         where('participants', 'array-contains', user.uid)
       );
-      const unsubscribe = onSnapshot(q, (snapshot) => {
-        let totalUnread = 0;
+      unsub1 = onSnapshot(q1, (snapshot) => {
+        let total = 0;
         snapshot.docs.forEach(d => {
           const data = d.data();
-          if (data.unreadCount && data.unreadCount[user.uid]) {
-            totalUnread += Number(data.unreadCount[user.uid]) || 0;
+          if (data.unreadCount) {
+            if (typeof data.unreadCount === 'object') {
+              total += Number(data.unreadCount[user.uid] || data.unreadCount['guest_or_user'] || 0);
+            } else if (typeof data.unreadCount === 'number' && data.lastSenderId !== user.uid) {
+              total += data.unreadCount;
+            }
+          } else if (data.unread && typeof data.unread === 'object') {
+            total += Number(data.unread[user.uid] || 0);
           }
         });
-        setUnreadMsgCount(totalUnread);
+        unreadFromChats = total;
+        updateTotal();
       }, () => {});
-      return () => unsubscribe();
     } catch (e) {
-      console.warn("Unread msg count error in home header", e);
+      console.warn("Unread chats error", e);
     }
+
+    // 2. Listen to 'conversations' collection
+    let unsub2 = () => {};
+    try {
+      const q2 = query(
+        collection(db, 'conversations'),
+        where('participants', 'array-contains', user.uid)
+      );
+      unsub2 = onSnapshot(q2, (snapshot) => {
+        let total = 0;
+        snapshot.docs.forEach(d => {
+          const data = d.data();
+          if (data.unreadCount) {
+            if (typeof data.unreadCount === 'object') {
+              total += Number(data.unreadCount[user.uid] || data.unreadCount['guest_or_user'] || 0);
+            } else if (typeof data.unreadCount === 'number' && data.lastSenderId !== user.uid) {
+              total += data.unreadCount;
+            }
+          } else if (data.unread && typeof data.unread === 'object') {
+            total += Number(data.unread[user.uid] || 0);
+          }
+        });
+        unreadFromConversations = total;
+        updateTotal();
+      }, () => {});
+    } catch (e) {
+      console.warn("Unread conversations error", e);
+    }
+
+    // 3. Listen to message-type notifications if any
+    let unsub3 = () => {};
+    try {
+      const q3 = query(
+        collection(db, 'notifications'),
+        where('recipientId', '==', user.uid),
+        where('read', '==', false)
+      );
+      unsub3 = onSnapshot(q3, (snapshot) => {
+        let count = 0;
+        snapshot.docs.forEach(d => {
+          const data = d.data();
+          if (['message', 'chat', 'chat_message', 'direct_message'].includes(data.type)) {
+            count++;
+          }
+        });
+        unreadFromNotifications = count;
+        updateTotal();
+      }, () => {});
+    } catch (e) {
+      console.warn("Unread msg notifs error", e);
+    }
+
+    return () => {
+      unsub1();
+      unsub2();
+      unsub3();
+    };
   }, [user]);
 
   const handleMenuClick = () => {
@@ -204,12 +277,12 @@ const Header: React.FC<HeaderProps> = ({
     }
   };
 
-  const toBengaliNumber = (num: number) => {
+  const toBengaliNumber = (num: number | string): string => {
+    if (num === null || num === undefined) return '';
     const bengaliDigits = ['০', '১', '২', '৩', '৪', '৫', '৬', '৭', '৮', '৯'];
-    return num.toString().split('').map(digit => {
-      const parsed = parseInt(digit);
-      return isNaN(parsed) ? digit : bengaliDigits[parsed];
-    }).join('');
+    return num
+      .toString()
+      .replace(/[0-9]/g, (digit) => bengaliDigits[parseInt(digit, 10)]);
   };
 
   const handleProfileClick = () => {
@@ -410,8 +483,8 @@ const Header: React.FC<HeaderProps> = ({
                 >
                   <MessageSquare size={typeof window !== 'undefined' && window.innerWidth >= 768 ? 24 : 16} className="text-emerald-700" />
                   {unreadMsgCount > 0 && (
-                    <span className="absolute -top-1 -right-1 w-4 h-4 sm:w-5 sm:h-5 md:w-8 md:h-8 bg-rose-600 text-white text-[8px] sm:text-[10px] md:text-base font-black rounded-full border-2 border-white flex items-center justify-center shadow-xs animate-bounce">
-                      {unreadMsgCount > 9 ? '9+' : unreadMsgCount}
+                    <span className="absolute -top-1 -right-1 min-w-[16px] h-4 sm:min-w-[20px] sm:h-5 md:min-w-[32px] md:h-8 px-1 bg-rose-600 text-white text-[8px] sm:text-[10px] md:text-base font-black rounded-full border-2 border-white flex items-center justify-center shadow-xs animate-bounce leading-none">
+                      {toBengaliNumber(unreadMsgCount > 99 ? '99+' : unreadMsgCount)}
                     </span>
                   )}
                 </button>
@@ -427,8 +500,8 @@ const Header: React.FC<HeaderProps> = ({
                 >
                   <Bell size={typeof window !== 'undefined' && window.innerWidth >= 768 ? 24 : 16} className="text-emerald-800" />
                   {realUnreadCount > 0 && (
-                    <span className="absolute -top-1 -right-1 w-4 h-4 sm:w-5 sm:h-5 md:w-8 md:h-8 bg-rose-600 text-white text-[8px] sm:text-[10px] md:text-base font-black rounded-full border-2 border-white flex items-center justify-center shadow-xs">
-                      {realUnreadCount}
+                    <span className="absolute -top-1 -right-1 min-w-[16px] h-4 sm:min-w-[20px] sm:h-5 md:min-w-[32px] md:h-8 px-1 bg-rose-600 text-white text-[8px] sm:text-[10px] md:text-base font-black rounded-full border-2 border-white flex items-center justify-center shadow-xs leading-none">
+                      {toBengaliNumber(realUnreadCount > 99 ? '99+' : realUnreadCount)}
                     </span>
                   )}
                 </button>

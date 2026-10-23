@@ -78,6 +78,14 @@ export const AddaFacebookHeader: React.FC<AddaFacebookHeaderProps> = ({
   const [unreadPostsCount, setUnreadPostsCount] = useState(0);
   const [unreadReelsCount, setUnreadReelsCount] = useState(0);
 
+  const toBengaliNumber = (num: number | string): string => {
+    if (num === null || num === undefined) return '';
+    const bengaliDigits = ['০', '১', '২', '৩', '৪', '৫', '৬', '৭', '৮', '৯'];
+    return num
+      .toString()
+      .replace(/[0-9]/g, (digit) => bengaliDigits[parseInt(digit, 10)]);
+  };
+
   // Real-time friend requests count for friends tab badge
   useEffect(() => {
     if (!user) {
@@ -106,25 +114,98 @@ export const AddaFacebookHeader: React.FC<AddaFacebookHeaderProps> = ({
       return;
     }
 
+    let unreadFromChats = 0;
+    let unreadFromConversations = 0;
+    let unreadFromNotifications = 0;
+
+    const updateTotal = () => {
+      setUnreadMsgCount(unreadFromChats + unreadFromConversations + unreadFromNotifications);
+    };
+
+    // 1. Listen to 'chats' collection
+    let unsub1 = () => {};
     try {
-      const q = query(
+      const q1 = query(
         collection(db, 'chats'),
         where('participants', 'array-contains', user.uid)
       );
-      const unsubscribe = onSnapshot(q, (snapshot) => {
-        let totalUnread = 0;
+      unsub1 = onSnapshot(q1, (snapshot) => {
+        let total = 0;
         snapshot.docs.forEach(d => {
           const data = d.data();
-          if (data.unreadCount && data.unreadCount[user.uid]) {
-            totalUnread += Number(data.unreadCount[user.uid]) || 0;
+          if (data.unreadCount) {
+            if (typeof data.unreadCount === 'object') {
+              total += Number(data.unreadCount[user.uid] || data.unreadCount['guest_or_user'] || 0);
+            } else if (typeof data.unreadCount === 'number' && data.lastSenderId !== user.uid) {
+              total += data.unreadCount;
+            }
+          } else if (data.unread && typeof data.unread === 'object') {
+            total += Number(data.unread[user.uid] || 0);
           }
         });
-        setUnreadMsgCount(totalUnread);
+        unreadFromChats = total;
+        updateTotal();
       }, () => {});
-      return () => unsubscribe();
     } catch (e) {
-      console.warn("Unread msg count error", e);
+      console.warn("Unread chats error", e);
     }
+
+    // 2. Listen to 'conversations' collection
+    let unsub2 = () => {};
+    try {
+      const q2 = query(
+        collection(db, 'conversations'),
+        where('participants', 'array-contains', user.uid)
+      );
+      unsub2 = onSnapshot(q2, (snapshot) => {
+        let total = 0;
+        snapshot.docs.forEach(d => {
+          const data = d.data();
+          if (data.unreadCount) {
+            if (typeof data.unreadCount === 'object') {
+              total += Number(data.unreadCount[user.uid] || data.unreadCount['guest_or_user'] || 0);
+            } else if (typeof data.unreadCount === 'number' && data.lastSenderId !== user.uid) {
+              total += data.unreadCount;
+            }
+          } else if (data.unread && typeof data.unread === 'object') {
+            total += Number(data.unread[user.uid] || 0);
+          }
+        });
+        unreadFromConversations = total;
+        updateTotal();
+      }, () => {});
+    } catch (e) {
+      console.warn("Unread conversations error", e);
+    }
+
+    // 3. Listen to message-type notifications if any
+    let unsub3 = () => {};
+    try {
+      const q3 = query(
+        collection(db, 'notifications'),
+        where('recipientId', '==', user.uid),
+        where('read', '==', false)
+      );
+      unsub3 = onSnapshot(q3, (snapshot) => {
+        let count = 0;
+        snapshot.docs.forEach(d => {
+          const data = d.data();
+          if (['message', 'chat', 'chat_message', 'direct_message'].includes(data.type)) {
+            count++;
+          }
+        });
+        unreadFromNotifications = count;
+        updateTotal();
+      }, () => {});
+    } catch (e) {
+      console.warn("Unread msg notifs error", e);
+    }
+
+    return () => {
+      unsub1();
+      unsub2();
+      unsub3();
+    };
   }, [user]);
 
   // Top Tabs Configuration (Facebook Style with Site Design System Color: Emerald Green #0B7A3B)
@@ -163,7 +244,7 @@ export const AddaFacebookHeader: React.FC<AddaFacebookHeaderProps> = ({
       label: 'হোম',
       icon: Home,
       isActive: isFeedActive && !isNotifOpen,
-      badge: unreadPostsCount > 0 ? (unreadPostsCount > 99 ? '99+' : unreadPostsCount) : null,
+      badge: unreadPostsCount > 0 ? toBengaliNumber(unreadPostsCount > 99 ? '99+' : unreadPostsCount) : null,
       action: () => {
         setIsNotifOpen(false);
         setUnreadPostsCount(0);
@@ -176,7 +257,7 @@ export const AddaFacebookHeader: React.FC<AddaFacebookHeaderProps> = ({
       label: 'বন্ধু',
       icon: Users,
       isActive: isFriendsActive,
-      badge: incomingRequestsCount > 0 ? (incomingRequestsCount > 99 ? '99+' : incomingRequestsCount) : null,
+      badge: incomingRequestsCount > 0 ? toBengaliNumber(incomingRequestsCount > 99 ? '99+' : incomingRequestsCount) : null,
       action: () => {
         setIsNotifOpen(false);
         if (!user) {
@@ -192,7 +273,7 @@ export const AddaFacebookHeader: React.FC<AddaFacebookHeaderProps> = ({
       label: 'ভিডিও',
       icon: WatchVideoIcon,
       isActive: isReelsActive,
-      badge: unreadReelsCount > 0 ? (unreadReelsCount > 99 ? '99+' : unreadReelsCount) : null,
+      badge: unreadReelsCount > 0 ? toBengaliNumber(unreadReelsCount > 99 ? '99+' : unreadReelsCount) : null,
       action: () => {
         setIsNotifOpen(false);
         setUnreadReelsCount(0);
@@ -204,7 +285,7 @@ export const AddaFacebookHeader: React.FC<AddaFacebookHeaderProps> = ({
       label: 'নোটিফিকেশন',
       icon: Bell,
       isActive: isNotifOpen || activeTab === 'notifications' || location.pathname === '/notifications',
-      badge: notifUnreadCount > 0 ? (notifUnreadCount > 99 ? '99+' : notifUnreadCount) : null,
+      badge: notifUnreadCount > 0 ? toBengaliNumber(notifUnreadCount > 99 ? '99+' : notifUnreadCount) : null,
       action: () => {
         setIsNotifOpen(false);
         navigate('/notifications');
@@ -274,14 +355,12 @@ export const AddaFacebookHeader: React.FC<AddaFacebookHeaderProps> = ({
               title="মেসেঞ্জার ও মেসেজ"
               aria-label="Messages"
             >
-              <div className="relative flex items-center justify-center">
-                <MessageCircle size={18} strokeWidth={2.5} />
-                {unreadMsgCount > 0 && (
-                  <span className="absolute -top-1.5 -right-1.5 min-w-[16px] h-[16px] px-1 bg-red-500 text-white text-[9px] font-bold rounded-full flex items-center justify-center border-2 border-[#0B7A3B]">
-                    {unreadMsgCount > 9 ? '9+' : unreadMsgCount}
-                  </span>
-                )}
-              </div>
+              <MessageCircle size={18} strokeWidth={2.5} />
+              {unreadMsgCount > 0 && (
+                <span className="absolute -top-1.5 -right-1.5 min-w-[18px] h-[18px] px-1 bg-red-600 text-white text-[10px] font-black rounded-full flex items-center justify-center border-2 border-[#0B7A3B] shadow-sm z-10 leading-none">
+                  {toBengaliNumber(unreadMsgCount > 99 ? '99+' : unreadMsgCount)}
+                </span>
+              )}
             </button>
           </div>
         </div>

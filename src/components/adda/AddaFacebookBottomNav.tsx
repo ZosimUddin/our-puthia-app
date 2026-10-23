@@ -57,6 +57,14 @@ export const AddaFacebookBottomNav: React.FC<AddaFacebookBottomNavProps> = ({
   const [isAuthModalOpen, setIsAuthModalOpen] = useState(false);
   const [unreadMsgCount, setUnreadMsgCount] = useState(0);
 
+  const toBengaliNumber = (num: number | string): string => {
+    if (num === null || num === undefined) return '';
+    const bengaliDigits = ['০', '১', '২', '৩', '৪', '৫', '৬', '৭', '৮', '৯'];
+    return num
+      .toString()
+      .replace(/[0-9]/g, (digit) => bengaliDigits[parseInt(digit, 10)]);
+  };
+
   // Unread messages count
   useEffect(() => {
     if (!user) {
@@ -64,25 +72,98 @@ export const AddaFacebookBottomNav: React.FC<AddaFacebookBottomNavProps> = ({
       return;
     }
 
+    let unreadFromChats = 0;
+    let unreadFromConversations = 0;
+    let unreadFromNotifications = 0;
+
+    const updateTotal = () => {
+      setUnreadMsgCount(unreadFromChats + unreadFromConversations + unreadFromNotifications);
+    };
+
+    // 1. Listen to 'chats' collection
+    let unsub1 = () => {};
     try {
-      const q = query(
+      const q1 = query(
         collection(db, 'chats'),
         where('participants', 'array-contains', user.uid)
       );
-      const unsubscribe = onSnapshot(q, (snapshot) => {
-        let totalUnread = 0;
+      unsub1 = onSnapshot(q1, (snapshot) => {
+        let total = 0;
         snapshot.docs.forEach(d => {
           const data = d.data();
-          if (data.unreadCount && data.unreadCount[user.uid]) {
-            totalUnread += Number(data.unreadCount[user.uid]) || 0;
+          if (data.unreadCount) {
+            if (typeof data.unreadCount === 'object') {
+              total += Number(data.unreadCount[user.uid] || data.unreadCount['guest_or_user'] || 0);
+            } else if (typeof data.unreadCount === 'number' && data.lastSenderId !== user.uid) {
+              total += data.unreadCount;
+            }
+          } else if (data.unread && typeof data.unread === 'object') {
+            total += Number(data.unread[user.uid] || 0);
           }
         });
-        setUnreadMsgCount(totalUnread);
+        unreadFromChats = total;
+        updateTotal();
       }, () => {});
-      return () => unsubscribe();
     } catch (e) {
-      console.warn("Unread msg count error in bottom nav", e);
+      console.warn("Unread chats error", e);
     }
+
+    // 2. Listen to 'conversations' collection
+    let unsub2 = () => {};
+    try {
+      const q2 = query(
+        collection(db, 'conversations'),
+        where('participants', 'array-contains', user.uid)
+      );
+      unsub2 = onSnapshot(q2, (snapshot) => {
+        let total = 0;
+        snapshot.docs.forEach(d => {
+          const data = d.data();
+          if (data.unreadCount) {
+            if (typeof data.unreadCount === 'object') {
+              total += Number(data.unreadCount[user.uid] || data.unreadCount['guest_or_user'] || 0);
+            } else if (typeof data.unreadCount === 'number' && data.lastSenderId !== user.uid) {
+              total += data.unreadCount;
+            }
+          } else if (data.unread && typeof data.unread === 'object') {
+            total += Number(data.unread[user.uid] || 0);
+          }
+        });
+        unreadFromConversations = total;
+        updateTotal();
+      }, () => {});
+    } catch (e) {
+      console.warn("Unread conversations error", e);
+    }
+
+    // 3. Listen to message-type notifications if any
+    let unsub3 = () => {};
+    try {
+      const q3 = query(
+        collection(db, 'notifications'),
+        where('recipientId', '==', user.uid),
+        where('read', '==', false)
+      );
+      unsub3 = onSnapshot(q3, (snapshot) => {
+        let count = 0;
+        snapshot.docs.forEach(d => {
+          const data = d.data();
+          if (['message', 'chat', 'chat_message', 'direct_message'].includes(data.type)) {
+            count++;
+          }
+        });
+        unreadFromNotifications = count;
+        updateTotal();
+      }, () => {});
+    } catch (e) {
+      console.warn("Unread msg notifs error", e);
+    }
+
+    return () => {
+      unsub1();
+      unsub2();
+      unsub3();
+    };
   }, [user]);
 
   const rawAvatar = userProfile?.photoURL || (userProfile as any)?.avatarUrl || user?.photoURL || '';
@@ -189,8 +270,8 @@ export const AddaFacebookBottomNav: React.FC<AddaFacebookBottomNavProps> = ({
 
                   {/* Badge */}
                   {Boolean(item.badge && item.badge > 0) && (
-                    <span className="absolute -top-1.5 -right-2 min-w-[17px] h-[17px] px-1 bg-red-600 text-white text-[9px] font-black rounded-full flex items-center justify-center border-2 border-white shadow-xs animate-pulse">
-                      {item.badge! > 99 ? '99+' : item.badge}
+                    <span className="absolute -top-1.5 -right-2 min-w-[17px] h-[17px] px-1 bg-red-600 text-white text-[9px] font-black rounded-full flex items-center justify-center border-2 border-white shadow-xs animate-pulse leading-none">
+                      {toBengaliNumber(item.badge! > 99 ? '99+' : item.badge!)}
                     </span>
                   )}
                 </div>
