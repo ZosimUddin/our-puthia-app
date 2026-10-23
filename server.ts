@@ -107,7 +107,6 @@ function getAiClient(): GoogleGenAI {
 
 async function startServer() {
   const app = express();
-  const PORT = 3000;
 
   app.use(compression() as any);
   app.use(express.json({ limit: "50mb" }));
@@ -1085,34 +1084,24 @@ ${contextString}`;
     });
   }
 
-  // Support both port 3000 (AI Studio standard) and process.env.PORT (Cloud Run default 8080)
-  const ports = new Set<number>();
-  ports.add(3000);
+  // Support both port 3000 (AI Studio standard) and process.env.PORT
+  const PORT = parseInt(process.env.PORT || "3000", 10) || 3000;
 
-  if (process.env.PORT) {
-    const ep = parseInt(process.env.PORT, 10);
-    if (!isNaN(ep) && ep > 0) ports.add(ep);
-  }
+  const server = app.listen(PORT, "0.0.0.0", () => {
+    console.log(`Server running on port ${PORT}`);
+    console.log(`  ➜  Local:   http://localhost:${PORT}/`);
+    console.log(`  ➜  Network: http://0.0.0.0:${PORT}/`);
+  });
 
-  const argv = process.argv.slice(2);
-  const pIdx = argv.indexOf('--port');
-  if (pIdx !== -1 && argv[pIdx + 1]) {
-    const cp = parseInt(argv[pIdx + 1], 10);
-    if (!isNaN(cp) && cp > 0) ports.add(cp);
-  }
-
-  Array.from(ports).forEach((p) => {
-    try {
-      const server = app.listen(p, "0.0.0.0", () => {
-        console.log(`Server running on port ${p}`);
-        console.log(`  ➜  Local:   http://localhost:${p}/`);
-        console.log(`  ➜  Network: http://0.0.0.0:${p}/`);
-      });
-      server.on('error', (e: any) => {
-        console.warn(`Could not listen on port ${p} (it might already be in use):`, e.message);
-      });
-    } catch (e: any) {
-      console.warn(`Could not listen on port ${p}:`, e.message);
+  server.on('error', (err: any) => {
+    if (err.code === 'EADDRINUSE') {
+      console.warn(`Port ${PORT} is in use, retrying after brief delay...`);
+      setTimeout(() => {
+        try { server.close(); } catch (_) {}
+        server.listen(PORT, "0.0.0.0");
+      }, 1000);
+    } else {
+      console.error('Server binding error:', err);
     }
   });
 }
