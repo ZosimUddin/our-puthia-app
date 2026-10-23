@@ -27,17 +27,37 @@ import { getFallbackData } from '../../../data/directoryFallbackData';
 interface ServiceDetailTemplateProps {
   serviceKeyParam?: string;
   idParam?: string;
+  onGoBack?: () => void;
 }
 
 export const ServiceDetailTemplate: React.FC<ServiceDetailTemplateProps> = ({
   serviceKeyParam,
   idParam,
+  onGoBack,
 }) => {
   const params = useParams();
   const navigate = useNavigate();
 
   const serviceKey = serviceKeyParam || params.serviceKey || 'doctor';
   const docId = idParam || params.id;
+
+  const handleBack = () => {
+    if (onGoBack) {
+      onGoBack();
+      return;
+    }
+    if (window.history.state && typeof window.history.state.idx === 'number' && window.history.state.idx > 0) {
+      navigate(-1);
+      const currentPath = window.location.pathname;
+      setTimeout(() => {
+        if (window.location.pathname === currentPath) {
+          navigate(serviceKey ? `/service/${serviceKey}` : '/');
+        }
+      }, 150);
+    } else {
+      navigate(serviceKey ? `/service/${serviceKey}` : '/');
+    }
+  };
 
   const config: ServiceConfig = getServiceConfig(serviceKey);
   const schema = config.fieldsSchema;
@@ -217,8 +237,8 @@ export const ServiceDetailTemplate: React.FC<ServiceDetailTemplateProps> = ({
           <h2 className="text-lg font-black text-slate-800">{error || 'তথ্য পাওয়া যায়নি'}</h2>
           <button
             type="button"
-            onClick={() => navigate(-1)}
-            className="px-4 py-2.5 bg-[#006a4e] text-white text-xs font-black rounded-2xl border-none cursor-pointer"
+            onClick={handleBack}
+            className="px-5 py-3 bg-[#006a4e] hover:bg-[#00543e] active:scale-95 text-white text-xs font-black rounded-2xl border-none cursor-pointer transition-all"
           >
             ফিরে যান
           </button>
@@ -427,6 +447,7 @@ export const ServiceDetailTemplate: React.FC<ServiceDetailTemplateProps> = ({
         setIsSaved={setIsSaved}
         handleShare={handleShare}
         navigate={navigate}
+        onGoBack={handleBack}
         setShowRatingModal={setShowRatingModal}
         setShowCorrectionModal={setShowCorrectionModal}
       />
@@ -453,10 +474,11 @@ export const ServiceDetailTemplate: React.FC<ServiceDetailTemplateProps> = ({
             <div className="flex items-center justify-between">
               <button
                 type="button"
-                onClick={() => navigate(-1)}
-                className="p-2 rounded-full bg-white/10 hover:bg-white/20 text-white border-none cursor-pointer flex items-center justify-center transition-colors"
+                onClick={handleBack}
+                aria-label="ফিরে যান"
+                className="w-11 h-11 min-w-[44px] min-h-[44px] rounded-full bg-white/15 hover:bg-white/25 active:bg-white/35 active:scale-95 text-white border-none cursor-pointer flex items-center justify-center transition-all z-20 touch-manipulation shadow-xs"
               >
-                <ArrowLeft size={18} />
+                <ArrowLeft size={22} className="stroke-[2.5]" />
               </button>
 
               <div className="flex items-center gap-2">

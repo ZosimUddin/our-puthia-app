@@ -86,14 +86,29 @@ const GenericDetailsPage: React.FC<GenericDetailsPageProps> = ({ defaultTitle, d
     }
   };
 
+  const handleBack = () => {
+    if (window.history.state && typeof window.history.state.idx === 'number' && window.history.state.idx > 0) {
+      navigate(-1);
+      const currentPath = window.location.pathname;
+      setTimeout(() => {
+        if (window.location.pathname === currentPath) {
+          navigate('/');
+        }
+      }, 150);
+    } else {
+      navigate('/');
+    }
+  };
+
   return (
     <div className="min-h-screen bg-slate-50 flex flex-col">
       <main className="flex-1 w-full max-w-5xl mx-auto pb-16">
         {/* Top App Bar inside main to float over image or above it */}
         <div className="sticky top-0 z-50 bg-white/80 backdrop-blur-md border-b border-slate-100 px-4 py-3 flex items-center justify-between">
           <button 
-            onClick={() => navigate(-1)}
-            className="w-10 h-10 rounded-full bg-slate-100 flex items-center justify-center text-slate-700 hover:bg-slate-200 transition-colors"
+            onClick={handleBack}
+            aria-label="ফিরে যান"
+            className="w-11 h-11 min-w-[44px] min-h-[44px] rounded-full bg-slate-100 flex items-center justify-center text-slate-700 hover:bg-slate-200 active:scale-95 transition-all touch-manipulation cursor-pointer border-none"
           >
             <ArrowLeft size={20} />
           </button>

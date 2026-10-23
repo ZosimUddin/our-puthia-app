@@ -83,6 +83,20 @@ const UnionDetailsPage: React.FC = () => {
   const [isFavorite, setIsFavorite] = useState(false);
   const [expandedFaq, setExpandedFaq] = useState<number | null>(null);
 
+  const handleBack = () => {
+    if (window.history.state && typeof window.history.state.idx === 'number' && window.history.state.idx > 0) {
+      navigate(-1);
+      const currentPath = window.location.pathname;
+      setTimeout(() => {
+        if (window.location.pathname === currentPath) {
+          navigate('/service/union');
+        }
+      }, 150);
+    } else {
+      navigate('/service/union');
+    }
+  };
+
   useEffect(() => {
     const fetchData = async () => {
       try {
@@ -152,7 +166,11 @@ const UnionDetailsPage: React.FC = () => {
       <div className="bg-white sticky top-0 z-30 shadow-sm border-b border-slate-200">
         <div className="max-w-4xl mx-auto px-4 py-4 flex items-center justify-between gap-4">
           <div className="flex items-center gap-4">
-            <button onClick={() => navigate(-1)} className="p-2 bg-slate-100 text-slate-700 rounded-full hover:bg-slate-200 transition-colors">
+            <button 
+              onClick={handleBack} 
+              aria-label="ফিরে যান"
+              className="w-11 h-11 min-w-[44px] min-h-[44px] bg-slate-100 text-slate-700 rounded-full hover:bg-slate-200 active:scale-95 transition-all flex items-center justify-center touch-manipulation cursor-pointer border-none"
+            >
               <ArrowLeft size={20} />
             </button>
             <h1 className="text-lg font-black text-slate-900 tracking-wide flex items-center gap-2 line-clamp-1">

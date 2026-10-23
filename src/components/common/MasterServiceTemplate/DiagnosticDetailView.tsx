@@ -67,6 +67,7 @@ interface DiagnosticDetailViewProps {
   setIsSaved: (val: boolean) => void;
   handleShare: () => void;
   navigate: (path: string | number) => void;
+  onGoBack?: () => void;
   setShowRatingModal: (val: boolean) => void;
   setShowCorrectionModal: (val: boolean) => void;
 }
@@ -79,10 +80,29 @@ export const DiagnosticDetailView: React.FC<DiagnosticDetailViewProps> = ({
   setIsSaved,
   handleShare,
   navigate,
+  onGoBack,
   setShowRatingModal,
   setShowCorrectionModal,
 }) => {
   const item = rawItem as DiagnosticCenterMaster;
+
+  const handleBack = () => {
+    if (onGoBack) {
+      onGoBack();
+      return;
+    }
+    if (window.history.state && typeof window.history.state.idx === 'number' && window.history.state.idx > 0) {
+      navigate(-1);
+      const currentPath = window.location.pathname;
+      setTimeout(() => {
+        if (window.location.pathname === currentPath) {
+          navigate(`/service/${config?.id || 'diagnostic'}`);
+        }
+      }, 150);
+    } else {
+      navigate(`/service/${config?.id || 'diagnostic'}`);
+    }
+  };
 
   // States
   const [showQrModal, setShowQrModal] = useState(false);
@@ -168,10 +188,11 @@ export const DiagnosticDetailView: React.FC<DiagnosticDetailViewProps> = ({
         <div className="flex items-center gap-3">
           <button
             type="button"
-            onClick={() => navigate(-1)}
-            className="p-2 rounded-full hover:bg-white/15 text-white border-none cursor-pointer flex items-center justify-center transition-colors"
+            onClick={handleBack}
+            aria-label="ফিরে যান"
+            className="w-11 h-11 min-w-[44px] min-h-[44px] rounded-full bg-white/15 hover:bg-white/25 active:bg-white/35 active:scale-95 text-white border-none cursor-pointer flex items-center justify-center transition-all z-20 touch-manipulation shadow-xs"
           >
-            <ArrowLeft size={19} />
+            <ArrowLeft size={22} className="stroke-[2.5]" />
           </button>
           <div>
             <span className="text-[10px] uppercase font-bold tracking-widest text-emerald-200 block">উপজেলা ডিরেক্টরি</span>
