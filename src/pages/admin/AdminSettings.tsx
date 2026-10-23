@@ -178,82 +178,82 @@ const AdminSettings: React.FC = () => {
             </div>
 
             {/* Main Tabs Selector */}
-            <div className="flex items-center gap-1 bg-slate-100 p-1 rounded-2xl self-start sm:self-auto border border-slate-200 overflow-x-auto max-w-full">
+            <div className="flex items-center gap-1.5 bg-slate-100 p-1.5 rounded-2xl border border-slate-200 overflow-x-auto w-full max-w-full scrollbar-none">
               <button
                 type="button"
                 onClick={() => setActiveMainTab("welcome_email")}
-                className={`px-3 py-1.5 rounded-xl text-xs font-black transition-all flex items-center gap-1.5 cursor-pointer whitespace-nowrap ${
+                className={`px-3.5 py-2 rounded-xl text-xs font-black transition-all flex items-center gap-1.5 cursor-pointer whitespace-nowrap shrink-0 ${
                   activeMainTab === "welcome_email"
                     ? "bg-white text-emerald-800 shadow-xs ring-1 ring-slate-200"
                     : "text-slate-600 hover:text-slate-900"
                 }`}
               >
-                <Mail size={14} className={activeMainTab === "welcome_email" ? "text-emerald-600" : "text-slate-400"} />
+                <Mail size={14} className={`shrink-0 ${activeMainTab === "welcome_email" ? "text-emerald-600" : "text-slate-400"}`} />
                 <span>স্বাগতম ইমেইল</span>
               </button>
 
               <button
                 type="button"
                 onClick={() => setActiveMainTab("profile_reminder_email")}
-                className={`px-3 py-1.5 rounded-xl text-xs font-black transition-all flex items-center gap-1.5 cursor-pointer whitespace-nowrap ${
+                className={`px-3.5 py-2 rounded-xl text-xs font-black transition-all flex items-center gap-1.5 cursor-pointer whitespace-nowrap shrink-0 ${
                   activeMainTab === "profile_reminder_email"
                     ? "bg-white text-emerald-800 shadow-xs ring-1 ring-slate-200"
                     : "text-slate-600 hover:text-slate-900"
                 }`}
               >
-                <UserCheck size={14} className={activeMainTab === "profile_reminder_email" ? "text-emerald-600" : "text-slate-400"} />
+                <UserCheck size={14} className={`shrink-0 ${activeMainTab === "profile_reminder_email" ? "text-emerald-600" : "text-slate-400"}`} />
                 <span>প্রোফাইল রিমাইন্ডার</span>
               </button>
 
               <button
                 type="button"
                 onClick={() => setActiveMainTab("password_reset_email")}
-                className={`px-3 py-1.5 rounded-xl text-xs font-black transition-all flex items-center gap-1.5 cursor-pointer whitespace-nowrap ${
+                className={`px-3.5 py-2 rounded-xl text-xs font-black transition-all flex items-center gap-1.5 cursor-pointer whitespace-nowrap shrink-0 ${
                   activeMainTab === "password_reset_email"
                     ? "bg-white text-emerald-800 shadow-xs ring-1 ring-slate-200"
                     : "text-slate-600 hover:text-slate-900"
                 }`}
               >
-                <KeyRound size={14} className={activeMainTab === "password_reset_email" ? "text-emerald-600" : "text-slate-400"} />
+                <KeyRound size={14} className={`shrink-0 ${activeMainTab === "password_reset_email" ? "text-emerald-600" : "text-slate-400"}`} />
                 <span>পাসওয়ার্ড রিসেট</span>
               </button>
 
               <button
                 type="button"
                 onClick={() => setActiveMainTab("security_alert_email")}
-                className={`px-3 py-1.5 rounded-xl text-xs font-black transition-all flex items-center gap-1.5 cursor-pointer whitespace-nowrap ${
+                className={`px-3.5 py-2 rounded-xl text-xs font-black transition-all flex items-center gap-1.5 cursor-pointer whitespace-nowrap shrink-0 ${
                   activeMainTab === "security_alert_email"
                     ? "bg-white text-emerald-800 shadow-xs ring-1 ring-slate-200"
                     : "text-slate-600 hover:text-slate-900"
                 }`}
               >
-                <Shield size={14} className={activeMainTab === "security_alert_email" ? "text-rose-600" : "text-slate-400"} />
+                <Shield size={14} className={`shrink-0 ${activeMainTab === "security_alert_email" ? "text-rose-600" : "text-slate-400"}`} />
                 <span>নিরাপত্তা অ্যালার্ট</span>
               </button>
 
               <button
                 type="button"
                 onClick={() => setActiveMainTab("announcement_email")}
-                className={`px-3 py-1.5 rounded-xl text-xs font-black transition-all flex items-center gap-1.5 cursor-pointer whitespace-nowrap ${
+                className={`px-3.5 py-2 rounded-xl text-xs font-black transition-all flex items-center gap-1.5 cursor-pointer whitespace-nowrap shrink-0 ${
                   activeMainTab === "announcement_email"
                     ? "bg-white text-emerald-800 shadow-xs ring-1 ring-slate-200"
                     : "text-slate-600 hover:text-slate-900"
                 }`}
               >
-                <Bell size={14} className={activeMainTab === "announcement_email" ? "text-amber-500" : "text-slate-400"} />
+                <Bell size={14} className={`shrink-0 ${activeMainTab === "announcement_email" ? "text-amber-500" : "text-slate-400"}`} />
                 <span>ঘোষণা ও আপডেট</span>
               </button>
 
               <button
                 type="button"
                 onClick={() => setActiveMainTab("site")}
-                className={`px-3 py-1.5 rounded-xl text-xs font-black transition-all flex items-center gap-1.5 cursor-pointer whitespace-nowrap ${
+                className={`px-3.5 py-2 rounded-xl text-xs font-black transition-all flex items-center gap-1.5 cursor-pointer whitespace-nowrap shrink-0 ${
                   activeMainTab === "site"
                     ? "bg-white text-emerald-800 shadow-xs ring-1 ring-slate-200"
                     : "text-slate-600 hover:text-slate-900"
                 }`}
               >
-                <Sliders size={14} className={activeMainTab === "site" ? "text-emerald-600" : "text-slate-400"} />
+                <Sliders size={14} className={`shrink-0 ${activeMainTab === "site" ? "text-emerald-600" : "text-slate-400"}`} />
                 <span>সাইট সেটিংস</span>
               </button>
             </div>
@@ -1012,11 +1012,11 @@ const AdminSettings: React.FC = () => {
               </div>
 
               {/* Toggle preview type */}
-              <div className="flex items-center gap-2 overflow-x-auto pb-1">
+              <div className="flex items-center gap-2 overflow-x-auto pb-1 scrollbar-none">
                 <button
                   type="button"
                   onClick={() => setShowPreviewModal("welcome")}
-                  className={`px-3 py-1.5 rounded-xl text-xs font-bold transition cursor-pointer whitespace-nowrap ${
+                  className={`px-3 py-1.5 rounded-xl text-xs font-bold transition cursor-pointer whitespace-nowrap shrink-0 ${
                     showPreviewModal === "welcome"
                       ? "bg-emerald-600 text-white"
                       : "bg-slate-100 text-slate-700 hover:bg-slate-200"
@@ -1027,7 +1027,7 @@ const AdminSettings: React.FC = () => {
                 <button
                   type="button"
                   onClick={() => setShowPreviewModal("profile")}
-                  className={`px-3 py-1.5 rounded-xl text-xs font-bold transition cursor-pointer whitespace-nowrap ${
+                  className={`px-3 py-1.5 rounded-xl text-xs font-bold transition cursor-pointer whitespace-nowrap shrink-0 ${
                     showPreviewModal === "profile"
                       ? "bg-emerald-600 text-white"
                       : "bg-slate-100 text-slate-700 hover:bg-slate-200"
@@ -1038,7 +1038,7 @@ const AdminSettings: React.FC = () => {
                 <button
                   type="button"
                   onClick={() => setShowPreviewModal("reset")}
-                  className={`px-3 py-1.5 rounded-xl text-xs font-bold transition cursor-pointer whitespace-nowrap ${
+                  className={`px-3 py-1.5 rounded-xl text-xs font-bold transition cursor-pointer whitespace-nowrap shrink-0 ${
                     showPreviewModal === "reset"
                       ? "bg-emerald-600 text-white"
                       : "bg-slate-100 text-slate-700 hover:bg-slate-200"
@@ -1049,7 +1049,7 @@ const AdminSettings: React.FC = () => {
                 <button
                   type="button"
                   onClick={() => setShowPreviewModal("security")}
-                  className={`px-3 py-1.5 rounded-xl text-xs font-bold transition cursor-pointer whitespace-nowrap ${
+                  className={`px-3 py-1.5 rounded-xl text-xs font-bold transition cursor-pointer whitespace-nowrap shrink-0 ${
                     showPreviewModal === "security"
                       ? "bg-rose-600 text-white"
                       : "bg-slate-100 text-slate-700 hover:bg-slate-200"
@@ -1060,7 +1060,7 @@ const AdminSettings: React.FC = () => {
                 <button
                   type="button"
                   onClick={() => setShowPreviewModal("announcement")}
-                  className={`px-3 py-1.5 rounded-xl text-xs font-bold transition cursor-pointer whitespace-nowrap ${
+                  className={`px-3 py-1.5 rounded-xl text-xs font-bold transition cursor-pointer whitespace-nowrap shrink-0 ${
                     showPreviewModal === "announcement"
                       ? "bg-amber-600 text-white"
                       : "bg-slate-100 text-slate-700 hover:bg-slate-200"
