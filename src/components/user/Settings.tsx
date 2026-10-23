@@ -456,7 +456,7 @@ export default function Settings() {
             <ArrowLeft size={22} className="stroke-[2.5]" />
           </button>
           <h1 className="text-xl font-black text-slate-950 tracking-tight">
-            Settings
+            সেটিংস
           </h1>
         </div>
       </header>
@@ -469,7 +469,7 @@ export default function Settings() {
         {/* ========================================================================= */}
         <div className="space-y-2.5">
           <h2 className="text-[13px] font-bold text-slate-500 uppercase tracking-wide px-1">
-            Switch Account
+            অ্যাকাউন্ট পরিবর্তন
           </h2>
 
           <div className="bg-white rounded-3xl p-4 shadow-2xs border border-slate-100/90 space-y-3">
@@ -487,7 +487,7 @@ export default function Settings() {
                       {displayName}
                     </h3>
                     <span className="px-2 py-0.5 rounded-md bg-emerald-50 text-emerald-600 text-[10px] font-black border border-emerald-200/60">
-                      Active
+                      সক্রিয়
                     </span>
                   </div>
                   <p className="text-[12px] text-slate-500 truncate mt-0.5">
@@ -509,7 +509,7 @@ export default function Settings() {
         {/* ========================================================================= */}
         <div className="space-y-2">
           <h2 className="text-[13px] font-bold text-slate-500 uppercase tracking-wide px-1">
-            Account
+            অ্যাকাউন্ট
           </h2>
 
           <div className="bg-white rounded-3xl shadow-2xs border border-slate-100/90 divide-y divide-slate-100 overflow-hidden">
@@ -524,8 +524,8 @@ export default function Settings() {
                   <User size={20} className="stroke-[2.2]" />
                 </div>
                 <div className="min-w-0">
-                  <p className="text-[14px] font-black text-slate-950">Personal Information</p>
-                  <p className="text-[11px] text-slate-500 truncate mt-0.5">Name, email, phone</p>
+                  <p className="text-[14px] font-black text-slate-950">ব্যক্তিগত তথ্য</p>
+                  <p className="text-[11px] text-slate-500 truncate mt-0.5">নাম, ইমেইল, ফোন নম্বর</p>
                 </div>
               </div>
               <ChevronRight size={18} className="text-slate-400 shrink-0" />
@@ -542,8 +542,8 @@ export default function Settings() {
                   <Lock size={20} className="stroke-[2.2]" />
                 </div>
                 <div className="min-w-0">
-                  <p className="text-[14px] font-black text-slate-950">Change Password</p>
-                  <p className="text-[11px] text-slate-500 truncate mt-0.5">Update your password</p>
+                  <p className="text-[14px] font-black text-slate-950">পাসওয়ার্ড পরিবর্তন</p>
+                  <p className="text-[11px] text-slate-500 truncate mt-0.5">আপনার পাসওয়ার্ড আপডেট করুন</p>
                 </div>
               </div>
               <ChevronRight size={18} className="text-slate-400 shrink-0" />
@@ -556,8 +556,8 @@ export default function Settings() {
                   <Shield size={20} className="stroke-[2.2]" />
                 </div>
                 <div className="min-w-0">
-                  <p className="text-[14px] font-black text-slate-950">Lock Profile</p>
-                  <p className="text-[11px] text-slate-500 truncate mt-0.5">Lock your profile to restrict access</p>
+                  <p className="text-[14px] font-black text-slate-950">প্রোফাইল লক</p>
+                  <p className="text-[11px] text-slate-500 truncate mt-0.5">অন্যদের থেকে আপনার প্রোফাইল লক রাখুন</p>
                 </div>
               </div>
 
@@ -588,8 +588,8 @@ export default function Settings() {
                   <LayoutGrid size={20} className="stroke-[2.2]" />
                 </div>
                 <div className="min-w-0">
-                  <p className="text-[14px] font-black text-slate-950">Professional Dashboard</p>
-                  <p className="text-[11px] text-slate-500 truncate mt-0.5">Insights, monetization & earnings</p>
+                  <p className="text-[14px] font-black text-slate-950">প্রফেশনাল ড্যাশবোর্ড</p>
+                  <p className="text-[11px] text-slate-500 truncate mt-0.5">ইনসাইটস, মনিটাইজেশন ও আয়</p>
                 </div>
               </div>
               <ChevronRight size={18} className="text-slate-400 shrink-0" />
@@ -606,8 +606,8 @@ export default function Settings() {
                   <BadgeCheck size={20} className="stroke-[2.2]" />
                 </div>
                 <div className="min-w-0">
-                  <p className="text-[14px] font-black text-slate-950">Verification Badge</p>
-                  <p className="text-[11px] text-slate-500 truncate mt-0.5">Get verified checkmark</p>
+                  <p className="text-[14px] font-black text-slate-950">ভেরিফাইড ব্যাজ</p>
+                  <p className="text-[11px] text-slate-500 truncate mt-0.5">ভেরিফাইড নীল টিক ব্যাজ পান</p>
                 </div>
               </div>
               <ChevronRight size={18} className="text-slate-400 shrink-0" />
@@ -624,8 +624,8 @@ export default function Settings() {
                   <Bookmark size={20} className="stroke-[2.2]" />
                 </div>
                 <div className="min-w-0">
-                  <p className="text-[14px] font-black text-slate-950">Saved Reels</p>
-                  <p className="text-[11px] text-slate-500 truncate mt-0.5">Your saved reels collection</p>
+                  <p className="text-[14px] font-black text-slate-950">সেভ করা রিলস</p>
+                  <p className="text-[11px] text-slate-500 truncate mt-0.5">সংরক্ষিত রিলস কালেকশন</p>
                 </div>
               </div>
               <ChevronRight size={18} className="text-slate-400 shrink-0" />
@@ -638,7 +638,7 @@ export default function Settings() {
         {/* ========================================================================= */}
         <div className="space-y-2">
           <h2 className="text-[13px] font-bold text-slate-500 uppercase tracking-wide px-1">
-            Appearance
+            ডিসপ্লে ও থিম
           </h2>
 
           <div className="bg-white rounded-3xl shadow-2xs border border-slate-100/90 divide-y divide-slate-100 overflow-hidden">
@@ -653,9 +653,9 @@ export default function Settings() {
                   <Moon size={20} className="stroke-[2.2]" />
                 </div>
                 <div className="min-w-0">
-                  <p className="text-[14px] font-black text-slate-950">Theme</p>
+                  <p className="text-[14px] font-black text-slate-950">অ্যাপের থিম</p>
                   <p className="text-[11px] text-slate-500 truncate mt-0.5">
-                    {selectedTheme === "system" ? "System default" : selectedTheme === "light" ? "Light Theme" : "Dark Theme"}
+                    {selectedTheme === "system" ? "সিস্টেম ডিফল্ট" : selectedTheme === "light" ? "লাইট থিম" : "ডার্ক থিম"}
                   </p>
                 </div>
               </div>
@@ -673,9 +673,9 @@ export default function Settings() {
                   <Globe size={20} className="stroke-[2.2]" />
                 </div>
                 <div className="min-w-0">
-                  <p className="text-[14px] font-black text-slate-950">Language</p>
+                  <p className="text-[14px] font-black text-slate-950">ভাষা (Language)</p>
                   <p className="text-[11px] text-slate-500 truncate mt-0.5">
-                    {selectedLanguage === "en" ? "English (English)" : "বাংলা (Bangla)"}
+                    {selectedLanguage === "en" ? "ইংরেজি (English)" : "বাংলা (Bangla)"}
                   </p>
                 </div>
               </div>
@@ -685,11 +685,11 @@ export default function Settings() {
         </div>
 
         {/* ========================================================================= */}
-        {/* 5. STORAGE SECTION (Matching Screenshot 2 Card)                           */}
+        {/* 5. STORAGE SECTION                                                       */}
         {/* ========================================================================= */}
         <div className="space-y-2">
           <h2 className="text-[13px] font-bold text-slate-500 uppercase tracking-wide px-1">
-            Storage
+            স্টোরেজ ও মেমরি
           </h2>
 
           <div className="bg-white rounded-3xl p-4 shadow-2xs border border-slate-100/90 space-y-4">
@@ -700,8 +700,8 @@ export default function Settings() {
                   <HardDrive size={18} />
                 </div>
                 <div>
-                  <h4 className="text-[14px] font-black text-slate-950">Storage Usage</h4>
-                  <p className="text-[11px] text-slate-500 mt-0.5">{totalStorageUsed} of 500 MB used</p>
+                  <h4 className="text-[14px] font-black text-slate-950">মেমরি ব্যবহার</h4>
+                  <p className="text-[11px] text-slate-500 mt-0.5">৫০০ মেগাবাইটের মধ্যে {totalStorageUsed} ব্যবহৃত</p>
                 </div>
               </div>
 
@@ -722,8 +722,8 @@ export default function Settings() {
                     <Video size={19} className="stroke-[2.2]" />
                   </div>
                   <div className="min-w-0">
-                    <p className="text-[13px] font-black text-slate-950">Video Cache</p>
-                    <p className="text-[11px] text-slate-500 mt-0.5">{videoCount} videos • {videoCacheSize}</p>
+                    <p className="text-[13px] font-black text-slate-950">ভিডিও ক্যাশ</p>
+                    <p className="text-[11px] text-slate-500 mt-0.5">{videoCount}টি ভিডিও • {videoCacheSize}</p>
                   </div>
                 </div>
 
@@ -732,7 +732,7 @@ export default function Settings() {
                   onClick={handleClearVideoCache}
                   className="px-3 py-1.5 text-xs font-bold text-red-500 hover:text-red-700 hover:bg-red-50 rounded-xl transition cursor-pointer border-none bg-transparent shrink-0"
                 >
-                  Clear Cache
+                  ক্যাশ মুছুন
                 </button>
               </div>
 
@@ -743,8 +743,8 @@ export default function Settings() {
                     <ImageIcon size={19} className="stroke-[2.2]" />
                   </div>
                   <div className="min-w-0">
-                    <p className="text-[13px] font-black text-slate-950">Image Cache</p>
-                    <p className="text-[11px] text-slate-500 mt-0.5">{imageCount} images • {imageCacheSize}</p>
+                    <p className="text-[13px] font-black text-slate-950">ছবি ক্যাশ</p>
+                    <p className="text-[11px] text-slate-500 mt-0.5">{imageCount}টি ছবি • {imageCacheSize}</p>
                   </div>
                 </div>
 
@@ -753,7 +753,7 @@ export default function Settings() {
                   onClick={handleClearImageCache}
                   className="px-3 py-1.5 text-xs font-bold text-red-500 hover:text-red-700 hover:bg-red-50 rounded-xl transition cursor-pointer border-none bg-transparent shrink-0"
                 >
-                  Clear Cache
+                  ক্যাশ মুছুন
                 </button>
               </div>
 
@@ -764,8 +764,8 @@ export default function Settings() {
                     <Trash2 size={19} className="stroke-[2.2]" />
                   </div>
                   <div className="min-w-0">
-                    <p className="text-[13px] font-black text-red-500">Clear All Cache</p>
-                    <p className="text-[11px] text-slate-500 mt-0.5">Free up storage space</p>
+                    <p className="text-[13px] font-black text-red-500">সকল ক্যাশ মুছুন</p>
+                    <p className="text-[11px] text-slate-500 mt-0.5">ডিভাইসের স্টোরেজ খালি করুন</p>
                   </div>
                 </div>
 
@@ -774,7 +774,7 @@ export default function Settings() {
                   onClick={handleClearAllCache}
                   className="px-3 py-1.5 text-xs font-black text-red-500 hover:text-red-700 hover:bg-red-50 rounded-xl transition cursor-pointer border-none bg-transparent shrink-0"
                 >
-                  Clear All Cache
+                  সকল ক্যাশ মুছুন
                 </button>
               </div>
             </div>
@@ -786,7 +786,7 @@ export default function Settings() {
         {/* ========================================================================= */}
         <div className="space-y-2">
           <h2 className="text-[13px] font-bold text-slate-500 uppercase tracking-wide px-1">
-            Support
+            হেল্প ও সাপোর্ট
           </h2>
 
           <div className="bg-white rounded-3xl shadow-2xs border border-slate-100/90 divide-y divide-slate-100 overflow-hidden">
@@ -801,8 +801,8 @@ export default function Settings() {
                   <Headphones size={20} className="stroke-[2.2]" />
                 </div>
                 <div className="min-w-0">
-                  <p className="text-[14px] font-black text-slate-950">Support Center</p>
-                  <p className="text-[11px] text-slate-500 truncate mt-0.5">Get help from our support team</p>
+                  <p className="text-[14px] font-black text-slate-950">সাপোর্ট সেন্টার</p>
+                  <p className="text-[11px] text-slate-500 truncate mt-0.5">সাপোর্ট টিমের সাহায্য নিন</p>
                 </div>
               </div>
               <ChevronRight size={18} className="text-slate-400 shrink-0" />
@@ -819,8 +819,8 @@ export default function Settings() {
                   <HelpCircle size={20} className="stroke-[2.2]" />
                 </div>
                 <div className="min-w-0">
-                  <p className="text-[14px] font-black text-slate-950">Help & Support</p>
-                  <p className="text-[11px] text-slate-500 truncate mt-0.5">Get help with your account</p>
+                  <p className="text-[14px] font-black text-slate-950">সাহায্য ও সহায়িকা</p>
+                  <p className="text-[11px] text-slate-500 truncate mt-0.5">আপনার অ্যাকাউন্ট সংক্রান্ত সাহায্য নিন</p>
                 </div>
               </div>
               <ChevronRight size={18} className="text-slate-400 shrink-0" />
@@ -837,7 +837,7 @@ export default function Settings() {
                   <Shield size={20} className="stroke-[2.2]" />
                 </div>
                 <div className="min-w-0">
-                  <p className="text-[14px] font-black text-slate-950">Privacy Policy</p>
+                  <p className="text-[14px] font-black text-slate-950">গোপনীয়তা নীতি</p>
                 </div>
               </div>
               <ChevronRight size={18} className="text-slate-400 shrink-0" />
@@ -854,7 +854,7 @@ export default function Settings() {
                   <FileText size={20} className="stroke-[2.2]" />
                 </div>
                 <div className="min-w-0">
-                  <p className="text-[14px] font-black text-slate-950">Terms of Service</p>
+                  <p className="text-[14px] font-black text-slate-950">ব্যবহারের শর্তাবলী</p>
                 </div>
               </div>
               <ChevronRight size={18} className="text-slate-400 shrink-0" />
@@ -871,8 +871,8 @@ export default function Settings() {
                   <Info size={20} className="stroke-[2.2]" />
                 </div>
                 <div className="min-w-0">
-                  <p className="text-[14px] font-black text-slate-950">About</p>
-                  <p className="text-[11px] text-slate-500 truncate mt-0.5">Version 2.0.3 (17)</p>
+                  <p className="text-[14px] font-black text-slate-950">অ্যাপ পরিচিতি</p>
+                  <p className="text-[11px] text-slate-500 truncate mt-0.5">ভার্সন ২.০.৩ (১৭)</p>
                 </div>
               </div>
               <ChevronRight size={18} className="text-slate-400 shrink-0" />
@@ -885,7 +885,7 @@ export default function Settings() {
         {/* ========================================================================= */}
         <div className="space-y-2">
           <h2 className="text-[13px] font-bold text-slate-500 uppercase tracking-wide px-1">
-            Business
+            ব্যবসা ও লেনদেন
           </h2>
 
           <div className="bg-white rounded-3xl shadow-2xs border border-slate-100/90 divide-y divide-slate-100 overflow-hidden">
@@ -900,8 +900,8 @@ export default function Settings() {
                   <Wallet size={20} className="stroke-[2.2]" />
                 </div>
                 <div className="min-w-0">
-                  <p className="text-[14px] font-black text-slate-950">Wallet</p>
-                  <p className="text-[11px] text-slate-500 truncate mt-0.5">Balance & Transactions</p>
+                  <p className="text-[14px] font-black text-slate-950">আমার ওয়ালেট</p>
+                  <p className="text-[11px] text-slate-500 truncate mt-0.5">ব্যালেন্স ও লেনদেন ইতিহাস</p>
                 </div>
               </div>
               <ChevronRight size={18} className="text-slate-400 shrink-0" />
@@ -918,8 +918,8 @@ export default function Settings() {
                   <Megaphone size={20} className="stroke-[2.2]" />
                 </div>
                 <div className="min-w-0">
-                  <p className="text-[14px] font-black text-slate-950">My Advertisements</p>
-                  <p className="text-[11px] text-slate-500 truncate mt-0.5">Manage your ads</p>
+                  <p className="text-[14px] font-black text-slate-950">আমার বিজ্ঞাপনসমূহ</p>
+                  <p className="text-[11px] text-slate-500 truncate mt-0.5">বিজ্ঞাপনসমূহ পরিচালনা করুন</p>
                 </div>
               </div>
               <ChevronRight size={18} className="text-slate-400 shrink-0" />
@@ -938,7 +938,7 @@ export default function Settings() {
             className="w-full py-3.5 px-4 bg-white border border-red-300 hover:border-red-500 text-red-500 hover:bg-red-50/60 active:scale-[0.99] font-black text-sm rounded-2xl flex items-center justify-center gap-2 shadow-2xs transition cursor-pointer"
           >
             <LogOut size={18} className="stroke-[2.5]" />
-            <span>Log Out</span>
+            <span>লগ আউট</span>
           </button>
 
           {/* Delete Account Button */}
@@ -948,7 +948,7 @@ export default function Settings() {
             className="w-full py-2 text-slate-500 hover:text-red-600 font-bold text-xs flex items-center justify-center gap-1.5 transition cursor-pointer border-none bg-transparent"
           >
             <Trash2 size={14} />
-            <span>Delete Account</span>
+            <span>অ্যাকাউন্ট মুছে ফেলুন</span>
           </button>
         </div>
       </main>
@@ -968,7 +968,7 @@ export default function Settings() {
               className="bg-white rounded-3xl w-full max-w-md p-6 shadow-2xl border border-slate-100 space-y-4"
             >
               <div className="flex items-center justify-between border-b border-slate-100 pb-3">
-                <h3 className="font-black text-slate-950 text-base">Personal Information</h3>
+                <h3 className="font-black text-slate-950 text-base">ব্যক্তিগত তথ্য</h3>
                 <button
                   type="button"
                   onClick={() => setShowPersonalInfoModal(false)}
@@ -980,7 +980,7 @@ export default function Settings() {
 
               <form onSubmit={handleSavePersonalInfo} className="space-y-3.5">
                 <div>
-                  <label className="text-xs font-bold text-slate-700">Full Name</label>
+                  <label className="text-xs font-bold text-slate-700">পূর্ণ নাম</label>
                   <input
                     type="text"
                     value={nameInput}
@@ -990,7 +990,7 @@ export default function Settings() {
                 </div>
 
                 <div>
-                  <label className="text-xs font-bold text-slate-700">Email Address</label>
+                  <label className="text-xs font-bold text-slate-700">ইমেইল ঠিকানা</label>
                   <input
                     type="email"
                     disabled
@@ -1000,7 +1000,7 @@ export default function Settings() {
                 </div>
 
                 <div>
-                  <label className="text-xs font-bold text-slate-700">Phone Number</label>
+                  <label className="text-xs font-bold text-slate-700">ফোন নম্বর</label>
                   <input
                     type="tel"
                     value={phoneInput}
@@ -1010,7 +1010,7 @@ export default function Settings() {
                 </div>
 
                 <div>
-                  <label className="text-xs font-bold text-slate-700">Bio</label>
+                  <label className="text-xs font-bold text-slate-700">বায়ো (সংক্ষিপ্ত পরিচয়)</label>
                   <textarea
                     rows={2}
                     value={bioInput}
@@ -1046,7 +1046,7 @@ export default function Settings() {
               className="bg-white rounded-3xl w-full max-w-md p-6 shadow-2xl border border-slate-100 space-y-4"
             >
               <div className="flex items-center justify-between border-b border-slate-100 pb-3">
-                <h3 className="font-black text-slate-950 text-base">Change Password</h3>
+                <h3 className="font-black text-slate-950 text-base">পাসওয়ার্ড পরিবর্তন</h3>
                 <button
                   type="button"
                   onClick={() => setShowPasswordModal(false)}
@@ -1058,7 +1058,7 @@ export default function Settings() {
 
               <form onSubmit={handleChangePassword} className="space-y-3.5">
                 <div>
-                  <label className="text-xs font-bold text-slate-700">Current Password</label>
+                  <label className="text-xs font-bold text-slate-700">বর্তমান পাসওয়ার্ড</label>
                   <input
                     type={showPasswordFields ? "text" : "password"}
                     value={currentPassword}
@@ -1069,7 +1069,7 @@ export default function Settings() {
                 </div>
 
                 <div>
-                  <label className="text-xs font-bold text-slate-700">New Password</label>
+                  <label className="text-xs font-bold text-slate-700">নতুন পাসওয়ার্ড</label>
                   <input
                     type={showPasswordFields ? "text" : "password"}
                     value={newPassword}
@@ -1080,7 +1080,7 @@ export default function Settings() {
                 </div>
 
                 <div>
-                  <label className="text-xs font-bold text-slate-700">Confirm New Password</label>
+                  <label className="text-xs font-bold text-slate-700">নতুন পাসওয়ার্ড নিশ্চিত করুন</label>
                   <input
                     type={showPasswordFields ? "text" : "password"}
                     value={confirmPassword}
@@ -1134,7 +1134,7 @@ export default function Settings() {
                     <BadgeCheck size={18} />
                   </div>
                   <h3 className="font-black text-slate-950 text-base">
-                    Verification Badge (৳500)
+                    ভেরিফাইড ব্যাজ (৳৫০০)
                   </h3>
                 </div>
                 <button
@@ -1213,7 +1213,7 @@ export default function Settings() {
               className="bg-white rounded-3xl w-full max-w-sm p-6 shadow-2xl border border-slate-100 space-y-4"
             >
               <div className="flex items-center justify-between border-b border-slate-100 pb-3">
-                <h3 className="font-black text-slate-950 text-base">Select Theme</h3>
+                <h3 className="font-black text-slate-950 text-base">থিম নির্বাচন করুন</h3>
                 <button
                   type="button"
                   onClick={() => setShowThemeModal(false)}
@@ -1225,9 +1225,9 @@ export default function Settings() {
 
               <div className="space-y-2">
                 {[
-                  { id: "system", label: "System default", icon: HardDrive },
-                  { id: "light", label: "Light Theme", icon: Sun },
-                  { id: "dark", label: "Dark Theme", icon: Moon }
+                  { id: "system", label: "সিস্টেম ডিফল্ট", icon: HardDrive },
+                  { id: "light", label: "লাইট থিম", icon: Sun },
+                  { id: "dark", label: "ডার্ক থিম", icon: Moon }
                 ].map((item) => {
                   const Icon = item.icon;
                   const isSel = selectedTheme === item.id;
@@ -1269,7 +1269,7 @@ export default function Settings() {
               className="bg-white rounded-3xl w-full max-w-sm p-6 shadow-2xl border border-slate-100 space-y-4"
             >
               <div className="flex items-center justify-between border-b border-slate-100 pb-3">
-                <h3 className="font-black text-slate-950 text-base">Select Language</h3>
+                <h3 className="font-black text-slate-950 text-base">ভাষা নির্বাচন করুন</h3>
                 <button
                   type="button"
                   onClick={() => setShowLanguageModal(false)}
@@ -1281,7 +1281,7 @@ export default function Settings() {
 
               <div className="space-y-2">
                 {[
-                  { id: "en", label: "English (English)" },
+                  { id: "en", label: "ইংরেজি (English)" },
                   { id: "bn", label: "বাংলা (Bangla)" }
                 ].map((item) => {
                   const isSel = selectedLanguage === item.id;
@@ -1324,7 +1324,7 @@ export default function Settings() {
                   <div className="w-8 h-8 rounded-full bg-emerald-50 text-emerald-700 flex items-center justify-center">
                     <Wallet size={18} />
                   </div>
-                  <h3 className="font-black text-slate-950 text-base">Wallet & Balance</h3>
+                  <h3 className="font-black text-slate-950 text-base">ওয়ালেট ও ব্যালেন্স</h3>
                 </div>
                 <button
                   type="button"
@@ -1526,7 +1526,7 @@ export default function Settings() {
             >
               <div className="flex items-center justify-between border-b border-slate-100 pb-2.5">
                 <h3 className="font-black text-slate-950 text-base">
-                  {showAboutModal ? "About App" : showPrivacyModal ? "Privacy Policy" : showTermsModal ? "Terms of Service" : "Support Center"}
+                  {showAboutModal ? "অ্যাপ পরিচিতি" : showPrivacyModal ? "গোপনীয়তা নীতি" : showTermsModal ? "ব্যবহারের শর্তাবলী" : "সাপোর্ট সেন্টার"}
                 </h3>
                 <button
                   type="button"
