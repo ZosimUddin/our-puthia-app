@@ -189,7 +189,11 @@ export const ChangePassword: React.FC = () => {
     setError('');
 
     try {
-      await sendPasswordResetEmail(auth, userEmail);
+      const actionCodeSettings = {
+        url: `${window.location.origin}/login`,
+        handleCodeInApp: false,
+      };
+      await sendPasswordResetEmail(auth, userEmail, actionCodeSettings);
       const msg = `${userEmail} ঠিকানায় পাসওয়ার্ড রিসেট লিংক সফলভাবে পাঠানো হয়েছে! ইনবক্স অথবা স্প্যাম ফোল্ডার চেক করুন।`;
       setResetEmailSuccess(msg);
       toast.success('পাসওয়ার্ড রিসেট লিংক পাঠানো হয়েছে');

@@ -653,7 +653,11 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
   const resetPassword = async (email: string) => {
     setLoading(true);
     try {
-      await sendPasswordResetEmail(auth, email);
+      const actionCodeSettings = {
+        url: `${window.location.origin}/login`,
+        handleCodeInApp: false,
+      };
+      await sendPasswordResetEmail(auth, email, actionCodeSettings);
       // Also queue custom formatted password reset notification
       try {
         await sendPasswordResetCustomEmail({
