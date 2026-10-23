@@ -140,7 +140,7 @@ export const ProfessionalDashboardPage: React.FC = () => {
             <ArrowLeft size={22} className="stroke-[2.5]" />
           </button>
           <h1 className="text-xl font-black text-slate-950 tracking-tight">
-            Professional Dashboard
+            প্রফেশনাল ড্যাশবোর্ড
           </h1>
         </div>
       </header>
@@ -149,11 +149,11 @@ export const ProfessionalDashboardPage: React.FC = () => {
       <main className="max-w-md mx-auto px-4 pt-5 space-y-6">
 
         {/* ========================================================================= */}
-        {/* 2. PERFORMANCE OVERVIEW (2x2 Grid matching Screenshot 2)                  */}
+        {/* 2. PERFORMANCE OVERVIEW (2x2 Grid matching Screenshot)                   */}
         {/* ========================================================================= */}
         <div className="space-y-3">
           <h2 className="text-[17px] font-black text-slate-950 tracking-tight">
-            Performance Overview
+            পারফর্মেন্স ওভারভিউ
           </h2>
 
           <div className="grid grid-cols-2 gap-3">
@@ -167,7 +167,7 @@ export const ProfessionalDashboardPage: React.FC = () => {
                   {followersCount}
                 </p>
                 <p className="text-[11.5px] text-slate-500 font-medium mt-0.5">
-                  Followers
+                  ফলোয়ার
                 </p>
               </div>
             </div>
@@ -182,7 +182,7 @@ export const ProfessionalDashboardPage: React.FC = () => {
                   {totalViews}
                 </p>
                 <p className="text-[11.5px] text-slate-500 font-medium mt-0.5">
-                  Total Views
+                  মোট ভিউ
                 </p>
               </div>
             </div>
@@ -197,7 +197,7 @@ export const ProfessionalDashboardPage: React.FC = () => {
                   {postsCount}
                 </p>
                 <p className="text-[11.5px] text-slate-500 font-medium mt-0.5">
-                  Posts
+                  পোস্ট
                 </p>
               </div>
             </div>
@@ -212,7 +212,7 @@ export const ProfessionalDashboardPage: React.FC = () => {
                   {reelsCount}
                 </p>
                 <p className="text-[11.5px] text-slate-500 font-medium mt-0.5">
-                  Scrolle
+                  স্ক্স্রোল (Scrolle)
                 </p>
               </div>
             </div>
@@ -220,11 +220,11 @@ export const ProfessionalDashboardPage: React.FC = () => {
         </div>
 
         {/* ========================================================================= */}
-        {/* 3. MONETIZATION (Checklist & Revenue Share matching Screenshot 2)         */}
+        {/* 3. MONETIZATION (Checklist & Revenue Share matching Screenshot)          */}
         {/* ========================================================================= */}
         <div className="space-y-3">
           <h2 className="text-[17px] font-black text-slate-950 tracking-tight">
-            Monetization
+            মনিটাইজেশন
           </h2>
 
           <div className="bg-white rounded-3xl p-5 shadow-2xs border border-slate-100 space-y-4">
@@ -235,11 +235,11 @@ export const ProfessionalDashboardPage: React.FC = () => {
                   <DollarSign size={16} strokeWidth={3} />
                 </div>
                 <h3 className="text-[15px] font-black text-slate-950">
-                  Monetization Requirements
+                  মনিটাইজেশনের প্রয়োজনীয় শর্তাবলী
                 </h3>
               </div>
               <p className="text-[12px] text-slate-500 leading-relaxed pl-9.5">
-                Earn 55% revenue share from ad views on your content
+                আপনার কন্টেন্টে বিজ্ঞাপন ভিউ থেকে ৫৫% রেভিনিউ শেয়ার আয় করুন
               </p>
             </div>
 
@@ -252,8 +252,8 @@ export const ProfessionalDashboardPage: React.FC = () => {
                     <Users size={18} className="stroke-[2.2]" />
                   </div>
                   <div className="min-w-0">
-                    <p className="text-[13px] font-black text-slate-900">Followers</p>
-                    <p className="text-[11px] text-slate-400 mt-0.5">{followersCount} / 1000</p>
+                    <p className="text-[13px] font-black text-slate-900">ফলোয়ার (Followers)</p>
+                    <p className="text-[11px] text-slate-400 mt-0.5">{followersCount} / ১০০০</p>
                   </div>
                 </div>
 
@@ -271,8 +271,8 @@ export const ProfessionalDashboardPage: React.FC = () => {
                     <FileText size={18} className="stroke-[2.2]" />
                   </div>
                   <div className="min-w-0">
-                    <p className="text-[13px] font-black text-slate-900">Posts</p>
-                    <p className="text-[11px] text-slate-400 mt-0.5">{postsCount} / 10</p>
+                    <p className="text-[13px] font-black text-slate-900">পোস্ট (Posts)</p>
+                    <p className="text-[11px] text-slate-400 mt-0.5">{postsCount} / ১০</p>
                   </div>
                 </div>
 
@@ -290,8 +290,8 @@ export const ProfessionalDashboardPage: React.FC = () => {
                     <Play size={18} className="stroke-[2.2] fill-current" />
                   </div>
                   <div className="min-w-0">
-                    <p className="text-[13px] font-black text-slate-900">Scrolle</p>
-                    <p className="text-[11px] text-slate-400 mt-0.5">{reelsCount} / 7</p>
+                    <p className="text-[13px] font-black text-slate-900">স্ক্স্রোল (Scrolle)</p>
+                    <p className="text-[11px] text-slate-400 mt-0.5">{reelsCount} / ৭</p>
                   </div>
                 </div>
 
@@ -309,8 +309,8 @@ export const ProfessionalDashboardPage: React.FC = () => {
                     <Calendar size={18} className="stroke-[2.2]" />
                   </div>
                   <div className="min-w-0">
-                    <p className="text-[13px] font-black text-slate-900">Account Age</p>
-                    <p className="text-[11px] text-slate-400 mt-0.5">{accountAgeDays} / 180 days</p>
+                    <p className="text-[13px] font-black text-slate-900">অ্যাকাউন্টের বয়স</p>
+                    <p className="text-[11px] text-slate-400 mt-0.5">{accountAgeDays} / ১৮০ দিন</p>
                   </div>
                 </div>
 
@@ -333,18 +333,18 @@ export const ProfessionalDashboardPage: React.FC = () => {
                     : "bg-[#E2E5E9] text-[#8C939E] cursor-not-allowed"
                 }`}
               >
-                {allReqsMet ? "Apply for Monetization" : "Requirements not met yet"}
+                {allReqsMet ? "মনিটাইজেশনের জন্য আবেদন করুন" : "শর্তাবলী এখনো পূরণ হয়নি"}
               </button>
             </div>
           </div>
         </div>
 
         {/* ========================================================================= */}
-        {/* 4. THIS MONTH (Content views this month matching Screenshot 2)            */}
+        {/* 4. THIS MONTH (Content views this month matching Screenshot)              */}
         {/* ========================================================================= */}
         <div className="space-y-3">
           <h2 className="text-[17px] font-black text-slate-950 tracking-tight">
-            This Month
+            এই মাসে
           </h2>
 
           <div className="bg-white rounded-3xl p-4 shadow-2xs border border-slate-100 flex items-center gap-3.5">
@@ -353,10 +353,10 @@ export const ProfessionalDashboardPage: React.FC = () => {
             </div>
             <div>
               <p className="text-base font-black text-slate-950">
-                {monthlyViews} views
+                {monthlyViews} টি ভিউ
               </p>
               <p className="text-[11.5px] text-slate-500 font-medium mt-0.5">
-                Content views this month
+                এই মাসে কন্টেন্ট ভিউ
               </p>
             </div>
           </div>
