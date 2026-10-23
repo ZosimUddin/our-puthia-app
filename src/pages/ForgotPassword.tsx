@@ -134,10 +134,34 @@ const ForgotPassword = () => {
           <motion.div 
             initial={{ opacity: 0, scale: 0.95 }}
             animate={{ opacity: 1, scale: 1 }}
-            className="p-4 bg-[#E5FDF6] border border-emerald-200 rounded-[20px] flex items-center gap-3 text-emerald-800 text-xs sm:text-sm font-bold shadow-sm"
+            className="p-5 bg-[#E5FDF6] border border-emerald-200 rounded-[24px] space-y-3.5 text-emerald-900 text-xs sm:text-sm shadow-sm"
           >
-            <CheckCircle2 size={18} className="shrink-0 text-emerald-600" />
-            <span>{message}</span>
+            <div className="flex items-center gap-3 text-emerald-900">
+              <CheckCircle2 size={22} className="shrink-0 text-emerald-600" />
+              <span className="font-black text-sm sm:text-base">পাসওয়ার্ড রিসেট বার্তা সফলভাবে পাঠানো হয়েছে!</span>
+            </div>
+            
+            <div className="bg-white p-4 rounded-[18px] border border-emerald-200/80 text-slate-700 text-xs leading-relaxed space-y-2 shadow-xs">
+              <p className="font-black text-[#01412F] border-b border-emerald-50 pb-1 flex items-center justify-between">
+                <span>ইনবক্সে প্রেরিত বার্তার বিবরণ:</span>
+                <span className="text-[10px] text-emerald-600 bg-emerald-50 px-2 py-0.5 rounded-full">আমাদের পুঠিয়া</span>
+              </p>
+              <p className="text-slate-700 font-semibold whitespace-pre-line text-[11.5px] leading-relaxed">
+                {`প্রিয় ব্যবহারকারী,
+
+আপনি আপনার “আমাদের পুঠিয়া” অ্যাকাউন্টের পাসওয়ার্ড পরিবর্তন করার অনুরোধ করেছেন।
+
+আপনার অ্যাকাউন্টে আবার নিরাপদে প্রবেশ করতে নিচের বাটনে ক্লিক করে নতুন পাসওয়ার্ড সেট করুন।
+
+👉 [নতুন পাসওয়ার্ড সেট করুন]
+
+নিরাপত্তার জন্য এই লিংকটি সীমিত সময়ের জন্য কার্যকর থাকবে।`}
+              </p>
+            </div>
+
+            <p className="text-[11px] text-emerald-800 font-bold flex items-center gap-1.5">
+              <span>📩 আপনার ইমেইলের ইনবক্স (Inbox) অথবা স্প্যাম (Spam) ফোল্ডার চেক করুন।</span>
+            </p>
           </motion.div>
         )}
 
