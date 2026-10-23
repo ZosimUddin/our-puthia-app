@@ -2788,8 +2788,8 @@ const PublicProfilePage: React.FC = () => {
                         <Wallet size={20} className="stroke-[2.2]" />
                       </div>
                       <div className="flex-1 min-w-0">
-                        <p className="text-[15px] font-black text-slate-900 leading-tight">My Wallet</p>
-                        <p className="text-[12px] text-slate-500 mt-0.5">Balance, Recharge & Withdraw</p>
+                        <p className="text-[15px] font-black text-slate-900 leading-tight">আমার ওয়ালেট</p>
+                        <p className="text-[12px] text-slate-500 mt-0.5">ব্যালেন্স, রিচার্জ ও ক্যাশআউট</p>
                       </div>
                     </button>
 
@@ -2806,8 +2806,8 @@ const PublicProfilePage: React.FC = () => {
                         <BadgeCheck size={20} className="stroke-[2.2]" />
                       </div>
                       <div className="flex-1 min-w-0">
-                        <p className="text-[15px] font-black text-slate-900 leading-tight">Get Verified Badge</p>
-                        <p className="text-[12px] text-slate-500 mt-0.5">Apply for verification — ৳500</p>
+                        <p className="text-[15px] font-black text-slate-900 leading-tight">ভেরিফাইড ব্যাজ পান</p>
+                        <p className="text-[12px] text-slate-500 mt-0.5">ভেরিফিকেশনের আবেদন — ৳৫০০</p>
                       </div>
                     </button>
 
@@ -2824,8 +2824,8 @@ const PublicProfilePage: React.FC = () => {
                         <Megaphone size={20} className="stroke-[2.2]" />
                       </div>
                       <div className="flex-1 min-w-0">
-                        <p className="text-[15px] font-black text-slate-900 leading-tight">Create Advertisement</p>
-                        <p className="text-[12px] text-slate-500 mt-0.5">Promote your content</p>
+                        <p className="text-[15px] font-black text-slate-900 leading-tight">বিজ্ঞাপন তৈরি করুন</p>
+                        <p className="text-[12px] text-slate-500 mt-0.5">আপনার ব্যবসা বা কন্টেন্ট প্রচার করুন</p>
                       </div>
                     </button>
 
@@ -2842,8 +2842,8 @@ const PublicProfilePage: React.FC = () => {
                         <Radio size={20} className="stroke-[2.2]" />
                       </div>
                       <div className="flex-1 min-w-0">
-                        <p className="text-[15px] font-black text-slate-900 leading-tight">My Advertisements</p>
-                        <p className="text-[12px] text-slate-500 mt-0.5">Manage your ads</p>
+                        <p className="text-[15px] font-black text-slate-900 leading-tight">আমার বিজ্ঞাপনসমূহ</p>
+                        <p className="text-[12px] text-slate-500 mt-0.5">বিজ্ঞাপনসমূহ ম্যানেজ করুন</p>
                       </div>
                     </button>
 
@@ -2860,8 +2860,8 @@ const PublicProfilePage: React.FC = () => {
                         <Settings size={20} className="stroke-[2.2]" />
                       </div>
                       <div className="flex-1 min-w-0">
-                        <p className="text-[15px] font-black text-slate-900 leading-tight">Settings</p>
-                        <p className="text-[12px] text-slate-500 mt-0.5">App preferences, cache, privacy</p>
+                        <p className="text-[15px] font-black text-slate-900 leading-tight">সেটিংস</p>
+                        <p className="text-[12px] text-slate-500 mt-0.5">অ্যাপ প্রেফারেন্স, ক্যাশ ও প্রাইভেসি</p>
                       </div>
                       <ChevronRight size={18} className="text-slate-400 shrink-0" />
                     </button>
@@ -2885,7 +2885,7 @@ const PublicProfilePage: React.FC = () => {
                         <LogOut size={20} className="stroke-[2.2]" />
                       </div>
                       <div className="flex-1 min-w-0">
-                        <p className="text-[15px] font-black text-rose-600 leading-tight">Logout</p>
+                        <p className="text-[15px] font-black text-rose-600 leading-tight">লগআউট</p>
                       </div>
                     </button>
                   </>
