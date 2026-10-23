@@ -213,7 +213,7 @@ export const HeroBannerSlider: React.FC = () => {
               pauseOnMouseEnter: true
             }}
             modules={[Autoplay, Pagination, Navigation]}
-            className="h-[175px] sm:h-[250px] md:h-[300px] relative z-10 rounded-2xl sm:rounded-3xl"
+            className="aspect-[2.7/1] sm:aspect-[3/1] w-full relative z-10 rounded-2xl sm:rounded-3xl"
           >
             {displayBanners.map((banner, idx) => {
               const hasText = Boolean(banner.title && banner.title.trim());

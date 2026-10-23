@@ -498,7 +498,7 @@ export const HeroSliderManagement: React.FC = () => {
         </div>
 
         {/* Mock Carousel Frame */}
-        <div className="relative rounded-2xl sm:rounded-3xl overflow-hidden shadow-2xl bg-black border border-slate-700/60 aspect-[16/7] min-h-[180px] sm:min-h-[250px] md:min-h-[290px] flex items-center">
+        <div className="relative rounded-2xl sm:rounded-3xl overflow-hidden shadow-2xl bg-black border border-slate-700/60 aspect-[2.7/1] sm:aspect-[3/1] w-full flex items-center">
           <img
             src={currentPreviewSlide.image}
             alt={currentPreviewSlide.title}
