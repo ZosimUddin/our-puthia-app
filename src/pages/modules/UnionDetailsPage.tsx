@@ -11,9 +11,6 @@ import {
 import { useParams, useNavigate } from 'react-router-dom';
 import { doc, getDoc } from 'firebase/firestore';
 import { db } from '../../firebase';
-import Header from '../../components/home/Header';
-import Footer from '../../components/home/Footer';
-import BottomNavigation from '../../components/home/BottomNavigation';
 
 const UNION_DETAILS_FALLBACK: Record<string, any> = {
   "1": {
@@ -151,7 +148,6 @@ const UnionDetailsPage: React.FC = () => {
 
   return (
     <div className="min-h-screen bg-slate-50/50 font-sans flex flex-col w-full max-w-full overflow-x-hidden">
-      <Header />
       {/* Page Header */}
       <div className="bg-white sticky top-0 z-30 shadow-sm border-b border-slate-200">
         <div className="max-w-4xl mx-auto px-4 py-4 flex items-center justify-between gap-4">
@@ -613,9 +609,6 @@ const UnionDetailsPage: React.FC = () => {
         )}
 
       </div>
-
-      <Footer />
-      <BottomNavigation activeTab="services" onTabChange={() => {}} />
     </div>
   );
 };

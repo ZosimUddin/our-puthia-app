@@ -18,8 +18,6 @@ import { ReportAndUpdateModal } from '../ReportAndUpdateModal';
 import { SuggestCorrectionModal } from './SuggestCorrectionModal';
 import { DomainSpecificDetails } from './DomainSpecificDetails';
 import { DiagnosticDetailView } from './DiagnosticDetailView';
-import Header from '../../home/Header';
-import BottomNav from '../../home/BottomNavigation';
 import SEO from '../../SEO';
 import { getServiceItemDetailSchema } from '../../../utils/seoHelpers';
 import { PUTHIA_DIAGNOSTIC_MASTER_DIRECTORY } from '../../../data/diagnosticData';
@@ -201,21 +199,18 @@ export const ServiceDetailTemplate: React.FC<ServiceDetailTemplateProps> = ({
 
   if (loading) {
     return (
-      <div className="bg-slate-50 min-h-screen pb-20">
-        <Header />
-        <div className="max-w-3xl mx-auto p-4 pt-20">
+      <div className="bg-slate-50 min-h-screen pb-12">
+        <div className="max-w-3xl mx-auto p-4 pt-10">
           <GlobalSkeletonLoader count={1} />
         </div>
-        <BottomNav activeTab="home" onTabChange={() => navigate('/')} />
       </div>
     );
   }
 
   if (error || !item) {
     return (
-      <div className="bg-slate-50 min-h-screen pb-20">
-        <Header />
-        <div className="max-w-md mx-auto p-6 pt-24 text-center space-y-4">
+      <div className="bg-slate-50 min-h-screen pb-12">
+        <div className="max-w-md mx-auto p-6 pt-16 text-center space-y-4">
           <div className="w-16 h-16 rounded-full bg-rose-100 text-rose-600 flex items-center justify-center mx-auto text-3xl">
             ⚠️
           </div>
@@ -228,7 +223,6 @@ export const ServiceDetailTemplate: React.FC<ServiceDetailTemplateProps> = ({
             ফিরে যান
           </button>
         </div>
-        <BottomNav activeTab="home" onTabChange={() => navigate('/')} />
       </div>
     );
   }
@@ -452,9 +446,7 @@ export const ServiceDetailTemplate: React.FC<ServiceDetailTemplateProps> = ({
         jsonLd={docId ? getServiceItemDetailSchema(config, item, docId) : undefined}
       />
 
-      <Header />
-
-      <main className="flex-1 pb-24">
+      <main className="flex-1 pb-16">
         {/* Header Green Banner */}
         <div className="bg-[#006a4e] text-white pt-4 pb-12 px-4 sm:px-6 relative overflow-hidden shadow-sm">
           <div className="max-w-3xl mx-auto space-y-3 relative z-10">
@@ -942,12 +934,10 @@ export const ServiceDetailTemplate: React.FC<ServiceDetailTemplateProps> = ({
 
       {/* Toast Notification */}
       {toastMessage && (
-        <div className="fixed bottom-20 left-1/2 -translate-x-1/2 bg-slate-900/90 text-white text-xs font-bold px-4 py-2.5 rounded-full shadow-lg z-50 animate-in fade-in slide-in-from-bottom-2">
+        <div className="fixed bottom-6 left-1/2 -translate-x-1/2 bg-slate-900/90 text-white text-xs font-bold px-4 py-2.5 rounded-full shadow-lg z-50 animate-in fade-in slide-in-from-bottom-2">
           {toastMessage}
         </div>
       )}
-
-      <BottomNav activeTab="home" onTabChange={() => navigate('/')} />
     </div>
   );
 };

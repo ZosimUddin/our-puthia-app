@@ -4,8 +4,6 @@ import { motion } from 'motion/react';
 import { 
   ArrowLeft, Share2, Heart, MapPin, Phone, Globe, Facebook, Image as ImageIcon 
 } from 'lucide-react';
-import Header from '../../components/home/Header';
-import Footer from '../../components/home/Footer';
 
 interface GenericDetailsPageProps {
   defaultTitle?: string;
@@ -90,9 +88,7 @@ const GenericDetailsPage: React.FC<GenericDetailsPageProps> = ({ defaultTitle, d
 
   return (
     <div className="min-h-screen bg-slate-50 flex flex-col">
-      <Header />
-      
-      <main className="flex-1 w-full max-w-5xl mx-auto pb-32">
+      <main className="flex-1 w-full max-w-5xl mx-auto pb-16">
         {/* Top App Bar inside main to float over image or above it */}
         <div className="sticky top-0 z-50 bg-white/80 backdrop-blur-md border-b border-slate-100 px-4 py-3 flex items-center justify-between">
           <button 
