@@ -327,7 +327,7 @@ export const GetVerifiedPage: React.FC = () => {
             <ArrowLeft size={22} className="stroke-[2.5]" />
           </button>
           <h1 className="text-xl font-black text-slate-950 tracking-tight">
-            Get Verified
+            ভেরিফাইড ব্যাজ পান
           </h1>
         </div>
       </header>
@@ -336,7 +336,7 @@ export const GetVerifiedPage: React.FC = () => {
       <main className="max-w-md mx-auto px-4 pt-4 space-y-4">
 
         {/* ========================================================================= */}
-        {/* 2. GREEN VERIFIED BADGE HERO BANNER (Matching Screenshot 2)               */}
+        {/* 2. GREEN VERIFIED BADGE HERO BANNER                                       */}
         {/* ========================================================================= */}
         <div className="rounded-[28px] bg-gradient-to-br from-[#064e3b] via-[#047857] to-[#0d9488] text-white p-6 shadow-md text-center flex flex-col items-center justify-center relative overflow-hidden">
           {/* Official Starburst Verified Icon */}
@@ -345,16 +345,16 @@ export const GetVerifiedPage: React.FC = () => {
           </div>
 
           <h2 className="text-2xl font-black tracking-tight text-white">
-            Verified Badge
+            ভেরিফাইড ব্যাজ
           </h2>
 
           <p className="text-white/90 text-xs mt-1.5 max-w-xs leading-relaxed">
-            Show the world your account is authentic. Get a verified checkmark on your profile.
+            আপনার অ্যাকাউন্ট প্রামাণিক ও আসল তা সবাইকে দেখান। আপনার প্রোফাইলে ভেরিফাইড নীল টিক চিহ্ন যুক্ত করুন।
           </p>
 
           {/* Fee Pill */}
           <div className="mt-3.5 px-4 py-1.5 rounded-full bg-white/20 backdrop-blur-xs text-white text-xs font-black shadow-2xs">
-            Fee: ৳150 (monthly (30 days))
+            ফি: ৳১৫০ (মাসিক (৩০ দিন))
           </div>
         </div>
 
@@ -369,10 +369,10 @@ export const GetVerifiedPage: React.FC = () => {
             </div>
             <div>
               <h3 className="text-sm font-black text-slate-950">
-                Complete Your Profile
+                আপনার প্রোফাইল সম্পন্ন করুন
               </h3>
               <p className="text-[11px] text-slate-500">
-                {missingFields.length === 0 ? "All fields complete" : `${missingFields.length} fields missing`}
+                {missingFields.length === 0 ? "সকল তথ্য সম্পন্ন" : `${missingFields.length}টি তথ্য অসম্পূর্ণ`}
               </p>
             </div>
           </div>
@@ -386,14 +386,14 @@ export const GetVerifiedPage: React.FC = () => {
               />
             </div>
             <p className="text-[11px] text-slate-500 font-bold">
-              {profileCompletionPercent}% complete
+              {profileCompletionPercent}% সম্পন্ন
             </p>
           </div>
 
           {/* Missing Fields Tags */}
           <div className="space-y-2">
             <p className="text-xs font-bold text-slate-800">
-              {missingFields.length === 0 ? "Status:" : "Missing:"}
+              {missingFields.length === 0 ? "প্রোফাইল স্ট্যাটাস:" : "অসম্পূর্ণ তথ্যসমূহ:"}
             </p>
             <div className="flex flex-wrap gap-1.5">
               {profileFields.map((field) => (
@@ -418,7 +418,7 @@ export const GetVerifiedPage: React.FC = () => {
             className="w-full py-3 bg-white border border-emerald-500 hover:bg-emerald-50 text-emerald-600 font-black text-xs sm:text-sm rounded-2xl flex items-center justify-center gap-2 transition cursor-pointer active:scale-[0.99]"
           >
             <Edit3 size={16} />
-            <span>Complete Profile</span>
+            <span>প্রোফাইল সম্পন্ন করুন</span>
           </button>
         </div>
 
@@ -433,10 +433,10 @@ export const GetVerifiedPage: React.FC = () => {
             </div>
             <div>
               <h3 className="text-sm font-black text-slate-950">
-                Wallet Balance
+                ওয়ালেট ব্যালেন্স
               </h3>
               <p className="text-[11px] text-slate-500">
-                {balanceNeeded > 0 ? `৳${balanceNeeded.toFixed(2)} more needed` : "Sufficient balance"}
+                {balanceNeeded > 0 ? `আরও ৳${balanceNeeded.toFixed(2)} প্রয়োজন` : "পর্যাপ্ত ব্যালেন্স রয়েছে"}
               </p>
             </div>
           </div>
@@ -444,14 +444,14 @@ export const GetVerifiedPage: React.FC = () => {
           {/* 2-Column Balance Check */}
           <div className="flex items-center justify-between pt-1">
             <div>
-              <p className="text-xs text-slate-500 font-medium">Your Balance</p>
+              <p className="text-xs text-slate-500 font-medium">আপনার ব্যালেন্স</p>
               <p className="text-lg font-black text-slate-950 mt-0.5">
                 ৳ {walletBalance.toFixed(2)}
               </p>
             </div>
 
             <div className="text-right">
-              <p className="text-xs text-slate-500 font-medium">Required</p>
+              <p className="text-xs text-slate-500 font-medium">প্রয়োজনীয় ফি</p>
               <p className="text-lg font-black text-slate-950 mt-0.5">
                 ৳ {requiredFee.toFixed(2)}
               </p>
@@ -465,7 +465,7 @@ export const GetVerifiedPage: React.FC = () => {
             className="w-full py-3 bg-white border border-emerald-500 hover:bg-emerald-50 text-emerald-600 font-black text-xs sm:text-sm rounded-2xl flex items-center justify-center gap-2 transition cursor-pointer active:scale-[0.99]"
           >
             <Plus size={16} strokeWidth={3} />
-            <span>Recharge Wallet</span>
+            <span>ওয়ালেট রিচার্জ করুন</span>
           </button>
         </div>
 
@@ -480,17 +480,17 @@ export const GetVerifiedPage: React.FC = () => {
             </div>
             <div>
               <h3 className="text-sm font-black text-slate-950">
-                Identity Verification
+                পরিচয়পত্র যাচাইকরণ
               </h3>
               <p className="text-[11px] text-slate-500">
-                NID front, back & selfie required
+                এনআইডি কার্ডের দুই পাশ ও সেলফি আবশ্যক
               </p>
             </div>
           </div>
 
           {/* Instruction */}
           <p className="text-xs text-slate-600 leading-relaxed">
-            আপনার জাতীয় পরিচয়পত্র (NID) এর সামনে ও পেছনের ছবি এবং একটি সেলফি আপলোড করুন।
+            আপনার জাতীয় পরিচয়পত্র (NID) এর সামনে ও পেছনের ছবি এবং একটি লাইভ সেলফি আপলোড করুন।
           </p>
 
           {/* 3 Upload Grid Cards */}
@@ -510,8 +510,8 @@ export const GetVerifiedPage: React.FC = () => {
               ) : (
                 <>
                   <CreditCard size={22} className="text-slate-400 mb-1.5" />
-                  <p className="text-[11px] font-black text-slate-800">NID Front</p>
-                  <p className="text-[9px] text-slate-400 mt-0.5">Tap to capture</p>
+                  <p className="text-[11px] font-black text-slate-800">এনআইডি সামনের দিক</p>
+                  <p className="text-[9px] text-slate-400 mt-0.5">ক্যাপচার করতে ট্যাপ করুন</p>
                 </>
               )}
             </div>
@@ -531,8 +531,8 @@ export const GetVerifiedPage: React.FC = () => {
               ) : (
                 <>
                   <CreditCard size={22} className="text-slate-400 mb-1.5" />
-                  <p className="text-[11px] font-black text-slate-800">NID Back</p>
-                  <p className="text-[9px] text-slate-400 mt-0.5">Tap to capture</p>
+                  <p className="text-[11px] font-black text-slate-800">এনআইডি পেছনের দিক</p>
+                  <p className="text-[9px] text-slate-400 mt-0.5">ক্যাপচার করতে ট্যাপ করুন</p>
                 </>
               )}
             </div>
@@ -552,8 +552,8 @@ export const GetVerifiedPage: React.FC = () => {
               ) : (
                 <>
                   <Smile size={22} className="text-slate-400 mb-1.5" />
-                  <p className="text-[11px] font-black text-slate-800">Selfie</p>
-                  <p className="text-[9px] text-slate-400 mt-0.5">Tap to capture</p>
+                  <p className="text-[11px] font-black text-slate-800">লাইভ সেলফি</p>
+                  <p className="text-[9px] text-slate-400 mt-0.5">ক্যাপচার করতে ট্যাপ করুন</p>
                 </>
               )}
             </div>
@@ -571,16 +571,16 @@ export const GetVerifiedPage: React.FC = () => {
             </div>
             <div>
               <h3 className="text-sm font-black text-slate-950">
-                Admin Review
+                এডমিন ভেরিফিকেশন
               </h3>
               <p className="text-[11px] text-slate-500">
-                Reviewed within 3–5 business days
+                ৩–৫ কার্যদিবসের মধ্যে সম্পন্ন হবে
               </p>
             </div>
           </div>
 
           <p className="text-xs text-slate-600 leading-relaxed pt-1">
-            After payment, our team will review your profile, identity documents and selfie. You will be notified once the review is complete.
+            আবেদন জমা দেওয়ার পর আমাদের এডমিন টিম আপনার প্রোফাইল, এনআইডি ও সেলফি পরীক্ষা করবে। ভেরিফিকেশন সম্পন্ন হলে নোটিফিকেশন পাবেন।
           </p>
         </div>
 
@@ -595,7 +595,7 @@ export const GetVerifiedPage: React.FC = () => {
               className="w-full py-4 bg-slate-300 hover:bg-slate-400 text-white font-black text-sm rounded-2xl flex items-center justify-center gap-2 transition cursor-pointer shadow-xs"
             >
               <Edit3 size={18} />
-              <span>Complete Profile First</span>
+              <span>প্রথমে প্রোফাইল সম্পন্ন করুন</span>
             </button>
           ) : walletBalance < requiredFee ? (
             <button
@@ -604,7 +604,7 @@ export const GetVerifiedPage: React.FC = () => {
               className="w-full py-4 bg-[#00C853] hover:bg-emerald-600 text-white font-black text-sm rounded-2xl flex items-center justify-center gap-2 transition cursor-pointer shadow-xs"
             >
               <Plus size={18} strokeWidth={3} />
-              <span>Recharge Wallet (৳{balanceNeeded.toFixed(2)} Needed)</span>
+              <span>ওয়ালেট রিচার্জ করুন (আরও ৳{balanceNeeded.toFixed(2)} প্রয়োজন)</span>
             </button>
           ) : (
             <button
@@ -614,12 +614,12 @@ export const GetVerifiedPage: React.FC = () => {
               className="w-full py-4 bg-gradient-to-r from-[#00C853] to-[#00A844] hover:from-emerald-600 hover:to-emerald-700 text-white font-black text-sm rounded-2xl flex items-center justify-center gap-2 transition shadow-md cursor-pointer disabled:opacity-50"
             >
               <BadgeCheck size={18} />
-              <span>{isSubmitting ? "আবেদন জমা হচ্ছে..." : "Submit Verification Request (৳150)"}</span>
+              <span>{isSubmitting ? "আবেদন জমা হচ্ছে..." : "যাচাইকরণের আবেদন জমা দিন (৳১৫০)"}</span>
             </button>
           )}
 
           <p className="text-center text-[11px] text-slate-400">
-            The fee is non-refundable if rejected.
+            আবেদন বাতিল বা প্রত্যাখ্যাত হলে ফি অফেরতযোগ্য।
           </p>
         </div>
       </main>
@@ -639,7 +639,7 @@ export const GetVerifiedPage: React.FC = () => {
               <div className="flex items-center justify-between border-b border-slate-100 pb-3">
                 <div className="flex items-center gap-2">
                   <Edit3 size={18} className="text-emerald-600" />
-                  <h3 className="font-black text-slate-950 text-base">Complete Your Profile</h3>
+                  <h3 className="font-black text-slate-950 text-base">আপনার প্রোফাইল সম্পন্ন করুন</h3>
                 </div>
                 <button
                   type="button"
