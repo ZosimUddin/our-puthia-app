@@ -88,6 +88,7 @@ export const db = customDatabaseId
   : initializeFirestore(app, firestoreSettings);
 
 export const auth = getAuth(app);
+auth.languageCode = "bn";
 export const storage = getStorage(app);
 
 export const initMessaging = async () => {
