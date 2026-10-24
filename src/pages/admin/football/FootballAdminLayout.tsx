@@ -43,7 +43,7 @@ export const FootballAdminLayout: React.FC = () => {
   const location = useLocation();
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-6 w-full max-w-full overflow-hidden min-w-0">
       {/* Top Banner & Hub Header */}
       <div className="bg-gradient-to-r from-emerald-800 via-[#0B7A3B] to-teal-900 rounded-3xl p-6 sm:p-7 text-white shadow-xl relative overflow-hidden border border-emerald-600/30">
         <div className="absolute -right-6 -bottom-6 w-48 h-48 rounded-full bg-white/5 blur-2xl pointer-events-none" />
@@ -76,8 +76,8 @@ export const FootballAdminLayout: React.FC = () => {
       </div>
 
       {/* Horizontal Scrollable Submenu Navigation Bar */}
-      <div className="bg-white p-2 rounded-2xl border border-slate-200/80 shadow-xs">
-        <div className="flex items-center gap-1.5 overflow-x-auto pb-1 scrollbar-thin">
+      <div className="bg-white p-1.5 sm:p-2 rounded-2xl border border-slate-200/80 shadow-xs w-full max-w-full overflow-hidden">
+        <div className="flex items-center gap-2 overflow-x-auto py-1 px-1 no-scrollbar scroll-smooth touch-pan-x w-full min-w-0">
           {FOOTBALL_SUBMENUS.map((item) => {
             const Icon = item.icon;
             const isActive = location.pathname === item.path || 
@@ -87,14 +87,14 @@ export const FootballAdminLayout: React.FC = () => {
               <NavLink
                 key={item.path}
                 to={item.path}
-                className={`px-3 py-2 rounded-xl text-xs font-black whitespace-nowrap transition-all flex items-center gap-2 cursor-pointer ${
+                className={`px-3.5 py-2.5 rounded-xl text-xs font-bold whitespace-nowrap transition-all flex items-center gap-2 cursor-pointer shrink-0 select-none ${
                   isActive
-                    ? 'bg-[#0B7A3B] text-white shadow-xs'
-                    : 'text-slate-600 hover:text-[#0B7A3B] hover:bg-emerald-50'
+                    ? 'bg-[#0B7A3B] text-white font-black shadow-xs ring-1 ring-[#0B7A3B]'
+                    : 'bg-slate-50 text-slate-700 hover:text-[#0B7A3B] hover:bg-emerald-50 border border-slate-100'
                 }`}
               >
-                <Icon size={14} />
-                <span>{item.name}</span>
+                <Icon size={15} className="shrink-0" />
+                <span className="shrink-0">{item.name}</span>
               </NavLink>
             );
           })}
