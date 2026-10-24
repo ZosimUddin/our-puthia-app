@@ -3,7 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import { 
   ChevronRight, 
   Wrench, Bookmark, Sparkles, Headset,
-  Search, Clock,
+  Search,
   AlertCircle
 } from 'lucide-react';
 import { motion } from 'motion/react';
@@ -213,14 +213,6 @@ const AllServicesPage: React.FC = () => {
                           <div className="w-8 h-8 rounded-full bg-slate-50 flex items-center justify-center group-hover:bg-emerald-50 transition-colors">
                             <ChevronRight size={18} className="text-slate-400 group-hover:text-[#01412F]" strokeWidth={2.5} />
                           </div>
-                        </div>
-                      </div>
-
-                      {/* Last Updated Footer Bar on Card */}
-                      <div className="pt-2 border-t border-slate-100/70 flex items-center justify-between text-[10px] text-slate-400 font-medium">
-                        <div className="flex items-center gap-1">
-                          <Clock size={11} className="text-slate-400 shrink-0" />
-                          <span>সর্বশেষ হালনাগাদ: <strong className="text-slate-600 font-bold">{service.lastUpdated}</strong></span>
                         </div>
                       </div>
                     </motion.div>
