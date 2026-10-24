@@ -20,6 +20,7 @@ import { DomainSpecificDetails } from './DomainSpecificDetails';
 import { DiagnosticDetailView } from './DiagnosticDetailView';
 import SEO from '../../SEO';
 import { getServiceItemDetailSchema } from '../../../utils/seoHelpers';
+import { useAuth } from '../../../contexts/AuthContext';
 import { PUTHIA_DIAGNOSTIC_MASTER_DIRECTORY } from '../../../data/diagnosticData';
 import { DEFAULT_HEALTH_SERVICES } from '../../../data/healthData';
 import { getFallbackData } from '../../../data/directoryFallbackData';
@@ -35,6 +36,7 @@ export const ServiceDetailTemplate: React.FC<ServiceDetailTemplateProps> = ({
   idParam,
   onGoBack,
 }) => {
+  const { user } = useAuth();
   const params = useParams();
   const navigate = useNavigate();
 
@@ -782,14 +784,16 @@ export const ServiceDetailTemplate: React.FC<ServiceDetailTemplateProps> = ({
               </div>
             </div>
 
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-2.5 pt-1">
-              <button
-                type="button"
-                onClick={() => setShowCorrectionModal(true)}
-                className="py-2.5 px-4 bg-amber-600 hover:bg-amber-700 text-white text-xs font-black rounded-2xl flex items-center justify-center gap-2 border-none cursor-pointer shadow-sm transition-all"
-              >
-                <span>✏️ পুরোনো তথ্য সংশোধন করুন</span>
-              </button>
+            <div className={`grid gap-2.5 pt-1 ${user ? 'grid-cols-1 sm:grid-cols-2' : 'grid-cols-1'}`}>
+              {user && (
+                <button
+                  type="button"
+                  onClick={() => setShowCorrectionModal(true)}
+                  className="py-2.5 px-4 bg-amber-600 hover:bg-amber-700 text-white text-xs font-black rounded-2xl flex items-center justify-center gap-2 border-none cursor-pointer shadow-sm transition-all"
+                >
+                  <span>✏️ পুরোনো তথ্য সংশোধন করুন</span>
+                </button>
+              )}
 
               <button
                 type="button"
@@ -924,7 +928,7 @@ export const ServiceDetailTemplate: React.FC<ServiceDetailTemplateProps> = ({
       />
 
       {/* Suggest Correction Modal */}
-      {showCorrectionModal && (
+      {user && showCorrectionModal && (
         <SuggestCorrectionModal
           isOpen={showCorrectionModal}
           onClose={() => setShowCorrectionModal(false)}

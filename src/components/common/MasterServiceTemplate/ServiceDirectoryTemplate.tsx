@@ -26,6 +26,8 @@ import BottomNav from '../../home/BottomNavigation';
 import Footer from '../../home/Footer';
 import SEO from '../../SEO';
 import { getServiceDirectorySchema } from '../../../utils/seoHelpers';
+import { useAuth } from '../../../contexts/AuthContext';
+import { toast } from 'sonner';
 
 const toBengaliNumber = (num: number | string): string => {
   const englishToBengaliMap: Record<string, string> = {
@@ -49,6 +51,7 @@ export const ServiceDirectoryTemplate: React.FC<ServiceDirectoryTemplateProps> =
   serviceKeyParam,
   isEmbedded = false,
 }) => {
+  const { user } = useAuth();
   const params = useParams();
   const navigate = useNavigate();
   const listTopRef = useRef<HTMLDivElement>(null);
@@ -250,6 +253,22 @@ export const ServiceDirectoryTemplate: React.FC<ServiceDirectoryTemplateProps> =
 
   const [showAddModal, setShowAddModal] = useState<boolean>(false);
   const [showGeneralCorrectionModal, setShowGeneralCorrectionModal] = useState<boolean>(false);
+
+  const handleOpenGeneralCorrection = () => {
+    if (!user) {
+      toast.error('তথ্য সংশোধন করতে দয়া করে প্রথমে লগইন করুন।');
+      return;
+    }
+    setShowGeneralCorrectionModal(true);
+  };
+
+  const handleOpenAddService = () => {
+    if (!user) {
+      toast.error('নতুন তথ্য যোগ করতে দয়া করে প্রথমে লগইন করুন।');
+      return;
+    }
+    setShowAddModal(true);
+  };
   const [savedIds, setSavedIds] = useState<string[]>([]);
 
   // Pagination States
@@ -603,7 +622,7 @@ export const ServiceDirectoryTemplate: React.FC<ServiceDirectoryTemplateProps> =
             <GlobalErrorState message={error} onRetry={() => window.location.reload()} />
           ) : finalFilteredItems.length === 0 ? (
             <GlobalEmptyState
-              onAddClick={() => setShowAddModal(true)}
+              onAddClick={user ? handleOpenAddService : undefined}
             />
           ) : (
             <>
@@ -687,12 +706,14 @@ export const ServiceDirectoryTemplate: React.FC<ServiceDirectoryTemplateProps> =
         </div>
 
         {/* Global Modals for Embedded Layout */}
-        <AddServiceModal
-          isOpen={showAddModal}
-          onClose={() => setShowAddModal(false)}
-          config={config}
-        />
-        {showGeneralCorrectionModal && (
+        {user && (
+          <AddServiceModal
+            isOpen={showAddModal}
+            onClose={() => setShowAddModal(false)}
+            config={config}
+          />
+        )}
+        {user && showGeneralCorrectionModal && (
           <SuggestCorrectionModal
             isOpen={showGeneralCorrectionModal}
             onClose={() => setShowGeneralCorrectionModal(false)}
@@ -751,25 +772,27 @@ export const ServiceDirectoryTemplate: React.FC<ServiceDirectoryTemplateProps> =
                 <ArrowLeft size={18} />
               </button>
 
-              <div className="flex items-center gap-2">
-                <button
-                  type="button"
-                  onClick={() => setShowGeneralCorrectionModal(true)}
-                  className="p-2 rounded-full bg-white/10 hover:bg-white/20 text-white border-none cursor-pointer flex items-center justify-center transition-colors active:scale-95"
-                  title="পুরোনো তথ্য সংশোধন"
-                >
-                  <Edit3 size={18} />
-                </button>
+              {user && (
+                <div className="flex items-center gap-2">
+                  <button
+                    type="button"
+                    onClick={handleOpenGeneralCorrection}
+                    className="p-2 rounded-full bg-white/10 hover:bg-white/20 text-white border-none cursor-pointer flex items-center justify-center transition-colors active:scale-95"
+                    title="পুরোনো তথ্য সংশোধন"
+                  >
+                    <Edit3 size={18} />
+                  </button>
 
-                <button
-                  type="button"
-                  onClick={() => setShowAddModal(true)}
-                  className="p-2 rounded-full bg-white hover:bg-emerald-50 text-[#006a4e] border-none cursor-pointer flex items-center justify-center transition-colors active:scale-95 shadow-sm"
-                  title="নতুন তথ্য যোগ করুন"
-                >
-                  <Plus size={18} className="stroke-[2.5]" />
-                </button>
-              </div>
+                  <button
+                    type="button"
+                    onClick={handleOpenAddService}
+                    className="p-2 rounded-full bg-white hover:bg-emerald-50 text-[#006a4e] border-none cursor-pointer flex items-center justify-center transition-colors active:scale-95 shadow-sm"
+                    title="নতুন তথ্য যোগ করুন"
+                  >
+                    <Plus size={18} className="stroke-[2.5]" />
+                  </button>
+                </div>
+              )}
             </div>
 
             {/* Title & Subtitle */}
@@ -841,7 +864,7 @@ export const ServiceDirectoryTemplate: React.FC<ServiceDirectoryTemplateProps> =
               <GlobalErrorState message={error} onRetry={() => window.location.reload()} />
             ) : finalFilteredItems.length === 0 ? (
               <GlobalEmptyState
-                onAddClick={() => setShowAddModal(true)}
+                onAddClick={user ? handleOpenAddService : undefined}
               />
             ) : (
               <>
@@ -927,14 +950,16 @@ export const ServiceDirectoryTemplate: React.FC<ServiceDirectoryTemplateProps> =
       </main>
 
       {/* Add Information Form Modal */}
-      <AddServiceModal
-        isOpen={showAddModal}
-        onClose={() => setShowAddModal(false)}
-        config={config}
-      />
+      {user && (
+        <AddServiceModal
+          isOpen={showAddModal}
+          onClose={() => setShowAddModal(false)}
+          config={config}
+        />
+      )}
 
       {/* Suggest Correction Modal */}
-      {showGeneralCorrectionModal && (
+      {user && showGeneralCorrectionModal && (
         <SuggestCorrectionModal
           isOpen={showGeneralCorrectionModal}
           onClose={() => setShowGeneralCorrectionModal(false)}

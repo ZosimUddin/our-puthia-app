@@ -674,26 +674,30 @@ const News: React.FC = () => {
                   <RefreshCw size={18} className={isRefreshing ? 'animate-spin' : ''} />
                 </button>
 
-                <button
-                  type="button"
-                  onClick={() => setShowSendReportModal(true)}
-                  className="p-2 sm:p-2.5 rounded-full bg-white/10 hover:bg-white/20 text-white border-none cursor-pointer flex items-center justify-center transition-colors active:scale-95"
-                  title="সংবাদ পাঠান / নাগরিক সাংবাদিকতা"
-                >
-                  <Edit3 size={18} />
-                </button>
+                {user && (
+                  <>
+                    <button
+                      type="button"
+                      onClick={() => setShowSendReportModal(true)}
+                      className="p-2 sm:p-2.5 rounded-full bg-white/10 hover:bg-white/20 text-white border-none cursor-pointer flex items-center justify-center transition-colors active:scale-95"
+                      title="সংবাদ পাঠান / নাগরিক সাংবাদিকতা"
+                    >
+                      <Edit3 size={18} />
+                    </button>
 
-                <button
-                  type="button"
-                  onClick={() => {
-                    resetAdminForm();
-                    setShowAdminModal(true);
-                  }}
-                  className="p-2 sm:p-2.5 rounded-full bg-white hover:bg-emerald-50 text-[#006a4e] border-none cursor-pointer flex items-center justify-center transition-colors active:scale-95 shadow-sm"
-                  title="নতুন সংবাদ লিখুন"
-                >
-                  <Plus size={18} className="stroke-[2.5]" />
-                </button>
+                    <button
+                      type="button"
+                      onClick={() => {
+                        resetAdminForm();
+                        setShowAdminModal(true);
+                      }}
+                      className="p-2 sm:p-2.5 rounded-full bg-white hover:bg-emerald-50 text-[#006a4e] border-none cursor-pointer flex items-center justify-center transition-colors active:scale-95 shadow-sm"
+                      title="নতুন সংবাদ লিখুন"
+                    >
+                      <Plus size={18} className="stroke-[2.5]" />
+                    </button>
+                  </>
+                )}
               </div>
             </div>
 

@@ -56,7 +56,7 @@ export const SuggestCorrectionModal: React.FC<SuggestCorrectionModalProps> = ({
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
 
-  if (!isOpen) return null;
+  if (!isOpen || !user) return null;
 
   const handleValidateToPreview = (e: React.FormEvent) => {
     e.preventDefault();

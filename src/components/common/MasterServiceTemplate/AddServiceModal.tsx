@@ -52,7 +52,7 @@ export const AddServiceModal: React.FC<AddServiceModalProps> = ({
     }
   }, [isOpen]);
 
-  if (!isOpen) return null;
+  if (!isOpen || !user) return null;
 
   const handleChange = (fieldId: string, value: string) => {
     setFormData((prev) => ({ ...prev, [fieldId]: value }));
