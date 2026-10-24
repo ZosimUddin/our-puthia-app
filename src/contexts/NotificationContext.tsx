@@ -256,8 +256,39 @@ export const NotificationProvider: React.FC<{ children: ReactNode }> = ({ childr
     };
 
     const updateCombinedState = () => {
-      const combined = Array.from(notifMap.values()).sort((a, b) => (b.createdAt || 0) - (a.createdAt || 0));
-      setNotifications(combined);
+      const rawList = Array.from(notifMap.values()).sort((a, b) => (b.createdAt || 0) - (a.createdAt || 0));
+
+      // Intelligent deduplication map
+      // 1. Group / deduplicate friend requests:
+      // A user should NEVER see two friend request cards for the same sender (actorId).
+      // If there is both a Firestore notification AND a synthesized friend_request (fr_...),
+      // or multiple notification documents from the same sender, merge them into one clean entry!
+      const seenFriendRequestActors = new Set<string>();
+      const seenContentSignatures = new Set<string>();
+      const deduplicated: AppNotification[] = [];
+
+      for (const item of rawList) {
+        if (item.type === 'friend_request') {
+          const actorKey = (item.actorId || (item.actionData as any)?.senderId || item.actorName || '').trim().toLowerCase();
+          if (actorKey) {
+            if (seenFriendRequestActors.has(actorKey)) {
+              // Skip duplicate friend request from the same sender
+              continue;
+            }
+            seenFriendRequestActors.add(actorKey);
+          }
+        } else {
+          // Deduplicate identical notifications by signature
+          const signature = `${item.actorId || ''}_${item.type}_${item.targetId || ''}_${(item.message || '').trim()}`;
+          if (seenContentSignatures.has(signature)) {
+            continue;
+          }
+          seenContentSignatures.add(signature);
+        }
+        deduplicated.push(item);
+      }
+
+      setNotifications(deduplicated);
     };
 
     let isInitialSnapshot1 = true;
@@ -309,6 +340,18 @@ export const NotificationProvider: React.FC<{ children: ReactNode }> = ({ childr
             } else {
               resolveUserProfilePhoto(actorUid);
             }
+          }
+
+          // If this is a real friend_request notification, remove any synthetic fr_ entry for the same actor
+          if (normType === 'friend_request' && actorUid) {
+            Array.from(notifMap.keys()).forEach(k => {
+              if (k.startsWith('fr_')) {
+                const existingSynthetic = notifMap.get(k);
+                if (existingSynthetic && (existingSynthetic.actorId === actorUid || (existingSynthetic.actionData as any)?.senderId === actorUid)) {
+                  notifMap.delete(k);
+                }
+              }
+            });
           }
 
           notifMap.set(docSnap.id, { 
@@ -405,6 +448,18 @@ export const NotificationProvider: React.FC<{ children: ReactNode }> = ({ childr
             }
           }
 
+          // If this is a real friend_request notification, remove any synthetic fr_ entry for the same actor
+          if (normType === 'friend_request' && actorUid2) {
+            Array.from(notifMap.keys()).forEach(k => {
+              if (k.startsWith('fr_')) {
+                const existingSynthetic = notifMap.get(k);
+                if (existingSynthetic && (existingSynthetic.actorId === actorUid2 || (existingSynthetic.actionData as any)?.senderId === actorUid2)) {
+                  notifMap.delete(k);
+                }
+              }
+            });
+          }
+
           notifMap.set(docSnap.id, { 
             id: docSnap.id, 
             userId: data.userId || data.recipientId || user.uid,
@@ -471,30 +526,56 @@ export const NotificationProvider: React.FC<{ children: ReactNode }> = ({ childr
             parsedCreatedAt = data.createdAt.seconds * 1000;
           }
 
-          notifMap.set(`fr_${docSnap.id}`, {
-            id: `fr_${docSnap.id}`,
-            userId: user.uid,
-            actorId: data.senderId,
-            actorName: senderName,
-            actorAvatar: senderAvatar,
-            type: 'friend_request',
-            priority: 'high',
-            targetId: data.senderId,
-            targetType: 'user',
-            title: '👥 Friend Request',
-            message: `${senderName} আপনাকে friend request পাঠিয়েছেন`,
-            read: false,
-            actionStatus: 'pending',
-            actionData: {
-              requestId: docSnap.id,
-              senderId: data.senderId,
-              senderName: senderName,
-              senderPhotoUrl: senderAvatar,
-              deepLink: '/friends'
-            },
-            createdAt: parsedCreatedAt,
-            isPinned: true
-          } as AppNotification);
+          // Check if an existing notification from notifications collection ALREADY exists for this senderId!
+          // If so, attach requestId to it instead of creating a second duplicate notification!
+          let existingNotifKey: string | null = null;
+          for (const [key, existing] of notifMap.entries()) {
+            if (!key.startsWith('fr_') && existing.type === 'friend_request' && (existing.actorId === data.senderId || (existing.actionData as any)?.senderId === data.senderId)) {
+              existingNotifKey = key;
+              break;
+            }
+          }
+
+          if (existingNotifKey) {
+            const existing = notifMap.get(existingNotifKey)!;
+            notifMap.set(existingNotifKey, {
+              ...existing,
+              actionStatus: 'pending',
+              actionData: {
+                ...existing.actionData,
+                requestId: docSnap.id,
+                senderId: data.senderId,
+                senderName: senderName,
+                senderPhotoUrl: senderAvatar || existing.actorAvatar,
+                deepLink: '/friends'
+              }
+            });
+          } else {
+            notifMap.set(`fr_${docSnap.id}`, {
+              id: `fr_${docSnap.id}`,
+              userId: user.uid,
+              actorId: data.senderId,
+              actorName: senderName,
+              actorAvatar: senderAvatar,
+              type: 'friend_request',
+              priority: 'high',
+              targetId: data.senderId,
+              targetType: 'user',
+              title: '👥 বন্ধুত্বের অনুরোধ',
+              message: `${senderName} আপনাকে বন্ধুত্বের অনুরোধ পাঠিয়েছেন`,
+              read: false,
+              actionStatus: 'pending',
+              actionData: {
+                requestId: docSnap.id,
+                senderId: data.senderId,
+                senderName: senderName,
+                senderPhotoUrl: senderAvatar,
+                deepLink: '/friends'
+              },
+              createdAt: parsedCreatedAt,
+              isPinned: true
+            } as AppNotification);
+          }
         });
 
         // Trigger phone push notification for new incoming friend requests (AFTER initial load)
@@ -505,8 +586,8 @@ export const NotificationProvider: React.FC<{ children: ReactNode }> = ({ childr
               const senderName = data.senderName || data.name || 'একজন নাগরিক';
               const senderAvatar = data.senderPhotoUrl || data.senderAvatar || data.photoURL || '/logo.png';
 
-              notificationService.triggerBrowserPushNotification('👥 Friend Request', {
-                body: `${senderName} আপনাকে friend request পাঠিয়েছেন`,
+              notificationService.triggerBrowserPushNotification('👥 বন্ধুত্বের অনুরোধ', {
+                body: `${senderName} আপনাকে বন্ধুত্বের অনুরোধ পাঠিয়েছেন`,
                 icon: senderAvatar,
                 badge: '/badge-72x72.png',
                 tag: `fr_${change.doc.id}`,
@@ -591,11 +672,27 @@ export const NotificationProvider: React.FC<{ children: ReactNode }> = ({ childr
 
   // Delete notification
   const deleteNotification = async (id: string) => {
-    setNotifications(prev => prev.filter(n => n.id !== id));
+    const targetNotif = notifications.find(n => n.id === id);
+    const senderUid = targetNotif?.actorId || (targetNotif?.actionData as any)?.senderId;
+    const isFriendReq = targetNotif?.type === 'friend_request';
+
+    setNotifications(prev => prev.filter(n => {
+      if (n.id === id) return false;
+      if (isFriendReq && senderUid && n.type === 'friend_request' && (n.actorId === senderUid || (n.actionData as any)?.senderId === senderUid)) {
+        return false;
+      }
+      return true;
+    }));
+
     toast.info("নোটিফিকেশন মুছে ফেলা হয়েছে।");
     if (!user || id.startsWith('sample-')) return;
     try {
-      await deleteDoc(doc(db, "notifications", id));
+      if (id.startsWith('fr_')) {
+        const reqId = id.replace('fr_', '');
+        await deleteDoc(doc(db, "friend_requests", reqId)).catch(() => {});
+      } else {
+        await deleteDoc(doc(db, "notifications", id)).catch(() => {});
+      }
     } catch (e) {
       console.warn("Delete notification sync note:", e);
     }
@@ -608,7 +705,7 @@ export const NotificationProvider: React.FC<{ children: ReactNode }> = ({ childr
     if (!user) return;
     try {
       const batch = writeBatch(db);
-      notifications.filter(n => !n.id.startsWith('sample-')).forEach(n => {
+      notifications.filter(n => !n.id.startsWith('sample-') && !n.id.startsWith('fr_')).forEach(n => {
         batch.delete(doc(db, "notifications", n.id));
       });
       await batch.commit();
@@ -621,13 +718,19 @@ export const NotificationProvider: React.FC<{ children: ReactNode }> = ({ childr
   const respondToFriendRequest = async (id: string, accept: boolean) => {
     const nextStatus = accept ? 'accepted' : 'declined';
     const targetNotif = notifications.find(n => n.id === id);
-    const senderUid = targetNotif?.actorId;
+    const senderUid = targetNotif?.actorId || (targetNotif?.actionData as any)?.senderId;
     const reqDocId = targetNotif?.actionData?.requestId || (id.startsWith('fr_') ? id.replace('fr_', '') : `${senderUid}_${user?.uid}`);
 
-    setNotifications(prev => prev.map(n => n.id === id ? { ...n, actionStatus: nextStatus, read: true } : n));
+    // Update ALL notifications matching this sender & friend_request in local state simultaneously
+    setNotifications(prev => prev.map(n => {
+      if (n.id === id || (senderUid && (n.actorId === senderUid || (n.actionData as any)?.senderId === senderUid) && n.type === 'friend_request')) {
+        return { ...n, actionStatus: nextStatus, read: true };
+      }
+      return n;
+    }));
     
     if (accept) {
-      toast.success(`🎉 ${targetNotif?.actorName || 'ব্যবহারকারীর'} ফ্রেন্ড রিকোয়েস্ট গ্রহণ করা হয়েছে!`);
+      toast.success(`🎉 ${targetNotif?.actorName || 'ব্যবহারকারীর'} বন্ধুত্বের অনুরোধ গ্রহণ করা হয়েছে!`);
       
       // Update Firestore friend_requests & users friend lists
       if (user && senderUid) {
@@ -656,7 +759,7 @@ export const NotificationProvider: React.FC<{ children: ReactNode }> = ({ childr
       // Send notification back to actor
       if (targetNotif && user) {
         notificationService.dispatchNotification({
-          recipientId: targetNotif.actorId,
+          recipientId: senderUid,
           actorId: user.uid,
           actorName: userProfile?.name || user.displayName || 'সম্মানিত নাগরিক',
           actorAvatar: (userProfile?.photoURL && !userProfile.photoURL.includes('dicebear')) ? userProfile.photoURL : (user?.photoURL && !user.photoURL.includes('dicebear')) ? user.photoURL : '',
@@ -669,7 +772,7 @@ export const NotificationProvider: React.FC<{ children: ReactNode }> = ({ childr
         }).catch(() => {});
       }
     } else {
-      toast.info("ফ্রেন্ড রিকোয়েস্ট বাতিল করা হয়েছে।");
+      toast.info("বন্ধুত্বের অনুরোধ বাতিল করা হয়েছে।");
       if (user && senderUid && reqDocId) {
         try {
           await deleteDoc(doc(db, 'friend_requests', reqDocId)).catch(() => {});
@@ -683,14 +786,35 @@ export const NotificationProvider: React.FC<{ children: ReactNode }> = ({ childr
       }
     }
 
-    if (!user || id.startsWith('sample-') || id.startsWith('fr_')) return;
+    if (!user) return;
     try {
-      await setDoc(doc(db, "notifications", id), { 
-        actionStatus: nextStatus, 
-        read: true, 
-        isRead: true,
-        updatedAt: Date.now()
-      }, { merge: true });
+      // If id is a real notifications doc, update it
+      if (!id.startsWith('fr_') && !id.startsWith('sample-')) {
+        await setDoc(doc(db, "notifications", id), { 
+          actionStatus: nextStatus, 
+          read: true, 
+          isRead: true,
+          updatedAt: Date.now()
+        }, { merge: true });
+      }
+
+      // Also ensure any matching notifications in the collection for this sender are marked updated
+      if (senderUid) {
+        const matchingNotifs = notifications.filter(n => 
+          !n.id.startsWith('fr_') && 
+          !n.id.startsWith('sample-') && 
+          n.type === 'friend_request' && 
+          (n.actorId === senderUid || (n.actionData as any)?.senderId === senderUid)
+        );
+        for (const notifDoc of matchingNotifs) {
+          await setDoc(doc(db, "notifications", notifDoc.id), {
+            actionStatus: nextStatus,
+            read: true,
+            isRead: true,
+            updatedAt: Date.now()
+          }, { merge: true }).catch(() => {});
+        }
+      }
     } catch (e) {}
   };
 

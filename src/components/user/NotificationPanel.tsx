@@ -84,15 +84,50 @@ export const NotificationPanel: React.FC<NotificationPanelProps> = ({ isOpen, on
     return () => document.removeEventListener('mousedown', handleClickOutside);
   }, [isOpen, onClose, mode]);
 
+  // Clean and localize notification messages
+  const cleanBengaliMessage = (msg?: string) => {
+    if (!msg) return '';
+    return msg
+      .replace(/Privacy Setting/gi, 'প্রাইভেসী সেটিংস')
+      .replace(/Privacy Settings/gi, 'প্রাইভেসী সেটিংস')
+      .replace(/reacted to your post/gi, 'আপনার পোস্টে রিঅ্যাক্ট করেছেন')
+      .replace(/commented on your post/gi, 'আপনার পোস্টে মন্তব্য করেছেন')
+      .replace(/sent you a friend request/gi, 'আপনাকে বন্ধুত্বের অনুরোধ পাঠিয়েছেন')
+      .replace(/friend request পাঠিয়েছে/gi, 'বন্ধুত্বের অনুরোধ পাঠিয়েছেন')
+      .replace(/friend request পাঠিয়েছেন/gi, 'বন্ধুত্বের অনুরোধ পাঠিয়েছেন')
+      .replace(/accepted your friend request/gi, 'আপনার ফ্রেন্ড রিকোয়েস্ট গ্রহণ করেছেন')
+      .replace(/started following you/gi, 'আপনাকে ফলো করা শুরু করেছেন');
+  };
+
   const activeList = isGroupingEnabled ? groupedNotifications : notifications;
 
-  const filteredList = useMemo(() => {
+  // Defensive deduplication so no card is ever rendered twice
+  const deduplicatedList = useMemo(() => {
+    const seenFrActors = new Set<string>();
+    const seenSignatures = new Set<string>();
     return activeList.filter(n => {
+      if (n.type === 'friend_request') {
+        const actorKey = (n.actorId || (n.actionData as any)?.senderId || n.actorName || '').trim().toLowerCase();
+        if (actorKey) {
+          if (seenFrActors.has(actorKey)) return false;
+          seenFrActors.add(actorKey);
+        }
+      } else {
+        const sig = `${n.actorId || ''}_${n.type}_${n.targetId || ''}_${(n.message || '').trim()}`;
+        if (seenSignatures.has(sig)) return false;
+        seenSignatures.add(sig);
+      }
+      return true;
+    });
+  }, [activeList]);
+
+  const filteredList = useMemo(() => {
+    return deduplicatedList.filter(n => {
       if (activeFilter === 'unread') return !n.read;
       if (activeFilter === 'security') return n.type === 'security_alert' || n.priority === 'critical';
       return true;
     });
-  }, [activeList, activeFilter]);
+  }, [deduplicatedList, activeFilter]);
 
   // Group by Date: Today, Yesterday, Earlier
   const dateBuckets = useMemo(() => {
@@ -260,7 +295,7 @@ export const NotificationPanel: React.FC<NotificationPanelProps> = ({ isOpen, on
             <p className={`text-xs mt-0.5 leading-relaxed ${
               notif.read ? 'text-slate-600' : 'text-slate-900 font-semibold'
             }`}>
-              {notif.message}
+              {cleanBengaliMessage(notif.message)}
             </p>
 
             {/* If there's an aggregation badge */}

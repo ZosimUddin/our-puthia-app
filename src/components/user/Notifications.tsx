@@ -145,7 +145,9 @@ export const Notifications: React.FC<NotificationsProps> = ({ hideHeader = false
       .replace(/Privacy Settings/gi, 'প্রাইভেসী সেটিংস')
       .replace(/reacted to your post/gi, 'আপনার পোস্টে রিঅ্যাক্ট করেছেন')
       .replace(/commented on your post/gi, 'আপনার পোস্টে মন্তব্য করেছেন')
-      .replace(/sent you a friend request/gi, 'আপনাকে ফ্রেন্ড রিকোয়েস্ট পাঠিয়েছেন')
+      .replace(/sent you a friend request/gi, 'আপনাকে বন্ধুত্বের অনুরোধ পাঠিয়েছেন')
+      .replace(/friend request পাঠিয়েছে/gi, 'বন্ধুত্বের অনুরোধ পাঠিয়েছেন')
+      .replace(/friend request পাঠিয়েছেন/gi, 'বন্ধুত্বের অনুরোধ পাঠিয়েছেন')
       .replace(/accepted your friend request/gi, 'আপনার ফ্রেন্ড রিকোয়েস্ট গ্রহণ করেছেন')
       .replace(/started following you/gi, 'আপনাকে ফলো করা শুরু করেছেন');
   };
@@ -241,8 +243,27 @@ export const Notifications: React.FC<NotificationsProps> = ({ hideHeader = false
     toast.success("সবগুলো নোটিফিকেশন পঠিত হিসেবে চিহ্নিত করা হয়েছে");
   };
 
-  const filteredNotifications = useMemo(() => {
+  const deduplicatedNotifications = useMemo(() => {
+    const seenFrActors = new Set<string>();
+    const seenSignatures = new Set<string>();
     return notifications.filter(n => {
+      if (n.type === 'friend_request') {
+        const actorKey = (n.actorId || (n.actionData as any)?.senderId || n.actorName || '').trim().toLowerCase();
+        if (actorKey) {
+          if (seenFrActors.has(actorKey)) return false;
+          seenFrActors.add(actorKey);
+        }
+      } else {
+        const sig = `${n.actorId || ''}_${n.type}_${n.targetId || ''}_${(n.message || '').trim()}`;
+        if (seenSignatures.has(sig)) return false;
+        seenSignatures.add(sig);
+      }
+      return true;
+    });
+  }, [notifications]);
+
+  const filteredNotifications = useMemo(() => {
+    return deduplicatedNotifications.filter(n => {
       // Filter tab check
       if (activeFilter === 'unread' && n.read) return false;
       if (activeFilter === 'security' && n.type !== 'security_alert' && n.priority !== 'critical') return false;
@@ -257,7 +278,7 @@ export const Notifications: React.FC<NotificationsProps> = ({ hideHeader = false
       }
       return true;
     });
-  }, [notifications, searchTerm, activeFilter]);
+  }, [deduplicatedNotifications, searchTerm, activeFilter]);
 
   // Group notifications into "New" (unread) and "Earlier" (read) in Bengali
   const notificationSections = useMemo(() => {
