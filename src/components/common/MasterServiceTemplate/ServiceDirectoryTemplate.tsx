@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useMemo, useRef } from 'react';
-import { useParams, useNavigate } from 'react-router-dom';
+import { useParams, useNavigate, useLocation } from 'react-router-dom';
 import {
   Search, Filter, ArrowUpDown, X, Plus, ArrowLeft, CheckCircle2, User, MapPin, 
   ChevronLeft, ChevronRight, ChevronsLeft, ChevronsRight, RotateCcw, Sparkles,
@@ -54,6 +54,7 @@ export const ServiceDirectoryTemplate: React.FC<ServiceDirectoryTemplateProps> =
   const { user } = useAuth();
   const params = useParams();
   const navigate = useNavigate();
+  const location = useLocation();
   const listTopRef = useRef<HTMLDivElement>(null);
 
   // Determine active service key
@@ -256,7 +257,8 @@ export const ServiceDirectoryTemplate: React.FC<ServiceDirectoryTemplateProps> =
 
   const handleOpenGeneralCorrection = () => {
     if (!user) {
-      toast.error('তথ্য সংশোধন করতে দয়া করে প্রথমে লগইন করুন।');
+      toast.info('তথ্য সংশোধন করতে দয়া করে প্রথমে লগইন করুন।');
+      navigate('/login', { state: { from: location.pathname } });
       return;
     }
     setShowGeneralCorrectionModal(true);
@@ -264,7 +266,8 @@ export const ServiceDirectoryTemplate: React.FC<ServiceDirectoryTemplateProps> =
 
   const handleOpenAddService = () => {
     if (!user) {
-      toast.error('নতুন তথ্য যোগ করতে দয়া করে প্রথমে লগইন করুন।');
+      toast.info('নতুন তথ্য যোগ করতে দয়া করে প্রথমে লগইন করুন।');
+      navigate('/login', { state: { from: location.pathname } });
       return;
     }
     setShowAddModal(true);
@@ -772,27 +775,25 @@ export const ServiceDirectoryTemplate: React.FC<ServiceDirectoryTemplateProps> =
                 <ArrowLeft size={18} />
               </button>
 
-              {user && (
-                <div className="flex items-center gap-2">
-                  <button
-                    type="button"
-                    onClick={handleOpenGeneralCorrection}
-                    className="p-2 rounded-full bg-white/10 hover:bg-white/20 text-white border-none cursor-pointer flex items-center justify-center transition-colors active:scale-95"
-                    title="পুরোনো তথ্য সংশোধন"
-                  >
-                    <Edit3 size={18} />
-                  </button>
+              <div className="flex items-center gap-2">
+                <button
+                  type="button"
+                  onClick={handleOpenGeneralCorrection}
+                  className="p-2 rounded-full bg-white/10 hover:bg-white/20 text-white border-none cursor-pointer flex items-center justify-center transition-colors active:scale-95"
+                  title="পুরোনো তথ্য সংশোধন"
+                >
+                  <Edit3 size={18} />
+                </button>
 
-                  <button
-                    type="button"
-                    onClick={handleOpenAddService}
-                    className="p-2 rounded-full bg-white hover:bg-emerald-50 text-[#006a4e] border-none cursor-pointer flex items-center justify-center transition-colors active:scale-95 shadow-sm"
-                    title="নতুন তথ্য যোগ করুন"
-                  >
-                    <Plus size={18} className="stroke-[2.5]" />
-                  </button>
-                </div>
-              )}
+                <button
+                  type="button"
+                  onClick={handleOpenAddService}
+                  className="p-2 rounded-full bg-white hover:bg-emerald-50 text-[#006a4e] border-none cursor-pointer flex items-center justify-center transition-colors active:scale-95 shadow-sm"
+                  title="নতুন তথ্য যোগ করুন"
+                >
+                  <Plus size={18} className="stroke-[2.5]" />
+                </button>
+              </div>
             </div>
 
             {/* Title & Subtitle */}

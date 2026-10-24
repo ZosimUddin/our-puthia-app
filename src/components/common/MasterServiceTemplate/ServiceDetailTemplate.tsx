@@ -1,11 +1,12 @@
 import React, { useState, useEffect } from 'react';
-import { useParams, useNavigate } from 'react-router-dom';
+import { useParams, useNavigate, useLocation } from 'react-router-dom';
 import {
   ArrowLeft, Phone, MapPin, Clock, Star, ShieldCheck, Heart, Share2, AlertTriangle, Building2, ExternalLink,
   MessageSquare, Calendar, Award, Stethoscope, CheckCircle2, UserCheck, DollarSign, Camera, Info, RefreshCw,
   Flag, ChevronRight, X, Activity, Truck, ShieldAlert, BookOpen, Utensils, Bed, Newspaper, Briefcase, Sprout,
-  Check, Navigation, FileText, User, ShoppingBag, HelpCircle, Navigation2
+  Check, Navigation, FileText, User, ShoppingBag, HelpCircle, Navigation2, Edit3
 } from 'lucide-react';
+import { toast } from 'sonner';
 import { doc, getDoc, collection, query, where, getDocs, limit } from 'firebase/firestore';
 import { db } from '../../../firebase';
 import { getServiceConfig, ServiceConfig } from '../../../config/servicesConfig';
@@ -39,6 +40,7 @@ export const ServiceDetailTemplate: React.FC<ServiceDetailTemplateProps> = ({
   const { user } = useAuth();
   const params = useParams();
   const navigate = useNavigate();
+  const location = useLocation();
 
   const serviceKey = serviceKeyParam || params.serviceKey || 'doctor';
   const docId = idParam || params.id;
@@ -338,6 +340,15 @@ export const ServiceDetailTemplate: React.FC<ServiceDetailTemplateProps> = ({
     }, 3000);
   };
 
+  const handleOpenCorrection = () => {
+    if (!user) {
+      toast.info('তথ্য সংশোধন করতে দয়া করে প্রথমে লগইন করুন।');
+      navigate('/login', { state: { from: location.pathname } });
+      return;
+    }
+    setShowCorrectionModal(true);
+  };
+
   const handleShare = () => {
     if (navigator.share) {
       navigator.share({
@@ -484,6 +495,14 @@ export const ServiceDetailTemplate: React.FC<ServiceDetailTemplateProps> = ({
               </button>
 
               <div className="flex items-center gap-2">
+                <button
+                  type="button"
+                  onClick={handleOpenCorrection}
+                  className="p-2 rounded-full bg-white/10 hover:bg-white/20 text-white border-none cursor-pointer flex items-center justify-center transition-colors active:scale-95"
+                  title="তথ্য সংশোধন"
+                >
+                  <Edit3 size={18} />
+                </button>
                 <button
                   type="button"
                   onClick={handleShare}
@@ -784,16 +803,14 @@ export const ServiceDetailTemplate: React.FC<ServiceDetailTemplateProps> = ({
               </div>
             </div>
 
-            <div className={`grid gap-2.5 pt-1 ${user ? 'grid-cols-1 sm:grid-cols-2' : 'grid-cols-1'}`}>
-              {user && (
-                <button
-                  type="button"
-                  onClick={() => setShowCorrectionModal(true)}
-                  className="py-2.5 px-4 bg-amber-600 hover:bg-amber-700 text-white text-xs font-black rounded-2xl flex items-center justify-center gap-2 border-none cursor-pointer shadow-sm transition-all"
-                >
-                  <span>✏️ পুরোনো তথ্য সংশোধন করুন</span>
-                </button>
-              )}
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-2.5 pt-1">
+              <button
+                type="button"
+                onClick={handleOpenCorrection}
+                className="py-2.5 px-4 bg-amber-600 hover:bg-amber-700 text-white text-xs font-black rounded-2xl flex items-center justify-center gap-2 border-none cursor-pointer shadow-sm transition-all"
+              >
+                <span>✏️ পুরোনো তথ্য সংশোধন করুন</span>
+              </button>
 
               <button
                 type="button"

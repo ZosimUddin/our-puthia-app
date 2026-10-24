@@ -3,6 +3,8 @@ import { motion } from 'motion/react';
 import { ArrowLeft, Search, X, ChevronRight, AlertCircle, Sparkles, Plus } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import { UniversalAddModal } from './UniversalAddModal';
+import { useAuth } from '../../contexts/AuthContext';
+import { toast } from 'sonner';
 
 // Landmark background image
 // @ts-ignore
@@ -62,6 +64,7 @@ export const UnifiedHeroHeader: React.FC<UnifiedHeroHeaderProps> = ({
   } catch (err) {
     navigate = null;
   }
+  const { user } = useAuth();
   const [isAddModalOpen, setIsAddModalOpen] = useState(false);
 
   // Default showAddButton to true only if addCategory is specified.
@@ -79,6 +82,13 @@ export const UnifiedHeroHeader: React.FC<UnifiedHeroHeaderProps> = ({
   };
 
   const handlePlusClick = () => {
+    if (!user) {
+      toast.info('নতুন তথ্য যোগ করতে দয়া করে প্রথমে লগইন করুন।');
+      if (navigate) {
+        navigate('/login', { state: { from: window.location.pathname } });
+      }
+      return;
+    }
     if (onAddClick) {
       onAddClick();
     } else {
@@ -201,7 +211,9 @@ export const UnifiedHeroHeader: React.FC<UnifiedHeroHeaderProps> = ({
         {children && <div className="mt-4">{children}</div>}
       </div>
 
-      <UniversalAddModal isOpen={isAddModalOpen} onClose={() => setIsAddModalOpen(false)} defaultCategory={currentCategory as any} />
+      {user && (
+        <UniversalAddModal isOpen={isAddModalOpen} onClose={() => setIsAddModalOpen(false)} defaultCategory={currentCategory as any} />
+      )}
     </div>
   );
 };

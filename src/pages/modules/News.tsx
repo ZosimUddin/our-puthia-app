@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useMemo } from 'react';
 import { copyToClipboard } from '../../utils/clipboard';
 import { motion, AnimatePresence } from 'motion/react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useLocation } from 'react-router-dom';
 import { 
   Newspaper, Calendar, Clock, X, Edit, Trash2, Plus, Sparkles, ChevronRight, 
   Image as ImageIcon, GraduationCap, Trophy, ShieldAlert, TrendingUp, Users, 
@@ -67,6 +67,7 @@ const CATEGORY_MAP = [
 
 const News: React.FC = () => {
   const navigate = useNavigate();
+  const location = useLocation();
   const { user, userProfile } = useAuth();
   
   // Real-time news state
@@ -491,6 +492,25 @@ const News: React.FC = () => {
     setEditingId(null);
   };
 
+  const handleOpenSendReport = () => {
+    if (!user) {
+      toast.info('সংবাদ পাঠাতে দয়া করে প্রথমে লগইন করুন।');
+      navigate('/login', { state: { from: location.pathname } });
+      return;
+    }
+    setShowSendReportModal(true);
+  };
+
+  const handleOpenAdminModal = () => {
+    if (!user) {
+      toast.info('নতুন সংবাদ লিখতে দয়া করে প্রথমে লগইন করুন।');
+      navigate('/login', { state: { from: location.pathname } });
+      return;
+    }
+    resetAdminForm();
+    setShowAdminModal(true);
+  };
+
   const handleOpenEdit = (item: NewsItem, e: React.MouseEvent) => {
     e.stopPropagation();
     setEditingId(item.id);
@@ -674,30 +694,23 @@ const News: React.FC = () => {
                   <RefreshCw size={18} className={isRefreshing ? 'animate-spin' : ''} />
                 </button>
 
-                {user && (
-                  <>
-                    <button
-                      type="button"
-                      onClick={() => setShowSendReportModal(true)}
-                      className="p-2 sm:p-2.5 rounded-full bg-white/10 hover:bg-white/20 text-white border-none cursor-pointer flex items-center justify-center transition-colors active:scale-95"
-                      title="সংবাদ পাঠান / নাগরিক সাংবাদিকতা"
-                    >
-                      <Edit3 size={18} />
-                    </button>
+                <button
+                  type="button"
+                  onClick={handleOpenSendReport}
+                  className="p-2 sm:p-2.5 rounded-full bg-white/10 hover:bg-white/20 text-white border-none cursor-pointer flex items-center justify-center transition-colors active:scale-95"
+                  title="সংবাদ পাঠান / নাগরিক সাংবাদিকতা"
+                >
+                  <Edit3 size={18} />
+                </button>
 
-                    <button
-                      type="button"
-                      onClick={() => {
-                        resetAdminForm();
-                        setShowAdminModal(true);
-                      }}
-                      className="p-2 sm:p-2.5 rounded-full bg-white hover:bg-emerald-50 text-[#006a4e] border-none cursor-pointer flex items-center justify-center transition-colors active:scale-95 shadow-sm"
-                      title="নতুন সংবাদ লিখুন"
-                    >
-                      <Plus size={18} className="stroke-[2.5]" />
-                    </button>
-                  </>
-                )}
+                <button
+                  type="button"
+                  onClick={handleOpenAdminModal}
+                  className="p-2 sm:p-2.5 rounded-full bg-white hover:bg-emerald-50 text-[#006a4e] border-none cursor-pointer flex items-center justify-center transition-colors active:scale-95 shadow-sm"
+                  title="নতুন সংবাদ লিখুন"
+                >
+                  <Plus size={18} className="stroke-[2.5]" />
+                </button>
               </div>
             </div>
 
@@ -1655,7 +1668,7 @@ const News: React.FC = () => {
       {/* 2. CITIZEN JOURNALIST REPORT FULLSCREEN MODAL                              */}
       {/* ========================================================================= */}
       <AnimatePresence>
-        {showSendReportModal && (
+        {showSendReportModal && user && (
           <motion.div
             initial={{ opacity: 0, y: 25 }}
             animate={{ opacity: 1, y: 0 }}
@@ -1910,7 +1923,7 @@ const News: React.FC = () => {
       {/* 3. ADMIN / CITIZEN NEWS WRITE / EDIT FULLSCREEN MODAL                     */}
       {/* ========================================================================= */}
       <AnimatePresence>
-        {showAdminModal && (
+        {showAdminModal && user && (
           <motion.div
             initial={{ opacity: 0, y: 25 }}
             animate={{ opacity: 1, y: 0 }}
