@@ -2,6 +2,9 @@ import React from "react";
 import { Flag, ShieldAlert, AlertTriangle } from "lucide-react";
 import { useUniversalReport } from "../../context/UniversalReportContext";
 import { ReportTarget } from "./UniversalReportModal";
+import { useAuth } from "../../contexts/AuthContext";
+import { useNavigate } from "react-router-dom";
+import { toast } from "sonner";
 
 interface UniversalReportButtonProps {
   contentId: string;
@@ -27,10 +30,18 @@ export const UniversalReportButton: React.FC<UniversalReportButtonProps> = ({
   iconOnly = false,
 }) => {
   const { openReportModal } = useUniversalReport();
+  const { user } = useAuth();
+  const navigate = useNavigate();
 
   const handleReportClick = (e: React.MouseEvent) => {
     e.stopPropagation();
     e.preventDefault();
+
+    if (!user) {
+      toast.info('রিপোর্ট করতে দয়া করে প্রথমে লগইন করুন।');
+      navigate('/login', { state: { from: window.location.pathname } });
+      return;
+    }
 
     const target: ReportTarget = {
       contentId,

@@ -340,13 +340,39 @@ export const ServiceDetailTemplate: React.FC<ServiceDetailTemplateProps> = ({
     }, 3000);
   };
 
-  const handleOpenCorrection = () => {
+  const handleOpenCorrection = (val?: boolean | React.MouseEvent) => {
+    if (typeof val === 'boolean' && !val) {
+      setShowCorrectionModal(false);
+      return;
+    }
     if (!user) {
       toast.info('তথ্য সংশোধন করতে দয়া করে প্রথমে লগইন করুন।');
       navigate('/login', { state: { from: location.pathname } });
       return;
     }
     setShowCorrectionModal(true);
+  };
+
+  const handleOpenRatingModal = (val?: boolean | React.MouseEvent) => {
+    if (typeof val === 'boolean' && !val) {
+      setShowRatingModal(false);
+      return;
+    }
+    if (!user) {
+      toast.info('রিভিউ ও রেটিং লিখতে দয়া করে প্রথমে লগইন করুন।');
+      navigate('/login', { state: { from: location.pathname } });
+      return;
+    }
+    setShowRatingModal(true);
+  };
+
+  const handleOpenReportModal = () => {
+    if (!user) {
+      toast.info('রিপোর্ট করতে দয়া করে প্রথমে লগইন করুন।');
+      navigate('/login', { state: { from: location.pathname } });
+      return;
+    }
+    setReportUpdateModal({ isOpen: true, mode: 'report' });
   };
 
   const handleShare = () => {
@@ -461,8 +487,8 @@ export const ServiceDetailTemplate: React.FC<ServiceDetailTemplateProps> = ({
         handleShare={handleShare}
         navigate={navigate}
         onGoBack={handleBack}
-        setShowRatingModal={setShowRatingModal}
-        setShowCorrectionModal={setShowCorrectionModal}
+        setShowRatingModal={handleOpenRatingModal}
+        setShowCorrectionModal={handleOpenCorrection}
       />
     );
   }
@@ -694,7 +720,7 @@ export const ServiceDetailTemplate: React.FC<ServiceDetailTemplateProps> = ({
               </h3>
               <button
                 type="button"
-                onClick={() => setShowRatingModal(true)}
+                onClick={() => handleOpenRatingModal(true)}
                 className="px-3 py-1.5 bg-amber-50 hover:bg-amber-100 text-amber-900 text-xs font-black rounded-xl border border-amber-200 flex items-center gap-1 cursor-pointer transition-colors"
               >
                 <MessageSquare size={13} />
@@ -814,7 +840,7 @@ export const ServiceDetailTemplate: React.FC<ServiceDetailTemplateProps> = ({
 
               <button
                 type="button"
-                onClick={() => setReportUpdateModal({ isOpen: true, mode: 'report' })}
+                onClick={handleOpenReportModal}
                 className="py-2.5 px-4 bg-white hover:bg-rose-50 text-rose-700 text-xs font-bold rounded-2xl border border-rose-200/80 flex items-center justify-center gap-1.5 cursor-pointer transition-colors"
               >
                 <Flag size={14} className="text-rose-600" />
@@ -863,13 +889,15 @@ export const ServiceDetailTemplate: React.FC<ServiceDetailTemplateProps> = ({
       )}
 
       {/* Rating Modal */}
-      <RatingModal
-        isOpen={showRatingModal}
-        onClose={() => setShowRatingModal(false)}
-        targetId={docId || ''}
-        targetType={serviceKey}
-        targetName={title}
-      />
+      {user && (
+        <RatingModal
+          isOpen={showRatingModal}
+          onClose={() => setShowRatingModal(false)}
+          targetId={docId || ''}
+          targetType={serviceKey}
+          targetName={title}
+        />
+      )}
 
       {/* Appointment Modal (For Doctors) */}
       <AppointmentModal
@@ -968,12 +996,14 @@ export const ServiceDetailTemplate: React.FC<ServiceDetailTemplateProps> = ({
       )}
 
       {/* Report & Update Modal */}
-      <ReportAndUpdateModal
-        isOpen={reportUpdateModal.isOpen}
-        onClose={() => setReportUpdateModal({ isOpen: false, mode: 'report' })}
-        mode={reportUpdateModal.mode}
-        title={title}
-      />
+      {user && (
+        <ReportAndUpdateModal
+          isOpen={reportUpdateModal.isOpen}
+          onClose={() => setReportUpdateModal({ isOpen: false, mode: 'report' })}
+          mode={reportUpdateModal.mode}
+          title={title}
+        />
+      )}
 
       {/* Toast Notification */}
       {toastMessage && (

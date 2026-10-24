@@ -117,7 +117,7 @@ export const UniversalReportModal: React.FC<UniversalReportModalProps> = ({
     return ALL_REPORT_REASONS.find(r => r.id === selectedReasonId);
   }, [selectedReasonId]);
 
-  if (!isOpen || !target) return null;
+  if (!isOpen || !target || !user) return null;
 
   const handleCategorySelect = (catId: ReportCategory) => {
     setSelectedCategory(catId);

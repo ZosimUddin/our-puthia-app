@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { motion, AnimatePresence } from 'motion/react';
 import { Flag, RefreshCw, X, CheckCircle2, AlertTriangle } from 'lucide-react';
+import { useAuth } from '../../contexts/AuthContext';
 
 interface ReportAndUpdateModalProps {
   isOpen: boolean;
@@ -15,13 +16,14 @@ export const ReportAndUpdateModal: React.FC<ReportAndUpdateModalProps> = ({
   mode,
   title,
 }) => {
+  const { user } = useAuth();
   const [reason, setReason] = useState<string>('phone_wrong');
   const [details, setDetails] = useState<string>('');
   const [contactPhone, setContactPhone] = useState<string>('');
   const [submitted, setSubmitted] = useState<boolean>(false);
   const [loading, setLoading] = useState<boolean>(false);
 
-  if (!isOpen) return null;
+  if (!isOpen || !user) return null;
 
   const isReport = mode === 'report';
 

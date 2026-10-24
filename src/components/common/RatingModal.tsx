@@ -20,7 +20,7 @@ export const RatingModal: React.FC<RatingModalProps> = ({ isOpen, onClose, targe
   const [feedback, setFeedback] = useState('');
   const [loading, setLoading] = useState(false);
 
-  if (!isOpen) return null;
+  if (!isOpen || !user) return null;
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
