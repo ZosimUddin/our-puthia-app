@@ -317,6 +317,24 @@ const Header: React.FC<HeaderProps> = ({
     setIsSearchOpen(false);
   };
 
+  const handleBackNavigation = () => {
+    if (onBackClick) {
+      onBackClick();
+      return;
+    }
+    if (window.history.state && typeof window.history.state.idx === 'number' && window.history.state.idx > 0) {
+      navigate(-1);
+      const currentPath = window.location.pathname;
+      setTimeout(() => {
+        if (window.location.pathname === currentPath) {
+          navigate('/', { replace: true });
+        }
+      }, 150);
+    } else {
+      navigate('/', { replace: true });
+    }
+  };
+
   return (
     <>
       <header className={`sticky top-0 z-50 w-full max-w-full transition-all duration-300 ${
@@ -329,17 +347,18 @@ const Header: React.FC<HeaderProps> = ({
           <div className="flex items-center gap-1 sm:gap-2.5 md:gap-4 min-w-0 flex-1">
             {showBackBtn && (
               <button
-                onClick={onBackClick || (() => navigate(-1))}
-                className="w-8 h-8 sm:w-10 md:w-16 sm:h-10 md:h-16 hover:bg-slate-100 bg-transparent rounded-xl transition-colors flex items-center justify-center cursor-pointer shrink-0"
+                type="button"
+                onClick={handleBackNavigation}
+                className="w-10 h-10 sm:w-12 md:w-16 sm:h-12 md:h-16 hover:bg-slate-100 active:bg-slate-200 bg-transparent rounded-xl transition-all flex items-center justify-center cursor-pointer shrink-0 touch-manipulation"
                 aria-label="Back"
               >
-                <ArrowLeft size={typeof window !== 'undefined' && window.innerWidth >= 768 ? 32 : 20} className="text-emerald-800" />
+                <ArrowLeft size={typeof window !== 'undefined' && window.innerWidth >= 768 ? 32 : 22} className="text-emerald-800" />
               </button>
             )}
 
             <div
               className="flex items-center gap-2 sm:gap-4 cursor-pointer min-w-0"
-              onClick={showBackBtn ? (onBackClick || (() => navigate(-1))) : (() => navigate("/"))}
+              onClick={showBackBtn ? handleBackNavigation : (() => navigate("/"))}
             >
               {customTitle ? (
                 customTitle === "আড্ডা" ? (

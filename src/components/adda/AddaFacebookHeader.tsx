@@ -49,12 +49,14 @@ interface AddaFacebookHeaderProps {
   onOpenCreateModal?: (action?: 'photo' | 'video' | 'general') => void;
   activeTab?: 'feed' | 'friends' | 'reels' | 'marketplace' | 'notifications' | 'menu' | string;
   onTabChange?: (tab: string) => void;
+  onBack?: () => void;
 }
 
 export const AddaFacebookHeader: React.FC<AddaFacebookHeaderProps> = ({
   onOpenCreateModal,
   activeTab = 'feed',
-  onTabChange
+  onTabChange,
+  onBack,
 }) => {
   const navigate = useNavigate();
   const location = useLocation();
@@ -293,11 +295,26 @@ export const AddaFacebookHeader: React.FC<AddaFacebookHeaderProps> = ({
     }
   ];
 
-  const handleBack = () => {
-    if (window.history.length > 1) {
+  const handleBack = (e?: React.MouseEvent) => {
+    e?.preventDefault();
+    e?.stopPropagation();
+
+    if (onBack) {
+      onBack();
+      return;
+    }
+
+    // If internal router history exists, go back; otherwise navigate to home
+    if (window.history.state && typeof window.history.state.idx === 'number' && window.history.state.idx > 0) {
       navigate(-1);
+      const currentPath = window.location.pathname;
+      setTimeout(() => {
+        if (window.location.pathname === currentPath) {
+          navigate('/', { replace: true });
+        }
+      }, 150);
     } else {
-      navigate('/');
+      navigate('/', { replace: true });
     }
   };
 
@@ -314,11 +331,11 @@ export const AddaFacebookHeader: React.FC<AddaFacebookHeaderProps> = ({
             <button
               type="button"
               onClick={handleBack}
-              className="w-9 h-9 sm:w-10 sm:h-10 rounded-full bg-white/20 hover:bg-white/30 text-white flex items-center justify-center transition active:scale-95 cursor-pointer border border-white/20 shadow-xs backdrop-blur-xs shrink-0"
-              title="পেছনে ফিরে যান"
+              className="w-10 h-10 sm:w-11 sm:h-11 min-w-[40px] min-h-[40px] rounded-full bg-white/20 hover:bg-white/30 active:bg-white/40 active:scale-95 text-white flex items-center justify-center transition cursor-pointer border border-white/25 shadow-xs backdrop-blur-xs shrink-0 touch-manipulation z-10"
+              title="হোমে বা পেছনে ফিরে যান"
               aria-label="Back"
             >
-              <ArrowLeft size={19} strokeWidth={2.5} />
+              <ArrowLeft size={22} strokeWidth={2.5} />
             </button>
 
             <Link to="/adda" className="flex items-center gap-1.5 sm:gap-2 no-underline group">
