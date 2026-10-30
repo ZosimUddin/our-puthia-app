@@ -1,0 +1,657 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+
+    // ==========================================
+    // ZERO-TRUST HELPER & RBAC FUNCTIONS
+    // ==========================================
+    function isSignedIn() {
+      return request.auth != null;
+    }
+
+    function getUserData() {
+      return get(/databases/$(database)/documents/users/$(request.auth.uid)).data;
+    }
+
+    function existsUser() {
+      return isSignedIn() && exists(/databases/$(database)/documents/users/$(request.auth.uid));
+    }
+
+    function isSuperAdmin() {
+      return isSignedIn() && (
+        ('email' in request.auth.token && request.auth.token.email in [
+          'mdzosimuddin31@gmail.com',
+          'mdzosimuddin47@gmail.com',
+          'josimuddinadds@gmail.com'
+        ]) ||
+        (existsUser() && getUserData().get('role', 'user') == 'super_admin')
+      );
+    }
+
+    function isAdmin() {
+      return isSignedIn() && (
+        isSuperAdmin() || 
+        (existsUser() && getUserData().get('role', 'user') in ['super_admin', 'admin'])
+      );
+    }
+
+    function isStaff() {
+      return isSignedIn() && (
+        isAdmin() || 
+        (existsUser() && getUserData().get('role', 'user') in ['super_admin', 'admin', 'editor', 'staff', 'moderator'])
+      );
+    }
+
+    function isDocOwner() {
+      return isSignedIn() && resource != null && (
+        resource.data.get('userId', '') == request.auth.uid ||
+        resource.data.get('uid', '') == request.auth.uid ||
+        resource.data.get('authorId', '') == request.auth.uid ||
+        resource.data.get('ownerId', '') == request.auth.uid ||
+        resource.data.get('uploaderId', '') == request.auth.uid ||
+        resource.data.get('createdBy', '') == request.auth.uid
+      );
+    }
+
+    function incoming() {
+      return request.resource.data;
+    }
+
+    function existing() {
+      return resource.data;
+    }
+
+    function isValidId(id) {
+      return id is string && id.size() <= 128 && id.matches('^[a-zA-Z0-9_\\-]+$');
+    }
+
+    // ==========================================
+    // 1. USERS, PROFILES & PERMISSIONS
+    // ==========================================
+    match /users/{userId} {
+      allow read: if true;
+      allow create: if isSignedIn() && request.auth.uid == userId && 
+        (!('role' in incoming()) || incoming().role == 'user' || isStaff());
+      allow update: if isStaff() || (
+        isSignedIn() && request.auth.uid == userId &&
+        (!('role' in incoming()) || incoming().role == existing().get('role', 'user')) &&
+        (!('isBlocked' in incoming()) || incoming().isBlocked == existing().get('isBlocked', false)) &&
+        (!('permissions' in incoming()) || incoming().permissions == existing().get('permissions', []))
+      );
+      allow delete: if isAdmin();
+
+      match /favorites/{favoriteId} {
+        allow read, write: if isSignedIn() && request.auth.uid == userId;
+      }
+    }
+
+    match /user_profiles/{profileId} {
+      allow read: if true;
+      allow create, update: if isSignedIn() && (request.auth.uid == profileId || incoming().get('userId', '') == request.auth.uid || isStaff());
+      allow delete: if isStaff();
+    }
+
+    match /user_permissions/{uid} {
+      allow read: if isSignedIn() && (request.auth.uid == uid || isStaff());
+      allow write: if isStaff();
+    }
+
+    match /user_presences/{presenceId} {
+      allow read: if true;
+      allow create, update: if isSignedIn() && (request.auth.uid == presenceId || incoming().get('userId', '') == request.auth.uid);
+      allow delete: if isStaff();
+    }
+
+    // ==========================================
+    // 2. SYSTEM SETTINGS & NOTICES
+    // ==========================================
+    match /settings/{document=**} {
+      allow read: if true;
+      allow write: if isAdmin();
+    }
+
+    match /site_settings/{settingId} {
+      allow read: if true;
+      allow write: if settingId == 'footer' ? isSuperAdmin() : isStaff();
+    }
+
+    match /notices/{noticeId} {
+      allow read: if true;
+      allow write: if isStaff();
+    }
+
+    match /notice_items/{noticeId} {
+      allow read: if true;
+      allow write: if isStaff();
+    }
+
+    match /news/{newsId} {
+      allow read: if true;
+      allow create: if isSignedIn() && incoming().get('authorId', '') == request.auth.uid;
+      allow update, delete: if isStaff() || isDocOwner();
+
+      match /comments/{commentId} {
+        allow read: if true;
+        allow create: if isSignedIn() && incoming().get('authorId', '') == request.auth.uid;
+        allow update, delete: if isStaff() || isDocOwner();
+      }
+    }
+
+    match /citizen_news_reports/{reportId} {
+      allow read: if isStaff() || isDocOwner();
+      allow create: if true;
+      allow update, delete: if isStaff() || isDocOwner();
+    }
+
+    match /banners/{bannerId} {
+      allow read: if true;
+      allow write: if isStaff();
+    }
+
+    match /hero_slides/{slideId} {
+      allow read: if true;
+      allow write: if isStaff();
+    }
+
+    match /ads/{adId} {
+      allow read: if true;
+      allow write: if isStaff();
+    }
+
+    match /stats/{docId} {
+      allow read: if true;
+      allow write: if isStaff();
+    }
+
+    match /sub_menu_pages/{pageId} {
+      allow read: if true;
+      allow write: if isStaff();
+    }
+
+    // ==========================================
+    // 3. SOCIAL, POSTS, DISCUSSIONS & INTERACTIONS
+    // ==========================================
+    match /discussions/{id} {
+      allow read: if true;
+      allow create: if isSignedIn() && incoming().get('authorId', incoming().get('userId', '')) == request.auth.uid;
+      allow update, delete: if isStaff() || isDocOwner();
+    }
+
+    match /posts/{id} {
+      allow read: if true;
+      allow create: if isSignedIn() && incoming().get('authorId', incoming().get('userId', '')) == request.auth.uid;
+      allow update, delete: if isStaff() || isDocOwner();
+    }
+
+    match /user_posts/{id} {
+      allow read: if true;
+      allow create: if isSignedIn() && incoming().get('uid', incoming().get('userId', '')) == request.auth.uid;
+      allow update, delete: if isStaff() || isDocOwner();
+    }
+
+    match /comments/{id} {
+      allow read: if true;
+      allow create: if isSignedIn() && incoming().get('authorId', incoming().get('userId', '')) == request.auth.uid;
+      allow update, delete: if isStaff() || isDocOwner();
+    }
+
+    match /discussion_comments/{id} {
+      allow read: if true;
+      allow create: if isSignedIn() && incoming().get('authorId', incoming().get('userId', '')) == request.auth.uid;
+      allow update, delete: if isStaff() || isDocOwner();
+    }
+
+    match /likes/{likeId} {
+      allow read: if true;
+      allow create: if isSignedIn() && incoming().get('userId', '') == request.auth.uid;
+      allow delete: if isStaff() || (isSignedIn() && existing().get('userId', '') == request.auth.uid);
+    }
+
+    match /post_reactions/{id} {
+      allow read: if true;
+      allow create: if isSignedIn() && incoming().get('userId', '') == request.auth.uid;
+      allow update, delete: if isStaff() || (isSignedIn() && existing().get('userId', '') == request.auth.uid);
+    }
+
+    match /comment_reactions/{id} {
+      allow read: if true;
+      allow create: if isSignedIn() && incoming().get('userId', '') == request.auth.uid;
+      allow update, delete: if isStaff() || (isSignedIn() && existing().get('userId', '') == request.auth.uid);
+    }
+
+    match /bookmarks/{id} {
+      allow read: if isSignedIn() && (existing().get('userId', '') == request.auth.uid || isStaff());
+      allow create: if isSignedIn() && incoming().get('userId', '') == request.auth.uid;
+      allow delete: if isStaff() || (isSignedIn() && existing().get('userId', '') == request.auth.uid);
+    }
+
+    match /stories/{storyId} {
+      allow read: if true;
+      allow create: if isSignedIn() && incoming().get('userId', '') == request.auth.uid;
+      allow update, delete: if isStaff() || (isSignedIn() && existing().get('userId', '') == request.auth.uid);
+    }
+
+    match /reels/{reelId} {
+      allow read: if true;
+      allow create: if isSignedIn() && incoming().get('authorId', '') == request.auth.uid;
+      allow update, delete: if isStaff() || (isSignedIn() && existing().get('authorId', '') == request.auth.uid);
+
+      match /comments/{commentId} {
+        allow read: if true;
+        allow create: if isSignedIn() && incoming().get('authorId', '') == request.auth.uid;
+        allow update, delete: if isStaff() || (isSignedIn() && existing().get('authorId', '') == request.auth.uid);
+      }
+    }
+
+    match /reel_audio/{audioId} {
+      allow read: if true;
+      allow write: if isStaff();
+    }
+
+    match /reel_reports/{reportId} {
+      allow read: if isStaff();
+      allow create: if isSignedIn() && incoming().get('reporterId', '') == request.auth.uid;
+      allow update, delete: if isStaff();
+    }
+
+    // ==========================================
+    // 4. CHAT, CONVERSATIONS, CALLS & NOTIFICATIONS
+    // ==========================================
+    match /notifications/{id} {
+      allow read: if isSignedIn() && (resource == null || resource.data.userId == request.auth.uid || isStaff());
+      allow create: if isStaff() || isSignedIn();
+      allow update, delete: if isStaff() || (isSignedIn() && resource.data.userId == request.auth.uid);
+    }
+
+    match /conversations/{conversationId} {
+      allow read: if isSignedIn() && (request.auth.uid in resource.data.participants || isStaff());
+      allow create: if isSignedIn() && (request.auth.uid in incoming().participants);
+      allow update: if isSignedIn() && (request.auth.uid in resource.data.participants || isStaff());
+      allow delete: if isStaff();
+
+      match /messages/{messageId} {
+        allow read: if isSignedIn() && (request.auth.uid in get(/databases/$(database)/documents/conversations/$(conversationId)).data.participants || isStaff());
+        allow create: if isSignedIn() && 
+          (request.auth.uid in get(/databases/$(database)/documents/conversations/$(conversationId)).data.participants) &&
+          incoming().senderId == request.auth.uid;
+        allow update, delete: if isStaff() || (isSignedIn() && existing().senderId == request.auth.uid);
+      }
+
+      match /typing/{userId} {
+        allow read, write: if isSignedIn() && (request.auth.uid == userId || isStaff());
+      }
+    }
+
+    match /calls/{callId} {
+      allow read: if isSignedIn() && (
+        resource == null || 
+        resource.data.callerId == request.auth.uid || 
+        resource.data.receiverId == request.auth.uid || 
+        isStaff()
+      );
+      allow create: if isSignedIn() && incoming().callerId == request.auth.uid;
+      allow update: if isSignedIn() && (
+        existing().callerId == request.auth.uid || 
+        existing().receiverId == request.auth.uid || 
+        isStaff()
+      );
+      allow delete: if isStaff() || (isSignedIn() && existing().callerId == request.auth.uid);
+
+      match /{subcollection=**} {
+        allow read, write: if isSignedIn() && (
+          get(/databases/$(database)/documents/calls/$(callId)).data.callerId == request.auth.uid ||
+          get(/databases/$(database)/documents/calls/$(callId)).data.receiverId == request.auth.uid ||
+          isStaff()
+        );
+      }
+    }
+
+    match /chat/{chatId} {
+      allow read: if isSignedIn() && (
+        resource == null ||
+        resource.data.get('senderId', '') == request.auth.uid ||
+        resource.data.get('receiverId', '') == request.auth.uid ||
+        isStaff()
+      );
+      allow create: if isSignedIn() && incoming().get('senderId', '') == request.auth.uid;
+      allow update, delete: if isStaff() || (isSignedIn() && existing().get('senderId', '') == request.auth.uid);
+    }
+
+    match /messages/{messageId} {
+      allow read: if isSignedIn() && (
+        resource == null ||
+        resource.data.get('senderId', '') == request.auth.uid ||
+        resource.data.get('receiverId', '') == request.auth.uid ||
+        isStaff()
+      );
+      allow create: if isSignedIn() && incoming().get('senderId', '') == request.auth.uid;
+      allow update, delete: if isStaff() || (isSignedIn() && existing().get('senderId', '') == request.auth.uid);
+    }
+
+    match /friend_requests/{requestId} {
+      allow read: if isSignedIn() && (
+        resource == null ||
+        resource.data.get('senderId', '') == request.auth.uid ||
+        resource.data.get('receiverId', '') == request.auth.uid ||
+        isStaff()
+      );
+      allow create: if isSignedIn() && incoming().get('senderId', '') == request.auth.uid;
+      allow update, delete: if isSignedIn() && (
+        existing().get('senderId', '') == request.auth.uid ||
+        existing().get('receiverId', '') == request.auth.uid ||
+        isStaff()
+      );
+    }
+
+    match /friendships/{friendshipId} {
+      allow read: if isSignedIn() && (
+        resource == null ||
+        request.auth.uid in resource.data.get('userIds', []) ||
+        resource.data.get('user1Id', '') == request.auth.uid ||
+        resource.data.get('user2Id', '') == request.auth.uid ||
+        isStaff()
+      );
+      allow write: if isSignedIn() && (
+        (incoming() != null && request.auth.uid in incoming().get('userIds', [])) ||
+        (existing() != null && request.auth.uid in existing().get('userIds', [])) ||
+        isStaff()
+      );
+    }
+
+    match /follows/{followId} {
+      allow read: if true;
+      allow create: if isSignedIn() && incoming().get('followerId', '') == request.auth.uid;
+      allow delete: if isStaff() || (isSignedIn() && existing().get('followerId', '') == request.auth.uid);
+    }
+
+    match /blocks/{blockId} {
+      allow read: if isSignedIn() && (existing().get('blockedBy', '') == request.auth.uid || isStaff());
+      allow create: if isSignedIn() && incoming().get('blockedBy', '') == request.auth.uid;
+      allow delete: if isStaff() || (isSignedIn() && existing().get('blockedBy', '') == request.auth.uid);
+    }
+
+    match /privacy_settings/{userId} {
+      allow read, write: if isSignedIn() && (request.auth.uid == userId || isStaff());
+    }
+
+    // ==========================================
+    // 5. AUDIT LOGS, POINTS & FINANCIAL TRANSACTIONS
+    // ==========================================
+    match /point_history/{id} {
+      allow read: if isSignedIn() && (resource == null || resource.data.userId == request.auth.uid || isStaff());
+      allow create: if isSignedIn() && request.resource.data.userId == request.auth.uid;
+      allow update, delete: if isStaff();
+    }
+
+    match /recharge_requests/{id} {
+      allow read: if isSignedIn() && (resource == null || resource.data.uid == request.auth.uid || isStaff());
+      allow create: if isSignedIn() && request.resource.data.uid == request.auth.uid;
+      allow update, delete: if isStaff();
+    }
+
+    match /complaints/{id} {
+      allow read: if true;
+      allow create: if isSignedIn();
+      allow update: if isStaff() || (isSignedIn() && isDocOwner() && request.resource.data.status == resource.data.status);
+      allow delete: if isStaff() || isDocOwner();
+    }
+
+    match /blood_donations/{id} {
+      allow read: if true;
+      allow create: if isSignedIn() && request.resource.data.userId == request.auth.uid;
+      allow update, delete: if isStaff() || isDocOwner();
+    }
+
+    match /blood_inventory/{id} {
+      allow read: if true;
+      allow write: if isStaff() || isAdmin();
+    }
+
+    match /blood_stock_logs/{id} {
+      allow read: if true;
+      allow create: if isStaff() || isAdmin();
+      allow update, delete: if isAdmin();
+    }
+
+    match /volunteers/{id} {
+      allow read: if true;
+      allow create: if isSignedIn();
+      allow update, delete: if isStaff() || isDocOwner();
+    }
+
+    // STRICT APPEND-ONLY AUDIT LOGS (NO UPDATES, NO DELETES)
+    match /audit_logs/{logId} {
+      allow read: if isStaff();
+      allow create: if isSignedIn() && (incoming().get('actorUid', request.auth.uid) == request.auth.uid || isStaff());
+      allow update, delete: if false;
+    }
+
+    match /admin_audit_logs/{logId} {
+      allow read: if isStaff();
+      allow create: if isStaff(); // Only staff/admin can create admin audit logs
+      allow update, delete: if false;
+    }
+
+    match /notification_preferences/{userId} {
+      allow read, write: if isSignedIn() && (request.auth.uid == userId || isStaff());
+    }
+
+    match /notification_audit_logs/{id} {
+      allow read: if isStaff();
+      allow create: if isStaff();
+      allow update, delete: if false;
+    }
+
+    match /mail/{id} {
+      allow read: if isStaff();
+      allow create: if true;
+      allow update, delete: if isStaff();
+    }
+
+    match /welcome_emails_sent/{id} {
+      allow read: if isStaff();
+      allow create: if true;
+      allow update, delete: if isStaff();
+    }
+
+    // ==========================================
+    // 6. DIRECTORIES & MUNICIPAL SERVICES
+    // ==========================================
+    match /hospitals/{hospitalId} {
+      allow read: if true;
+      allow write: if isStaff();
+    }
+
+    match /doctors/{doctorId} {
+      allow read: if true;
+      allow write: if isStaff();
+    }
+
+    match /diagnostic_centers/{diagnosticId} {
+      allow read: if true;
+      allow write: if isStaff();
+    }
+
+    match /educational_institutions/{instId} {
+      allow read: if true;
+      allow write: if isStaff();
+    }
+
+    match /banks/{bankId} {
+      allow read: if true;
+      allow write: if isStaff();
+    }
+
+    match /ngos/{ngoId} {
+      allow read: if true;
+      allow write: if isStaff();
+    }
+
+    match /emergency_services/{serviceId} {
+      allow read: if true;
+      allow write: if isStaff();
+    }
+
+    match /transport/{transportId} {
+      allow read: if true;
+      allow create: if isSignedIn();
+      allow update, delete: if isStaff() || isDocOwner();
+    }
+
+    match /tourism/{spotId} {
+      allow read: if true;
+      allow write: if isStaff();
+    }
+
+    match /jobs/{jobId} {
+      allow read: if true;
+      allow create: if isSignedIn() && incoming().get('publisherId', '') == request.auth.uid;
+      allow update, delete: if isStaff() || isDocOwner();
+    }
+
+    match /businesses/{businessId} {
+      allow read: if true;
+      allow create: if isSignedIn() && incoming().get('ownerId', '') == request.auth.uid;
+      allow update, delete: if isStaff() || isDocOwner();
+    }
+
+    match /service_providers/{providerId} {
+      allow read: if true;
+      allow create: if isSignedIn() && incoming().get('userId', '') == request.auth.uid;
+      allow update, delete: if isStaff() || isDocOwner();
+    }
+
+    match /upazila_services/{serviceId} {
+      allow read: if true;
+      allow write: if isStaff();
+    }
+
+    match /upazila_services_submissions/{submissionId} {
+      allow read: if isStaff() || isDocOwner();
+      allow create: if isSignedIn();
+      allow update, delete: if isStaff() || isDocOwner();
+    }
+
+    match /upazila_services_edits/{editId} {
+      allow read: if isStaff() || isDocOwner();
+      allow create: if isSignedIn();
+      allow update, delete: if isStaff() || isDocOwner();
+    }
+
+    match /upazila_services_reports/{reportId} {
+      allow read: if isStaff();
+      allow create: if true;
+      allow update, delete: if isStaff();
+    }
+
+    match /medicines/{medicineId} {
+      allow read: if true;
+      allow write: if isStaff();
+    }
+
+    match /medicine_price_reports/{reportId} {
+      allow read: if isStaff();
+      allow create: if isSignedIn();
+      allow update, delete: if isStaff();
+    }
+
+    match /saved_prescriptions/{id} {
+      allow read, write: if isSignedIn() && (existing().get('userId', '') == request.auth.uid || incoming().get('userId', '') == request.auth.uid || isStaff());
+    }
+
+    match /vehicle_rentals/{id} {
+      allow read: if true;
+      allow create: if isSignedIn();
+      allow update, delete: if isStaff() || isDocOwner();
+    }
+
+    match /vehicle_bookings/{id} {
+      allow read: if isStaff() || (isSignedIn() && (resource == null || resource.data.get('userId', '') == request.auth.uid));
+      allow create: if isSignedIn() && incoming().get('userId', '') == request.auth.uid;
+      allow update, delete: if isStaff() || isDocOwner();
+    }
+
+    match /vehicle_reviews/{id} {
+      allow read: if true;
+      allow create: if isSignedIn() && incoming().get('userId', '') == request.auth.uid;
+      allow update, delete: if isStaff() || isDocOwner();
+    }
+
+    // ==========================================
+    // 7. FOOTBALL TOURNAMENT MODULE
+    // ==========================================
+    match /footballTournaments/{id} {
+      allow read: if true;
+      allow create, update, delete: if isAdmin();
+    }
+
+    match /footballClubs/{id} {
+      allow read: if true;
+      allow create: if isStaff() || isSignedIn();
+      allow update: if isStaff() || isDocOwner();
+      allow delete: if isAdmin();
+    }
+
+    match /footballTeams/{id} {
+      allow read: if true;
+      allow create: if isStaff() || isSignedIn();
+      allow update: if isStaff() || isDocOwner();
+      allow delete: if isAdmin();
+    }
+
+    match /footballPlayers/{id} {
+      allow read: if true;
+      allow create: if isStaff() || isSignedIn();
+      allow update: if isStaff() || isDocOwner();
+      allow delete: if isAdmin();
+    }
+
+    match /footballMatches/{id} {
+      allow read: if true;
+      allow create, update, delete: if isStaff();
+
+      match /events/{eventId} {
+        allow read: if true;
+        allow create, update, delete: if isStaff();
+      }
+    }
+
+    match /footballStandings/{id} {
+      allow read: if true;
+      allow create, update, delete: if isStaff();
+    }
+
+    match /footballVenues/{id} {
+      allow read: if true;
+      allow create, update, delete: if isAdmin();
+    }
+
+    match /footballSponsors/{id} {
+      allow read: if true;
+      allow create, update, delete: if isAdmin();
+    }
+
+    match /footballPosters/{id} {
+      allow read: if true;
+      allow create, update, delete: if isStaff();
+    }
+
+    match /footballActivityLogs/{id} {
+      allow read: if isAdmin();
+      allow create: if isSignedIn() || isStaff();
+      allow update, delete: if false; // Append-only
+    }
+
+    match /footballSettings/{id} {
+      allow read: if true;
+      allow create, update, delete: if isSuperAdmin();
+    }
+
+    // ==========================================
+    // ZERO-TRUST DEFAULT DENY FALLBACK
+    // ==========================================
+    match /{document=**} {
+      allow read, write: if false;
+    }
+  }
+}

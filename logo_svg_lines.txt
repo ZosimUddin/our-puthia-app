@@ -1,0 +1,944 @@
+src/pages/admin/MelaManagement.tsx:212:                    src={fair.bannerUrl || '/logo.svg'} 
+src/pages/admin/MelaManagement.tsx:341:                          placeholder="'/logo.svg'"
+src/pages/admin/GalleryManagement.tsx:642:                    const thumb = ytId ? `https://img.youtube.com/vi/${ytId}/mqdefault.jpg` : "'/logo.svg'";
+src/pages/modules/VehicleRental/AddVehicleModal.tsx:72:      imageUrl: imageUrl.trim() || '/logo.svg',
+src/pages/modules/VehicleRental/AddVehicleModal.tsx:73:      gallery: [imageUrl.trim() || '/logo.svg'],
+src/pages/modules/VehicleRental/AddVehicleModal.tsx:269:                  placeholder="'/logo.svg'"
+src/pages/modules/VehicleRental/data.ts:59:    imageUrl: '/logo.svg',
+src/pages/modules/VehicleRental/data.ts:61:      '/logo.svg',
+src/pages/modules/VehicleRental/data.ts:62:      '/logo.svg',
+src/pages/modules/VehicleRental/data.ts:63:      '/logo.svg'
+src/pages/modules/VehicleRental/data.ts:93:      profileImage: '/logo.svg',
+src/pages/modules/VehicleRental/data.ts:140:    imageUrl: '/logo.svg',
+src/pages/modules/VehicleRental/data.ts:142:      '/logo.svg',
+src/pages/modules/VehicleRental/data.ts:143:      '/logo.svg'
+src/pages/modules/VehicleRental/data.ts:173:      profileImage: '/logo.svg',
+src/pages/modules/VehicleRental/data.ts:219:    imageUrl: '/logo.svg',
+src/pages/modules/VehicleRental/data.ts:221:      '/logo.svg'
+src/pages/modules/VehicleRental/data.ts:249:      profileImage: '/logo.svg',
+src/pages/modules/VehicleRental/data.ts:294:    imageUrl: '/logo.svg',
+src/pages/modules/VehicleRental/data.ts:296:      '/logo.svg'
+src/pages/modules/VehicleRental/data.ts:324:      profileImage: '/logo.svg',
+src/pages/modules/VehicleRental/data.ts:369:    imageUrl: '/logo.svg',
+src/pages/modules/VehicleRental/data.ts:371:      '/logo.svg'
+src/pages/modules/VehicleRental/data.ts:397:      profileImage: '/logo.svg',
+src/pages/modules/VehicleRental/data.ts:439:    imageUrl: '/logo.svg',
+src/pages/modules/VehicleRental/data.ts:441:      '/logo.svg'
+src/pages/modules/VehicleRental/data.ts:469:      profileImage: '/logo.svg',
+src/pages/modules/VehicleRental/data.ts:511:    imageUrl: '/logo.svg',
+src/pages/modules/VehicleRental/data.ts:513:      '/logo.svg'
+src/pages/modules/VehicleRental/data.ts:540:      profileImage: '/logo.svg',
+src/pages/modules/VehicleRental/data.ts:582:    imageUrl: '/logo.svg',
+src/pages/modules/VehicleRental/data.ts:584:      '/logo.svg'
+src/pages/modules/VehicleRental/data.ts:612:      profileImage: '/logo.svg',
+src/pages/modules/VehicleRental/data.ts:654:    imageUrl: '/logo.svg',
+src/pages/modules/VehicleRental/data.ts:656:      '/logo.svg'
+src/pages/modules/VehicleRental/data.ts:683:      profileImage: '/logo.svg',
+src/pages/modules/VehicleRental/data.ts:725:    userAvatar: '/logo.svg',
+src/pages/modules/VehicleRental/data.ts:742:    userAvatar: '/logo.svg',
+src/pages/modules/VehicleRental/VehicleDetailsModal.tsx:201:                      src={vehicle.provider?.profileImage || '/logo.svg'}
+src/pages/modules/VehicleRental/VehicleDetailsModal.tsx:383:                            src={rev.userAvatar || '/logo.svg'}
+src/pages/modules/VehicleRental/ProviderProfileModal.tsx:64:                src={provider?.profileImage || '/logo.svg'}
+src/pages/modules/VehicleRental/VehicleCard.tsx:120:            src={vehicle.imageUrl || '/logo.svg'}
+src/pages/modules/VehicleRental/VehicleCard.tsx:125:              e.currentTarget.src = '/logo.svg';
+src/pages/modules/Diagnostic/LocationModal.tsx:53:            src="'/logo.svg'" 
+src/pages/modules/Diagnostic/LocationModal.tsx:58:              e.currentTarget.src = "'/logo.svg'";
+src/pages/modules/Diagnostic/AddDiagnosticModal.tsx:55:      imageUrl: imageUrl.trim() || '/logo.svg',
+src/pages/modules/Diagnostic/DiagnosticCard.tsx:96:            src={center.imageUrl || '/logo.svg'}
+src/pages/modules/Diagnostic/DiagnosticCard.tsx:101:              e.currentTarget.src = '/logo.svg';
+src/pages/modules/Diagnostic/DiagnosticDetailsModal.tsx:87:              src={center.imageUrl || '/logo.svg'} 
+src/pages/modules/Diagnostic/DiagnosticDetailsModal.tsx:92:                e.currentTarget.src = '/logo.svg';
+src/pages/modules/Diagnostic/data.ts:24:    imageUrl: '/logo.svg',
+src/pages/modules/Diagnostic/data.ts:48:    imageUrl: '/logo.svg',
+src/pages/modules/Diagnostic/data.ts:72:    imageUrl: '/logo.svg',
+src/pages/modules/Diagnostic/data.ts:96:    imageUrl: '/logo.svg',
+src/pages/modules/PhotoGallery/index.tsx:30:    coverImage: '/logo.svg',
+src/pages/modules/PhotoGallery/index.tsx:32:      id: `p1-${i}`, url: `/logo.svg` + i}?q=80&w=800&auto=format&fit=crop`, caption: `ঐতিহাসিক দৃশ্য ${i+1}`, dateAdded: '2023-10-15', views: 10 + i,
+src/pages/modules/PhotoGallery/index.tsx:48:    coverImage: '/logo.svg',
+src/pages/modules/PhotoGallery/index.tsx:50:      id: `p2-${i}`, url: `/logo.svg` + i}?q=80&w=800&auto=format&fit=crop`, caption: `ঈদের আনন্দ ${i+1}`, dateAdded: '2023-04-22', views: 5 + i,
+src/pages/modules/PhotoGallery/index.tsx:66:    coverImage: '/logo.svg',
+src/pages/modules/PhotoGallery/index.tsx:68:      id: `p3-${i}`, url: `/logo.svg` + i}?q=80&w=800&auto=format&fit=crop`, caption: `কৃষি কাজ ${i+1}`, dateAdded: '2022-12-05', views: 15 + i,
+src/pages/modules/PhotoGallery/AlbumDetails.tsx:24:    coverImage: '/logo.svg',
+src/pages/modules/PhotoGallery/AlbumDetails.tsx:27:      url: `/logo.svg` + i}?q=80&w=800&auto=format&fit=crop`, 
+src/pages/modules/PhotoGallery/AlbumDetails.tsx:378:                    src={photo.url || `/logo.svg` + i}?q=80&w=400&auto=format&fit=crop`} 
+src/pages/modules/PhotoGallery/AlbumDetails.tsx:564:                src={currentPhoto.url || `/logo.svg` + currentIndex}?q=80&w=1600&auto=format&fit=contain`}
+src/pages/modules/Doctors/DoctorRegistrationForm.tsx:351:                          (e.target as HTMLImageElement).src = '/logo.svg';
+src/pages/modules/Doctors/DoctorRegistrationForm.tsx:390:                        placeholder="'/logo.svg'"
+src/pages/modules/Doctors/DoctorDetails.tsx:346:                  (e.target as HTMLImageElement).src = '/logo.svg';
+src/pages/modules/Doctors/constants.ts:103:    url: '/logo.svg',
+src/pages/modules/Doctors/constants.ts:109:    url: '/logo.svg',
+src/pages/modules/Doctors/constants.ts:115:    url: '/logo.svg',
+src/pages/modules/Doctors/constants.ts:121:    url: '/logo.svg',
+src/pages/modules/Doctors/constants.ts:127:    url: '/logo.svg',
+src/pages/modules/Doctors/constants.ts:133:    url: '/logo.svg',
+src/pages/modules/Doctors/constants.ts:146:    return '/logo.svg';
+src/pages/modules/Doctors/constants.ts:149:    return '/logo.svg';
+src/pages/modules/Doctors/constants.ts:151:  return '/logo.svg';
+src/pages/modules/Doctors/DoctorAdminPanel.tsx:344:                              (e.target as HTMLImageElement).src = '/logo.svg';
+src/pages/modules/Education/data.ts:264:    imageUrl: '/logo.svg',
+src/pages/modules/Education/data.ts:311:    imageUrl: '/logo.svg',
+src/pages/modules/Education/data.ts:355:    imageUrl: '/logo.svg',
+src/pages/modules/Education/data.ts:394:    imageUrl: '/logo.svg',
+src/pages/modules/Education/data.ts:421:    imageUrl: '/logo.svg',
+src/pages/modules/Education/data.ts:449:    imageUrl: '/logo.svg',
+src/pages/modules/Education/data.ts:475:    imageUrl: '/logo.svg',
+src/pages/modules/Education/data.ts:501:    imageUrl: '/logo.svg',
+src/pages/modules/Education/data.ts:527:    imageUrl: '/logo.svg',
+src/pages/modules/Education/data.ts:553:    imageUrl: '/logo.svg',
+src/pages/modules/Education/data.ts:580:    imageUrl: '/logo.svg',
+src/pages/modules/Education/data.ts:606:    imageUrl: '/logo.svg',
+src/pages/modules/Education/data.ts:632:    imageUrl: '/logo.svg',
+src/pages/modules/Education/data.ts:658:    imageUrl: '/logo.svg',
+src/pages/modules/Education/EducationDetailModal.tsx:71:            src={institution.imageUrl || "'/logo.svg'"}
+src/pages/modules/Hospital/HospitalRegistrationForm.tsx:104:        imageUrl: formData.imageUrl || '/logo.svg',
+src/pages/modules/Hospital/HospitalRegistrationForm.tsx:105:        coverImageUrl: formData.coverImageUrl || '/logo.svg',
+src/pages/modules/Hospital/constants.ts:124:    logoUrl: '/logo.svg',
+src/pages/modules/Hospital/constants.ts:125:    coverImageUrl: '/logo.svg',
+src/pages/modules/Hospital/constants.ts:126:    imageUrl: '/logo.svg',
+src/pages/modules/Hospital/constants.ts:165:      '/logo.svg',
+src/pages/modules/Hospital/constants.ts:166:      '/logo.svg',
+src/pages/modules/Hospital/constants.ts:167:      '/logo.svg'
+src/pages/modules/Hospital/constants.ts:195:    logoUrl: '/logo.svg',
+src/pages/modules/Hospital/constants.ts:196:    coverImageUrl: '/logo.svg',
+src/pages/modules/Hospital/constants.ts:197:    imageUrl: '/logo.svg',
+src/pages/modules/Hospital/constants.ts:227:      '/logo.svg'
+src/pages/modules/Hospital/constants.ts:254:    imageUrl: '/logo.svg',
+src/pages/modules/Hospital/constants.ts:300:    imageUrl: '/logo.svg',
+src/pages/modules/Reels/CreateReelModal.tsx:350:        thumbnailUrl: finalThumbUrl || '/logo.svg',
+src/pages/modules/Reels/MusicLibraryModal.tsx:161:                    <img src={track.coverUrl || '/logo.svg'} alt={track.title} className="w-full h-full object-cover" />
+src/pages/modules/NGOs/constants.ts:135:    logoUrl: '/logo.svg',
+src/pages/modules/NGOs/constants.ts:136:    coverUrl: '/logo.svg',
+src/pages/modules/NGOs/constants.ts:171:        image: '/logo.svg',
+src/pages/modules/NGOs/constants.ts:179:        image: '/logo.svg',
+src/pages/modules/NGOs/constants.ts:212:        userAvatar: '/logo.svg',
+src/pages/modules/NGOs/constants.ts:220:        userAvatar: '/logo.svg',
+src/pages/modules/NGOs/constants.ts:227:      '/logo.svg',
+src/pages/modules/NGOs/constants.ts:228:      '/logo.svg',
+src/pages/modules/NGOs/constants.ts:229:      '/logo.svg'
+src/pages/modules/NGOs/constants.ts:238:    logoUrl: '/logo.svg',
+src/pages/modules/NGOs/constants.ts:239:    coverUrl: '/logo.svg',
+src/pages/modules/NGOs/constants.ts:272:        image: '/logo.svg',
+src/pages/modules/NGOs/constants.ts:296:        userAvatar: '/logo.svg',
+src/pages/modules/NGOs/constants.ts:303:      '/logo.svg',
+src/pages/modules/NGOs/constants.ts:304:      '/logo.svg'
+src/pages/modules/NGOs/constants.ts:313:    logoUrl: '/logo.svg',
+src/pages/modules/NGOs/constants.ts:314:    coverUrl: '/logo.svg',
+src/pages/modules/NGOs/constants.ts:347:        image: '/logo.svg',
+src/pages/modules/NGOs/constants.ts:371:        userAvatar: '/logo.svg',
+src/pages/modules/NGOs/constants.ts:378:      '/logo.svg'
+src/pages/modules/NGOs/constants.ts:387:    logoUrl: '/logo.svg',
+src/pages/modules/NGOs/constants.ts:388:    coverUrl: '/logo.svg',
+src/pages/modules/NGOs/constants.ts:421:        image: '/logo.svg',
+src/pages/modules/NGOs/constants.ts:445:        userAvatar: '/logo.svg',
+src/pages/modules/NGOs/constants.ts:452:      '/logo.svg'
+src/pages/modules/NGOs/constants.ts:461:    logoUrl: '/logo.svg',
+src/pages/modules/NGOs/constants.ts:462:    coverUrl: '/logo.svg',
+src/pages/modules/NGOs/constants.ts:495:        image: '/logo.svg',
+src/pages/modules/NGOs/constants.ts:519:        userAvatar: '/logo.svg',
+src/pages/modules/NGOs/constants.ts:526:      '/logo.svg'
+src/pages/modules/NGOs/constants.ts:535:    logoUrl: '/logo.svg',
+src/pages/modules/NGOs/constants.ts:536:    coverUrl: '/logo.svg',
+src/pages/modules/NGOs/constants.ts:569:        image: '/logo.svg',
+src/pages/modules/NGOs/constants.ts:593:        userAvatar: '/logo.svg',
+src/pages/modules/NGOs/constants.ts:600:      '/logo.svg'
+src/pages/modules/NGOs/NgoDetails.tsx:42:      userAvatar: '/logo.svg',
+src/pages/modules/NGOs/NgoDetails.tsx:137:                src={ngo.coverUrl || "'/logo.svg'"}
+src/pages/modules/NGOs/NgoDetails.tsx:565:                          src={rev.userAvatar || '/logo.svg'}
+src/pages/modules/NGOs/NgoRegistrationForm.tsx:65:        logoUrl: formData.logoUrl || "'/logo.svg'",
+src/pages/modules/NGOs/NgoRegistrationForm.tsx:66:        coverUrl: formData.coverUrl || "'/logo.svg'",
+src/pages/modules/Marketplace/MarketplaceDetails.tsx:204:  const images = item.images && item.images.length > 0 ? item.images : ["'/logo.svg'"];
+src/pages/modules/Marketplace/MarketplaceCard.tsx:103:          src={(item.images && item.images[0]) || "'/logo.svg'"} 
+src/pages/modules/Marketplace/constants.ts:31:  { label: 'পুঠিয়ার আম', url: '/logo.svg' },
+src/pages/modules/Marketplace/constants.ts:32:  { label: 'খেজুরের খাঁটি গুড়', url: '/logo.svg' },
+src/pages/modules/Marketplace/constants.ts:33:  { label: 'ধান/চাল ফসলাদি', url: '/logo.svg' },
+src/pages/modules/Marketplace/constants.ts:34:  { label: 'স্মার্টফোন', url: '/logo.svg' },
+src/pages/modules/Marketplace/constants.ts:35:  { label: 'মোটরসাইকেল', url: '/logo.svg' },
+src/pages/modules/Marketplace/constants.ts:36:  { label: 'জমি ও বাড়ি', url: '/logo.svg' },
+src/pages/modules/Marketplace/constants.ts:37:  { label: 'ল্যাপটপ ও কম্পিউটার', url: '/logo.svg' },
+src/pages/modules/Marketplace/constants.ts:38:  { label: 'অন্যান্য জিনিসপত্র', url: '/logo.svg' }
+src/pages/modules/MediaGallery/index.tsx:27:              src="'/logo.svg'" 
+src/pages/modules/UnionDetailsPage.tsx:50:        "'/logo.svg'",
+src/pages/modules/UnionDetailsPage.tsx:51:        "'/logo.svg'",
+src/pages/modules/UnionDetailsPage.tsx:52:        "'/logo.svg'",
+src/pages/modules/UnionDetailsPage.tsx:53:        "'/logo.svg'"
+src/pages/modules/LostAndFoundPage.tsx:27:    image: "'/logo.svg'",
+src/pages/modules/LostAndFoundPage.tsx:38:    image: "'/logo.svg'",
+src/pages/modules/LostAndFoundPage.tsx:49:    image: "'/logo.svg'",
+src/pages/modules/News.tsx:438:        image: formImage.trim() || "'/logo.svg'",
+src/pages/modules/News.tsx:1824:                              placeholder="'/logo.svg'"
+src/pages/modules/News.tsx:2040:                          placeholder="'/logo.svg'"
+src/pages/modules/GenericDetailsPage.tsx:19:    coverImage: "'/logo.svg'",
+src/pages/modules/GenericDetailsPage.tsx:25:      "'/logo.svg'",
+src/pages/modules/GenericDetailsPage.tsx:26:      "'/logo.svg'",
+src/pages/modules/GenericDetailsPage.tsx:27:      "'/logo.svg'"
+src/pages/modules/GenericDetailsPage.tsx:33:    coverImage: "'/logo.svg'",
+src/pages/modules/GenericDetailsPage.tsx:39:      "'/logo.svg'",
+src/pages/modules/GenericDetailsPage.tsx:40:      "'/logo.svg'"
+src/pages/modules/GenericDetailsPage.tsx:46:    coverImage: "'/logo.svg'",
+src/pages/modules/GenericDetailsPage.tsx:52:      "'/logo.svg'",
+src/pages/modules/GenericDetailsPage.tsx:53:      "'/logo.svg'"
+src/pages/modules/AnnouncementPage.tsx:49:    image: "'/logo.svg'"
+src/pages/modules/AnnouncementPage.tsx:62:    image: "'/logo.svg'"
+src/pages/modules/AnnouncementPage.tsx:75:    image: "'/logo.svg'"
+src/pages/modules/UpazilaIntroductionPage.tsx:357:                <img src="'/logo.svg'" alt="Map" className="w-full h-full object-cover opacity-80" />
+src/pages/modules/UpazilaIntroductionPage.tsx:375:                    { name: "পুঠিয়া রাজবাড়ি", img: "'/logo.svg'" },
+src/pages/modules/UpazilaIntroductionPage.tsx:376:                    { name: "গোবিন্দ মন্দির", img: "'/logo.svg'" },
+src/pages/modules/UpazilaIntroductionPage.tsx:377:                    { name: "শিব মন্দির", img: "'/logo.svg'" },
+src/pages/modules/UpazilaIntroductionPage.tsx:378:                    { name: "জগন্নাথ মন্দির", img: "'/logo.svg'" },
+src/pages/modules/UpazilaIntroductionPage.tsx:467:                            <img src={`/logo.svg` className="w-full h-full object-cover opacity-80 hover:opacity-100 transition-opacity" alt="Gallery"/>
+src/pages/modules/UpazilaIntroductionPage.tsx:479:                    <img src="'/logo.svg'" alt="Video cover" className="w-full h-full object-cover opacity-60 group-hover:scale-105 transition-transform duration-700" />
+src/pages/modules/Events.tsx:349:                        placeholder="'/logo.svg'"
+src/pages/modules/HistoryPage.tsx:33:    image: '/logo.svg',
+src/pages/modules/HistoryPage.tsx:45:    image: '/logo.svg',
+src/pages/modules/HistoryPage.tsx:57:    image: '/logo.svg',
+src/pages/modules/HistoryPage.tsx:69:    image: '/logo.svg',
+src/pages/modules/HistoryPage.tsx:81:    image: '/logo.svg',
+src/pages/modules/HistoryPage.tsx:93:    image: '/logo.svg',
+src/pages/modules/HistoryPage.tsx:105:    image: '/logo.svg',
+src/pages/modules/HistoryPage.tsx:343:                src="'/logo.svg'" 
+src/pages/modules/PublicProfilePage.tsx:3494:          authorPhotoUrl={targetUserProfile?.photoURL || lightboxPost.authorPhotoUrl || `/logo.svg` || lightboxPost.author}`}
+src/pages/modules/AdAdvertiserDashboard.tsx:21:    url: "'/logo.svg'",
+src/pages/modules/AdAdvertiserDashboard.tsx:27:    url: "'/logo.svg'",
+src/pages/modules/AdAdvertiserDashboard.tsx:33:    url: "'/logo.svg'",
+src/pages/modules/AdAdvertiserDashboard.tsx:39:    url: "'/logo.svg'",
+src/pages/modules/ImportantPlaceDetailsPage.tsx:30:      "'/logo.svg'",
+src/pages/modules/ImportantPlaceDetailsPage.tsx:31:      "'/logo.svg'"
+src/pages/modules/ImportantPlaceDetailsPage.tsx:38:    image: "'/logo.svg'",
+src/pages/modules/ImportantPlaceDetailsPage.tsx:49:    gallery: ["'/logo.svg'"]
+src/pages/modules/ImportantPlaceDetailsPage.tsx:55:    image: "'/logo.svg'",
+src/pages/modules/ImportantPlaceDetailsPage.tsx:66:    gallery: ["'/logo.svg'"]
+src/pages/modules/ImportantPlaceDetailsPage.tsx:72:    image: "'/logo.svg'",
+src/pages/modules/ImportantPlaceDetailsPage.tsx:83:    gallery: ["'/logo.svg'"]
+src/pages/modules/ImportantPlaceDetailsPage.tsx:89:    image: "'/logo.svg'",
+src/pages/modules/ImportantPlaceDetailsPage.tsx:100:    gallery: ["'/logo.svg'"]
+src/pages/modules/ImportantPlaceDetailsPage.tsx:106:    image: "'/logo.svg'",
+src/pages/modules/ImportantPlaceDetailsPage.tsx:117:    gallery: ["'/logo.svg'"]
+src/pages/modules/ImportantPlaceDetailsPage.tsx:123:    image: "'/logo.svg'",
+src/pages/modules/ImportantPlaceDetailsPage.tsx:134:    gallery: ["'/logo.svg'"]
+src/pages/modules/ImportantPlaceDetailsPage.tsx:140:    image: "'/logo.svg'",
+src/pages/modules/ImportantPlaceDetailsPage.tsx:151:    gallery: ["'/logo.svg'"]
+src/pages/modules/Notice.tsx:38:      image: '/logo.svg',
+src/pages/modules/Notice.tsx:59:      image: '/logo.svg',
+src/pages/modules/Notice.tsx:80:      image: '/logo.svg',
+src/pages/modules/Notice.tsx:101:      image: '/logo.svg',
+src/pages/modules/Notice.tsx:121:      image: '/logo.svg',
+src/pages/modules/Notice.tsx:142:      image: '/logo.svg',
+src/pages/modules/Notice.tsx:163:      image: '/logo.svg',
+src/pages/modules/Notice.tsx:184:    image: '/logo.svg',
+src/pages/modules/SmartMapPage.tsx:99:    imageUrl: "'/logo.svg'",
+src/pages/modules/SmartMapPage.tsx:114:    imageUrl: "'/logo.svg'",
+src/pages/modules/SmartMapPage.tsx:129:    imageUrl: "'/logo.svg'",
+src/pages/modules/SmartMapPage.tsx:144:    imageUrl: "'/logo.svg'",
+src/pages/modules/SmartMapPage.tsx:159:    imageUrl: "'/logo.svg'",
+src/pages/modules/SmartMapPage.tsx:174:    imageUrl: "'/logo.svg'",
+src/pages/modules/SmartMapPage.tsx:189:    imageUrl: "'/logo.svg'",
+src/pages/modules/SmartMapPage.tsx:204:    imageUrl: "'/logo.svg'",
+src/pages/modules/SmartMapPage.tsx:219:    imageUrl: "'/logo.svg'",
+src/pages/modules/SmartMapPage.tsx:234:    imageUrl: "'/logo.svg'",
+src/pages/modules/SmartMapPage.tsx:249:    imageUrl: "'/logo.svg'",
+src/pages/modules/SmartMapPage.tsx:264:    imageUrl: "'/logo.svg'",
+src/pages/modules/SmartMapPage.tsx:279:    imageUrl: "'/logo.svg'",
+src/pages/modules/SmartMapPage.tsx:294:    imageUrl: "'/logo.svg'",
+src/pages/modules/SmartMapPage.tsx:309:    imageUrl: "'/logo.svg'",
+src/pages/modules/GenericSubMenuPage.tsx:71:    coverImage: "'/logo.svg'",
+src/pages/modules/GenericSubMenuPage.tsx:77:    coverImage: "'/logo.svg'",
+src/pages/modules/GenericSubMenuPage.tsx:83:    coverImage: "'/logo.svg'",
+src/pages/modules/GenericSubMenuPage.tsx:89:    coverImage: "'/logo.svg'",
+src/pages/modules/GenericSubMenuPage.tsx:99:    coverImage: "'/logo.svg'",
+src/pages/modules/GenericSubMenuPage.tsx:101:      "'/logo.svg'",
+src/pages/modules/GenericSubMenuPage.tsx:102:      "'/logo.svg'"
+src/pages/modules/GenericSubMenuPage.tsx:108:    coverImage: "'/logo.svg'",
+src/pages/modules/GenericSubMenuPage.tsx:116:    coverImage: "'/logo.svg'",
+src/pages/modules/GenericSubMenuPage.tsx:121:    coverImage: "'/logo.svg'",
+src/pages/modules/GenericSubMenuPage.tsx:126:    coverImage: "'/logo.svg'",
+src/pages/modules/GenericSubMenuPage.tsx:131:    coverImage: "'/logo.svg'",
+src/pages/modules/GenericSubMenuPage.tsx:137:    coverImage: "'/logo.svg'",
+src/pages/modules/GenericSubMenuPage.tsx:142:    coverImage: "'/logo.svg'",
+src/pages/modules/GenericSubMenuPage.tsx:147:    coverImage: "'/logo.svg'",
+src/pages/modules/GenericSubMenuPage.tsx:152:    coverImage: "'/logo.svg'",
+src/pages/modules/GenericSubMenuPage.tsx:157:    coverImage: "'/logo.svg'",
+src/pages/modules/GenericSubMenuPage.tsx:162:    coverImage: "'/logo.svg'",
+src/pages/modules/GenericSubMenuPage.tsx:167:    coverImage: "'/logo.svg'",
+src/pages/modules/GenericSubMenuPage.tsx:172:    coverImage: "'/logo.svg'",
+src/pages/modules/GenericSubMenuPage.tsx:177:    coverImage: "'/logo.svg'",
+src/pages/modules/GenericSubMenuPage.tsx:182:    coverImage: "'/logo.svg'",
+src/pages/modules/GenericSubMenuPage.tsx:187:    coverImage: "'/logo.svg'",
+src/pages/modules/GenericSubMenuPage.tsx:192:    coverImage: "'/logo.svg'",
+src/pages/modules/GenericSubMenuPage.tsx:197:    coverImage: "'/logo.svg'",
+src/pages/modules/GenericSubMenuPage.tsx:202:    coverImage: "'/logo.svg'",
+src/pages/modules/GenericSubMenuPage.tsx:207:    coverImage: "'/logo.svg'",
+src/pages/modules/GenericSubMenuPage.tsx:212:    coverImage: "'/logo.svg'",
+src/pages/modules/GenericSubMenuPage.tsx:217:    coverImage: "'/logo.svg'",
+src/pages/modules/GenericSubMenuPage.tsx:222:    coverImage: "'/logo.svg'",
+src/pages/modules/GenericSubMenuPage.tsx:227:    coverImage: "'/logo.svg'",
+src/pages/modules/GenericSubMenuPage.tsx:232:    coverImage: "'/logo.svg'",
+src/pages/modules/GenericSubMenuPage.tsx:237:    coverImage: "'/logo.svg'",
+src/pages/modules/GenericSubMenuPage.tsx:242:    coverImage: "'/logo.svg'",
+src/pages/modules/GenericSubMenuPage.tsx:247:    coverImage: "'/logo.svg'",
+src/pages/modules/GenericSubMenuPage.tsx:252:    coverImage: "'/logo.svg'",
+src/pages/modules/GenericSubMenuPage.tsx:257:    coverImage: "'/logo.svg'",
+src/pages/modules/GenericSubMenuPage.tsx:262:    coverImage: "'/logo.svg'",
+src/pages/modules/GenericSubMenuPage.tsx:267:    coverImage: "'/logo.svg'",
+src/pages/modules/GenericSubMenuPage.tsx:272:    coverImage: "'/logo.svg'",
+src/pages/modules/GenericSubMenuPage.tsx:277:    coverImage: "'/logo.svg'",
+src/pages/modules/GenericSubMenuPage.tsx:282:    coverImage: "'/logo.svg'",
+src/pages/modules/GenericSubMenuPage.tsx:288:    coverImage: "'/logo.svg'",
+src/pages/modules/GenericSubMenuPage.tsx:294:    coverImage: "'/logo.svg'",
+src/pages/modules/GenericSubMenuPage.tsx:299:    coverImage: "'/logo.svg'",
+src/pages/modules/GenericSubMenuPage.tsx:304:    coverImage: "'/logo.svg'",
+src/pages/modules/GenericSubMenuPage.tsx:309:    coverImage: "'/logo.svg'",
+src/pages/modules/GenericSubMenuPage.tsx:314:    coverImage: "'/logo.svg'",
+src/pages/modules/GenericSubMenuPage.tsx:319:    coverImage: "'/logo.svg'",
+src/pages/modules/GenericSubMenuPage.tsx:324:    coverImage: "'/logo.svg'",
+src/pages/modules/GenericSubMenuPage.tsx:329:    coverImage: "'/logo.svg'",
+src/pages/modules/GenericSubMenuPage.tsx:334:    coverImage: "'/logo.svg'",
+src/pages/modules/GenericSubMenuPage.tsx:344:    coverImage: "'/logo.svg'",
+src/pages/modules/GenericSubMenuPage.tsx:354:    coverImage: "'/logo.svg'",
+src/pages/modules/GenericSubMenuPage.tsx:364:    coverImage: "'/logo.svg'",
+src/pages/modules/GenericSubMenuPage.tsx:373:    coverImage: "'/logo.svg'",
+src/pages/modules/GenericSubMenuPage.tsx:382:    coverImage: "'/logo.svg'",
+src/pages/modules/GenericSubMenuPage.tsx:391:    coverImage: "'/logo.svg'",
+src/pages/modules/GenericSubMenuPage.tsx:401:    coverImage: "'/logo.svg'",
+src/pages/modules/GenericSubMenuPage.tsx:410:    coverImage: "'/logo.svg'",
+src/pages/modules/GenericSubMenuPage.tsx:419:    coverImage: "'/logo.svg'",
+src/pages/modules/GenericSubMenuPage.tsx:428:    coverImage: "'/logo.svg'",
+src/pages/modules/GenericSubMenuPage.tsx:437:    coverImage: "'/logo.svg'",
+src/pages/modules/GenericSubMenuPage.tsx:446:    coverImage: "'/logo.svg'",
+src/pages/modules/GenericSubMenuPage.tsx:455:    coverImage: "'/logo.svg'",
+src/pages/modules/GenericSubMenuPage.tsx:464:    coverImage: "'/logo.svg'",
+src/pages/modules/GenericSubMenuPage.tsx:473:    coverImage: "'/logo.svg'",
+src/pages/modules/GenericSubMenuPage.tsx:482:    coverImage: "'/logo.svg'",
+src/pages/modules/GenericSubMenuPage.tsx:491:    coverImage: "'/logo.svg'",
+src/pages/modules/GenericSubMenuPage.tsx:500:    coverImage: "'/logo.svg'",
+src/pages/modules/GenericSubMenuPage.tsx:509:    coverImage: "'/logo.svg'",
+src/pages/modules/GenericSubMenuPage.tsx:518:    coverImage: "'/logo.svg'",
+src/pages/modules/GenericSubMenuPage.tsx:527:    coverImage: "'/logo.svg'",
+src/pages/modules/GenericSubMenuPage.tsx:536:    coverImage: "'/logo.svg'",
+src/pages/modules/GenericSubMenuPage.tsx:545:    coverImage: "'/logo.svg'",
+src/pages/modules/GenericSubMenuPage.tsx:554:    coverImage: "'/logo.svg'",
+src/pages/modules/GenericSubMenuPage.tsx:563:    coverImage: "'/logo.svg'",
+src/pages/modules/GenericSubMenuPage.tsx:681:    coverImage: "'/logo.svg'",
+src/pages/modules/BloodDonationPage.tsx:290:    photoURL: "'/logo.svg'"
+src/pages/modules/BloodDonationPage.tsx:302:    photoURL: "'/logo.svg'"
+src/pages/modules/BloodDonationPage.tsx:314:    photoURL: "'/logo.svg'"
+src/pages/modules/BloodDonationPage.tsx:326:    photoURL: "'/logo.svg'"
+src/pages/modules/BloodDonationPage.tsx:1610:                        const reqPhoto = userPhotos[req.contactPhone] || userPhotos[req.contactName] || userPhotos[req.id] || (req.contactName ? `/logo.svg`` : null);
+src/pages/modules/BloodDonationPage.tsx:1887:                const photo = donor.photoURL || donor.avatarUrl || userPhotos[donor.userId || ''] || userPhotos[donor.id] || (donor.name ? `/logo.svg`` : null);
+src/components/home/DesktopSidebar.tsx:81:              src="'/logo.svg'" 
+src/components/home/DesktopSidebar.tsx:90:              src="'/logo.svg'" 
+src/components/home/HeroSlider.tsx:41:    image: "'/logo.svg'",
+src/components/home/HeroSlider.tsx:57:    image: "'/logo.svg'",
+src/components/home/HeroSlider.tsx:73:    image: "'/logo.svg'",
+src/components/home/HeroSlider.tsx:89:    image: "'/logo.svg'",
+src/components/home/HeroSlider.tsx:105:    image: "'/logo.svg'",
+src/components/home/CommunicationHubSection.tsx:23:    image: "'/logo.svg'",
+src/components/home/CommunicationHubSection.tsx:35:      image: "'/logo.svg'",
+src/components/home/CommunicationHubSection.tsx:45:      image: "'/logo.svg'",
+src/components/home/CommunicationHubSection.tsx:55:      image: "'/logo.svg'",
+src/components/home/CommunicationHubSection.tsx:170:                      (e.currentTarget as HTMLImageElement).src = "'/logo.svg'";
+src/components/home/PuthiaRajbariSlider.tsx:11:    image: "'/logo.svg'",
+src/components/home/PuthiaRajbariSlider.tsx:16:    image: "'/logo.svg'",
+src/components/home/PuthiaRajbariSlider.tsx:21:    image: "'/logo.svg'",
+src/components/home/HeroBannerSlider.tsx:36:    image: "'/logo.svg'",
+src/components/home/HeroBannerSlider.tsx:45:    image: "'/logo.svg'",
+src/components/home/HeroBannerSlider.tsx:54:    image: "'/logo.svg'",
+src/components/home/HeroBannerSlider.tsx:63:    image: "'/logo.svg'",
+src/components/home/HeroBannerSlider.tsx:72:    image: "'/logo.svg'",
+src/components/home/TrainingSection.tsx:71:                  src={t.image || "'/logo.svg'"} 
+src/components/home/PhotoGallerySection.tsx:53:    "'/logo.svg'",
+src/components/home/PhotoGallerySection.tsx:54:    "'/logo.svg'",
+src/components/home/PhotoGallerySection.tsx:55:    "'/logo.svg'",
+src/components/home/PhotoGallerySection.tsx:56:    "'/logo.svg'",
+src/components/home/PhotoGallerySection.tsx:57:    "'/logo.svg'",
+src/components/home/PhotoGallerySection.tsx:58:    "'/logo.svg'",
+src/components/home/BuySellSection.tsx:89:                    "'/logo.svg'"
+src/components/home/FeaturedBusinessSection.tsx:137:                    "'/logo.svg'"
+src/components/home/HouseRentSection.tsx:90:                    "'/logo.svg'"
+src/components/home/QuickWidgetsSection.tsx:26:    image: "'/logo.svg'",
+src/components/home/QuickWidgetsSection.tsx:47:            image: docData.image || docData.images?.[0] || "'/logo.svg'"
+src/components/home/VideoGallerySection.tsx:55:          const defaultThumbnail = ytId ? `https://img.youtube.com/vi/${ytId}/maxresdefault.jpg` : "'/logo.svg'";
+src/components/home/VideoGallerySection.tsx:79:      thumbnail: "'/logo.svg'",
+src/components/home/VideoGallerySection.tsx:84:      thumbnail: "'/logo.svg'",
+src/components/home/MediaGallerySection.tsx:50:    { type: 'photo', url: "'/logo.svg'", title: "পুঠিয়া রাজবাড়ি" },
+src/components/home/MediaGallerySection.tsx:51:    { type: 'video', url: "'/logo.svg'", title: "পুঠিয়ার ঐতিহ্য" },
+src/components/home/MediaGallerySection.tsx:52:    { type: 'photo', url: "'/logo.svg'", title: "উৎসবের আনন্দ" },
+src/components/home/MediaGallerySection.tsx:53:    { type: 'video', url: "'/logo.svg'", title: "বানেশ্বর আম হাট" },
+src/components/home/EventsSection.tsx:88:                    "'/logo.svg'"
+src/components/home/ServicePage.tsx:1349:                coverImage="'/logo.svg'"
+src/components/home/ServicePage.tsx:1402:                coverImage="'/logo.svg'"
+src/components/home/ServicePage.tsx:1409:                  "'/logo.svg'",
+src/components/home/ServicePage.tsx:1410:                  "'/logo.svg'",
+src/components/home/ServicePage.tsx:1411:                  "'/logo.svg'"
+src/components/home/TourismSection.tsx:23:        "'/logo.svg'",
+src/components/home/TourismSection.tsx:30:        "'/logo.svg'",
+src/components/home/TourismSection.tsx:37:        "'/logo.svg'",
+src/components/home/BusinessServicesTabsSection.tsx:209:                      src={item.imageUrl || "'/logo.svg'"} 
+src/components/home/Header.tsx:312:                      src="'/logo.svg'" 
+src/components/common/MasterServiceTemplate/DiagnosticDetailView.tsx:219:          src={item.imageUrl || '/logo.svg'}
+src/components/common/MasterServiceTemplate/DiagnosticDetailView.tsx:752:                <div className="w-full h-full bg-cover bg-center" style={{ backgroundImage: "url('/logo.svg')" }} />
+src/components/common/MasterServiceTemplate/DiagnosticDetailView.tsx:878:              { name: 'Reception Desk', url: '/logo.svg' },
+src/components/common/MasterServiceTemplate/DiagnosticDetailView.tsx:879:              { name: 'Pathology Lab', url: '/logo.svg' },
+src/components/common/MasterServiceTemplate/DiagnosticDetailView.tsx:880:              { name: 'Waiting Lounge', url: '/logo.svg' },
+src/components/common/MasterServiceTemplate/DiagnosticDetailView.tsx:881:              { name: 'Equipment Area', url: '/logo.svg' },
+src/components/common/MasterServiceTemplate/DiagnosticDetailView.tsx:882:              { name: 'Doctor Chamber', url: '/logo.svg' },
+src/components/common/UniversalAddModal.tsx:187:            image: "'/logo.svg'",
+src/components/common/SubMenuDetailLayout.tsx:36:  coverImage = "'/logo.svg'",
+src/components/common/MelaEventAddModal.tsx:111:          bannerUrl: bannerUrl || '/logo.svg',
+src/components/common/MelaEventAddModal.tsx:128:          food: [{ name: 'ঐতিহ্যবাহী মিষ্টি', price: '১৫০ টাকা', shopName: 'পুঠিয়া ঐতিহ্য মিষ্টান্ন', imageUrl: '/logo.svg' }],
+src/components/common/MelaEventAddModal.tsx:158:          image: bannerUrl || '/logo.svg',
+src/components/common/MelaEventAddModal.tsx:518:                            placeholder="যেমন: '/logo.svg'" 
+src/components/user/Settings.tsx:278:  const avatarUrl = userProfile?.photoURL || user?.photoURL || `/logo.svg`
+src/components/user/Notifications.tsx:359:      effectiveAvatar = '/logo.svg';
+src/components/user/Notifications.tsx:390:                <img src="'/logo.svg'" alt="আমাদের পুঠিয়া" className="w-9 h-9 object-contain" />
+src/components/user/Notifications.tsx:743:                    modalAvatar = '/logo.svg';
+src/components/user/Notifications.tsx:974:                src={viewDetailNotif.actorAvatar || `/logo.svg` || 'system'}`}
+src/components/user/NotificationPanel.tsx:234:              src={notif.actorAvatar || '/logo.svg'} 
+src/components/user/NotificationPanel.tsx:238:                (e.target as HTMLImageElement).src = '/logo.svg';
+src/components/adda/music/AdminMusicManagerModal.tsx:100:    setFormCoverUrl('/logo.svg');
+src/components/adda/music/AdminMusicManagerModal.tsx:473:                      placeholder="'/logo.svg'"
+src/components/adda/search/AddaSearchResultsView.tsx:414:                              src={p.avatarUrl || `/logo.svg`
+src/components/adda/search/AddaSearchResultsView.tsx:506:                                src={post.authorPhotoUrl || `/logo.svg`
+src/components/adda/search/AddaSearchResultsView.tsx:574:                            src={p.avatarUrl || `/logo.svg`
+src/components/adda/search/AddaSearchResultsView.tsx:623:                              src={post.authorPhotoUrl || `/logo.svg`
+src/components/adda/search/AddaSearchResultsView.tsx:853:                          <img src={item.imageUrl || (item.images && item.images[0]) || '/logo.svg'} alt={item.title} className="w-full h-full object-cover" />
+src/components/adda/search/AddaSearchModal.tsx:276:                                src={person.avatarUrl || `/logo.svg`
+src/components/adda/search/AddaSearchDropdown.tsx:93:                        src={person.avatarUrl || `/logo.svg`
+src/components/adda/AddaMessengerHub.tsx:457:            const senderPhoto = senderDetail?.photoURL || '/logo.svg';
+src/components/adda/AddaMessengerHub.tsx:795:            photoURL: d.photoURL || '/logo.svg',
+src/components/adda/AddaMessengerHub.tsx:991:    if (chat.type === 'group') return chat.photoURL || '/logo.svg';
+src/components/adda/AddaMessengerHub.tsx:993:    return other?.photoURL || '/logo.svg';
+src/components/adda/AddaMessengerHub.tsx:1402:      '/logo.svg',
+src/components/adda/AddaMessengerHub.tsx:2210:                            src={msg.mediaUrl || '/logo.svg'} 
+src/components/adda/AddaMessengerHub.tsx:2222:                            onClick={() => setSelectedVideoModalUrl(msg.mediaUrl || '/logo.svg')}
+src/components/adda/MessagesTestLabModal.tsx:45:    photoURL: '/logo.svg',
+src/components/adda/MessagesTestLabModal.tsx:52:    photoURL: '/logo.svg',
+src/components/adda/MessagesTestLabModal.tsx:284:          mediaUrl: '/logo.svg',
+src/components/adda/MessagesTestLabModal.tsx:301:          mediaUrl: '/logo.svg',
+src/components/adda/MessagesTestLabModal.tsx:392:        '/logo.svg',
+src/components/adda/MessagesTestLabModal.tsx:394:        [personaB, { uid: 'qa_user_c', name: 'সালাম মিয়া (User C)', photoURL: '/logo.svg', isOnline: true }]
+src/components/adda/MessagesTestLabModal.tsx:436:        '/logo.svg',
+src/components/adda/MessagesTestLabModal.tsx:446:      const newMember: UserInfo = { uid: 'qa_user_d', name: 'কামাল হোসেন (User D)', photoURL: '/logo.svg', isOnline: true };
+src/components/adda/AddaFacebookHeader.tsx:253:                src="'/logo.svg'" 
+src/components/admin/AddaPostManagement.tsx:187:              imageUrl: '/logo.svg',
+src/components/admin/AddaPostManagement.tsx:208:              thumbnailUrl: '/logo.svg',
+src/components/admin/SiteSettingsManagement.tsx:624:                  placeholder="'/logo.svg'"
+src/components/admin/CommunicationManagement.tsx:1472:                              onError={(e) => { (e.target as any).src = "'/logo.svg'"; }}
+src/components/admin/CommunicationManagement.tsx:1514:                              onError={(e) => { (e.target as any).src = "'/logo.svg'"; }}
+src/components/admin/ReportsAndModerationHub.tsx:287:              contentMediaUrl: '/logo.svg',
+src/components/admin/AddaMediaManagement.tsx:184:              url: '/logo.svg',
+src/components/admin/AddaMediaManagement.tsx:205:              thumbnailUrl: '/logo.svg',
+src/components/admin/AddaMediaManagement.tsx:247:              url: '/logo.svg',
+src/components/admin/AddaMediaManagement.tsx:268:              url: '/logo.svg',
+src/components/admin/HeroSliderManagement.tsx:50:    url: "'/logo.svg'"
+src/components/admin/HeroSliderManagement.tsx:54:    url: "'/logo.svg'"
+src/components/admin/HeroSliderManagement.tsx:58:    url: "'/logo.svg'"
+src/components/admin/HeroSliderManagement.tsx:62:    url: "'/logo.svg'"
+src/components/admin/HeroSliderManagement.tsx:66:    url: "'/logo.svg'"
+src/components/admin/HeroSliderManagement.tsx:70:    url: "'/logo.svg'"
+src/components/admin/SeoSettingsManagement.tsx:56:    url: "'/logo.svg'"
+src/components/admin/SeoSettingsManagement.tsx:60:    url: "'/logo.svg'"
+src/components/admin/SeoSettingsManagement.tsx:64:    url: "'/logo.svg'"
+src/components/admin/SeoSettingsManagement.tsx:743:                placeholder="'/logo.svg'"
+src/components/admin/ContentManagement.tsx:120:    image: "'/logo.svg'",
+src/components/admin/ContentManagement.tsx:131:    image: "'/logo.svg'",
+src/components/admin/ContentManagement.tsx:142:    image: "'/logo.svg'",
+src/components/admin/ContentManagement.tsx:186:    imageUrl: "'/logo.svg'",
+src/components/admin/ContentManagement.tsx:195:    imageUrl: "'/logo.svg'",
+src/components/admin/ContentManagement.tsx:204:    imageUrl: "'/logo.svg'",
+src/components/admin/ContentManagement.tsx:222:    image: "'/logo.svg'",
+src/components/admin/ContentManagement.tsx:234:    image: "'/logo.svg'",
+src/components/admin/ContentManagement.tsx:249:    image: "'/logo.svg'",
+src/components/admin/ContentManagement.tsx:261:    image: "'/logo.svg'",
+src/components/admin/ContentManagement.tsx:273:    image: "'/logo.svg'",
+src/components/admin/ContentManagement.tsx:1324:                        placeholder="'/logo.svg'"
+src/components/admin/ContentManagement.tsx:1339:                      placeholder="'/logo.svg'"
+src/components/admin/HealthDirectoryManagement.tsx:109:    profilePhoto: '/logo.svg'
+src/components/admin/HealthDirectoryManagement.tsx:131:    profilePhoto: '/logo.svg'
+src/components/admin/HealthDirectoryManagement.tsx:152:    profilePhoto: '/logo.svg'
+src/components/admin/HealthDirectoryManagement.tsx:171:    imageUrl: '/logo.svg'
+src/components/admin/HealthDirectoryManagement.tsx:187:    imageUrl: '/logo.svg'
+src/components/admin/HealthDirectoryManagement.tsx:207:    image: '/logo.svg',
+src/components/admin/HealthDirectoryManagement.tsx:231:    image: '/logo.svg',
+src/components/admin/HealthDirectoryManagement.tsx:815:                            src={docItem.profilePhoto || docItem.imageUrl || '/logo.svg'}
+src/components/admin/HealthDirectoryManagement.tsx:905:                            src={hosp.imageUrl || hosp.logoUrl || '/logo.svg'}
+src/components/admin/HealthManagement.tsx:57:    image: "'/logo.svg'"
+src/components/admin/HealthManagement.tsx:171:      image: "'/logo.svg'"
+src/components/live/LivePlayerScreen.tsx:311:                  src={stream.hostAvatar || `/logo.svg`
+src/components/live/LivePlayerScreen.tsx:332:              src={stream.hostAvatar || `/logo.svg`
+src/components/live/LiveHomeView.tsx:292:                        src={stream.hostAvatar || `/logo.svg`
+src/components/live/LiveHomeView.tsx:335:                        src={stream.hostAvatar || `/logo.svg`
+src/components/live/LiveCommentsTray.tsx:106:                    src={comment.authorAvatar || `/logo.svg`
+src/components/comments/FacebookCommentSystem.tsx:83:  { id: 'heart_love', title: 'Love Heart', url: '/logo.svg' },
+src/components/comments/FacebookCommentSystem.tsx:84:  { id: 'cute_bear', title: 'Cute Hug', url: '/logo.svg' },
+src/components/comments/FacebookCommentSystem.tsx:85:  { id: 'celebrate', title: 'Celebrate', url: '/logo.svg' },
+src/components/comments/FacebookCommentSystem.tsx:86:  { id: 'flower_gift', title: 'Flower Gift', url: '/logo.svg' }
+src/components/comments/FacebookCommentSystem.tsx:600:                  avatar: matched.avatarUrl || '/logo.svg',
+src/components/comments/FacebookCommentSystem.tsx:1041:                          src={userProfile?.photoURL || currentUser?.photoURL || `/logo.svg` || 'user')}`}
+src/components/auth/Profile.tsx:1982:                          src={uItem.photoURL || `/logo.svg``}
+src/components/auth/Profile.tsx:2108:                            src={fItem.photoURL || `/logo.svg` 
+src/components/auth/Profile.tsx:2160:                            src={rItem.photoURL || `/logo.svg` 
+src/components/auth/Profile.tsx:2230:                              src={sUser.photoURL || `/logo.svg` 
+src/components/memories/MemoriesHome.tsx:281:                src={userProfile?.photoURL || user?.photoURL || `/logo.svg` || 'guest'}`}
+src/components/memories/MemoryCard.tsx:315:              src={memory.authorPhotoUrl || `/logo.svg`
+src/components/memories/MemoryCard.tsx:507:                src={userProfile?.photoURL || user?.photoURL || `/logo.svg` || 'guest'}`}
+src/components/memories/MemoryCard.tsx:535:                      src={c.authorPhotoUrl || `/logo.svg`
+src/components/memories/MemoryPreferencesModal.tsx:375:                                  src={p.avatar || `/logo.svg`
+src/components/memories/MemoryPreferencesModal.tsx:421:                                  src={u.photoURL || `/logo.svg`
+src/components/memories/ShareMemoryModal.tsx:286:                            src={u.photoURL || `/logo.svg`
+src/components/memories/ShareMemoryModal.tsx:327:                  src={memory.authorPhotoUrl || `/logo.svg`
+src/components/sports/SportsAddModal.tsx:108:                ? '/logo.svg'
+src/components/sports/SportsAddModal.tsx:109:                : '/logo.svg'),
+src/components/VideoGallery.tsx:5:  { id: 1, title: 'পুঠিয়া রাজবাড়ী ড্রোন ভিউ', thumbnail: '/logo.svg' },
+src/components/VideoGallery.tsx:6:  { id: 2, title: 'বানেশ্বর আম বাজারের লাইভ', thumbnail: '/logo.svg' },
+src/components/VideoGallery.tsx:7:  { id: 3, title: 'পুঠিয়ার ঐতিহ্যবাহী মেলা', thumbnail: '/logo.svg' },
+src/components/UserProfileView.tsx:559:          "'/logo.svg'",
+src/components/SportsNews.tsx:58:             <img src="'/logo.svg'" alt="লোকাল টুর্নামেন্ট" className="w-full h-full object-cover" />
+src/components/SportsNews.tsx:77:             <img src="'/logo.svg'" alt="ঐতিহ্যবাহী গ্রামীণ খেলা" className="w-full h-full object-cover" />
+src/components/SportsNews.tsx:96:             <img src="'/logo.svg'" alt="কৃতি খেলোয়াড়" className="w-full h-full object-cover" />
+src/components/LocalShopDirectoryInfo.tsx:114:        image: newShopImage || "'/logo.svg'",
+src/components/LocalShopDirectoryInfo.tsx:115:        logo: newShopImage || "'/logo.svg'",
+src/components/LocalShopDirectoryInfo.tsx:175:      image: "'/logo.svg'",
+src/components/LocalShopDirectoryInfo.tsx:176:      logo: "'/logo.svg'",
+src/components/LocalShopDirectoryInfo.tsx:196:      image: "'/logo.svg'",
+src/components/LocalShopDirectoryInfo.tsx:197:      logo: "'/logo.svg'",
+src/components/LocalShopDirectoryInfo.tsx:216:      image: "'/logo.svg'",
+src/components/LocalShopDirectoryInfo.tsx:217:      logo: "'/logo.svg'",
+src/components/LocalShopDirectoryInfo.tsx:236:      logo: "'/logo.svg'",
+src/components/LocalShopDirectoryInfo.tsx:252:      logo: "'/logo.svg'",
+src/components/LocalShopDirectoryInfo.tsx:266:      logo: "'/logo.svg'",
+src/components/LocalShopDirectoryInfo.tsx:818:                    <img src="'/logo.svg'" alt="Map View" className="w-full h-full object-cover opacity-60" />
+src/components/MediaHubInfo.tsx:231:    image: "'/logo.svg'",
+src/components/MediaHubInfo.tsx:238:    image: "'/logo.svg'",
+src/components/EduNews.tsx:58:             <img src="'/logo.svg'" alt="ফলাফল ও কৃতিত্ব" className="w-full h-full object-cover" />
+src/components/EduNews.tsx:77:             <img src="'/logo.svg'" alt="সরকারি নির্দেশনা ও স্কলারশিপ" className="w-full h-full object-cover" />
+src/components/EduNews.tsx:96:             <img src="'/logo.svg'" alt="সহ-শিক্ষা কার্যক্রম" className="w-full h-full object-cover" />
+src/components/CitizenNews.tsx:50:      image: "'/logo.svg'",
+src/components/CitizenNews.tsx:61:      image: "'/logo.svg'",
+src/components/CitizenNews.tsx:72:      image: "'/logo.svg'",
+src/components/CitizenNews.tsx:145:        image: imageUrl || "'/logo.svg'",
+src/components/SeoHead.tsx:14:  const imageUrl = image || '/logo.svg';
+src/components/RentToLetHub.tsx:60:    images: ["'/logo.svg'"]
+src/components/RentToLetHub.tsx:95:    images: ["'/logo.svg'"]
+src/components/RentToLetHub.tsx:128:    images: ["'/logo.svg'"]
+src/components/RentToLetHub.tsx:162:    images: ["'/logo.svg'"]
+src/components/RentToLetHub.tsx:196:    images: ["'/logo.svg'"]
+src/components/RentToLetHub.tsx:347:      return ["'/logo.svg'"];
+src/components/RentToLetHub.tsx:370:        finalImages.push("'/logo.svg'");
+src/components/RentToLetHub.tsx:1238:                          src={ad.images && ad.images[0] ? ad.images[0] : "'/logo.svg'"}
+src/components/RentToLetHub.tsx:1243:                            (e.target as HTMLImageElement).src = "'/logo.svg'";
+src/components/RentToLetHub.tsx:1994:                  src={selectedAd.images && selectedAd.images[0] ? selectedAd.images[0] : "'/logo.svg'"}
+src/components/RentToLetHub.tsx:1999:                    (e.target as HTMLImageElement).src = "'/logo.svg'";
+src/components/UnionNews.tsx:14:      image: "'/logo.svg'",
+src/components/UnionNews.tsx:23:      image: "'/logo.svg'",
+src/components/UnionNews.tsx:32:      image: "'/logo.svg'",
+src/components/UniversityInfo.tsx:19:      image: "'/logo.svg'"
+src/components/UniversityInfo.tsx:32:      image: "'/logo.svg'"
+src/components/UniversityInfo.tsx:45:      image: "'/logo.svg'"
+src/components/UniversityInfo.tsx:58:      image: "'/logo.svg'"
+src/components/UniversityInfo.tsx:71:      image: "'/logo.svg'"
+src/components/PhotoGallery.tsx:5:  '/logo.svg',
+src/components/PhotoGallery.tsx:6:  '/logo.svg',
+src/components/PhotoGallery.tsx:7:  '/logo.svg',
+src/components/PhotoGallery.tsx:8:  '/logo.svg',
+src/components/StoriesBar.tsx:166:    userAvatar: '/logo.svg',
+src/components/StoriesBar.tsx:168:    storyImage: '/logo.svg',
+src/components/StoriesBar.tsx:180:    userAvatar: '/logo.svg',
+src/components/StoriesBar.tsx:182:    storyImage: '/logo.svg',
+src/components/StoriesBar.tsx:194:    userAvatar: '/logo.svg',
+src/components/StoriesBar.tsx:196:    storyImage: '/logo.svg',
+src/components/StoriesBar.tsx:207:  { id: 'g1', url: '/logo.svg', title: 'Lake' },
+src/components/StoriesBar.tsx:208:  { id: 'g2', url: '/logo.svg', title: 'Heart' },
+src/components/StoriesBar.tsx:209:  { id: 'g3', url: '/logo.svg', title: 'Beach' },
+src/components/StoriesBar.tsx:210:  { id: 'g4', url: '/logo.svg', title: 'Nature' },
+src/components/StoriesBar.tsx:211:  { id: 'g5', url: '/logo.svg', title: 'Forest' },
+src/components/StoriesBar.tsx:212:  { id: 'g6', url: '/logo.svg', title: 'Mountain' },
+src/components/StoriesBar.tsx:213:  { id: 'g7', url: '/logo.svg', title: 'Night' },
+src/components/StoriesBar.tsx:214:  { id: 'g8', url: '/logo.svg', title: 'Sunset' },
+src/components/StoriesBar.tsx:215:  { id: 'g9', url: '/logo.svg', title: 'Garden' },
+src/components/BusinessNews.tsx:58:             <img src="'/logo.svg'" alt="নতুন উদ্যোগ" className="w-full h-full object-cover" />
+src/components/BusinessNews.tsx:77:             <img src="'/logo.svg'" alt="বাজার দর ও কৃষি" className="w-full h-full object-cover" />
+src/components/BusinessNews.tsx:96:             <img src="'/logo.svg'" alt="আর্থিক সহায়তা" className="w-full h-full object-cover" />
+src/components/BannerSlider.tsx:14:    image: '/logo.svg',
+src/components/BannerSlider.tsx:24:    image: '/logo.svg',
+src/components/LocalServiceProviderInfo.tsx:123:      "'/logo.svg'",
+src/components/LocalServiceProviderInfo.tsx:124:      "'/logo.svg'"
+src/components/LocalServiceProviderInfo.tsx:138:      "'/logo.svg'",
+src/components/LocalServiceProviderInfo.tsx:139:      "'/logo.svg'"
+src/components/LocalServiceProviderInfo.tsx:153:      "'/logo.svg'",
+src/components/LocalServiceProviderInfo.tsx:154:      "'/logo.svg'"
+src/components/LocalServiceProviderInfo.tsx:168:      "'/logo.svg'",
+src/components/LocalServiceProviderInfo.tsx:169:      "'/logo.svg'"
+src/components/LocalServiceProviderInfo.tsx:183:      "'/logo.svg'",
+src/components/LocalServiceProviderInfo.tsx:184:      "'/logo.svg'"
+src/components/LocalServiceProviderInfo.tsx:198:      "'/logo.svg'",
+src/components/LocalServiceProviderInfo.tsx:199:      "'/logo.svg'"
+src/components/LocalServiceProviderInfo.tsx:213:      "'/logo.svg'",
+src/components/LocalServiceProviderInfo.tsx:214:      "'/logo.svg'"
+src/components/LocalServiceProviderInfo.tsx:228:      "'/logo.svg'",
+src/components/LocalServiceProviderInfo.tsx:229:      "'/logo.svg'"
+src/components/LocalServiceProviderInfo.tsx:243:      "'/logo.svg'",
+src/components/LocalServiceProviderInfo.tsx:244:      "'/logo.svg'"
+src/components/LocalServiceProviderInfo.tsx:258:      "'/logo.svg'",
+src/components/LocalServiceProviderInfo.tsx:259:      "'/logo.svg'"
+src/components/LocalServiceProviderInfo.tsx:273:      "'/logo.svg'",
+src/components/LocalServiceProviderInfo.tsx:274:      "'/logo.svg'"
+src/components/LocalServiceProviderInfo.tsx:288:      "'/logo.svg'",
+src/components/LocalServiceProviderInfo.tsx:289:      "'/logo.svg'"
+src/components/LocalServiceProviderInfo.tsx:303:      "'/logo.svg'",
+src/components/LocalServiceProviderInfo.tsx:304:      "'/logo.svg'"
+src/components/LocalServiceProviderInfo.tsx:318:      "'/logo.svg'"
+src/components/LocalServiceProviderInfo.tsx:332:      "'/logo.svg'",
+src/components/LocalServiceProviderInfo.tsx:333:      "'/logo.svg'"
+src/components/LocalServiceProviderInfo.tsx:347:      "'/logo.svg'"
+src/components/LocalServiceProviderInfo.tsx:361:      "'/logo.svg'"
+src/components/LocalServiceProviderInfo.tsx:375:      "'/logo.svg'",
+src/components/LocalServiceProviderInfo.tsx:376:      "'/logo.svg'"
+src/components/LocalServiceProviderInfo.tsx:390:      "'/logo.svg'",
+src/components/LocalServiceProviderInfo.tsx:391:      "'/logo.svg'"
+src/components/LocalServiceProviderInfo.tsx:405:      "'/logo.svg'"
+src/components/LocalServiceProviderInfo.tsx:517:    sp_mason: ["'/logo.svg'"],
+src/components/LocalServiceProviderInfo.tsx:518:    sp_carpenter: ["'/logo.svg'"],
+src/components/LocalServiceProviderInfo.tsx:519:    sp_painter: ["'/logo.svg'"],
+src/components/LocalServiceProviderInfo.tsx:520:    sp_tiles: ["'/logo.svg'"],
+src/components/LocalServiceProviderInfo.tsx:521:    sp_tubewell: ["'/logo.svg'"],
+src/components/LocalServiceProviderInfo.tsx:522:    sp_sanitary: ["'/logo.svg'"],
+src/components/LocalServiceProviderInfo.tsx:523:    sp_grill: ["'/logo.svg'"],
+src/components/LocalServiceProviderInfo.tsx:524:    sp_thai_aluminum: ["'/logo.svg'"],
+src/components/LocalServiceProviderInfo.tsx:525:    sp_electrician: ["'/logo.svg'"],
+src/components/LocalServiceProviderInfo.tsx:526:    sp_wifi: ["'/logo.svg'"],
+src/components/LocalServiceProviderInfo.tsx:527:    sp_mobile: ["'/logo.svg'"],
+src/components/LocalServiceProviderInfo.tsx:528:    sp_computer: ["'/logo.svg'"],
+src/components/LocalServiceProviderInfo.tsx:529:    sp_cctv: ["'/logo.svg'"],
+src/components/LocalServiceProviderInfo.tsx:530:    sp_ac: ["'/logo.svg'"],
+src/components/LocalServiceProviderInfo.tsx:531:    sp_fridge: ["'/logo.svg'"],
+src/components/LocalServiceProviderInfo.tsx:532:    sp_tv: ["'/logo.svg'"],
+src/components/LocalServiceProviderInfo.tsx:533:    sp_car: ["'/logo.svg'"],
+src/components/LocalServiceProviderInfo.tsx:534:    sp_bike: ["'/logo.svg'"]
+src/components/LocalServiceProviderInfo.tsx:1673:                placeholder="যেমন: '/logo.svg' (খালি রাখলে ডিফল্ট ছবি সেট হবে)" 
+src/components/ContentNewsManagement.tsx:329:                placeholder="'/logo.svg'"
+src/components/TrainingHub.tsx:298:          src={training.image || "'/logo.svg'"} 
+src/components/PhotoVideoGallery.tsx:78:      "'/logo.svg'",
+src/components/PhotoVideoGallery.tsx:79:      "'/logo.svg'",
+src/components/PhotoVideoGallery.tsx:80:      "'/logo.svg'"
+src/components/PhotoVideoGallery.tsx:83:      "'/logo.svg'",
+src/components/PhotoVideoGallery.tsx:84:      "'/logo.svg'",
+src/components/PhotoVideoGallery.tsx:85:      "'/logo.svg'"
+src/components/PhotoVideoGallery.tsx:88:      "'/logo.svg'",
+src/components/PhotoVideoGallery.tsx:89:      "'/logo.svg'",
+src/components/PhotoVideoGallery.tsx:90:      "'/logo.svg'"
+src/components/PhotoVideoGallery.tsx:93:      "'/logo.svg'",
+src/components/PhotoVideoGallery.tsx:94:      "'/logo.svg'",
+src/components/PhotoVideoGallery.tsx:95:      "'/logo.svg'"
+src/components/PhotoVideoGallery.tsx:100:    festival: "'/logo.svg'",
+src/components/PhotoVideoGallery.tsx:101:    architecture: "'/logo.svg'",
+src/components/PhotoVideoGallery.tsx:102:    sports: "'/logo.svg'",
+src/components/PhotoVideoGallery.tsx:103:    nature: "'/logo.svg'"
+src/components/PhotoVideoGallery.tsx:116:        "'/logo.svg'",
+src/components/PhotoVideoGallery.tsx:117:        "'/logo.svg'",
+src/components/PhotoVideoGallery.tsx:118:        "'/logo.svg'",
+src/components/PhotoVideoGallery.tsx:119:        "'/logo.svg'",
+src/components/PhotoVideoGallery.tsx:120:        "'/logo.svg'"
+src/components/PhotoVideoGallery.tsx:131:        "'/logo.svg'",
+src/components/PhotoVideoGallery.tsx:132:        "'/logo.svg'",
+src/components/PhotoVideoGallery.tsx:133:        "'/logo.svg'",
+src/components/PhotoVideoGallery.tsx:134:        "'/logo.svg'"
+src/components/PhotoVideoGallery.tsx:145:        "'/logo.svg'",
+src/components/PhotoVideoGallery.tsx:146:        "'/logo.svg'",
+src/components/PhotoVideoGallery.tsx:147:        "'/logo.svg'"
+src/components/PhotoVideoGallery.tsx:161:      thumbnail: "'/logo.svg'",
+src/components/PhotoVideoGallery.tsx:172:      thumbnail: "'/logo.svg'",
+src/components/PhotoVideoGallery.tsx:183:      thumbnail: "'/logo.svg'",
+src/components/Header.tsx:1113:                  src="'/logo.svg'" 
+src/components/BankingFinance.tsx:65:    imageUrl: "'/logo.svg'",
+src/components/BankingFinance.tsx:92:    imageUrl: "'/logo.svg'",
+src/components/BankingFinance.tsx:119:    imageUrl: "'/logo.svg'",
+src/components/BankingFinance.tsx:146:    imageUrl: "'/logo.svg'",
+src/components/BankingFinance.tsx:173:    imageUrl: "'/logo.svg'",
+src/components/BankingFinance.tsx:199:    imageUrl: "'/logo.svg'",
+src/components/BankingFinance.tsx:225:    imageUrl: "'/logo.svg'",
+src/components/BankingFinance.tsx:293:            imageUrl: data.imageUrl || '/logo.svg',
+src/components/BankingFinance.tsx:396:                  src="'/logo.svg'" 
+src/components/BankingFinance.tsx:930:                      src="'/logo.svg'" 
+src/components/BankingFinance.tsx:1230:      imageUrl: imageUrl.trim() || "'/logo.svg'",
+src/components/SpecialNews.tsx:19:      image: "'/logo.svg'",
+src/components/SpecialNews.tsx:28:      image: "'/logo.svg'",
+src/components/SpecialNews.tsx:37:      image: "'/logo.svg'",
+src/components/ChurchInfo.tsx:20:      image: "'/logo.svg'"
+src/components/ChurchInfo.tsx:31:      image: "'/logo.svg'"
+src/components/SubViews.tsx:3358:                  img: "'/logo.svg'",
+src/components/LostAndFound.tsx:60:      imageUrl: "'/logo.svg'",
+src/components/LostAndFound.tsx:75:      imageUrl: "'/logo.svg'",
+src/components/LostAndFound.tsx:90:      imageUrl: "'/logo.svg'",
+src/components/LostAndFound.tsx:105:      imageUrl: "'/logo.svg'",
+src/components/LostAndFound.tsx:115:    wallet: "'/logo.svg'",
+src/components/LostAndFound.tsx:116:    document: "'/logo.svg'",
+src/components/LostAndFound.tsx:117:    keys: "'/logo.svg'",
+src/components/LostAndFound.tsx:118:    glasses: "'/logo.svg'",
+src/components/LostAndFound.tsx:119:    phone: "'/logo.svg'",
+src/components/LostAndFound.tsx:120:    bag: "'/logo.svg'",
+src/components/LostAndFound.tsx:121:    other: "'/logo.svg'"
+src/components/VillageNews.tsx:14:      image: "'/logo.svg'",
+src/components/VillageNews.tsx:23:      image: "'/logo.svg'",
+src/components/VillageNews.tsx:32:      image: "'/logo.svg'",
+src/components/RepresentativesProfile.tsx:36:    imageUrl: "'/logo.svg'"
+src/components/RepresentativesProfile.tsx:47:    imageUrl: "'/logo.svg'"
+src/components/RepresentativesProfile.tsx:58:    imageUrl: "'/logo.svg'"
+src/components/RepresentativesProfile.tsx:69:    imageUrl: "'/logo.svg'"
+src/components/RepresentativesProfile.tsx:80:    imageUrl: "'/logo.svg'"
+src/components/RepresentativesProfile.tsx:91:    imageUrl: "'/logo.svg'"
+src/components/RepresentativesProfile.tsx:102:    imageUrl: "'/logo.svg'"
+src/components/RepresentativesProfile.tsx:113:    imageUrl: "'/logo.svg'"
+src/components/RepresentativesProfile.tsx:124:    imageUrl: "'/logo.svg'"
+src/components/RepresentativesProfile.tsx:135:    imageUrl: "'/logo.svg'"
+src/components/RepresentativesProfile.tsx:146:    imageUrl: "'/logo.svg'"
+src/components/RepresentativesProfile.tsx:157:    imageUrl: "'/logo.svg'"
+src/components/RepresentativesProfile.tsx:286:      imageUrl: "'/logo.svg'"
+src/components/RepresentativesProfile.tsx:736:                  coverImage={selectedRep.imageUrl || "'/logo.svg'"}
+src/components/PuthiaInteractiveMap.tsx:48:    imageUrl: "'/logo.svg'",
+src/components/PuthiaInteractiveMap.tsx:61:    imageUrl: "'/logo.svg'",
+src/components/PuthiaInteractiveMap.tsx:74:    imageUrl: "'/logo.svg'",
+src/components/PuthiaInteractiveMap.tsx:87:    imageUrl: "'/logo.svg'",
+src/components/PuthiaInteractiveMap.tsx:100:    imageUrl: "'/logo.svg'",
+src/components/PuthiaInteractiveMap.tsx:113:    imageUrl: "'/logo.svg'",
+src/components/PuthiaInteractiveMap.tsx:126:    imageUrl: "'/logo.svg'",
+src/components/PagodaInfo.tsx:15:      image: "'/logo.svg'"
+src/components/PagodaInfo.tsx:26:      image: "'/logo.svg'"
+src/components/NewsFeed.tsx:8:    image: '/logo.svg',
+src/components/NewsFeed.tsx:15:    image: '/logo.svg',
+src/components/LocalRestaurantInfo.tsx:44:  restaurant: "'/logo.svg'",
+src/components/LocalRestaurantInfo.tsx:45:  cafe: "'/logo.svg'",
+src/components/LocalRestaurantInfo.tsx:46:  sweet: "'/logo.svg'",
+src/components/LocalRestaurantInfo.tsx:47:  fastfood: "'/logo.svg'"
+src/components/LocalRestaurantInfo.tsx:1516:                    placeholder="'/logo.svg'"
+src/components/AppLoading.tsx:220:                  src="'/logo.svg'"
+src/components/ReelFeedTray.tsx:94:              src={reel.thumbnailUrl || "'/logo.svg'"}
+src/components/CommunityPrograms.tsx:150:      image: "'/logo.svg'",
+src/components/CommunityPrograms.tsx:158:      image: "'/logo.svg'",
+src/components/CommunityPrograms.tsx:166:      image: "'/logo.svg'",
+src/components/CommunityPrograms.tsx:207:        image: "'/logo.svg'",
+src/components/CommunityPrograms.tsx:573:                <div className="absolute inset-0 bg-cover bg-center opacity-30" style={{ backgroundImage: "url('/logo.svg')" }}></div>
+src/services/chatService.ts:355:      photoURL: groupPhoto || '/logo.svg',
+src/services/chatService.ts:436:        photoURL: groupPhoto || '/logo.svg',
+src/services/newsService.ts:88:    image: "'/logo.svg'",
+src/services/newsService.ts:109:    image: "'/logo.svg'",
+src/services/newsService.ts:130:    image: "'/logo.svg'",
+src/services/newsService.ts:151:    image: "'/logo.svg'",
+src/services/newsService.ts:172:    image: "'/logo.svg'",
+src/services/newsService.ts:193:    image: "'/logo.svg'",
+src/services/newsService.ts:506:    image: itemData.image || "'/logo.svg'",
+src/services/newsService.ts:695:    image: report.imageUrl || "'/logo.svg'",
+src/services/musicLibraryService.ts:146:    coverImage: '/logo.svg',
+src/services/musicLibraryService.ts:166:    coverImage: '/logo.svg',
+src/services/musicLibraryService.ts:186:    coverImage: '/logo.svg',
+src/services/musicLibraryService.ts:206:    coverImage: '/logo.svg',
+src/services/musicLibraryService.ts:226:    coverImage: '/logo.svg',
+src/services/musicLibraryService.ts:246:    coverImage: '/logo.svg',
+src/services/musicLibraryService.ts:266:    coverImage: '/logo.svg',
+src/services/musicLibraryService.ts:288:    coverImage: '/logo.svg',
+src/services/musicLibraryService.ts:307:    coverImage: '/logo.svg',
+src/services/musicLibraryService.ts:326:    coverImage: '/logo.svg',
+src/services/musicLibraryService.ts:345:    coverImage: '/logo.svg',
+src/services/musicLibraryService.ts:364:    coverImage: '/logo.svg',
+src/services/musicLibraryService.ts:383:    coverImage: '/logo.svg',
+src/services/musicLibraryService.ts:402:    coverImage: '/logo.svg',
+src/services/mediaProcessingService.ts:628:            url: thumbUrl || '/logo.svg',
+src/services/mediaProcessingService.ts:665:          thumbnailUrl: '/logo.svg',
+src/services/mediaProcessingService.ts:742:      thumbUrl = '/logo.svg';
+src/services/mediaProcessingService.ts:1062:        originalUrl: '/logo.svg',
+src/services/mediaProcessingService.ts:1063:        mediumUrl: '/logo.svg',
+src/services/mediaProcessingService.ts:1064:        cdnUrl: '/logo.svg',
+src/services/mediaProcessingService.ts:1065:        thumbnailUrl: '/logo.svg',
+src/services/mediaProcessingService.ts:1067:          { label: 'original', url: '/logo.svg', width: 1920, height: 1080 },
+src/services/mediaProcessingService.ts:1068:          { label: 'large', url: '/logo.svg', width: 1000 },
+src/services/mediaProcessingService.ts:1069:          { label: 'medium', url: '/logo.svg', width: 600 },
+src/services/mediaProcessingService.ts:1070:          { label: 'thumbnail', url: '/logo.svg', width: 200 }
+src/services/mediaProcessingService.ts:1098:        mediumUrl: '/logo.svg',
+src/services/mediaProcessingService.ts:1100:        thumbnailUrl: '/logo.svg',
+src/services/mediaProcessingService.ts:1104:          { label: 'thumbnail', url: '/logo.svg' }
+src/services/heroSliderService.ts:24:    image: "'/logo.svg'",
+src/services/heroSliderService.ts:41:    image: "'/logo.svg'",
+src/services/heroSliderService.ts:58:    image: "'/logo.svg'",
+src/services/heroSliderService.ts:75:    image: "'/logo.svg'",
+src/services/heroSliderService.ts:92:    image: "'/logo.svg'",
+src/services/notificationService.ts:632:        actorAvatar: '/logo.svg',
+src/services/reelService.ts:31:    authorAvatar: '/logo.svg',
+src/services/reelService.ts:34:    thumbnailUrl: '/logo.svg',
+src/services/reelService.ts:58:    authorAvatar: '/logo.svg',
+src/services/reelService.ts:61:    thumbnailUrl: '/logo.svg',
+src/data/diagnosticData.ts:74:    imageUrl: '/logo.svg',
+src/data/diagnosticData.ts:120:    imageUrl: '/logo.svg',
+src/data/diagnosticData.ts:189:    imageUrl: '/logo.svg',
+src/data/diagnosticData.ts:246:    imageUrl: '/logo.svg',
+src/data/diagnosticData.ts:291:    imageUrl: '/logo.svg',
+src/data/diagnosticData.ts:334:    imageUrl: '/logo.svg',
+src/data/diagnosticData.ts:379:    imageUrl: '/logo.svg',
+src/data/diagnosticData.ts:424:    imageUrl: '/logo.svg',
+src/data/diagnosticData.ts:466:    imageUrl: '/logo.svg',
+src/data/diagnosticData.ts:505:    imageUrl: '/logo.svg',
+src/data/diagnosticData.ts:549:    imageUrl: '/logo.svg',
+src/data/newsData.ts:8:    img: "'/logo.svg'",
+src/data/newsData.ts:18:    img: "'/logo.svg'",
+src/data/newsData.ts:28:    img: "'/logo.svg'",
+src/data/business.ts:39:    imageUrl: '/logo.svg'
+src/data/business.ts:49:    imageUrl: '/logo.svg'
+src/data/business.ts:59:    imageUrl: '/logo.svg'
+src/data/business.ts:80:      '/logo.svg'
+src/data/business.ts:105:      '/logo.svg'
+src/data/business.ts:129:      '/logo.svg'
+src/data/business.ts:163:      '/logo.svg',
+src/data/business.ts:164:      '/logo.svg',
+src/data/business.ts:165:      '/logo.svg'
+src/data/business.ts:167:    logo: '/logo.svg',
+src/data/business.ts:217:      '/logo.svg',
+src/data/business.ts:218:      '/logo.svg'
+src/data/business.ts:253:      '/logo.svg',
+src/data/business.ts:254:      '/logo.svg'
+src/data/business.ts:280:      '/logo.svg'
+src/data/business.ts:304:      '/logo.svg'
+src/data/business.ts:328:      '/logo.svg'
+src/data/hotels.ts:20:      "'/logo.svg'",
+src/data/hotels.ts:21:      "'/logo.svg'",
+src/data/hotels.ts:22:      "'/logo.svg'"
+src/data/hotels.ts:63:      "'/logo.svg'",
+src/data/hotels.ts:64:      "'/logo.svg'"
+src/data/healthData.ts:44:    image: "'/logo.svg'",
+src/data/healthData.ts:52:      "'/logo.svg'",
+src/data/healthData.ts:53:      "'/logo.svg'"
+src/data/healthData.ts:74:    image: "'/logo.svg'",
+src/data/healthData.ts:81:      "'/logo.svg'"
+src/data/healthData.ts:102:    image: "'/logo.svg'",
+src/data/healthData.ts:110:      "'/logo.svg'"
+src/data/healthData.ts:131:    image: "'/logo.svg'",
+src/data/healthData.ts:138:      "'/logo.svg'"
+src/data/healthData.ts:159:    image: "'/logo.svg'",
+src/data/healthData.ts:185:    image: "'/logo.svg'",
+src/data/healthData.ts:208:    image: "'/logo.svg'",
+src/data/healthData.ts:232:    image: "'/logo.svg'",
+src/data/healthData.ts:258:    image: "'/logo.svg'",
+src/data/healthData.ts:283:    image: "'/logo.svg'",
+src/data/healthData.ts:308:    image: "'/logo.svg'",
+src/data/directoryFallbackData.ts:151:      imageUrl: "'/logo.svg'",
+src/data/directoryFallbackData.ts:162:      imageUrl: "'/logo.svg'",
+src/data/directoryFallbackData.ts:173:      imageUrl: "'/logo.svg'",
+src/data/directoryFallbackData.ts:184:      imageUrl: "'/logo.svg'",
+src/data/directoryFallbackData.ts:195:      imageUrl: "'/logo.svg'",
+src/data/directoryFallbackData.ts:206:      imageUrl: "'/logo.svg'",
+src/data/directoryFallbackData.ts:217:      imageUrl: "'/logo.svg'",
+src/data/directoryFallbackData.ts:228:      imageUrl: "'/logo.svg'",
+src/data/directoryFallbackData.ts:239:      imageUrl: "'/logo.svg'",
+src/data/directoryFallbackData.ts:250:      imageUrl: "'/logo.svg'",
+src/data/directoryFallbackData.ts:261:      imageUrl: "'/logo.svg'",
+src/data/directoryFallbackData.ts:276:      imageUrl: "'/logo.svg'",
+src/data/directoryFallbackData.ts:293:      imageUrl: "'/logo.svg'",
+src/data/directoryFallbackData.ts:310:      imageUrl: "'/logo.svg'",
+src/data/directoryFallbackData.ts:327:      imageUrl: "'/logo.svg'",
+src/data/directoryFallbackData.ts:344:      imageUrl: "'/logo.svg'",
+src/data/directoryFallbackData.ts:361:      imageUrl: "'/logo.svg'",
+src/data/directoryFallbackData.ts:378:      imageUrl: "'/logo.svg'",
+src/data/directoryFallbackData.ts:395:      imageUrl: "'/logo.svg'",
+src/data/directoryFallbackData.ts:412:      imageUrl: "'/logo.svg'",
+src/data/directoryFallbackData.ts:433:      imageUrl: "'/logo.svg'",
+src/data/directoryFallbackData.ts:447:      imageUrl: "'/logo.svg'",
+src/data/directoryFallbackData.ts:461:      imageUrl: "'/logo.svg'",
+src/data/directoryFallbackData.ts:476:      imageUrl: "'/logo.svg'",
+src/data/directoryFallbackData.ts:491:      imageUrl: "'/logo.svg'",
+src/data/directoryFallbackData.ts:506:      imageUrl: "'/logo.svg'",
+src/data/directoryFallbackData.ts:521:      imageUrl: "'/logo.svg'",
+src/data/directoryFallbackData.ts:536:      imageUrl: "'/logo.svg'",
+src/data/directoryFallbackData.ts:551:      imageUrl: "'/logo.svg'",
+src/data/directoryFallbackData.ts:566:      imageUrl: "'/logo.svg'",
+src/data/directoryFallbackData.ts:581:      imageUrl: "'/logo.svg'",
+src/data/directoryFallbackData.ts:596:      imageUrl: "'/logo.svg'",
+src/data/directoryFallbackData.ts:611:      imageUrl: "'/logo.svg'",
+src/data/directoryFallbackData.ts:629:      imageUrl: "'/logo.svg'",
+src/data/directoryFallbackData.ts:645:      imageUrl: "'/logo.svg'",
+src/data/directoryFallbackData.ts:661:      imageUrl: "'/logo.svg'",
+src/data/directoryFallbackData.ts:677:      imageUrl: "'/logo.svg'",
+src/data/directoryFallbackData.ts:693:      imageUrl: "'/logo.svg'",
+src/data/directoryFallbackData.ts:709:      imageUrl: "'/logo.svg'",
+src/data/directoryFallbackData.ts:725:      imageUrl: "'/logo.svg'",
+src/data/directoryFallbackData.ts:741:      imageUrl: "'/logo.svg'",
+src/data/directoryFallbackData.ts:757:      imageUrl: "'/logo.svg'",
+src/data/directoryFallbackData.ts:773:      imageUrl: "'/logo.svg'",
+src/data/directoryFallbackData.ts:789:      imageUrl: "'/logo.svg'",
+src/data/directoryFallbackData.ts:805:      imageUrl: "'/logo.svg'",
+src/data/directoryFallbackData.ts:821:      imageUrl: "'/logo.svg'",
+src/data/directoryFallbackData.ts:840:      imageUrl: "'/logo.svg'",
+src/data/directoryFallbackData.ts:856:      imageUrl: "'/logo.svg'",
+src/data/directoryFallbackData.ts:872:      imageUrl: "'/logo.svg'",
+src/data/directoryFallbackData.ts:888:      imageUrl: "'/logo.svg'",
+src/data/directoryFallbackData.ts:904:      imageUrl: "'/logo.svg'",
+src/data/directoryFallbackData.ts:920:      imageUrl: "'/logo.svg'",
+src/data/directoryFallbackData.ts:936:      imageUrl: "'/logo.svg'",
+src/data/directoryFallbackData.ts:952:      imageUrl: "'/logo.svg'",
+src/data/directoryFallbackData.ts:968:      imageUrl: "'/logo.svg'",
+src/data/directoryFallbackData.ts:984:      imageUrl: "'/logo.svg'",
+src/data/directoryFallbackData.ts:1003:      imageUrl: "'/logo.svg'",
+src/data/directoryFallbackData.ts:1016:      imageUrl: "'/logo.svg'",
+src/data/directoryFallbackData.ts:1029:      imageUrl: "'/logo.svg'",
+src/data/directoryFallbackData.ts:1045:      imageUrl: "'/logo.svg'",
+src/data/directoryFallbackData.ts:1057:      imageUrl: "'/logo.svg'",
+src/data/directoryFallbackData.ts:1069:      imageUrl: "'/logo.svg'",
+src/data/directoryFallbackData.ts:1256:      imageUrl: "'/logo.svg'",
+src/data/directoryFallbackData.ts:1268:      imageUrl: "'/logo.svg'",
+src/data/directoryFallbackData.ts:1285:      imageUrl: "'/logo.svg'",
+src/data/directoryFallbackData.ts:1301:      imageUrl: "'/logo.svg'",
+src/data/directoryFallbackData.ts:1317:      imageUrl: "'/logo.svg'",
+src/data/directoryFallbackData.ts:1333:      imageUrl: "'/logo.svg'",
+src/data/directoryFallbackData.ts:1349:      imageUrl: "'/logo.svg'",
+src/data/directoryFallbackData.ts:1365:      imageUrl: "'/logo.svg'",
+src/data/directoryFallbackData.ts:1381:      imageUrl: "'/logo.svg'",
+src/data/directoryFallbackData.ts:1397:      imageUrl: "'/logo.svg'",
+src/data/directoryFallbackData.ts:1413:      imageUrl: "'/logo.svg'",
+src/data/directoryFallbackData.ts:1429:      imageUrl: "'/logo.svg'",
+src/data/directoryFallbackData.ts:1445:      imageUrl: "'/logo.svg'",
+src/data/directoryFallbackData.ts:1461:      imageUrl: "'/logo.svg'",
+src/data/directoryFallbackData.ts:2039:      imageUrl: "'/logo.svg'"
+src/data/directoryFallbackData.ts:2056:      imageUrl: "'/logo.svg'"
+src/data/directoryFallbackData.ts:2072:      imageUrl: "'/logo.svg'"
+src/data/directoryFallbackData.ts:2088:      imageUrl: "'/logo.svg'"
+src/data/directoryFallbackData.ts:2104:      imageUrl: "'/logo.svg'"
+src/data/directoryFallbackData.ts:2120:      imageUrl: "'/logo.svg'"
+src/data/directoryFallbackData.ts:2135:      imageUrl: "'/logo.svg'"
+src/data/directoryFallbackData.ts:2151:      imageUrl: "'/logo.svg'"
+src/data/directoryFallbackData.ts:2166:      imageUrl: "'/logo.svg'"
+src/data/directoryFallbackData.ts:2181:      imageUrl: "'/logo.svg'"
+src/data/directoryFallbackData.ts:2199:      imageUrl: "'/logo.svg'"
+src/data/directoryFallbackData.ts:2214:      imageUrl: "'/logo.svg'"
+src/data/directoryFallbackData.ts:2450:      imageUrl: "'/logo.svg'"
+src/data/directoryFallbackData.ts:2467:      imageUrl: "'/logo.svg'"
+src/data/directoryFallbackData.ts:2484:      imageUrl: "'/logo.svg'"
+src/data/directoryFallbackData.ts:2501:      imageUrl: "'/logo.svg'"
+src/data/directoryFallbackData.ts:2521:      imageUrl: "'/logo.svg'"
+src/data/directoryFallbackData.ts:2538:      imageUrl: "'/logo.svg'"
+src/data/directoryFallbackData.ts:2555:      imageUrl: "'/logo.svg'"
+src/data/directoryFallbackData.ts:2572:      imageUrl: "'/logo.svg'"
+src/data/directoryFallbackData.ts:2770:      imageUrl: "'/logo.svg'",
+src/data/directoryFallbackData.ts:2785:      imageUrl: "'/logo.svg'",
+src/data/directoryFallbackData.ts:2800:      imageUrl: "'/logo.svg'",
+src/data/directoryFallbackData.ts:2815:      imageUrl: "'/logo.svg'",
+src/data/directoryFallbackData.ts:2830:      imageUrl: "'/logo.svg'",
+src/data/directoryFallbackData.ts:2845:      imageUrl: "'/logo.svg'",
+src/data/directoryFallbackData.ts:2860:      imageUrl: "'/logo.svg'",
+src/data/directoryFallbackData.ts:2875:      imageUrl: "'/logo.svg'",
+src/data/directoryFallbackData.ts:2890:      imageUrl: "'/logo.svg'",
+src/data/directoryFallbackData.ts:2905:      imageUrl: "'/logo.svg'",
+src/data/directoryFallbackData.ts:2951:      thumbnailUrl: "'/logo.svg'",
+src/data/directoryFallbackData.ts:2966:      thumbnailUrl: "'/logo.svg'",
+src/data/directoryFallbackData.ts:2981:      thumbnailUrl: "'/logo.svg'",
+src/data/reelAudioData.ts:11:    coverUrl: '/logo.svg',
+src/data/reelAudioData.ts:23:    coverUrl: '/logo.svg',
+src/data/reelAudioData.ts:35:    coverUrl: '/logo.svg',
+src/data/reelAudioData.ts:47:    coverUrl: '/logo.svg',
+src/data/reelAudioData.ts:59:    coverUrl: '/logo.svg',
+src/context/SiteSettingsContext.tsx:58:          ogImageUrl: "'/logo.svg'",
+src/context/SiteSettingsContext.tsx:64:          twitterImage: "'/logo.svg'",
+src/context/SiteSettingsContext.tsx:124:        ogImageUrl: "'/logo.svg'",
+src/context/SiteSettingsContext.tsx:130:        twitterImage: "'/logo.svg'",
+src/contexts/NotificationContext.tsx:828:      { name: 'তানভীর আহমেদ', avatar: '/logo.svg' },
+src/contexts/NotificationContext.tsx:829:      { name: 'সালমা খাতুন', avatar: '/logo.svg' },
+src/contexts/NotificationContext.tsx:830:      { name: 'নাজমুল হুদা', avatar: '/logo.svg' },
+src/api.ts:1268:    profilePhoto: '/logo.svg',
+src/api.ts:1269:    coverPhoto: '/logo.svg',
+src/api.ts:1328:    profilePhoto: '/logo.svg',
+src/api.ts:1329:    coverPhoto: '/logo.svg',
