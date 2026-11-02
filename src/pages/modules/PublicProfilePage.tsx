@@ -107,6 +107,7 @@ import { toast } from "sonner";
 import { formatDistanceToNow } from "date-fns";
 import { bn } from "date-fns/locale";
 import EditProfileModal from "../../components/auth/EditProfileModal";
+import { UniversalUserActionsDrawer } from "../../components/common/UniversalUserActionsDrawer";
 
 interface UserContribution {
   id: string;
@@ -2753,181 +2754,77 @@ const PublicProfilePage: React.FC = () => {
         editError={editError}
       />
 
-      {/* 9. Profile Options / More Menu Bottom Sheet (Matching Screenshot with Pure White Background) */}
-      <AnimatePresence>
-        {showMoreMenu && (
-          <div className="fixed inset-0 bg-black/60 z-[9999] flex items-end justify-center p-0 backdrop-blur-xs">
-            <div 
-              className="absolute inset-0" 
-              onClick={() => setShowMoreMenu(false)} 
-            />
-            <motion.div
-              initial={{ y: "100%" }}
-              animate={{ y: 0 }}
-              exit={{ y: "100%" }}
-              transition={{ type: "spring", damping: 26, stiffness: 320 }}
-              className="relative bg-white rounded-t-[32px] w-full max-w-lg p-5 pb-8 shadow-2xl border-t border-slate-100 z-10"
-            >
-              {/* Drag handle */}
-              <div className="w-12 h-1.5 bg-slate-300 rounded-full mx-auto mb-4" />
+      {/* 9. Profile Options / More Menu (Unified System for Own Profile, Custom for Visitors) */}
+      {isOwnProfile ? (
+        <UniversalUserActionsDrawer
+          isOpen={showMoreMenu}
+          onClose={() => setShowMoreMenu(false)}
+        />
+      ) : (
+        <AnimatePresence>
+          {showMoreMenu && (
+            <div className="fixed inset-0 bg-black/60 z-[9999] flex items-end justify-center p-0 backdrop-blur-xs">
+              <div 
+                className="absolute inset-0" 
+                onClick={() => setShowMoreMenu(false)} 
+              />
+              <motion.div
+                initial={{ y: "100%" }}
+                animate={{ y: 0 }}
+                exit={{ y: "100%" }}
+                transition={{ type: "spring", damping: 26, stiffness: 320 }}
+                className="relative bg-white rounded-t-[32px] w-full max-w-lg p-5 pb-8 shadow-2xl border-t border-slate-100 z-10 select-none"
+              >
+                {/* Drag handle */}
+                <div className="w-12 h-1.5 bg-slate-300 rounded-full mx-auto mb-4" />
 
-              <div className="space-y-1 divide-y divide-slate-100">
-                {isOwnProfile ? (
-                  <>
-                    {/* 1. My Wallet */}
-                    <button
-                      type="button"
-                      onClick={() => {
-                        setShowMoreMenu(false);
-                        navigate("/wallet");
-                      }}
-                      className="w-full flex items-center gap-4 py-3 px-2 rounded-2xl hover:bg-slate-50 text-left transition cursor-pointer border-0 bg-transparent"
-                    >
-                      <div className="w-10 h-10 rounded-full bg-emerald-50 text-[#059669] flex items-center justify-center shrink-0 shadow-2xs">
-                        <Wallet size={20} className="stroke-[2.2]" />
-                      </div>
-                      <div className="flex-1 min-w-0">
-                        <p className="text-[15px] font-black text-slate-900 leading-tight">আমার ওয়ালেট</p>
-                        <p className="text-[12px] text-slate-500 mt-0.5">ব্যালেন্স, রিচার্জ ও ক্যাশআউট</p>
-                      </div>
-                    </button>
+                <div className="space-y-1 divide-y divide-slate-100">
+                  {/* Visitor Action: Message */}
+                  <button
+                    onClick={() => {
+                      setShowMoreMenu(false);
+                      handleOpenChat();
+                    }}
+                    className="w-full flex items-center gap-4 py-3.5 px-2 rounded-2xl hover:bg-slate-50 text-left transition cursor-pointer border-0 bg-transparent"
+                  >
+                    <div className="w-10 h-10 rounded-full bg-emerald-50 text-blue-600 flex items-center justify-center shrink-0">
+                      <MessageCircle size={20} className="stroke-[2.2]" />
+                    </div>
+                    <div className="flex-1 min-w-0">
+                      <p className="text-[15px] font-black text-slate-900 leading-tight">ইনবক্সে বার্তা পাঠান</p>
+                      <p className="text-[12px] text-slate-500 mt-0.5">সরাসরি লাইভ চ্যাট শুরু করুন</p>
+                    </div>
+                  </button>
 
-                    {/* 2. Get Verified Badge */}
-                    <button
-                      type="button"
-                      onClick={() => {
-                        setShowMoreMenu(false);
-                        navigate("/get-verified");
-                      }}
-                      className="w-full flex items-center gap-4 py-3 px-2 rounded-2xl hover:bg-slate-50 text-left transition cursor-pointer border-0 bg-transparent"
-                    >
-                      <div className="w-10 h-10 rounded-full bg-slate-100 text-slate-500 flex items-center justify-center shrink-0 shadow-2xs">
-                        <BadgeCheck size={20} className="stroke-[2.2]" />
-                      </div>
-                      <div className="flex-1 min-w-0">
-                        <p className="text-[15px] font-black text-slate-900 leading-tight">ভেরিফাইড ব্যাজ পান</p>
-                        <p className="text-[12px] text-slate-500 mt-0.5">ভেরিফিকেশনের আবেদন — ৳৫০০</p>
-                      </div>
-                    </button>
+                  {/* Visitor Action: Share */}
+                  <button
+                    onClick={() => {
+                      setShowMoreMenu(false);
+                      handleShare();
+                    }}
+                    className="w-full flex items-center gap-4 py-3.5 px-2 rounded-2xl hover:bg-slate-50 text-left transition cursor-pointer border-0 bg-transparent"
+                  >
+                    <div className="w-10 h-10 rounded-full bg-emerald-50 text-emerald-600 flex items-center justify-center shrink-0">
+                      <Share2 size={20} className="stroke-[2.2]" />
+                    </div>
+                    <div className="flex-1 min-w-0">
+                      <p className="text-[15px] font-black text-slate-900 leading-tight">প্রোফাইল শেয়ার করুন</p>
+                      <p className="text-[12px] text-slate-500 mt-0.5">লিংক কপি করুন বা শেয়ার করুন</p>
+                    </div>
+                  </button>
+                </div>
 
-                    {/* 3. Create Advertisement */}
-                    <button
-                      type="button"
-                      onClick={() => {
-                        setShowMoreMenu(false);
-                        navigate("/ads/create");
-                      }}
-                      className="w-full flex items-center gap-4 py-3 px-2 rounded-2xl hover:bg-slate-50 text-left transition cursor-pointer border-0 bg-transparent"
-                    >
-                      <div className="w-10 h-10 rounded-full bg-sky-50 text-[#0284C7] flex items-center justify-center shrink-0">
-                        <Megaphone size={20} className="stroke-[2.2]" />
-                      </div>
-                      <div className="flex-1 min-w-0">
-                        <p className="text-[15px] font-black text-slate-900 leading-tight">বিজ্ঞাপন তৈরি করুন</p>
-                        <p className="text-[12px] text-slate-500 mt-0.5">আপনার ব্যবসা বা কন্টেন্ট প্রচার করুন</p>
-                      </div>
-                    </button>
-
-                    {/* 4. My Advertisements */}
-                    <button
-                      type="button"
-                      onClick={() => {
-                        setShowMoreMenu(false);
-                        navigate("/my-ads");
-                      }}
-                      className="w-full flex items-center gap-4 py-3 px-2 rounded-2xl hover:bg-slate-50 text-left transition cursor-pointer border-0 bg-transparent"
-                    >
-                      <div className="w-10 h-10 rounded-full bg-emerald-50 text-[#00C853] flex items-center justify-center shrink-0">
-                        <Radio size={20} className="stroke-[2.2]" />
-                      </div>
-                      <div className="flex-1 min-w-0">
-                        <p className="text-[15px] font-black text-slate-900 leading-tight">আমার বিজ্ঞাপনসমূহ</p>
-                        <p className="text-[12px] text-slate-500 mt-0.5">বিজ্ঞাপনসমূহ ম্যানেজ করুন</p>
-                      </div>
-                    </button>
-
-                    {/* 5. Settings */}
-                    <button
-                      type="button"
-                      onClick={() => {
-                        setShowMoreMenu(false);
-                        navigate("/settings");
-                      }}
-                      className="w-full flex items-center gap-4 py-3 px-2 rounded-2xl hover:bg-slate-50 text-left transition cursor-pointer border-0 bg-transparent"
-                    >
-                      <div className="w-10 h-10 rounded-full bg-slate-100 text-slate-600 flex items-center justify-center shrink-0">
-                        <Settings size={20} className="stroke-[2.2]" />
-                      </div>
-                      <div className="flex-1 min-w-0">
-                        <p className="text-[15px] font-black text-slate-900 leading-tight">সেটিংস</p>
-                        <p className="text-[12px] text-slate-500 mt-0.5">অ্যাপ প্রেফারেন্স, ক্যাশ ও প্রাইভেসি</p>
-                      </div>
-                      <ChevronRight size={18} className="text-slate-400 shrink-0" />
-                    </button>
-
-                    {/* 6. Logout */}
-                    <button
-                      type="button"
-                      onClick={async () => {
-                        setShowMoreMenu(false);
-                        try {
-                          await logout();
-                          navigate("/adda");
-                          toast.success("সফলভাবে লগআউট হয়েছেন");
-                        } catch (e) {
-                          console.error("Logout error", e);
-                        }
-                      }}
-                      className="w-full flex items-center gap-4 py-3 px-2 rounded-2xl hover:bg-rose-50/60 text-left transition cursor-pointer border-0 bg-transparent pt-3"
-                    >
-                      <div className="w-10 h-10 rounded-full bg-rose-50 text-rose-600 flex items-center justify-center shrink-0">
-                        <LogOut size={20} className="stroke-[2.2]" />
-                      </div>
-                      <div className="flex-1 min-w-0">
-                        <p className="text-[15px] font-black text-rose-600 leading-tight">লগআউট</p>
-                      </div>
-                    </button>
-                  </>
-                ) : (
-                  <>
-                    <button
-                      onClick={() => {
-                        setShowMoreMenu(false);
-                        handleOpenChat();
-                      }}
-                      className="w-full flex items-center gap-3.5 p-3 rounded-2xl hover:bg-slate-50 text-slate-800 text-left transition cursor-pointer border-0 bg-transparent"
-                    >
-                      <div className="w-10 h-10 rounded-full bg-emerald-50 text-blue-600 flex items-center justify-center shrink-0">
-                        <MessageCircle size={18} />
-                      </div>
-                      <div>
-                        <p className="text-sm font-extrabold text-slate-900">ইনবক্সে বার্তা পাঠান</p>
-                        <p className="text-xs text-slate-500">সরাসরি লাইভ চ্যাট শুরু করুন</p>
-                      </div>
-                    </button>
-
-                    <button
-                      onClick={() => {
-                        setShowMoreMenu(false);
-                        handleShare();
-                      }}
-                      className="w-full flex items-center gap-3.5 p-3 rounded-2xl hover:bg-slate-50 text-slate-800 text-left transition cursor-pointer border-0 bg-transparent"
-                    >
-                      <div className="w-10 h-10 rounded-full bg-emerald-50 text-emerald-600 flex items-center justify-center shrink-0">
-                        <Share2 size={18} />
-                      </div>
-                      <div>
-                        <p className="text-sm font-extrabold text-slate-900">প্রোফাইল শেয়ার করুন</p>
-                        <p className="text-xs text-slate-500">লিংক কপি করুন বা শেয়ার করুন</p>
-                      </div>
-                    </button>
-                  </>
-                )}
-              </div>
-            </motion.div>
-          </div>
-        )}
-      </AnimatePresence>
+                <button
+                  onClick={() => setShowMoreMenu(false)}
+                  className="mt-6 w-full py-3 bg-slate-100 hover:bg-slate-200 text-slate-700 font-bold rounded-2xl transition cursor-pointer border-0"
+                >
+                  বন্ধ করুন
+                </button>
+              </motion.div>
+            </div>
+          )}
+        </AnimatePresence>
+      )}
 
       {/* 9.1 Share Profile Bottom Sheet (Matching Screenshot 2) */}
       <AnimatePresence>

@@ -20,6 +20,7 @@ import { NotificationPanel } from '../user/NotificationPanel';
 import { AuthModal } from '../AuthModal';
 import { Sidebar } from '../Sidebar';
 import { AddaSettingsDrawerModal } from './AddaSettingsDrawerModal';
+import { UniversalUserActionsDrawer } from '../common/UniversalUserActionsDrawer';
 import { db } from '../../firebase';
 import { collection, query, where, onSnapshot } from 'firebase/firestore';
 import { getCleanAvatar, getUserInitial } from '../../utils/avatarUtils';
@@ -484,9 +485,9 @@ export const AddaFacebookHeader: React.FC<AddaFacebookHeaderProps> = ({
       )}
 
       {/* Settings Drawer Modal */}
-      <AddaSettingsDrawerModal 
-        isOpen={isSettingsOpen} 
-        onClose={() => setIsSettingsOpen(false)} 
+      <UniversalUserActionsDrawer
+        isOpen={isSettingsOpen}
+        onClose={() => setIsSettingsOpen(false)}
       />
 
       {/* Citizen Sidebar Drawer */}

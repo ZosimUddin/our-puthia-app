@@ -47,10 +47,16 @@ import EditProfileModal from "../auth/EditProfileModal";
 import { compressImageToBase64 } from "../../api";
 import { useLanguage } from "../../contexts/LanguageContext";
 import { getSavedTheme, applyTheme, ThemeMode } from "../../utils/themeUtils";
+import { 
+  getRealStorageMetrics, 
+  clearRealVideoCache, 
+  clearRealImageCache, 
+  clearRealAllCache 
+} from "../../utils/realStorageUtils";
 
 export default function Settings() {
   const { user, userProfile, updateUserProfile, logout } = useAuth();
-  const { language, setLanguage } = useLanguage();
+  const { language, setLanguage, toggleLanguage } = useLanguage();
   const navigate = useNavigate();
 
   // 1. Modal States
@@ -74,13 +80,24 @@ export default function Settings() {
     return (userProfile as any)?.isProfileLocked ?? false;
   });
 
-  // 3. Cache and Storage Simulation
-  const [videoCacheSize, setVideoCacheSize] = useState("101.9 MB");
-  const [videoCount, setVideoCount] = useState(61);
-  const [imageCacheSize, setImageCacheSize] = useState("10.0 MB");
-  const [imageCount, setImageCount] = useState(221);
-  const [totalStorageUsed, setTotalStorageUsed] = useState("111.9 MB");
-  const [storagePercent, setStoragePercent] = useState(22.4);
+  // 3. Real Cache and Storage Management
+  const [videoCacheSize, setVideoCacheSize] = useState("0 MB");
+  const [videoCount, setVideoCount] = useState(0);
+  const [imageCacheSize, setImageCacheSize] = useState("0 MB");
+  const [imageCount, setImageCount] = useState(0);
+  const [totalStorageUsed, setTotalStorageUsed] = useState("0 MB");
+  const [storagePercent, setStoragePercent] = useState(1);
+
+  useEffect(() => {
+    getRealStorageMetrics().then((metrics) => {
+      setVideoCacheSize(metrics.videoCacheMb);
+      setVideoCount(metrics.videoCount);
+      setImageCacheSize(metrics.imageCacheMb);
+      setImageCount(metrics.imageCount);
+      setTotalStorageUsed(metrics.totalUsedMb);
+      setStoragePercent(metrics.usagePercent);
+    });
+  }, []);
 
   // 4. Personal Info & Editor Profile System State
   const [isEditProfileModalOpen, setIsEditProfileModalOpen] = useState(false);
@@ -299,36 +316,39 @@ export default function Settings() {
   };
 
   // Clear Video Cache
-  const handleClearVideoCache = () => {
-    setVideoCacheSize("0 KB");
-    setVideoCount(0);
-    setTotalStorageUsed(`${imageCount > 0 ? imageCacheSize : "0 KB"}`);
-    setStoragePercent(imageCount > 0 ? 2 : 0);
-    toast.success("ভিডিও ক্যাশ সম্পূর্ণ ক্লিয়ার করা হয়েছে!");
+  const handleClearVideoCache = async () => {
+    const metrics = await clearRealVideoCache();
+    setVideoCacheSize(metrics.videoCacheMb);
+    setVideoCount(metrics.videoCount);
+    setImageCacheSize(metrics.imageCacheMb);
+    setImageCount(metrics.imageCount);
+    setTotalStorageUsed(metrics.totalUsedMb);
+    setStoragePercent(metrics.usagePercent);
+    toast.success(language === "en" ? "Video cache cleared successfully!" : "ভিডিও ক্যাশ সফলভাবে ক্লিয়ার করা হয়েছে!");
   };
 
   // Clear Image Cache
-  const handleClearImageCache = () => {
-    setImageCacheSize("0 KB");
-    setImageCount(0);
-    setTotalStorageUsed(`${videoCount > 0 ? videoCacheSize : "0 KB"}`);
-    setStoragePercent(videoCount > 0 ? 20.4 : 0);
-    toast.success("ইমেজ ক্যাশ সম্পূর্ণ ক্লিয়ার করা হয়েছে!");
+  const handleClearImageCache = async () => {
+    const metrics = await clearRealImageCache();
+    setVideoCacheSize(metrics.videoCacheMb);
+    setVideoCount(metrics.videoCount);
+    setImageCacheSize(metrics.imageCacheMb);
+    setImageCount(metrics.imageCount);
+    setTotalStorageUsed(metrics.totalUsedMb);
+    setStoragePercent(metrics.usagePercent);
+    toast.success(language === "en" ? "Image cache cleared successfully!" : "ছবি ক্যাশ সফলভাবে ক্লিয়ার করা হয়েছে!");
   };
 
   // Clear All Cache
-  const handleClearAllCache = () => {
-    setVideoCacheSize("0 KB");
-    setVideoCount(0);
-    setImageCacheSize("0 KB");
-    setImageCount(0);
-    setTotalStorageUsed("0 KB");
-    setStoragePercent(0);
-    try {
-      localStorage.removeItem("puthia_cached_media");
-      localStorage.removeItem("puthia_feed_cache");
-    } catch {}
-    toast.success("সকল লোকাল ক্যাশ সফলভাবে মুছে স্টোরেজ খালি করা হয়েছে!");
+  const handleClearAllCache = async () => {
+    const metrics = await clearRealAllCache();
+    setVideoCacheSize(metrics.videoCacheMb);
+    setVideoCount(metrics.videoCount);
+    setImageCacheSize(metrics.imageCacheMb);
+    setImageCount(metrics.imageCount);
+    setTotalStorageUsed(metrics.totalUsedMb);
+    setStoragePercent(metrics.usagePercent);
+    toast.success(language === "en" ? "All browser local caches cleared successfully!" : "সকল লোকাল ক্যাশ সফলভাবে মুছে মেমরি খালি করা হয়েছে!");
   };
 
   // Save Personal Info
@@ -640,53 +660,94 @@ export default function Settings() {
         </div>
 
         {/* ========================================================================= */}
-        {/* 4. APPEARANCE SECTION                                                     */}
+        {/* 4. APPEARANCE SECTION (Inline Selection as per User Request)              */}
         {/* ========================================================================= */}
         <div className="space-y-2">
           <h2 className="text-[13px] font-bold text-slate-500 uppercase tracking-wide px-1">
             ডিসপ্লে ও থিম
           </h2>
 
-          <div className="bg-white rounded-3xl shadow-2xs border border-slate-100/90 divide-y divide-slate-100 overflow-hidden">
-            {/* 4.1 Theme */}
-            <button
-              type="button"
-              onClick={() => setShowThemeModal(true)}
-              className="w-full flex items-center justify-between p-3.5 hover:bg-slate-50 transition cursor-pointer border-none bg-transparent text-left"
-            >
-              <div className="flex items-center gap-3.5 min-w-0">
+          <div className="bg-white rounded-3xl p-4 shadow-2xs border border-slate-100/90 space-y-4">
+            {/* 4.1 Theme Section */}
+            <div className="space-y-3.5">
+              <div className="flex items-center gap-3.5">
                 <div className="w-10 h-10 rounded-2xl bg-emerald-50 text-emerald-700 flex items-center justify-center shrink-0">
                   <Moon size={20} className="stroke-[2.2]" />
                 </div>
                 <div className="min-w-0">
-                  <p className="text-[14px] font-black text-slate-950">অ্যাপের থিম</p>
+                  <p className="text-[14px] font-black text-slate-950">
+                    {language === "en" ? "App Theme" : "অ্যাপের থিম"}
+                  </p>
                   <p className="text-[11px] text-slate-500 truncate mt-0.5">
-                    {selectedTheme === "system" ? "সিস্টেম ডিফল্ট" : selectedTheme === "light" ? "লাইট থিম" : "ডার্ক থিম"}
+                    {selectedTheme === "system" 
+                      ? (language === "en" ? "System Default" : "সিস্টেম ডিফল্ট") 
+                      : selectedTheme === "light" 
+                      ? (language === "en" ? "Light Theme" : "লাইট থিম") 
+                      : (language === "en" ? "Dark Theme" : "ডার্ক থিম")}
                   </p>
                 </div>
               </div>
-              <ChevronRight size={18} className="text-slate-400 shrink-0" />
-            </button>
 
-            {/* 4.2 Language */}
-            <button
-              type="button"
-              onClick={() => setShowLanguageModal(true)}
-              className="w-full flex items-center justify-between p-3.5 hover:bg-slate-50 transition cursor-pointer border-none bg-transparent text-left"
-            >
+              {/* Horizontal Theme Buttons */}
+              <div className="grid grid-cols-3 gap-2">
+                {[
+                  { id: "system", label: language === "en" ? "System" : "সিস্টেম ডিফল্ট" },
+                  { id: "light", label: language === "en" ? "Light" : "লাইট" },
+                  { id: "dark", label: language === "en" ? "Dark" : "ডার্ক" }
+                ].map((item) => {
+                  const isSel = selectedTheme === item.id;
+                  return (
+                    <button
+                      key={item.id}
+                      type="button"
+                      onClick={() => {
+                        setSelectedTheme(item.id as any);
+                        applyTheme(item.id as ThemeMode);
+                        toast.success(`${item.label} সংরক্ষিত হয়েছে`);
+                      }}
+                      className={`py-2.5 px-1 rounded-xl text-[11px] font-black transition border cursor-pointer flex items-center justify-center ${
+                        isSel 
+                          ? "bg-white text-emerald-700 border-emerald-600 shadow-xs ring-2 ring-emerald-500/20" 
+                          : "bg-white text-slate-600 border-slate-200 hover:bg-slate-50"
+                      }`}
+                    >
+                      {item.label}
+                    </button>
+                  );
+                })}
+              </div>
+            </div>
+
+            <div className="h-px bg-slate-100" />
+
+            {/* 4.2 Language Section */}
+            <div className="flex items-center justify-between">
               <div className="flex items-center gap-3.5 min-w-0">
                 <div className="w-10 h-10 rounded-2xl bg-emerald-50 text-emerald-700 flex items-center justify-center shrink-0">
                   <Globe size={20} className="stroke-[2.2]" />
                 </div>
                 <div className="min-w-0">
-                  <p className="text-[14px] font-black text-slate-950">ভাষা (Language)</p>
+                  <p className="text-[14px] font-black text-slate-950">
+                    {language === "en" ? "Language (ভাষা)" : "ভাষা (Language)"}
+                  </p>
                   <p className="text-[11px] text-slate-500 truncate mt-0.5">
-                    {language === "en" ? "ইংরেজি (English)" : "বাংলা (Bangla)"}
+                    {language === "en" ? "English (ইংরেজি)" : "বাংলা (Bangla)"}
                   </p>
                 </div>
               </div>
-              <ChevronRight size={18} className="text-slate-400 shrink-0" />
-            </button>
+
+              <button
+                type="button"
+                onClick={() => {
+                  toggleLanguage();
+                  const nextLang = language === "bn" ? "en" : "bn";
+                  toast.success(nextLang === "bn" ? "🌐 ভাষা পরিবর্তন: বাংলা" : "🌐 Language switched to English");
+                }}
+                className="px-4 py-2 rounded-xl bg-white hover:bg-slate-50 text-slate-900 font-black text-xs transition cursor-pointer border border-slate-200 shadow-2xs shrink-0"
+              >
+                {language === "bn" ? "English" : "বাংলা"}
+              </button>
+            </div>
           </div>
         </div>
 
@@ -950,7 +1011,7 @@ export default function Settings() {
           {/* Delete Account Button */}
           <button
             type="button"
-            onClick={() => setShowDeleteModal(true)}
+            onClick={() => navigate("/delete-account")}
             className="w-full py-2 text-slate-500 hover:text-red-600 font-bold text-xs flex items-center justify-center gap-1.5 transition cursor-pointer border-none bg-transparent"
           >
             <Trash2 size={14} />
@@ -1208,113 +1269,7 @@ export default function Settings() {
         )}
       </AnimatePresence>
 
-      {/* 9.4 Theme Modal */}
-      <AnimatePresence>
-        {showThemeModal && (
-          <div className="fixed inset-0 bg-black/60 z-[9999] flex items-center justify-center p-4 backdrop-blur-xs">
-            <motion.div
-              initial={{ opacity: 0, scale: 0.95 }}
-              animate={{ opacity: 1, scale: 1 }}
-              exit={{ opacity: 0, scale: 0.95 }}
-              className="bg-white rounded-3xl w-full max-w-sm p-6 shadow-2xl border border-slate-100 space-y-4"
-            >
-              <div className="flex items-center justify-between border-b border-slate-100 pb-3">
-                <h3 className="font-black text-slate-950 text-base">থিম নির্বাচন করুন</h3>
-                <button
-                  type="button"
-                  onClick={() => setShowThemeModal(false)}
-                  className="w-8 h-8 rounded-full hover:bg-slate-100 text-slate-400 flex items-center justify-center border-0 bg-transparent cursor-pointer"
-                >
-                  <X size={18} />
-                </button>
-              </div>
-
-              <div className="space-y-2">
-                {[
-                  { id: "system", label: "সিস্টেম ডিফল্ট", icon: HardDrive },
-                  { id: "light", label: "লাইট থিম", icon: Sun },
-                  { id: "dark", label: "ডার্ক থিম", icon: Moon }
-                ].map((item) => {
-                  const Icon = item.icon;
-                  const isSel = selectedTheme === item.id;
-                  return (
-                    <button
-                      key={item.id}
-                      type="button"
-                      onClick={() => {
-                        setSelectedTheme(item.id as any);
-                        applyTheme(item.id as ThemeMode);
-                        setShowThemeModal(false);
-                        toast.success(`${item.label} সংরক্ষিত হয়েছে`);
-                      }}
-                      className={`w-full p-3.5 rounded-2xl flex items-center justify-between border transition cursor-pointer ${
-                        isSel ? "border-emerald-600 bg-emerald-50/50 text-emerald-700 font-black" : "border-slate-200 bg-white text-slate-800"
-                      }`}
-                    >
-                      <div className="flex items-center gap-3">
-                        <Icon size={18} />
-                        <span className="text-xs sm:text-sm font-bold">{item.label}</span>
-                      </div>
-                      {isSel && <Check size={16} strokeWidth={3} />}
-                    </button>
-                  );
-                })}
-              </div>
-            </motion.div>
-          </div>
-        )}
-      </AnimatePresence>
-
-      {/* 9.5 Language Modal */}
-      <AnimatePresence>
-        {showLanguageModal && (
-          <div className="fixed inset-0 bg-black/60 z-[9999] flex items-center justify-center p-4 backdrop-blur-xs">
-            <motion.div
-              initial={{ opacity: 0, scale: 0.95 }}
-              animate={{ opacity: 1, scale: 1 }}
-              exit={{ opacity: 0, scale: 0.95 }}
-              className="bg-white rounded-3xl w-full max-w-sm p-6 shadow-2xl border border-slate-100 space-y-4"
-            >
-              <div className="flex items-center justify-between border-b border-slate-100 pb-3">
-                <h3 className="font-black text-slate-950 text-base">ভাষা নির্বাচন করুন</h3>
-                <button
-                  type="button"
-                  onClick={() => setShowLanguageModal(false)}
-                  className="w-8 h-8 rounded-full hover:bg-slate-100 text-slate-400 flex items-center justify-center border-0 bg-transparent cursor-pointer"
-                >
-                  <X size={18} />
-                </button>
-              </div>
-
-              <div className="space-y-2">
-                {[
-                  { id: "en", label: "ইংরেজি (English)" },
-                  { id: "bn", label: "বাংলা (Bangla)" }
-                ].map((item) => {
-                  const isSel = language === item.id;
-                  return (
-                    <button
-                      key={item.id}
-                      type="button"
-                      onClick={() => {
-                        setLanguage(item.id as any);
-                        setShowLanguageModal(false);
-                        toast.success(`${item.label} ভাষা নির্বাচিত হয়েছে`);
-                      }}
-                      className={`w-full p-3.5 rounded-2xl flex items-center justify-between border transition cursor-pointer ${
-                        isSel ? "border-emerald-600 bg-emerald-50/50 text-emerald-700 font-black" : "border-slate-200 bg-white text-slate-800"
-                      }`}
-                    >
-                      <span className="text-xs sm:text-sm font-bold">{item.label}</span>
-                      {isSel && <Check size={16} strokeWidth={3} />}
-                    </button>
-                  );
-                })}
-              </div>
-            </motion.div>
-          </div>
-        )}
-      </AnimatePresence>
+      {/* Theme and Language Modals Removed - Now Inline */}
 
       {/* 9.6 Wallet Modal */}
       <AnimatePresence>

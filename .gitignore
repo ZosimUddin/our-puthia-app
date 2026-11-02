@@ -6,3 +6,4 @@ dist
 *.log
 /app/
 !android/app/
+.aistudio

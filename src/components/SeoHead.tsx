@@ -1,4 +1,5 @@
-import { Helmet } from 'react-helmet-async';
+import React from 'react';
+import SEO from './SEO';
 
 interface SeoHeadProps {
   title: string;
@@ -7,28 +8,22 @@ interface SeoHeadProps {
   image?: string;
 }
 
+/**
+ * Backward compatible wrapper for the unified SEO component.
+ * Delegates to SEO component which uses react-helmet-async.
+ */
 export const SeoHead = ({ title, description, url, image }: SeoHeadProps) => {
-  const siteName = 'পুঠিয়া ডায়েরি';
-  const fullTitle = `${title} | ${siteName}`;
-  const canonicalUrl = url || 'https://ais-dev-slqtn6q7j5aq7ktex6nw4z-97912170438.asia-east1.run.app/';
-  const imageUrl = image || '/logo.svg';
-
+  // Translate 'url' prop to 'path' if it's relative, or just pass as is if SEO handles it
+  // For now, we'll just pass title, description and image to maintain safety.
   return (
-    <Helmet>
-      <title>{fullTitle}</title>
-      <meta name="description" content={description} />
-      <link rel="canonical" href={canonicalUrl} />
-      
-      <meta property="og:title" content={fullTitle} />
-      <meta property="og:description" content={description} />
-      <meta property="og:url" content={canonicalUrl} />
-      <meta property="og:image" content={imageUrl} />
-      <meta property="og:type" content="website" />
-      
-      <meta name="twitter:card" content="summary_large_image" />
-      <meta name="twitter:title" content={fullTitle} />
-      <meta name="twitter:description" content={description} />
-      <meta name="twitter:image" content={imageUrl} />
-    </Helmet>
+    <SEO 
+      title={title} 
+      description={description} 
+      image={image}
+      path={url}
+    />
   );
 };
+
+export default SeoHead;
+

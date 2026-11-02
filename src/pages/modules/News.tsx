@@ -1,12 +1,13 @@
 import React, { useState, useEffect, useMemo } from 'react';
 import { copyToClipboard } from '../../utils/clipboard';
 import { motion, AnimatePresence } from 'motion/react';
-import { useNavigate, useLocation } from 'react-router-dom';
+import { useNavigate, useLocation, useParams, useSearchParams, Link } from 'react-router-dom';
+import { SEO } from '../../components/SEO';
 import { 
   Newspaper, Calendar, Clock, X, Edit, Trash2, Plus, Sparkles, ChevronRight, 
   Image as ImageIcon, GraduationCap, Trophy, ShieldAlert, TrendingUp, Users, 
   Palette, Globe, Eye, Bookmark, Search, Share2, Megaphone, Send, CheckCircle2, ArrowLeft,
-  Facebook, MessageCircle, MoreHorizontal, Link, ThumbsUp, Heart, MessageSquare,
+  Facebook, MessageCircle, MoreHorizontal, Link as LinkIcon, ThumbsUp, Heart, MessageSquare,
   AlertCircle, RefreshCw, Filter, Check, Tag, MapPin, UserCheck, Mic, MicOff, ChevronDown, Edit3, RotateCcw, Compass
 } from 'lucide-react';
 import { useAuth } from '../../contexts/AuthContext';
@@ -34,6 +35,7 @@ import {
 import { WordPressRichEditor } from '../../components/editor/WordPressRichEditor';
 import { RichTextRenderer } from '../../components/editor/RichTextRenderer';
 import { isContentEmpty, extractPlainText } from '../../utils/sanitizeHtml';
+import { buildNewsArticleSchema } from '../../utils/seoHelpers';
 
 const toBengaliNumber = (num: number | string): string => {
   const englishToBengaliMap: Record<string, string> = {
@@ -69,7 +71,35 @@ const CATEGORY_MAP = [
 const News: React.FC = () => {
   const navigate = useNavigate();
   const location = useLocation();
+  const { id: paramId } = useParams<{ id?: string }>();
+  const [searchParams] = useSearchParams();
+  const queryId = searchParams.get('id');
   const { user, userProfile } = useAuth();
+
+  const handleSelectNews = (item: NewsItem) => {
+    if (item.status && item.status !== 'published') {
+      toast.error("সংবাদটি অপ্রকাশিত রয়েছে অথবা সরিয়ে নেওয়া হয়েছে");
+      return;
+    }
+    setSelectedNews(item);
+    navigate(`/news/${item.id}`);
+  };
+
+  const handleCloseNews = () => {
+    setSelectedNews(null);
+    if (paramId || queryId) {
+      navigate('/news');
+    }
+  };
+
+  // Safe Crawlable Link Click Handler: preserves Ctrl/Cmd/middle click while handling standard left-click
+  const handleNewsLinkClick = (e: React.MouseEvent<HTMLAnchorElement>, item: NewsItem) => {
+    if (e.metaKey || e.ctrlKey || e.shiftKey || e.altKey || e.button !== 0) {
+      return;
+    }
+    e.preventDefault();
+    handleSelectNews(item);
+  };
   
   // Real-time news state
   const [newsList, setNewsList] = useState<NewsItem[]>([]);
@@ -236,6 +266,62 @@ const News: React.FC = () => {
     return () => unsubscribe();
   }, []);
 
+  // 1.1 Deep-link, back/forward history navigation and legacy query parameter handler
+  useEffect(() => {
+    const currentTargetId = paramId || queryId;
+
+    if (!currentTargetId) {
+      if (selectedNews) {
+        setSelectedNews(null);
+      }
+      return;
+    }
+
+    // Normalize legacy query format (/news?id=xxx) to canonical URL (/news/:id)
+    if (!paramId && queryId) {
+      navigate(`/news/${queryId}`, { replace: true });
+      return;
+    }
+
+    if (selectedNews?.id === currentTargetId) {
+      return;
+    }
+
+    const matched = newsList.find(n => n.id === currentTargetId);
+    if (matched) {
+      // Fix 1: Article Reader Publication Guard
+      if (matched.status === 'published') {
+        setSelectedNews(matched);
+      } else {
+        setSelectedNews(null);
+        toast.error("সংবাদটি অপ্রকাশিত রয়েছে অথবা সরিয়ে নেওয়া হয়েছে");
+        navigate('/news', { replace: true });
+      }
+      return;
+    }
+
+    if (loading) {
+      return;
+    }
+
+    // If not found in current snapshot, fetch single document
+    let hasHandledInitialFetch = false;
+    const unsubscribe = onSingleNewsSnapshot(currentTargetId, (liveItem) => {
+      if (liveItem && liveItem.status === 'published') {
+        setSelectedNews(liveItem);
+      } else if (!hasHandledInitialFetch) {
+        hasHandledInitialFetch = true;
+        setSelectedNews(null);
+        toast.error("সংবাদটি খুঁজে পাওয়া যায়নি বা সরিয়ে ফেলা হয়েছে");
+        navigate('/news', { replace: true });
+      }
+    });
+
+    return () => {
+      unsubscribe();
+    };
+  }, [paramId, queryId, newsList, loading, selectedNews?.id, navigate]);
+
   // 2. Real-time Single News & Comments listener when modal is open
   useEffect(() => {
     if (!selectedNews) {
@@ -255,17 +341,29 @@ const News: React.FC = () => {
     setIsLikedLocally(liked);
     setCurrentLikesCount(selectedNews.likesCount || 0);
 
-    // Live subscription for updates to the selected news document itself
-    const unsubscribeSingle = onSingleNewsSnapshot(selectedNews.id, (liveItem) => {
-      if (liveItem) {
+    // Fix 3: Live Unpublish / Delete Handling
+    // If admin unpublishes or deletes the article while the user is reading, close Reader and notify once.
+    let isLiveClosureHandled = false;
+    const activeNewsId = selectedNews.id;
+
+    const unsubscribeSingle = onSingleNewsSnapshot(activeNewsId, (liveItem) => {
+      if (liveItem && liveItem.status === 'published') {
         setSelectedNews(liveItem);
         setCurrentLikesCount(liveItem.likesCount || 0);
         setIsLikedLocally(liveItem.likes?.includes(userUid) || false);
+      } else {
+        // Document was deleted or unpublished in real-time
+        if (!isLiveClosureHandled) {
+          isLiveClosureHandled = true;
+          setSelectedNews(null);
+          navigate('/news', { replace: true });
+          toast.error("সংবাদটি সরিয়ে নেওয়া হয়েছে বা অপ্রকাশিত করা হয়েছে");
+        }
       }
     });
 
     // Subscribe to live comments
-    const unsubscribeComments = onNewsCommentsSnapshot(selectedNews.id, (comments) => {
+    const unsubscribeComments = onNewsCommentsSnapshot(activeNewsId, (comments) => {
       setLiveComments(comments);
     });
 
@@ -274,7 +372,7 @@ const News: React.FC = () => {
       unsubscribeSingle();
       unsubscribeComments();
     };
-  }, [selectedNews?.id, user?.uid]);
+  }, [selectedNews?.id, user?.uid, navigate]);
 
   // Lock body scroll whenever any fullscreen modal is open
   useEffect(() => {
@@ -554,7 +652,7 @@ const News: React.FC = () => {
     // Optimistic UI update: remove immediately from state so the card instantly vanishes
     setNewsList(prev => prev.filter(item => item.id !== id));
     if (selectedNews?.id === id) {
-      setSelectedNews(null);
+      handleCloseNews();
     }
     setNewsToDelete(null);
 
@@ -571,7 +669,7 @@ const News: React.FC = () => {
 
   // Share handlers
   const handleNativeShare = async (item: NewsItem) => {
-    const shareUrl = window.location.origin + `/news?id=${item.id}`;
+    const shareUrl = `${window.location.origin}/news/${item.id}`;
     if (navigator.share) {
       try {
         await navigator.share({
@@ -637,9 +735,12 @@ const News: React.FC = () => {
     }
   };
 
-  // Filtered & Searched News
+  // Filtered & Searched News (Strictly Published News for public views)
   const filteredItems = useMemo(() => {
     let list = newsList.filter(item => {
+      // Must be published
+      if (item.status && item.status !== 'published') return false;
+
       const matchCategory = activeFilter === 'all' 
         ? true 
         : (activeFilter === 'খেলা' ? (item.category === 'খেলা' || item.category === 'খেলাধুলা') : item.category === activeFilter);
@@ -667,8 +768,8 @@ const News: React.FC = () => {
     return list;
   }, [newsList, activeFilter, searchTerm, selectedUnion, sortBy]);
 
-  const featuredNews = newsList.filter(item => item.featured || item.category === 'উন্নয়ন').slice(0, 5);
-  const popularNews = [...newsList].sort((a, b) => (b.views || 0) - (a.views || 0)).slice(0, 4);
+  const featuredNews = newsList.filter(item => (!item.status || item.status === 'published') && (item.featured || item.category === 'উন্নয়ন')).slice(0, 5);
+  const popularNews = [...newsList].filter(item => !item.status || item.status === 'published').sort((a, b) => (b.views || 0) - (a.views || 0)).slice(0, 4);
 
   // Dynamic Category Counts
   const categoryCounts = newsList.reduce((acc, curr) => {
@@ -679,6 +780,22 @@ const News: React.FC = () => {
 
   return (
     <div className="min-h-screen bg-[#F8FAFC] text-slate-800 pb-20 md:pb-12 flex flex-col justify-between font-sans">
+      <SEO
+        title={selectedNews ? `${selectedNews.title} — পুঠিয়া সংবাদ` : "স্থানীয় সংবাদ — পুঠিয়া উপজেলা"}
+        description={
+          selectedNews 
+            ? extractPlainText(selectedNews.summary || selectedNews.content).slice(0, 160)
+            : "পুঠিয়া উপজেলার সকল সংবাদ ও খবরাখবর একনজরে খুঁজুন ও পড়ুন"
+        }
+        path={selectedNews ? `/news/${selectedNews.id}` : "/news"}
+        type={selectedNews ? "article" : "website"}
+        image={selectedNews?.image}
+        jsonLd={
+          selectedNews && selectedNews.status === 'published'
+            ? buildNewsArticleSchema(selectedNews)
+            : undefined
+        }
+      />
       <Header />
 
       <main className="flex-1 pb-6">
@@ -873,20 +990,28 @@ const News: React.FC = () => {
               <div className="relative rounded-3xl overflow-hidden bg-slate-900 group shadow-md border border-slate-200">
                 <div className="relative h-64 sm:h-80 w-full overflow-hidden">
                   {featuredNews[currentFeaturedIndex]?.image ? (
-                    <img 
-                      src={featuredNews[currentFeaturedIndex].image} 
-                      alt="" 
-                      className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105"
-                    />
+                    <Link
+                      to={`/news/${featuredNews[currentFeaturedIndex].id}`}
+                      onClick={(e) => handleNewsLinkClick(e, featuredNews[currentFeaturedIndex])}
+                      tabIndex={-1}
+                      aria-hidden="true"
+                      className="block w-full h-full"
+                    >
+                      <img 
+                        src={featuredNews[currentFeaturedIndex].image} 
+                        alt={featuredNews[currentFeaturedIndex]?.title || "প্রধান সংবাদ"} 
+                        className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105"
+                      />
+                    </Link>
                   ) : (
                     <div className="w-full h-full bg-emerald-950 flex items-center justify-center">
                       <Newspaper className="w-16 h-16 text-emerald-700" />
                     </div>
                   )}
-                  <div className="absolute inset-0 bg-gradient-to-t from-slate-950 via-slate-950/50 to-transparent" />
+                  <div className="absolute inset-0 bg-gradient-to-t from-slate-950 via-slate-950/50 to-transparent pointer-events-none" />
                   
                   {/* Badge */}
-                  <div className="absolute top-4 left-4 px-3 py-1 bg-emerald-600 text-white text-[11px] font-black rounded-lg shadow-md uppercase tracking-wider">
+                  <div className="absolute top-4 left-4 px-3 py-1 bg-emerald-600 text-white text-[11px] font-black rounded-lg shadow-md uppercase tracking-wider pointer-events-none">
                     প্রধান সংবাদ
                   </div>
 
@@ -904,15 +1029,18 @@ const News: React.FC = () => {
                   )}
 
                   {/* Content Overlay */}
-                  <div className="absolute bottom-0 inset-x-0 p-5 sm:p-6 text-white space-y-2">
+                  <div className="absolute bottom-0 inset-x-0 p-5 sm:p-6 text-white space-y-2 pointer-events-auto">
                     <span className="inline-block text-[11px] font-bold text-emerald-400 bg-emerald-950/60 px-2.5 py-0.5 rounded-full border border-emerald-800/60">
                       {featuredNews[currentFeaturedIndex]?.category}
                     </span>
-                    <h2 
-                      onClick={() => setSelectedNews(featuredNews[currentFeaturedIndex])}
-                      className="text-lg sm:text-xl font-black text-white leading-snug hover:text-emerald-300 transition-colors cursor-pointer line-clamp-2"
-                    >
-                      {featuredNews[currentFeaturedIndex]?.title}
+                    <h2 className="text-lg sm:text-xl font-black text-white leading-snug line-clamp-2">
+                      <Link
+                        to={`/news/${featuredNews[currentFeaturedIndex]?.id}`}
+                        onClick={(e) => handleNewsLinkClick(e, featuredNews[currentFeaturedIndex])}
+                        className="hover:text-emerald-300 hover:underline focus:outline-none transition-colors"
+                      >
+                        {featuredNews[currentFeaturedIndex]?.title}
+                      </Link>
                     </h2>
                     <p className="text-xs text-slate-300 line-clamp-2 leading-relaxed">
                       {(() => {
@@ -935,13 +1063,14 @@ const News: React.FC = () => {
                         </span>
                       </div>
 
-                      <button
-                        onClick={() => setSelectedNews(featuredNews[currentFeaturedIndex])}
+                      <Link
+                        to={`/news/${featuredNews[currentFeaturedIndex]?.id}`}
+                        onClick={(e) => handleNewsLinkClick(e, featuredNews[currentFeaturedIndex])}
                         className="flex items-center gap-1 text-emerald-300 hover:text-white font-bold cursor-pointer transition-colors"
                       >
                         <span>সম্পূর্ণ পড়ুন</span>
                         <ChevronRight className="w-3.5 h-3.5" />
-                      </button>
+                      </Link>
                     </div>
                   </div>
                 </div>
@@ -1016,24 +1145,32 @@ const News: React.FC = () => {
                     return (
                       <article
                         key={item.id}
-                        onClick={() => setSelectedNews(item)}
+                        onClick={() => handleSelectNews(item)}
                         className="group bg-white rounded-3xl p-3.5 sm:p-4 border border-slate-200/80 hover:border-emerald-300 hover:shadow-md transition-all duration-200 cursor-pointer flex flex-col sm:flex-row gap-3.5 sm:gap-4"
                       >
                         {/* Thumbnail */}
                         <div className="relative w-full sm:w-44 h-40 sm:h-32 rounded-2xl overflow-hidden bg-slate-100 shrink-0 border border-slate-100">
-                          {item.image ? (
-                            <img
-                              src={item.image}
-                              alt=""
-                              className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
-                              loading="lazy"
-                            />
-                          ) : (
-                            <div className="w-full h-full flex items-center justify-center text-slate-400 bg-slate-100">
-                              <Newspaper className="w-8 h-8" />
-                            </div>
-                          )}
-                          <span className="absolute top-2 left-2 px-2 py-0.5 bg-emerald-700/90 backdrop-blur-sm text-white text-[10px] font-black rounded-lg shadow-sm">
+                          <Link
+                            to={`/news/${item.id}`}
+                            onClick={(e) => handleNewsLinkClick(e, item)}
+                            tabIndex={-1}
+                            aria-hidden="true"
+                            className="block w-full h-full"
+                          >
+                            {item.image ? (
+                              <img
+                                src={item.image}
+                                alt={item.title || "সংবাদের ছবি"}
+                                className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
+                                loading="lazy"
+                              />
+                            ) : (
+                              <div className="w-full h-full flex items-center justify-center text-slate-400 bg-slate-100">
+                                <Newspaper className="w-8 h-8" />
+                              </div>
+                            )}
+                          </Link>
+                          <span className="absolute top-2 left-2 px-2 py-0.5 bg-emerald-700/90 backdrop-blur-sm text-white text-[10px] font-black rounded-lg shadow-sm pointer-events-none">
                             {item.category}
                           </span>
                         </div>
@@ -1075,7 +1212,13 @@ const News: React.FC = () => {
                             </div>
 
                             <h4 className="font-black text-sm sm:text-base text-slate-900 group-hover:text-emerald-700 transition-colors leading-snug line-clamp-2">
-                              {item.title}
+                              <Link
+                                to={`/news/${item.id}`}
+                                onClick={(e) => handleNewsLinkClick(e, item)}
+                                className="hover:underline focus:outline-none"
+                              >
+                                {item.title}
+                              </Link>
                             </h4>
 
                             <p className="text-xs text-slate-500 line-clamp-2 leading-relaxed">
@@ -1177,21 +1320,39 @@ const News: React.FC = () => {
                 {popularNews.map((item, idx) => (
                   <div
                     key={item.id}
-                    onClick={() => setSelectedNews(item)}
+                    onClick={() => handleSelectNews(item)}
                     className="flex gap-3 group cursor-pointer"
                   >
                     <div className="w-14 h-14 rounded-2xl overflow-hidden bg-slate-100 shrink-0 border border-slate-100">
-                      {item.image ? (
-                        <img src={item.image} alt="" className="w-full h-full object-cover group-hover:scale-105 transition-transform" />
-                      ) : (
-                        <div className="w-full h-full flex items-center justify-center text-slate-400">
-                          <Newspaper className="w-5 h-5" />
-                        </div>
-                      )}
+                      <Link
+                        to={`/news/${item.id}`}
+                        onClick={(e) => handleNewsLinkClick(e, item)}
+                        tabIndex={-1}
+                        aria-hidden="true"
+                        className="block w-full h-full"
+                      >
+                        {item.image ? (
+                          <img 
+                            src={item.image} 
+                            alt={item.title || "সংবাদের ছবি"} 
+                            className="w-full h-full object-cover group-hover:scale-105 transition-transform" 
+                          />
+                        ) : (
+                          <div className="w-full h-full flex items-center justify-center text-slate-400">
+                            <Newspaper className="w-5 h-5" />
+                          </div>
+                        )}
+                      </Link>
                     </div>
                     <div className="flex-1 min-w-0">
                       <h5 className="text-xs font-black text-slate-800 group-hover:text-emerald-700 transition-colors line-clamp-2 leading-snug">
-                        {item.title}
+                        <Link
+                          to={`/news/${item.id}`}
+                          onClick={(e) => handleNewsLinkClick(e, item)}
+                          className="hover:underline focus:outline-none"
+                        >
+                          {item.title}
+                        </Link>
                       </h5>
                       <span className="text-[10px] font-bold text-slate-400 mt-1 flex items-center gap-1">
                         <Eye className="w-3 h-3" />
@@ -1408,7 +1569,7 @@ const News: React.FC = () => {
               <div className="flex items-center gap-2 sm:gap-3 min-w-0">
                 <button
                   type="button"
-                  onClick={() => setSelectedNews(null)}
+                  onClick={handleCloseNews}
                   className="p-2 -ml-1 rounded-full bg-slate-100 hover:bg-slate-200 text-slate-800 transition-colors cursor-pointer flex items-center gap-1 active:scale-95"
                   title="ফিরে যান"
                   aria-label="ফিরে যান"
@@ -1490,7 +1651,7 @@ const News: React.FC = () => {
 
                 <button
                   type="button"
-                  onClick={() => setSelectedNews(null)}
+                  onClick={handleCloseNews}
                   className="p-2 rounded-full bg-slate-100 text-slate-600 hover:bg-slate-200 hover:text-slate-900 transition-all cursor-pointer active:scale-95 ml-0.5"
                   aria-label="বন্ধ করুন"
                   title="বন্ধ করুন"
@@ -1582,7 +1743,7 @@ const News: React.FC = () => {
                     <button
                       type="button"
                       onClick={() => {
-                        const url = `https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(window.location.origin + '/news?id=' + selectedNews.id)}`;
+                        const url = `https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(window.location.origin + '/news/' + selectedNews.id)}`;
                         window.open(url, '_blank');
                       }}
                       className="p-2.5 rounded-xl sm:rounded-2xl bg-blue-50 text-blue-600 hover:bg-blue-100 transition-colors cursor-pointer"
@@ -1593,7 +1754,7 @@ const News: React.FC = () => {
                     <button
                       type="button"
                       onClick={() => {
-                        const text = `${selectedNews.title}\n${window.location.origin}/news?id=${selectedNews.id}`;
+                        const text = `${selectedNews.title}\n${window.location.origin}/news/${selectedNews.id}`;
                         window.open(`https://api.whatsapp.com/send?text=${encodeURIComponent(text)}`, '_blank');
                       }}
                       className="p-2.5 rounded-xl sm:rounded-2xl bg-emerald-50 text-emerald-600 hover:bg-emerald-100 transition-colors cursor-pointer"

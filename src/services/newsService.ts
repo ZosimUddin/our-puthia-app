@@ -326,46 +326,67 @@ export const onNewsSnapshot = (
 };
 
 /**
- * Real-time subscriber for Single News Item
+ * Real-time subscriber for Single News Item (Strictly Published Guarded)
  */
 export const onSingleNewsSnapshot = (
   newsId: string,
   callback: (item: NewsItem | null) => void
 ): (() => void) => {
   if (!newsId) return () => {};
-  const docRef = doc(db, NEWS_COLLECTION, newsId);
-  return onSnapshot(docRef, (docSnap) => {
-    if (docSnap.exists()) {
-      const data = docSnap.data();
-      callback({
-        id: docSnap.id,
-        title: data.title || "",
-        category: data.category || "অন্যান্য",
-        content: data.content || "",
-        summary: data.summary || "",
-        image: data.image || "",
-        date: data.date || "",
-        time: data.time || "",
-        views: Number(data.views) || 0,
-        likesCount: Number(data.likesCount) || 0,
-        likes: Array.isArray(data.likes) ? data.likes : [],
-        commentsCount: Number(data.commentsCount) || 0,
-        sharesCount: Number(data.sharesCount) || 0,
-        featured: Boolean(data.featured),
-        status: data.status || "published",
-        authorName: data.authorName || "আমাদের পুঠিয়া প্রতিনিধি",
-        authorRole: data.authorRole || "স্টাফ রিপোর্টার",
-        reporterLocation: data.reporterLocation || "পুঠিয়া, রাজশাহী",
-        tags: Array.isArray(data.tags) ? data.tags : [],
-        createdAt: data.createdAt,
-        updatedAt: data.updatedAt,
-        createdBy: data.createdBy,
-        verified: Boolean(data.verified)
-      });
-    } else {
-      callback(null);
-    }
-  });
+  try {
+    const docRef = doc(db, NEWS_COLLECTION, newsId);
+    return onSnapshot(
+      docRef,
+      (docSnap) => {
+        if (docSnap.exists()) {
+          const data = docSnap.data();
+          const docStatus = data.status || "published";
+
+          // Secure Publication Guard: Only published articles can be retrieved for reader
+          if (docStatus !== "published") {
+            callback(null);
+            return;
+          }
+
+          callback({
+            id: docSnap.id,
+            title: data.title || "",
+            category: data.category || "অন্যান্য",
+            content: data.content || "",
+            summary: data.summary || "",
+            image: data.image || "",
+            date: data.date || "",
+            time: data.time || "",
+            views: Number(data.views) || 0,
+            likesCount: Number(data.likesCount) || 0,
+            likes: Array.isArray(data.likes) ? data.likes : [],
+            commentsCount: Number(data.commentsCount) || 0,
+            sharesCount: Number(data.sharesCount) || 0,
+            featured: Boolean(data.featured),
+            status: "published",
+            authorName: data.authorName || "আমাদের পুঠিয়া প্রতিনিধি",
+            authorRole: data.authorRole || "স্টাফ রিপোর্টার",
+            reporterLocation: data.reporterLocation || "পুঠিয়া, রাজশাহী",
+            tags: Array.isArray(data.tags) ? data.tags : [],
+            createdAt: data.createdAt,
+            updatedAt: data.updatedAt,
+            createdBy: data.createdBy,
+            verified: Boolean(data.verified)
+          });
+        } else {
+          callback(null);
+        }
+      },
+      (error) => {
+        console.error("Firestore onSingleNewsSnapshot error:", error);
+        callback(null);
+      }
+    );
+  } catch (err) {
+    console.error("Error setting up onSingleNewsSnapshot:", err);
+    callback(null);
+    return () => {};
+  }
 };
 
 /**

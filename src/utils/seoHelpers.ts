@@ -1,6 +1,8 @@
 import { ServiceConfig, SERVICES_CONFIG } from '../config/servicesConfig';
+import { extractPlainText } from './sanitizeHtml';
 
-const SITE_URL = typeof window !== 'undefined' ? window.location.origin : 'https://amaderputhia.gov.bd';
+const PRIMARY_DOMAIN = 'https://our-puthia-app.vercel.app';
+const SITE_URL = typeof window !== 'undefined' ? window.location.origin : PRIMARY_DOMAIN;
 
 /**
  * Generate dynamic structured data (JSON-LD) for a service directory page (all 60 services)
@@ -217,4 +219,196 @@ export const generateXmlSitemapString = () => {
         http://www.sitemaps.org/schemas/sitemap/0.9/sitemap.xsd">
 ${xmlEntries}
 </urlset>`;
+};
+
+/**
+ * Safely converts diverse timestamp formats (Firestore Timestamp, seconds object, ISO string, Unix ms)
+ * to a strictly validated ISO 8601 string.
+ *
+ * Rules:
+ * - Returns undefined if timestamp is missing, null, undefined, or empty.
+ * - Does NOT fallback to new Date().toISOString() when timestamp is absent.
+ * - Does NOT attempt to guess or convert localized Bengali human-readable strings (e.g. "২ নভেম্বর ২০২৬").
+ * - Guards against Invalid Date and RangeError.
+ * - Validates year bounds (2000 - 2100).
+ */
+export const toSafeIsoDate = (raw: any): string | undefined => {
+  if (raw === null || raw === undefined || raw === '') {
+    return undefined;
+  }
+
+  try {
+    let d: Date | null = null;
+
+    // 1. Firestore Timestamp instance (client or admin SDK with toDate method)
+    if (typeof raw === 'object' && typeof raw.toDate === 'function') {
+      const res = raw.toDate();
+      if (res instanceof Date && !isNaN(res.getTime())) {
+        d = res;
+      }
+    }
+    // 2. Serialized Firestore timestamp object ({ seconds } or { _seconds })
+    else if (typeof raw === 'object' && raw !== null) {
+      const secs = raw.seconds ?? raw._seconds;
+      if (typeof secs === 'number' && !isNaN(secs) && isFinite(secs)) {
+        const nanos = raw.nanoseconds ?? raw._nanoseconds ?? 0;
+        const millis = secs * 1000 + Math.floor(nanos / 1000000);
+        const res = new Date(millis);
+        if (!isNaN(res.getTime())) {
+          d = res;
+        }
+      }
+    }
+    // 3. Numeric Unix timestamp
+    else if (typeof raw === 'number' && !isNaN(raw) && isFinite(raw)) {
+      // Milliseconds (between 2000 and 2100: ~946684800000 to ~4102444800000)
+      if (raw >= 946684800000 && raw <= 4102444800000) {
+        const res = new Date(raw);
+        if (!isNaN(res.getTime())) d = res;
+      } else if (raw >= 946684800 && raw <= 4102444800) {
+        // Seconds
+        const res = new Date(raw * 1000);
+        if (!isNaN(res.getTime())) d = res;
+      }
+    }
+    // 4. String format
+    else if (typeof raw === 'string') {
+      const trimmed = raw.trim();
+      // Strictly reject Bengali characters, names, or non-ISO human-readable strings
+      if (/[\u0980-\u09FF]/.test(trimmed)) {
+        return undefined;
+      }
+      // Must be a valid ISO 8601 date or date-time pattern
+      const isoPattern = /^\d{4}-\d{2}-\d{2}(?:[T\s]\d{2}:\d{2}(?::\d{2}(?:\.\d+)?)?(?:Z|[+-]\d{2}:?\d{2})?)?$/;
+      if (!isoPattern.test(trimmed)) {
+        return undefined;
+      }
+
+      const dateMatch = trimmed.match(/^(\d{4})-(\d{2})-(\d{2})/);
+      if (dateMatch) {
+        const year = parseInt(dateMatch[1], 10);
+        const month = parseInt(dateMatch[2], 10);
+        const day = parseInt(dateMatch[3], 10);
+
+        if (month >= 1 && month <= 12 && day >= 1 && day <= 31) {
+          // Strictly verify calendar date without rollover (e.g. rejects Feb 29 on non-leap years, Feb 31, April 31)
+          const utcCheck = new Date(Date.UTC(year, month - 1, day));
+          if (
+            utcCheck.getUTCFullYear() === year &&
+            utcCheck.getUTCMonth() === month - 1 &&
+            utcCheck.getUTCDate() === day
+          ) {
+            const res = new Date(trimmed);
+            if (!isNaN(res.getTime())) {
+              d = res;
+            }
+          }
+        }
+      }
+    }
+
+    if (d && !isNaN(d.getTime())) {
+      const year = d.getUTCFullYear();
+      if (year >= 2000 && year <= 2100) {
+        return d.toISOString();
+      }
+    }
+  } catch {
+    // Return undefined on any parse/range failure
+  }
+
+  return undefined;
+};
+
+export interface NewsArticleSchemaData {
+  id: string;
+  title: string;
+  summary?: string;
+  content?: string;
+  image?: string;
+  createdAt?: any;
+  authorName?: string;
+  status?: string;
+}
+
+/**
+ * Builds rich, compliant NewsArticle Schema.org structured data.
+ *
+ * Rules:
+ * - Includes @context, @type: NewsArticle, mainEntityOfPage, headline, publisher.
+ * - Extracts clean plain text description without HTML.
+ * - Validates news image; excludes default svg logos or invalid URLs.
+ * - Includes datePublished only when a verified ISO timestamp exists from createdAt.
+ * - Omits dateModified since updatedAt changes during like/view actions.
+ * - Includes author only when authorName is a non-empty, reliable string.
+ * - Includes verified publisher logo (logo.png) located on the primary domain.
+ */
+export const buildNewsArticleSchema = (news: NewsArticleSchemaData) => {
+  const articleUrl = `${PRIMARY_DOMAIN}/news/${news.id}`;
+
+  const cleanHeadline = (news.title || '').trim();
+  const rawDescription = extractPlainText(news.summary || news.content || '');
+  const cleanDescription = rawDescription.slice(0, 160).trim();
+
+  // Validate Image:
+  // Must be non-empty, must NOT be default logo.svg, must be a valid URL string
+  let validImageUrl: string | undefined = undefined;
+  if (news.image && typeof news.image === 'string') {
+    const trimmedImg = news.image.trim().replace(/^['"]|['"]$/g, '');
+    if (
+      trimmedImg &&
+      !trimmedImg.toLowerCase().includes('logo.svg') &&
+      !trimmedImg.toLowerCase().includes('.svg') &&
+      (trimmedImg.startsWith('http://') ||
+       trimmedImg.startsWith('https://') ||
+       trimmedImg.startsWith('/assets/') ||
+       trimmedImg.startsWith('/'))
+    ) {
+      validImageUrl = trimmedImg.startsWith('http') ? trimmedImg : `${PRIMARY_DOMAIN}${trimmedImg}`;
+    }
+  }
+
+  const safePublishedDate = toSafeIsoDate(news.createdAt);
+
+  const schema: Record<string, any> = {
+    '@context': 'https://schema.org',
+    '@type': 'NewsArticle',
+    'mainEntityOfPage': {
+      '@type': 'WebPage',
+      '@id': articleUrl,
+    },
+    'headline': cleanHeadline,
+  };
+
+  if (cleanDescription) {
+    schema['description'] = cleanDescription;
+  }
+
+  if (validImageUrl) {
+    schema['image'] = [validImageUrl];
+  }
+
+  if (safePublishedDate) {
+    schema['datePublished'] = safePublishedDate;
+  }
+
+  // Author: only include if authorName is non-empty and reliable
+  if (news.authorName && typeof news.authorName === 'string' && news.authorName.trim()) {
+    schema['author'] = {
+      '@type': 'Person',
+      'name': news.authorName.trim(),
+    };
+  }
+
+  // Publisher: Verified Organization with actual existing raster logo (logo.png)
+  schema['publisher'] = {
+    '@type': 'Organization',
+    'name': 'আমাদের পুঠিয়া',
+    'logo': {
+      '@type': 'ImageObject',
+      'url': `${PRIMARY_DOMAIN}/logo.png`,
+    },
+  };
+
+  return schema;
 };

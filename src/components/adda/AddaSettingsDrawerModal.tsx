@@ -36,6 +36,12 @@ import { getCleanAvatar, getUserInitial } from "../../utils/avatarUtils";
 import { doc, updateDoc } from "firebase/firestore";
 import { db } from "../../firebase";
 import { toast } from "sonner";
+import { 
+  getRealStorageMetrics, 
+  clearRealVideoCache, 
+  clearRealImageCache, 
+  clearRealAllCache 
+} from "../../utils/realStorageUtils";
 
 interface AddaSettingsDrawerModalProps {
   isOpen: boolean;
@@ -57,9 +63,26 @@ export const AddaSettingsDrawerModal: React.FC<AddaSettingsDrawerModalProps> = (
   // Theme & Language States
   const [themeMode, setThemeMode] = useState<ThemeMode>(getSavedTheme);
 
+  // Storage & Cache States
+  const [videoCount, setVideoCount] = useState(0);
+  const [videoCacheText, setVideoCacheText] = useState("0 MB");
+  const [imageCount, setImageCount] = useState(0);
+  const [imageCacheText, setImageCacheText] = useState("0 MB");
+  const [totalUsedMbText, setTotalUsedMbText] = useState("0 MB");
+  const [memoryPercent, setMemoryPercent] = useState(1);
+  const [isDeletingAccountModal, setIsDeletingAccountModal] = useState(false);
+
   useEffect(() => {
     if (isOpen) {
       setThemeMode(getSavedTheme());
+      getRealStorageMetrics().then((metrics) => {
+        setVideoCount(metrics.videoCount);
+        setVideoCacheText(metrics.videoCacheMb);
+        setImageCount(metrics.imageCount);
+        setImageCacheText(metrics.imageCacheMb);
+        setTotalUsedMbText(metrics.totalUsedMb);
+        setMemoryPercent(metrics.usagePercent);
+      });
     }
   }, [isOpen]);
 
@@ -75,16 +98,6 @@ export const AddaSettingsDrawerModal: React.FC<AddaSettingsDrawerModalProps> = (
     setLanguage(nextLang);
     toast.success(nextLang === "bn" ? "🌐 ভাষা পরিবর্তন: বাংলা" : "🌐 Language switched to English");
   };
-
-  // Storage & Cache States
-  const [videoCount, setVideoCount] = useState(61);
-  const [videoCacheMb, setVideoCacheMb] = useState(101.9);
-  const [imageCount, setImageCount] = useState(221);
-  const [imageCacheMb, setImageCacheMb] = useState(10.0);
-  const [isDeletingAccountModal, setIsDeletingAccountModal] = useState(false);
-
-  const totalUsedMb = (videoCacheMb + imageCacheMb).toFixed(1);
-  const memoryPercent = Math.min(100, Math.round((Number(totalUsedMb) / 500) * 100));
 
   const cleanAvatar = getCleanAvatar(userProfile, user);
   const userInitial = getUserInitial(userProfile, user, 'প');
@@ -121,23 +134,36 @@ export const AddaSettingsDrawerModal: React.FC<AddaSettingsDrawerModalProps> = (
   };
 
   // Cache Clear Handlers
-  const handleClearVideoCache = () => {
-    setVideoCacheMb(0);
-    setVideoCount(0);
+  const handleClearVideoCache = async () => {
+    const metrics = await clearRealVideoCache();
+    setVideoCount(metrics.videoCount);
+    setVideoCacheText(metrics.videoCacheMb);
+    setImageCount(metrics.imageCount);
+    setImageCacheText(metrics.imageCacheMb);
+    setTotalUsedMbText(metrics.totalUsedMb);
+    setMemoryPercent(metrics.usagePercent);
     toast.success("📹 ভিডিও ক্যাশ সফলভাবে মুছে ফেলা হয়েছে!");
   };
 
-  const handleClearImageCache = () => {
-    setImageCacheMb(0);
-    setImageCount(0);
+  const handleClearImageCache = async () => {
+    const metrics = await clearRealImageCache();
+    setVideoCount(metrics.videoCount);
+    setVideoCacheText(metrics.videoCacheMb);
+    setImageCount(metrics.imageCount);
+    setImageCacheText(metrics.imageCacheMb);
+    setTotalUsedMbText(metrics.totalUsedMb);
+    setMemoryPercent(metrics.usagePercent);
     toast.success("🖼️ ছবি ক্যাশ সফলভাবে মুছে ফেলা হয়েছে!");
   };
 
-  const handleClearAllCache = () => {
-    setVideoCacheMb(0);
-    setVideoCount(0);
-    setImageCacheMb(0);
-    setImageCount(0);
+  const handleClearAllCache = async () => {
+    const metrics = await clearRealAllCache();
+    setVideoCount(metrics.videoCount);
+    setVideoCacheText(metrics.videoCacheMb);
+    setImageCount(metrics.imageCount);
+    setImageCacheText(metrics.imageCacheMb);
+    setTotalUsedMbText(metrics.totalUsedMb);
+    setMemoryPercent(metrics.usagePercent);
     toast.success("🎉 ডিভাইসের সকল ক্যাশ মেমরি সফলভাবে খালি করা হয়েছে!");
   };
 
@@ -461,7 +487,7 @@ export const AddaSettingsDrawerModal: React.FC<AddaSettingsDrawerModalProps> = (
                       <div>
                         <h4 className="text-xs font-black text-slate-900">মেমরি ব্যবহার</h4>
                         <p className="text-[11px] text-slate-500 font-medium">
-                          ৫০০ মেগাবাইটের মধ্যে {totalUsedMb} MB ব্যবহৃত
+                          ৫০০ মেগাবাইটের মধ্যে {totalUsedMbText} ব্যবহৃত
                         </p>
                       </div>
                     </div>
@@ -482,7 +508,7 @@ export const AddaSettingsDrawerModal: React.FC<AddaSettingsDrawerModalProps> = (
                     <Video size={18} className="text-emerald-700 shrink-0" />
                     <div>
                       <h4 className="text-xs font-black text-slate-900">ভিডিও ক্যাশ</h4>
-                      <p className="text-[11px] text-slate-500">{videoCount}টি ভিডিও • {videoCacheMb.toFixed(1)} MB</p>
+                      <p className="text-[11px] text-slate-500">{videoCount}টি ভিডিও • {videoCacheText}</p>
                     </div>
                   </div>
 
@@ -501,7 +527,7 @@ export const AddaSettingsDrawerModal: React.FC<AddaSettingsDrawerModalProps> = (
                     <ImageIcon size={18} className="text-emerald-700 shrink-0" />
                     <div>
                       <h4 className="text-xs font-black text-slate-900">ছবি ক্যাশ</h4>
-                      <p className="text-[11px] text-slate-500">{imageCount}টি ছবি • {imageCacheMb.toFixed(1)} MB</p>
+                      <p className="text-[11px] text-slate-500">{imageCount}টি ছবি • {imageCacheText}</p>
                     </div>
                   </div>
 
@@ -699,7 +725,7 @@ export const AddaSettingsDrawerModal: React.FC<AddaSettingsDrawerModalProps> = (
 
                 <button
                   type="button"
-                  onClick={() => setIsDeletingAccountModal(true)}
+                  onClick={() => handleNavigate("/delete-account")}
                   className="text-xs font-bold text-slate-500 hover:text-rose-600 transition cursor-pointer flex items-center justify-center gap-1.5 mx-auto border-0 bg-transparent py-1"
                 >
                   <Trash2 size={14} />

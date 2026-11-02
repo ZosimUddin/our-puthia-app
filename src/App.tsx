@@ -145,6 +145,7 @@ const MediaGallery = lazyWithRetry(() => import("./pages/modules/MediaGallery"))
 const Hotels = lazyWithRetry(() => import("./pages/modules/Hotels"));
 const Business = lazyWithRetry(() => import("./pages/modules/Business"));
 const BusinessDashboard = lazyWithRetry(() => import("./pages/modules/BusinessDashboard"));
+const DeleteAccountPage = lazyWithRetry(() => import("./pages/DeleteAccountPage"));
 
 // Admin Pages
 import AdminRoute from "./components/admin/AdminRoute";
@@ -554,6 +555,7 @@ const MainAppContent = () => {
                 <Route path="/mistris/:slug" element={<MistriPage />} />
                 <Route path="/sports" element={<SportsPage />} />
                 <Route path="/news" element={<News />} />
+                <Route path="/news/:id" element={<News />} />
                 <Route path="/mela" element={<MelaPage />} />
                 <Route path="/services/birth-reg" element={<BirthRegistrationPage />} />
                 <Route path="/services/nid" element={<NIDPage />} />
@@ -858,6 +860,7 @@ const MainAppContent = () => {
                 <Route path="/football/results" element={<FootballPublicMatches />} />
                 <Route path="/football/posters" element={<FootballPublicPosters />} />
                 <Route path="/football/posters/:posterId" element={<FootballPublicPosters />} />
+                <Route path="/delete-account" element={<DeleteAccountPage />} />
 
                 {/* Admin Routes */}
                 <Route path="/admin" element={<AdminRoute><AdminLayout /></AdminRoute>}>

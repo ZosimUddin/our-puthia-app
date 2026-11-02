@@ -6,7 +6,7 @@ export const getSavedTheme = (): ThemeMode => {
   if (saved === "dark" || saved === "light" || saved === "system") {
     return saved;
   }
-  return "system";
+  return "system"; // Default to system
 };
 
 export const applyTheme = (mode: ThemeMode) => {
@@ -21,9 +21,9 @@ export const applyTheme = (mode: ThemeMode) => {
   } else if (mode === "light") {
     root.classList.remove("dark");
   } else {
-    // system default mode
-    const prefersDark = window.matchMedia && window.matchMedia("(prefers-color-scheme: dark)").matches;
-    if (prefersDark) {
+    // System mode
+    const isDark = window.matchMedia("(prefers-color-scheme: dark)").matches;
+    if (isDark) {
       root.classList.add("dark");
     } else {
       root.classList.remove("dark");
@@ -35,20 +35,16 @@ export const applyTheme = (mode: ThemeMode) => {
 };
 
 /**
- * Initialize theme listener for system color scheme changes if mode is 'system'
+ * Initialize theme listener for color scheme changes
  */
 export const initThemeListener = () => {
   if (typeof window === "undefined" || !window.matchMedia) return;
   
   const mediaQuery = window.matchMedia("(prefers-color-scheme: dark)");
-  const handleMediaChange = (e: MediaQueryListEvent) => {
+  const handleMediaChange = () => {
     const currentMode = getSavedTheme();
     if (currentMode === "system") {
-      if (e.matches) {
-        document.documentElement.classList.add("dark");
-      } else {
-        document.documentElement.classList.remove("dark");
-      }
+      applyTheme("system");
     }
   };
 
@@ -57,4 +53,7 @@ export const initThemeListener = () => {
   } else {
     mediaQuery.addListener(handleMediaChange);
   }
+  
+  // Initial apply
+  applyTheme(getSavedTheme());
 };
