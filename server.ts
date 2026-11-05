@@ -5,6 +5,7 @@ import compression from "compression";
 import { createServer as createViteServer } from "vite";
 import { GoogleGenAI, Type } from "@google/genai";
 import dotenv from "dotenv";
+import ogPreviewHandler from "./api/og-preview.ts";
 
 dotenv.config();
 
@@ -173,6 +174,20 @@ async function startServer() {
     } else {
       res.redirect(302, "https://github.com/ZosimUddin/our-puthia-app/releases/download/v1.0.0/app-debug.apk");
     }
+  });
+
+  // Social Media SEO Dynamic Open Graph & Twitter Card Preview Endpoint
+  app.get("/api/og-preview", (req, res) => ogPreviewHandler(req, res));
+
+  // Social Crawler Rewrite Route for /news/:id (mirrors Vercel rewrite configuration)
+  const SOCIAL_CRAWLER_REGEX = /facebookexternalhit|Facebot|WhatsApp|Twitterbot|TelegramBot|LinkedInBot|Discordbot|SkypeUriPreview/i;
+  app.get("/news/:id", (req, res, next) => {
+    const userAgent = (req.headers["user-agent"] as string) || "";
+    if (SOCIAL_CRAWLER_REGEX.test(userAgent)) {
+      req.query.id = req.params.id;
+      return ogPreviewHandler(req, res);
+    }
+    next();
   });
 
   // Production-Ready FCM Dispatch API Endpoint
