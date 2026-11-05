@@ -16,7 +16,7 @@ export interface SEOProps {
 const FALLBACK_TITLE = "আমাদের পুঠিয়া – ঐতিহ্য থেকে ডিজিটাল ভবিষ্যতের পথে";
 const FALLBACK_DESC = "পুঠিয়ার মানুষ, ইতিহাস, ঐতিহ্য, তথ্য ও প্রয়োজনীয় সেবাকে এক প্ল্যাটফর্মে যুক্ত করার ডিজিটাল উদ্যোগ।";
 const FALLBACK_KEYWORDS = "আমাদের পুঠিয়া, পুঠিয়া ডায়েরি, পুঠিয়া রাজবাড়ী, পুঠিয়া মন্দির কমপ্লেক্স, পুঠিয়া রাজশাহী, Puthia Rajbari, Puthia Upazila, Puthia Doctors, পুঠিয়া হাসপাতাল, বানেশ্বর বাজার, রাজশাহী পর্যটন";
-const FALLBACK_IMAGE = "https://our-puthia-app.vercel.app/puthia_official_full_logo.jpg";
+const FALLBACK_IMAGE = "https://our-puthia-app.vercel.app/puthia_og_banner.jpg";
 const PRIMARY_DOMAIN = "our-puthia-app.vercel.app";
 const SITE_URL = "https://our-puthia-app.vercel.app";
 
