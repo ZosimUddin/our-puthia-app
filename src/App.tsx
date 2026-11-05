@@ -22,7 +22,7 @@ function lazyWithRetry<T extends React.ComponentType<any>>(
 ) {
   return lazy(async () => {
     const pageKey = "page_reloaded_for_chunk_error";
-    const attempts = 3;
+    const attempts = 4;
     for (let i = 0; i < attempts; i++) {
       try {
         const res = await factory();
@@ -31,7 +31,7 @@ function lazyWithRetry<T extends React.ComponentType<any>>(
       } catch (err) {
         if (i < attempts - 1) {
           console.warn(`Dynamic import retry (${i + 1}/${attempts - 1})...`, err);
-          await new Promise((r) => setTimeout(r, (i + 1) * 300));
+          await new Promise((r) => setTimeout(r, (i + 1) * 500));
         } else {
           console.error("Dynamic import final failure:", err);
           const hasReloaded = sessionStorage.getItem(pageKey);
@@ -65,9 +65,10 @@ function lazyWithRetry<T extends React.ComponentType<any>>(
   });
 }
 
-// Direct imports for core admin modules to prevent dynamic import fetch failures
+// Direct imports for core modules to prevent dynamic import fetch failures
 import NewsManagement from "./pages/admin/NewsManagement";
 import FooterSettingsPage from "./pages/admin/FooterSettingsPage";
+import DiscussionPage from "./pages/modules/DiscussionPage";
 
 // Lazy load components for optimization
 const MemberCardPage = lazyWithRetry(() => import("./pages/modules/MemberCardPage"));
@@ -273,7 +274,6 @@ const InternetServicePage = lazyWithRetry(() => import("./pages/modules/Internet
 const LawyersPage = lazyWithRetry(() => import("./pages/modules/LawyersPage"));
 const MistriPage = lazyWithRetry(() => import("./pages/modules/MistriPage"));
 const LostAndFoundPage = lazyWithRetry(() => import("./pages/modules/LostAndFoundPage"));
-const DiscussionPage = lazyWithRetry(() => import("./pages/modules/DiscussionPage"));
 const FriendsPage = lazyWithRetry(() => import("./pages/modules/FriendsPage"));
 const MemoriesPage = lazyWithRetry(() => import("./pages/modules/MemoriesPage"));
 const MessagesPage = lazyWithRetry(() => import("./pages/modules/Messages"));
