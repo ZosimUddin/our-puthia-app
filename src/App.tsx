@@ -651,8 +651,8 @@ const MainAppContent = () => {
                 <Route path="/jobs" element={<Jobs />} />
                 <Route path="/training" element={<Training />} />
                 <Route path="/notice" element={<Notice />} />
-                <Route path="/notices" element={<Notice />} />
-                <Route path="/notice-board" element={<Notice />} />
+                <Route path="/notices" element={<Navigate to="/notice" replace />} />
+                <Route path="/notice-board" element={<Navigate to="/notice" replace />} />
                 <Route path="/notifications" element={<NotificationCenterPage />} />
                 <Route path="/notification-center" element={<NotificationCenterPage />} />
                 <Route path="/bookmarks" element={<BookmarksPage />} />

@@ -370,45 +370,73 @@ export const buildNewsArticleSchema = (news: NewsArticleSchemaData) => {
 
   const safePublishedDate = toSafeIsoDate(news.createdAt);
 
-  const schema: Record<string, any> = {
-    '@context': 'https://schema.org',
+  const articleEntity: Record<string, any> = {
     '@type': 'NewsArticle',
+    '@id': `${articleUrl}#article`,
+    'isPartOf': {
+      '@type': 'WebPage',
+      '@id': articleUrl,
+    },
     'mainEntityOfPage': {
       '@type': 'WebPage',
       '@id': articleUrl,
     },
     'headline': cleanHeadline,
+    'publisher': {
+      '@id': 'https://our-puthia-app.vercel.app/#organization',
+    },
   };
 
   if (cleanDescription) {
-    schema['description'] = cleanDescription;
+    articleEntity['description'] = cleanDescription;
   }
 
   if (validImageUrl) {
-    schema['image'] = [validImageUrl];
+    articleEntity['image'] = [validImageUrl];
   }
 
   if (safePublishedDate) {
-    schema['datePublished'] = safePublishedDate;
+    articleEntity['datePublished'] = safePublishedDate;
   }
 
   // Author: only include if authorName is non-empty and reliable
   if (news.authorName && typeof news.authorName === 'string' && news.authorName.trim()) {
-    schema['author'] = {
+    articleEntity['author'] = {
       '@type': 'Person',
       'name': news.authorName.trim(),
     };
   }
 
-  // Publisher: Verified Organization with actual existing raster logo (logo.png)
-  schema['publisher'] = {
-    '@type': 'Organization',
-    'name': 'আমাদের পুঠিয়া',
-    'logo': {
-      '@type': 'ImageObject',
-      'url': `${PRIMARY_DOMAIN}/logo.png`,
-    },
+  const breadcrumbEntity = {
+    '@type': 'BreadcrumbList',
+    '@id': `${articleUrl}#breadcrumb`,
+    'itemListElement': [
+      {
+        '@type': 'ListItem',
+        'position': 1,
+        'name': 'হোমপেজ',
+        'item': `${PRIMARY_DOMAIN}/`,
+      },
+      {
+        '@type': 'ListItem',
+        'position': 2,
+        'name': 'পুঠিয়া সংবাদ',
+        'item': `${PRIMARY_DOMAIN}/news`,
+      },
+      {
+        '@type': 'ListItem',
+        'position': 3,
+        'name': cleanHeadline || 'সংবাদ বিবরন',
+        'item': articleUrl,
+      },
+    ],
   };
 
-  return schema;
+  return {
+    '@context': 'https://schema.org',
+    '@graph': [
+      breadcrumbEntity,
+      articleEntity,
+    ],
+  };
 };

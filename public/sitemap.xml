@@ -14,6 +14,41 @@
     <changefreq>hourly</changefreq>
     <priority>0.9</priority>
   </url>
+  <!-- News Portal -->
+  <url>
+    <loc>https://our-puthia-app.vercel.app/news</loc>
+    <lastmod>2026-10-04</lastmod>
+    <changefreq>daily</changefreq>
+    <priority>0.9</priority>
+  </url>
+  <!-- Notices -->
+  <url>
+    <loc>https://our-puthia-app.vercel.app/notice</loc>
+    <lastmod>2026-10-04</lastmod>
+    <changefreq>daily</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <!-- Puthia History & Heritage Portal -->
+  <url>
+    <loc>https://our-puthia-app.vercel.app/history</loc>
+    <lastmod>2026-10-04</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <!-- Jobs & Employment -->
+  <url>
+    <loc>https://our-puthia-app.vercel.app/jobs</loc>
+    <lastmod>2026-10-04</lastmod>
+    <changefreq>daily</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <!-- Marketplace -->
+  <url>
+    <loc>https://our-puthia-app.vercel.app/marketplace</loc>
+    <lastmod>2026-10-04</lastmod>
+    <changefreq>daily</changefreq>
+    <priority>0.8</priority>
+  </url>
   <!-- Services Directory -->
   <url>
     <loc>https://our-puthia-app.vercel.app/services</loc>
@@ -49,7 +84,7 @@
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
   </url>
-  <!-- Puthia History & Rajbari -->
+  <!-- Service Directory History -->
   <url>
     <loc>https://our-puthia-app.vercel.app/service/history</loc>
     <lastmod>2026-10-04</lastmod>
@@ -61,13 +96,6 @@
     <loc>https://our-puthia-app.vercel.app/service/tourist-spots</loc>
     <lastmod>2026-10-04</lastmod>
     <changefreq>monthly</changefreq>
-    <priority>0.8</priority>
-  </url>
-  <!-- Notices -->
-  <url>
-    <loc>https://our-puthia-app.vercel.app/notices</loc>
-    <lastmod>2026-10-04</lastmod>
-    <changefreq>daily</changefreq>
     <priority>0.8</priority>
   </url>
   <!-- Market Prices -->

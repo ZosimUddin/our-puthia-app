@@ -20,6 +20,7 @@ import { requestAndSaveFcmToken } from '../../services/fcmTokenService';
 import Header from '../../components/home/Header';
 import Footer from '../../components/home/Footer';
 import BottomNavigation from '../../components/home/BottomNavigation';
+import SEO from '../../components/SEO';
 
 const toBanglaNumber = (num: number | string) => {
   const banglaDigits = ['০', '১', '২', '৩', '৪', '৫', '৬', '৭', '৮', '৯'];
@@ -511,6 +512,11 @@ const Notice: React.FC = () => {
 
   return (
     <div className="min-h-screen bg-slate-50/50 flex flex-col">
+      <SEO 
+        title="জরুরি নোটিশ ও বিজ্ঞপ্তি — আমাদের পুঠিয়া"
+        description="পুঠিয়া উপজেলার সরকারি ও স্থানীয় জরুরি তথ্য, নোটিশ ও ঘোষণার সর্বশেষ আপডেট।"
+        path="/notice"
+      />
       <Header />
       <div className="flex-1 max-w-7xl mx-auto w-full pt-0 pb-32">
         <div className="animate-fade-in font-sans bg-gray-50 min-h-screen pb-20">

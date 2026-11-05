@@ -1,5 +1,11 @@
 User-agent: *
 Allow: /
 
+# Allow public citizen profiles explicitly
+Allow: /profile/*
+
+# Disallow internal API proxies to optimize crawl budget
+Disallow: /api/
+
 # Production Sitemap
 Sitemap: https://our-puthia-app.vercel.app/sitemap.xml
