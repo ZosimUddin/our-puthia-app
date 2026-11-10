@@ -1,12 +1,17 @@
 /// <reference lib="webworker" />
 
+import { clientsClaim } from 'workbox-core';
 import { precacheAndRoute, cleanupOutdatedCaches, createHandlerBoundToURL } from 'workbox-precaching';
 import { registerRoute, NavigationRoute } from 'workbox-routing';
-import { CacheFirst, StaleWhileRevalidate, NetworkOnly } from 'workbox-strategies';
+import { CacheFirst, StaleWhileRevalidate, NetworkFirst, NetworkOnly } from 'workbox-strategies';
 import { ExpirationPlugin } from 'workbox-expiration';
 import { CacheableResponsePlugin } from 'workbox-cacheable-response';
 
 declare const self: any;
+
+// Immediately activate new service worker and claim clients to prevent stale cache lock
+self.skipWaiting();
+clientsClaim();
 
 // 1. Workbox Precache & Outdated Cache Cleanup
 precacheAndRoute(self.__WB_MANIFEST || []);
@@ -74,8 +79,9 @@ registerRoute(
      url.pathname.includes('html2canvas') ||
      url.pathname.includes('canvg') ||
      url.pathname.includes('pdf-lib')),
-  new StaleWhileRevalidate({
+  new NetworkFirst({
     cacheName: 'heavy-vendor-cache',
+    networkTimeoutSeconds: 4,
     plugins: [
       new ExpirationPlugin({ maxEntries: 15, maxAgeSeconds: 60 * 60 * 24 * 14 }),
       new CacheableResponsePlugin({ statuses: [0, 200] })
@@ -83,15 +89,16 @@ registerRoute(
   })
 );
 
-// 6. Runtime Caching for Local Public Route Scripts & Styles (StaleWhileRevalidate)
+// 6. Runtime Caching for Local Public Route Scripts & Styles (NetworkFirst to prevent stale 404 hashes)
 registerRoute(
   ({ url, request }) =>
     url.origin === self.location.origin &&
     (request.destination === 'script' || request.destination === 'style' || /\.(?:js|css)$/i.test(url.pathname)) &&
     !url.pathname.includes('/api/') &&
     !ADMIN_ASSET_REGEX.test(url.pathname),
-  new StaleWhileRevalidate({
+  new NetworkFirst({
     cacheName: 'app-dynamic-routes',
+    networkTimeoutSeconds: 3,
     plugins: [
       new ExpirationPlugin({ maxEntries: 100, maxAgeSeconds: 60 * 60 * 24 * 30 }),
       new CacheableResponsePlugin({ statuses: [0, 200] })
