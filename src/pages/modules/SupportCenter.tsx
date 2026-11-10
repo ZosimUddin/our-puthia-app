@@ -17,6 +17,7 @@ import Footer from "../../components/home/Footer";
 import BottomNavigation from "../../components/home/BottomNavigation";
 import { UnifiedHeroHeader } from "../../components/common/UnifiedDesignSystem";
 import SEO from "../../components/SEO";
+import { buildFaqPageSchema } from "../../utils/seoHelpers";
 import { 
   MOCK_PUTHIA_FAQS, 
   MOCK_PUTHIA_TICKETS, 
@@ -538,11 +539,17 @@ export default function SupportCenterPage({ initialTab }: { initialTab?: string 
     toast.success("আপনার মতামতের জন্য ধন্যবাদ!");
   };
 
+  const faqSchema = useMemo(() => {
+    return buildFaqPageSchema(MOCK_PUTHIA_FAQS);
+  }, []);
+
   return (
     <div className="min-h-screen bg-[#f8fafc] text-slate-800 flex flex-col font-sans">
       <SEO 
-        title="হেল্প ও সাপোর্ট সেন্টার - আমাদের পুঠিয়া"
+        title={activeTab === 'faq' ? "সাধারণ জিজ্ঞাসা (FAQ) - আমাদের পুঠিয়া" : "হেল্প ও সাপোর্ট সেন্টার - আমাদের পুঠিয়া"}
         description="আমাদের পুঠিয়া প্ল্যাটফর্মের সকল সেবা ব্যবহার সহায়িকা, সরাসরি সাপোর্ট টিকিট, ভিডিও টিউটোরিয়াল, হটলাইন ও হেল্পডেস্ক।"
+        path={activeTab === 'faq' ? "/faq" : "/support-center"}
+        jsonLd={faqSchema || undefined}
       />
 
       <Header />

@@ -1,5 +1,4 @@
 import React, { useState, useEffect } from "react";
-import html2canvas from "html2canvas-pro";
 import {
   ChevronLeft,
   Droplet,
@@ -2873,6 +2872,7 @@ export default function BloodDonationPage() {
                       if (cardEl) {
                         showToast("⏳ কার্ডের ছবি তৈরি হচ্ছে...");
                         try {
+                          const html2canvas = (await import('html2canvas-pro')).default;
                           const canvas = await html2canvas(cardEl, {
                             scale: 3,
                             useCORS: true,

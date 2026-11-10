@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from "react";
+import SEO from "../../components/SEO";
 import { motion, AnimatePresence } from "motion/react";
 import { 
   ShieldCheck, Users, Store, Heart, Droplets, Newspaper, 
@@ -802,6 +803,12 @@ export const AdminDashboard: React.FC = () => {
 
   return (
     <div className="w-full bg-slate-50/60 pb-16 min-h-screen">
+      <SEO
+        title="অ্যাডমিন ড্যাশবোর্ড"
+        description="পুঠিয়া পোর্টাল সিকিউর অ্যাডমিন কন্ট্রোল হাব।"
+        path="/admin"
+        noIndex={true}
+      />
       {/* 1. Header & Identity Section */}
       <div className="w-full relative overflow-hidden bg-gradient-to-br from-emerald-950 via-teal-900 to-slate-950 text-white border-b border-emerald-500/20 shadow-xl px-4 sm:px-6 lg:px-8 py-8 md:py-10">
         <div className="max-w-7xl mx-auto relative z-10 flex flex-col md:flex-row md:items-center justify-between gap-6">

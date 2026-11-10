@@ -1076,6 +1076,7 @@ ${contextString}`;
     const vite = await createViteServer({
       server: { 
         middlewareMode: true,
+        hmr: process.env.DISABLE_HMR === "true" ? false : { port: 24679 },
       },
       appType: "spa",
     });
@@ -1117,13 +1118,20 @@ ${contextString}`;
     console.log(`  ➜  Network: http://0.0.0.0:${PORT}/`);
   });
 
+  let retryCount = 0;
   server.on('error', (err: any) => {
     if (err.code === 'EADDRINUSE') {
-      console.warn(`Port ${PORT} is in use, retrying after brief delay...`);
-      setTimeout(() => {
-        try { server.close(); } catch (_) {}
-        server.listen(PORT, "0.0.0.0");
-      }, 1000);
+      retryCount++;
+      if (retryCount <= 5) {
+        console.warn(`Port ${PORT} is in use, retrying (${retryCount}/5) after brief delay...`);
+        setTimeout(() => {
+          try { server.close(); } catch (_) {}
+          server.listen(PORT, "0.0.0.0");
+        }, 1000);
+      } else {
+        console.error(`Port ${PORT} still in use after 5 retries. Exiting process so manager can restart cleanly.`);
+        process.exit(1);
+      }
     } else {
       console.error('Server binding error:', err);
     }

@@ -42,7 +42,7 @@ export default function TrainingSection() {
   if (!loading && trainings.length === 0) return null;
 
   return (
-    <section className="py-5 px-4 sm:px-6 max-w-7xl mx-auto w-full">
+    <section className="py-3 px-4 sm:px-6 max-w-7xl mx-auto w-full">
       <SectionHeader
         title="দক্ষতা উন্নয়ন"
         subtitle="সেরা প্রশিক্ষণ কোর্স"

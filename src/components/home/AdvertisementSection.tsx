@@ -64,13 +64,13 @@ const AdvertisementSection: React.FC = () => {
   if (!loading && activeAds.length === 0) return null;
 
   return (
-    <section className="py-3 md:py-4 px-4 max-w-7xl mx-auto">
+    <section className="py-2 md:py-3 px-4 max-w-7xl mx-auto">
       <SectionHeader 
         title="স্পনসরড বিজ্ঞাপন"
         subtitle="সেরা ডিল এবং অফার"
       />
 
-      <div className="grid grid-cols-1 gap-8 mt-8">
+      <div className="grid grid-cols-1 gap-6 mt-4">
         {loading ? (
           <Skeleton className="h-48 sm:h-64" />
         ) : (

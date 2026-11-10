@@ -16,7 +16,7 @@ export const DEFAULT_SEO_SETTINGS: SeoSettings = {
   twitterTitle: "আমাদের পুঠিয়া – ঐতিহ্য থেকে ডিজিটাল ভবিষ্যতের পথে",
   twitterDescription: "পুঠিয়ার মানুষ, ইতিহাস, ঐতিহ্য, তথ্য ও প্রয়োজনীয় সেবাকে এক প্ল্যাটফর্মে যুক্ত করার ডিজিটাল উদ্যোগ।",
   twitterImage: "https://our-puthia-app.vercel.app/puthia_official_full_logo.jpg",
-  canonicalUrl: typeof window !== "undefined" ? window.location.origin : "https://amaderputhia.gov.bd",
+  canonicalUrl: typeof window !== "undefined" ? window.location.origin : "https://our-puthia-app.vercel.app",
   robotsIndex: true,
   robotsFollow: true,
   authorName: "আমাদের পুঠিয়া ওয়েব টিম",
@@ -30,21 +30,34 @@ export const DEFAULT_SEO_SETTINGS: SeoSettings = {
     "@context": "https://schema.org",
     "@graph": [
       {
+        "@type": "Organization",
+        "@id": "https://our-puthia-app.vercel.app/#organization",
+        "name": "আমাদের পুঠিয়া",
+        "url": "https://our-puthia-app.vercel.app/",
+        "logo": {
+          "@type": "ImageObject",
+          "url": "https://our-puthia-app.vercel.app/puthia_official_full_logo.jpg"
+        }
+      },
+      {
         "@type": "WebSite",
-        "@id": "https://amaderputhia.gov.bd/#website",
-        "url": "https://amaderputhia.gov.bd/",
+        "@id": "https://our-puthia-app.vercel.app/#website",
+        "url": "https://our-puthia-app.vercel.app/",
         "name": "আমাদের পুঠিয়া",
         "description": "পুঠিয়া উপজেলার সকল ডিজিটাল তথ্য ও নাগরিক সেবা হাব",
         "inLanguage": "bn-BD",
+        "publisher": {
+          "@id": "https://our-puthia-app.vercel.app/#organization"
+        },
         "potentialAction": {
           "@type": "SearchAction",
-          "target": "https://amaderputhia.gov.bd/?search={search_term_string}",
+          "target": "https://our-puthia-app.vercel.app/?search={search_term_string}",
           "query-input": "required name=search_term_string"
         }
       },
       {
         "@type": "AdministrativeArea",
-        "@id": "https://amaderputhia.gov.bd/#puthia-upazila",
+        "@id": "https://our-puthia-app.vercel.app/#puthia-upazila",
         "name": "পুঠিয়া উপজেলা (Puthia Upazila)",
         "alternateName": ["Puthia Rajbari", "পুঠিয়া রাজবাড়ী"],
         "description": "রাজশাহী জেলার ঐতিহাসিক ও ঐতিহ্যবাহী উপজেলা পুঠিয়া, যা মহারানী হেমন্তকুমারী ও শিব মন্দিরের জন্য বিখ্যাত।",

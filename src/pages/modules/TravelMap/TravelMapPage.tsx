@@ -6,8 +6,6 @@ import {
   ArrowLeft, Palette, FileText, CheckCircle2, Bookmark, Lightbulb, HelpCircle
 } from 'lucide-react';
 import { motion, AnimatePresence } from 'motion/react';
-import html2canvas from 'html2canvas-pro';
-import jsPDF from 'jspdf';
 import Header from '../../../components/home/Header';
 import Footer from '../../../components/home/Footer';
 import BottomNavigation from '../../../components/home/BottomNavigation';
@@ -227,6 +225,7 @@ export const TravelMapPage: React.FC = () => {
       // Increment global counter in Firestore
       travelMapService.incrementMapCounter().catch(() => {});
 
+      const html2canvas = (await import('html2canvas-pro')).default;
       const canvas = await html2canvas(element, {
         scale: 3,
         useCORS: true,
@@ -241,6 +240,7 @@ export const TravelMapPage: React.FC = () => {
         link.click();
         toast.success(`ম্যাপ ${format.toUpperCase()} ফরম্যাটে ডাউনলোড সম্পন্ন!`, { id: 'dl' });
       } else if (format === 'pdf') {
+        const { default: jsPDF } = await import('jspdf');
         const imgData = canvas.toDataURL('image/png');
         const pdf = new jsPDF('p', 'mm', 'a4');
         const pdfWidth = pdf.internal.pageSize.getWidth();
@@ -265,6 +265,7 @@ export const TravelMapPage: React.FC = () => {
     try {
       travelMapService.incrementMapCounter().catch(() => {});
 
+      const html2canvas = (await import('html2canvas-pro')).default;
       const canvas = await html2canvas(element, {
         scale: 3,
         useCORS: true,
@@ -279,6 +280,7 @@ export const TravelMapPage: React.FC = () => {
         link.click();
         toast.success(`বিশ্ব ম্যাপ ${format.toUpperCase()} ফরম্যাটে ডাউনলোড সম্পন্ন!`, { id: 'dl-world' });
       } else if (format === 'pdf') {
+        const { default: jsPDF } = await import('jspdf');
         const imgData = canvas.toDataURL('image/png');
         const pdf = new jsPDF('l', 'mm', 'a4');
         const pdfWidth = pdf.internal.pageSize.getWidth();

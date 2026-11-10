@@ -12,6 +12,7 @@ import Header from '../../components/home/Header';
 import Footer from '../../components/home/Footer';
 import BottomNavigation from '../../components/home/BottomNavigation';
 import { Sidebar } from '../../components/Sidebar';
+import SEO from '../../components/SEO';
 import { useAuth } from '../../contexts/AuthContext';
 import { UnifiedHeroHeader, UnifiedBottomCTA } from '../../components/common/UnifiedDesignSystem';
 import { EXCLUSIVE_FEATURES } from './ExclusiveFeaturesPage';
@@ -100,6 +101,11 @@ const AllServicesPage: React.FC = () => {
 
   return (
     <div className="min-h-screen bg-[#fafcfb] flex flex-col font-sans">
+      <SEO
+        title="সকল নাগরিক সেবা ও ডিরেক্টরি"
+        description="পুঠিয়া উপজেলার সকল জরুরি ও নাগরিক সেবার তালিকা, হটলাইন, হাসপাতাল, ডাক্তার, ফায়ার সার্ভিস ও ডিজিটাল সেবা ডিরেক্টরি।"
+        path="/services"
+      />
       <Header 
         user={user} 
         onMenuClick={() => setIsSidebarOpen(true)} 

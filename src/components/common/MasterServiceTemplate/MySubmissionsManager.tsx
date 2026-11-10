@@ -557,7 +557,7 @@ export const MySubmissionsManager: React.FC = () => {
             </p>
             <button
               type="button"
-              onClick={() => navigate('/all-services')}
+              onClick={() => navigate('/services')}
               className="py-2.5 px-5 bg-[#006a4e] text-white rounded-2xl text-xs font-bold border-none cursor-pointer shadow-xs hover:bg-[#00543e] transition-all"
             >
               সেবা তালিকায় যান

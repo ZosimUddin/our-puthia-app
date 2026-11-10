@@ -1,24 +1,29 @@
 
-import React from 'react';
-import { jsPDF } from 'jspdf';
-import { Download } from 'lucide-react';
+import React, { useState } from 'react';
+import { Download, Loader2 } from 'lucide-react';
 
 export const SRSDownloadButton: React.FC = () => {
-  const generatePDF = () => {
-    const doc = new jsPDF();
-    
-    // Add Bengali support would require a custom font, 
-    // for simplicity here we use English for the technical terms 
-    // or very basic structure if Unicode is not fully supported by default.
-    // Given the constraints, I will use English for the SRS content for reliable PDF generation.
+  const [isGenerating, setIsGenerating] = useState(false);
 
-    doc.setFontSize(20);
-    doc.text('Software Requirements Specification (SRS)', 20, 20);
-    doc.setFontSize(14);
-    doc.text('Project: Puthia Upazila Portal', 20, 30);
+  const generatePDF = async () => {
+    if (isGenerating) return;
+    setIsGenerating(true);
+    try {
+      const { jsPDF } = await import('jspdf');
+      const doc = new jsPDF();
+      
+      // Add Bengali support would require a custom font, 
+      // for simplicity here we use English for the technical terms 
+      // or very basic structure if Unicode is not fully supported by default.
+      // Given the constraints, I will use English for the SRS content for reliable PDF generation.
 
-    doc.setFontSize(12);
-    const content = `
+      doc.setFontSize(20);
+      doc.text('Software Requirements Specification (SRS)', 20, 20);
+      doc.setFontSize(14);
+      doc.text('Project: Puthia Upazila Portal', 20, 30);
+
+      doc.setFontSize(12);
+      const content = `
 1. Modules:
    - Public Portal: View services, news, notices, directory information.
    - Admin Panel: Content management, user management, site configuration.
@@ -50,18 +55,34 @@ export const SRSDownloadButton: React.FC = () => {
    - Landing -> Category -> Item Detail.
    - Admin Login -> Admin Dashboard -> Module Management.
     `;
-    doc.text(content, 20, 40);
+      doc.text(content, 20, 40);
 
-    doc.save('Puthia_Portal_SRS.pdf');
+      doc.save('Puthia_Portal_SRS.pdf');
+    } catch (error) {
+      console.error('Failed to generate SRS PDF:', error);
+      alert('Failed to generate SRS PDF. Please try again.');
+    } finally {
+      setIsGenerating(false);
+    }
   };
 
   return (
     <button 
       onClick={generatePDF}
-      className="flex items-center gap-2 bg-emerald-600 text-white px-4 py-2 rounded-xl hover:bg-emerald-700 transition-all shadow-sm"
+      disabled={isGenerating}
+      className="flex items-center gap-2 bg-emerald-600 text-white px-4 py-2 rounded-xl hover:bg-emerald-700 disabled:opacity-60 transition-all shadow-sm cursor-pointer"
     >
-      <Download className="w-4 h-4" />
-      Download SRS (PDF)
+      {isGenerating ? (
+        <>
+          <Loader2 className="w-4 h-4 animate-spin" />
+          <span>Generating...</span>
+        </>
+      ) : (
+        <>
+          <Download className="w-4 h-4" />
+          <span>Download SRS (PDF)</span>
+        </>
+      )}
     </button>
   );
 };

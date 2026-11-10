@@ -10,16 +10,26 @@ export default defineConfig(() => {
       react(),
       tailwindcss(),
       VitePWA({
+        strategies: 'injectManifest',
+        srcDir: 'src',
+        filename: 'sw.ts',
         registerType: 'autoUpdate',
         devOptions: {
           enabled: false // Disable SW in dev mode to prevent preview iframe reloads
         },
         includeAssets: ['favicon.ico', 'apple-touch-icon.png', 'mask-icon.svg'],
         manifest: {
-          name: 'আমাদের পুঠিয়া - ডিজিটাল সেবা',
-          short_name: 'আমাদের পুঠিয়া',
-          description: 'পুঠিয়া উপজেলার সকল ডিজিটাল সেবার অনলাইন প্ল্যাটফর্ম',
-          theme_color: '#065f46',
+          id: '/',
+          name: 'আমাদের পুঠিয়া - স্মার্ট সিটিজেন পোর্টাল',
+          short_name: 'পুঠিয়া পোর্টাল',
+          description: 'পুঠিয়া উপজেলার সকল সেবা, হাসপাতাল, রক্তদাতা, শিক্ষা প্রতিষ্ঠান ও রাজবাড়ির তথ্য এক অ্যাপে',
+          start_url: '/',
+          display: 'standalone',
+          orientation: 'portrait',
+          background_color: '#064e3b',
+          theme_color: '#064e3b',
+          scope: '/',
+          categories: ['government', 'utilities', 'travel', 'medical'],
           icons: [
             {
               src: '/pwa-192x192.png',
@@ -47,38 +57,29 @@ export default defineConfig(() => {
             }
           ]
         },
-        workbox: {
+        injectManifest: {
+          rollupFormat: 'iife',
           maximumFileSizeToCacheInBytes: 10000000,
           globPatterns: ['**/*.{js,css,html,ico,png,svg,woff2}'],
-          runtimeCaching: [
-            {
-              urlPattern: /^https:\/\/fonts\.googleapis\.com\/.*/i,
-              handler: 'CacheFirst',
-              options: {
-                cacheName: 'google-fonts-cache',
-                expiration: {
-                  maxEntries: 10,
-                  maxAgeSeconds: 60 * 60 * 24 * 365
-                },
-                cacheableResponse: {
-                  statuses: [0, 200]
-                }
-              }
-            },
-            {
-              urlPattern: /^https:\/\/fonts\.gstatic\.com\/.*/i,
-              handler: 'CacheFirst',
-              options: {
-                cacheName: 'gstatic-fonts-cache',
-                expiration: {
-                  maxEntries: 10,
-                  maxAgeSeconds: 60 * 60 * 24 * 365
-                },
-                cacheableResponse: {
-                  statuses: [0, 200]
-                }
-              }
-            }
+          globIgnores: [
+            '**/vendor-pdf-tools-*.js',
+            '**/jspdf*',
+            '**/pdf*',
+            '**/html2canvas*',
+            '**/vendor-charts*',
+            '**/vendor-lottie*',
+            '**/vendor-maps*',
+            '**/*Admin*.js',
+            '**/Moderator*.js',
+            '**/RoleManagement*.js',
+            '**/ContentManagement*.js',
+            '**/ReportsAndModeration*.js',
+            '**/*Management*.js',
+            '**/Adda*Control*.js',
+            '**/AddaModerationCenter*.js',
+            '**/sample-reel.mp4',
+            '**/our-puthia.apk',
+            '**/puthia_og_banner.jpg'
           ]
         }
       })
@@ -102,9 +103,6 @@ export default defineConfig(() => {
               if (id.includes('motion') || id.includes('framer-motion')) {
                 return 'vendor-motion';
               }
-              if (id.includes('jspdf') || id.includes('html2canvas') || id.includes('pdf-lib') || id.includes('pdfjs-dist')) {
-                return 'vendor-pdf-tools';
-              }
               if (id.includes('lottie-web') || id.includes('lottie-react')) {
                 return 'vendor-lottie';
               }
@@ -125,11 +123,11 @@ export default defineConfig(() => {
     resolve: {
       dedupe: ['react', 'react-dom'],
       alias: {
-        '@': path.resolve(import.meta.dirname, './src'),
-        'react': path.resolve(import.meta.dirname, './node_modules/react'),
-        'react-dom': path.resolve(import.meta.dirname, './node_modules/react-dom'),
-        'react/jsx-runtime': path.resolve(import.meta.dirname, './node_modules/react/jsx-runtime.js'),
-        'react/jsx-dev-runtime': path.resolve(import.meta.dirname, './node_modules/react/jsx-dev-runtime.js'),
+        '@': path.resolve(process.cwd(), './src'),
+        'react': path.resolve(process.cwd(), './node_modules/react'),
+        'react-dom': path.resolve(process.cwd(), './node_modules/react-dom'),
+        'react/jsx-runtime': path.resolve(process.cwd(), './node_modules/react/jsx-runtime.js'),
+        'react/jsx-dev-runtime': path.resolve(process.cwd(), './node_modules/react/jsx-dev-runtime.js'),
       },
     },
     optimizeDeps: {

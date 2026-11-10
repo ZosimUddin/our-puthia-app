@@ -61,7 +61,7 @@ export const AppDownloadBanner: React.FC = () => {
   };
 
   return (
-    <section className="px-4 max-w-7xl mx-auto my-3 sm:my-5 select-none">
+    <section className="px-4 max-w-7xl mx-auto mt-2 sm:mt-4 mb-0 select-none">
       {/* Toast alert */}
       {showInfoToast && (
         <div className="fixed top-20 left-1/2 -translate-x-1/2 z-[100000] bg-slate-900/95 text-white text-xs sm:text-sm font-bold px-5 py-3 rounded-full shadow-2xl flex items-center gap-2 border border-slate-700 animate-in fade-in slide-in-from-top-3 max-w-xs sm:max-w-md text-center">

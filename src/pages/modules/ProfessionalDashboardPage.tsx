@@ -219,6 +219,7 @@ export const ProfessionalDashboardPage: React.FC = () => {
         title="Professional Dashboard - প্রফেশনাল ড্যাশবোর্ড" 
         description="আপনার কন্টেন্ট এনগেজমেন্ট, ভিউ ও মনিটাইজেশন শর্তাবলী পর্যবেক্ষণ করুন"
         path="/professional-dashboard"
+        noIndex={true}
       />
 
       {/* ========================================================================= */}

@@ -244,7 +244,6 @@ import {
   UserCheck,
   Hotel,
 } from "lucide-react";
-import { jsPDF } from "jspdf";
 import {
   PieChart,
   Pie,
@@ -338,6 +337,9 @@ export default function SubViews({
   // ==========================================
   // Community Section States
   // ==========================================
+  // PDF Generation State
+  const [isGeneratingPdf, setIsGeneratingPdf] = useState(false);
+
   // 1. Lost & Found
   const [lostFoundNotices, setLostFoundNotices] = useState<LostFoundNotice[]>(
     [],
@@ -2941,25 +2943,40 @@ export default function SubViews({
 
               <div className="pt-4 border-t border-gray-150 flex items-center justify-end">
                 <button
-                  onClick={() => {
-                    const pdf = new jsPDF();
-                    pdf.text(`PUTHIA DIGITAL PORTAL - ANNOUNCEMENT`, 20, 20);
-                    pdf.text(`Category: ${selectedNews.category}`, 20, 30);
-                    pdf.text(`Date: ${selectedNews.date}`, 20, 40);
-                    pdf.text(`Title: ${selectedNews.title}`, 20, 50);
-                    pdf.text(`Description: ${selectedNews.desc}`, 20, 60);
+                  disabled={isGeneratingPdf}
+                  onClick={async () => {
+                    if (isGeneratingPdf) return;
+                    setIsGeneratingPdf(true);
+                    try {
+                      const { jsPDF } = await import("jspdf");
+                      const pdf = new jsPDF();
+                      pdf.text(`PUTHIA DIGITAL PORTAL - ANNOUNCEMENT`, 20, 20);
+                      pdf.text(`Category: ${selectedNews.category}`, 20, 30);
+                      pdf.text(`Date: ${selectedNews.date}`, 20, 40);
+                      pdf.text(`Title: ${selectedNews.title}`, 20, 50);
+                      pdf.text(`Description: ${selectedNews.desc}`, 20, 60);
 
-                    const blob = pdf.output(`blob`);
-                    const link = document.createElement(`a`);
-                    link.href = window.URL.createObjectURL(blob);
-                    link.download = `announcement_${selectedNews.id}.pdf`;
-                    document.body.appendChild(link);
-                    link.click();
-                    document.body.removeChild(link);
+                      const blob = pdf.output(`blob`);
+                      const link = document.createElement(`a`);
+                      link.href = window.URL.createObjectURL(blob);
+                      link.download = `announcement_${selectedNews.id}.pdf`;
+                      document.body.appendChild(link);
+                      link.click();
+                      document.body.removeChild(link);
+                    } catch (error) {
+                      console.error("PDF generation failed:", error);
+                      alert("পিডিএফ তৈরি করতে সমস্যা হয়েছে। অনুগ্রহ করে আবার চেষ্টা করুন।");
+                    } finally {
+                      setIsGeneratingPdf(false);
+                    }
                   }}
-                  className="bg-[#2d5a27] hover:bg-[#1a3a18] text-white px-5 py-2.5 rounded-xl text-xs font-bold transition font-sans cursor-pointer"
+                  className="bg-[#2d5a27] hover:bg-[#1a3a18] disabled:opacity-60 text-white px-5 py-2.5 rounded-xl text-xs font-bold transition font-sans cursor-pointer flex items-center gap-2"
                 >
-                  📥 অফিশিয়াল ঘোষণানামা ডাউনলোড করুন (PDF)
+                  {isGeneratingPdf ? (
+                    <span>⏳ পিডিএফ তৈরি হচ্ছে...</span>
+                  ) : (
+                    <span>📥 অফিশিয়াল ঘোষণানামা ডাউনলোড করুন (PDF)</span>
+                  )}
                 </button>
               </div>
             </div>

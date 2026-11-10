@@ -280,7 +280,7 @@ export const SmartRecommendations: React.FC = () => {
     } else if (item.category === 'marketplace') {
       navigate('/marketplace');
     } else {
-      navigate('/all-services');
+      navigate('/services');
     }
   };
 

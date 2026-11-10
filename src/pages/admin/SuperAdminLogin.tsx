@@ -4,6 +4,7 @@ import { useAuth } from "../../contexts/AuthContext";
 import { useNavigate } from "react-router-dom";
 import { getFriendlyAuthErrorMessage } from "../../utils/authMessages";
 import { Lock, Mail, Eye, EyeOff, Loader2, ShieldCheck, AlertTriangle } from "lucide-react";
+import SEO from "../../components/SEO";
 
 export const SuperAdminLogin: React.FC = () => {
   const { user, userProfile, loginWithEmail, loginWithGoogle, loading: authLoading } = useAuth();
@@ -99,6 +100,7 @@ export const SuperAdminLogin: React.FC = () => {
 
   return (
     <div className="min-h-screen bg-slate-50 flex items-center justify-center p-4 relative overflow-hidden font-sans select-none">
+      <SEO title="সুপার অ্যাডমিন প্রবেশদ্বার" noIndex={true} />
       {/* Decorative background shapes */}
       <div className="absolute top-[-20%] left-[-10%] w-[500px] h-[500px] rounded-full bg-emerald-100/30 blur-3xl -z-10" />
       <div className="absolute bottom-[-10%] right-[-10%] w-[600px] h-[600px] rounded-full bg-emerald-50/20 blur-3xl -z-10" />

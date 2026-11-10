@@ -502,7 +502,7 @@ export const ServiceDetailTemplate: React.FC<ServiceDetailTemplateProps> = ({
         keywords={`${title}, ${config.title}, ${speciality || ''}, পুঠিয়া, রাজশাহী`}
         image={imageUrl || undefined}
         path={`/service/${serviceKey}/${docId}`}
-        type="place"
+        type={serviceKey === 'job' || serviceKey === 'marketplace' ? 'website' : 'place'}
         jsonLd={docId ? getServiceItemDetailSchema(config, item, docId) : undefined}
       />
 

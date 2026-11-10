@@ -144,8 +144,17 @@ export const requestNotificationPermission = async () => {
       const messaging = await initMessaging();
       if (messaging) {
         try {
+          let swReg: ServiceWorkerRegistration | undefined = undefined;
+          if (typeof navigator !== 'undefined' && 'serviceWorker' in navigator) {
+            try {
+              swReg = await navigator.serviceWorker.ready;
+            } catch (swErr) {
+              console.warn('[firebase] SW ready wait skipped:', swErr);
+            }
+          }
           const token = await getToken(messaging, {
-            vapidKey: vapidKey
+            vapidKey: vapidKey,
+            serviceWorkerRegistration: swReg
           });
           return token;
         } catch (tokenError) {

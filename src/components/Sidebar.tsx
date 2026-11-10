@@ -265,39 +265,7 @@ export function Sidebar({
                 </button>
               </div>
 
-              {/* Admin Command Center Link (If Staff) */}
-              {role !== 'user' && (
-                <button
-                  type="button"
-                  onClick={() => {
-                    onClose();
-                    const path =
-                      role === 'super_admin'
-                        ? '/super-admin'
-                        : role === 'admin'
-                        ? '/admin'
-                        : role === 'editor'
-                        ? '/editor'
-                        : '/moderator';
-                    onNavigate(path);
-                  }}
-                  className="w-full flex items-center justify-between px-2.5 py-1.5 bg-[#0B7A3B] text-white rounded-xl text-[11px] font-black transition-all hover:bg-emerald-800 cursor-pointer shadow-xs shadow-[#0B7A3B]/20"
-                >
-                  <span className="flex items-center gap-1.5">
-                    <span className="w-1.5 h-1.5 rounded-full bg-white animate-pulse"></span>
-                    <span>
-                      {role === 'super_admin'
-                        ? 'সুপার অ্যাডমিন ড্যাশবোর্ড'
-                        : role === 'admin'
-                        ? 'অ্যাডমিন প্যানেল'
-                        : role === 'editor'
-                        ? 'এডিটর প্যানেল'
-                        : 'মডারেটর প্যানেল'}
-                    </span>
-                  </span>
-                  <ChevronRight size={14} className="text-white" />
-                </button>
-              )}
+
             </div>
           ) : (
             /* Non-Logged In User Banner */

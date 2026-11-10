@@ -3,7 +3,7 @@
  * scripts/generate-sitemap.mjs
  * 
  * Dynamic Sitemap Generator for "আমাদের পুঠিয়া"
- * Generates build-time dynamic sitemap merging existing 15 static URLs
+ * Generates build-time dynamic sitemap merging canonical static URLs from public/sitemap.xml
  * with published news articles from Firestore REST API.
  * 
  * Resilient Error Policy:

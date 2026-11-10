@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { ArrowLeft, Plane, CheckCircle, ExternalLink, HelpCircle, ChevronDown, ChevronUp, AlertCircle, Info, FileText, RefreshCw, Calculator, Search } from 'lucide-react';
 import { motion, AnimatePresence } from 'motion/react';
+import SEO from '../../components/SEO';
 
 export default function PassportPage() {
   const navigate = useNavigate();
@@ -32,6 +33,11 @@ export default function PassportPage() {
 
   return (
     <div className="min-h-screen bg-[#fafcfb] pb-20 font-sans">
+      <SEO
+        title="ই-পাসপোর্ট সেবা ও আবেদন নির্দেশিকা"
+        description="পুঠিয়া উপজেলা থেকে ই-পাসপোর্ট আবেদনের নিয়ম, প্রয়োজনীয় কাগজপত্র, ফি হিসাব, আবেদন স্ট্যাটাস চেক ও পুলিশ ভেরিফিকেশন সহায়িকা।"
+        path="/services/passport"
+      />
       {/* Header */}
       <div className="bg-[#4338ca] px-4 pt-4 pb-12 rounded-b-[40px] shadow-lg relative overflow-hidden">
         <div className="absolute -right-10 -top-10 w-40 h-40 bg-white/5 rounded-full blur-2xl"></div>

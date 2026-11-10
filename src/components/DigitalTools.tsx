@@ -8,12 +8,6 @@ import {
   Crop, Eraser
 } from 'lucide-react';
 import jsQR from 'jsqr';
-import { PDFDocument, degrees } from 'pdf-lib';
-import { jsPDF } from 'jspdf';
-import * as pdfjsLib from 'pdfjs-dist';
-
-// Configure PDFJS Worker
-pdfjsLib.GlobalWorkerOptions.workerSrc = `https://cdnjs.cloudflare.com/ajax/libs/pdf.js/4.10.38/pdf.worker.min.js`;
 
 // Helper to convert numbers to Bengali
 export function toBn(n: number | string): string {
@@ -1678,6 +1672,7 @@ export function CompressPDF({ onGoBack }: { onGoBack: () => void }) {
     if (!file) return;
     setCompressing(true);
     try {
+      const { PDFDocument } = await import('pdf-lib');
       const bytes = await file.arrayBuffer();
       const pdfDoc = await PDFDocument.load(bytes);
       const pdfBytes = await pdfDoc.save();
@@ -1725,6 +1720,7 @@ export function RotatePDF({ onGoBack }: { onGoBack: () => void }) {
     if (!file) return;
     setRotating(true);
     try {
+      const { PDFDocument, degrees } = await import('pdf-lib');
       const bytes = await file.arrayBuffer();
       const pdfDoc = await PDFDocument.load(bytes);
       const pages = pdfDoc.getPages();
@@ -1807,6 +1803,7 @@ export function PDFMerge({ onGoBack }: { onGoBack: () => void }) {
     setMergeProgress(10);
 
     try {
+      const { PDFDocument } = await import('pdf-lib');
       const mergedPdf = await PDFDocument.create();
       setMergeProgress(30);
 
@@ -2003,6 +2000,7 @@ export function PDFSplit({ onGoBack }: { onGoBack: () => void }) {
     setSelectedFile(file);
 
     try {
+      const { PDFDocument } = await import('pdf-lib');
       const bytes = await file.arrayBuffer();
       const doc = await PDFDocument.load(bytes);
       setTotalPages(doc.getPageCount());
@@ -2020,6 +2018,7 @@ export function PDFSplit({ onGoBack }: { onGoBack: () => void }) {
     setSplitting(true);
 
     try {
+      const { PDFDocument } = await import('pdf-lib');
       const bytes = await selectedFile.arrayBuffer();
       const doc = await PDFDocument.load(bytes);
 
@@ -2230,6 +2229,16 @@ export function PDFToImage({ onGoBack }: { onGoBack: () => void }) {
     setRenderProgress(0);
 
     try {
+      const pdfjsLib = await import('pdfjs-dist');
+      try {
+        // @ts-ignore
+        const workerModule = await import('pdfjs-dist/build/pdf.worker.min.mjs?url');
+        pdfjsLib.GlobalWorkerOptions.workerSrc = workerModule.default;
+      } catch (wErr) {
+        console.warn('Local PDF.js worker import failed, falling back to version-matched CDN worker:', wErr);
+        pdfjsLib.GlobalWorkerOptions.workerSrc = `https://unpkg.com/pdfjs-dist@${pdfjsLib.version}/build/pdf.worker.min.mjs`;
+      }
+
       const arrayBuffer = await file.arrayBuffer();
       // Load PDF document using pdfjs-dist
       const pdf = await pdfjsLib.getDocument({ data: arrayBuffer }).promise;
@@ -2259,9 +2268,9 @@ export function PDFToImage({ onGoBack }: { onGoBack: () => void }) {
         setRenderProgress(Math.round((i / totalNumPages) * 100));
       }
       setPagesImages(imgUrls);
-    } catch (err) {
+    } catch (err: any) {
       console.error("PDF to Image conversion error:", err);
-      alert('পিডিএফ ফাইলটি ছবিতে রূপান্তর করতে সমস্যা হয়েছে। দয়া করে ফাইলের উৎস চেক করুন।');
+      alert(`পিডিএফ ফাইলটি ছবিতে রূপান্তর করতে সমস্যা হয়েছে: ${err?.message || 'ওয়ার্কার বা ফাইল প্রসেসিং ত্রুটি'}`);
     } finally {
       setLoading(false);
     }
@@ -2373,6 +2382,7 @@ export function ImageToPDF({ onGoBack }: { onGoBack: () => void }) {
     setGenerating(true);
 
     try {
+      const { jsPDF } = await import('jspdf');
       const doc = new jsPDF({
         orientation: orientation,
         unit: 'mm',

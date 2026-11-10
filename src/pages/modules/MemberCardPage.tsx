@@ -15,7 +15,6 @@ import {
 import toast, { Toaster } from 'react-hot-toast';
 import { copyToClipboard } from '../../utils/clipboard';
 import QRCode from 'react-qr-code';
-import html2canvas from 'html2canvas-pro';
 // @ts-ignore
 import domtoimage from 'dom-to-image-more';
 
@@ -87,6 +86,7 @@ export default function MemberCardPage() {
 
       // Fallback: html2canvas-pro with modern CSS oklab/oklch sanitization
       if (!dataUrl) {
+        const html2canvas = (await import('html2canvas-pro')).default;
         const canvas = await html2canvas(cardElement, {
           scale: 2,
           useCORS: true,

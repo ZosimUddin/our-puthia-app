@@ -14,6 +14,7 @@ import Header from '../../components/home/Header';
 import Footer from '../../components/home/Footer';
 import BottomNavigation from '../../components/home/BottomNavigation';
 import { UnifiedHeroHeader } from '../../components/common/UnifiedDesignSystem';
+import SEO from '../../components/SEO';
 
 const PUTHIA_STATS = [
   { icon: <MapPin size={24} />, label: "অবস্থান", value: "রাজশাহী" },
@@ -181,6 +182,11 @@ const UpazilaIntroductionPage: React.FC = () => {
 
   return (
     <div className="min-h-screen bg-slate-50 flex flex-col font-sans">
+      <SEO
+        title="পুঠিয়া উপজেলা পরিচিতি ও ঐতিহ্য"
+        description="পুঠিয়া উপজেলার ইতিহাস, আয়তন, জনসংখ্যা, ইউনিয়ন পরিষদ, অর্থনীতি ও সার্বিক নাগরিক পরিচিতি।"
+        path="/upazila-intro"
+      />
       <Header />
       <div className="flex-1 relative">
         <motion.div 

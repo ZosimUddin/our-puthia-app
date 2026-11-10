@@ -1,7 +1,6 @@
 import React, { useRef, useState } from 'react';
 import { FootballPosterConfig, PosterTemplateSize } from '../../types/football';
 import { Calendar, Clock, MapPin, Trophy, Shield, Sparkles, Download, Share2, Check, Copy } from 'lucide-react';
-import html2canvas from 'html2canvas-pro';
 
 interface FootballPosterCanvasProps {
   config: FootballPosterConfig;
@@ -39,6 +38,7 @@ export const FootballPosterCanvas: React.FC<FootballPosterCanvasProps> = ({
     if (!posterRef.current || isExporting) return;
     try {
       setIsExporting(true);
+      const html2canvas = (await import('html2canvas-pro')).default;
       const canvas = await html2canvas(posterRef.current, {
         scale: 2.5, // Ultra-high resolution 300DPI equivalent
         useCORS: true,
@@ -68,6 +68,7 @@ export const FootballPosterCanvas: React.FC<FootballPosterCanvasProps> = ({
     if (!posterRef.current || isExporting) return;
     try {
       setIsExporting(true);
+      const html2canvas = (await import('html2canvas-pro')).default;
       const canvas = await html2canvas(posterRef.current, {
         scale: 2,
         useCORS: true,
