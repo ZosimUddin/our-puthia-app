@@ -13,6 +13,7 @@ import ScrollProgressBar from "./components/ScrollProgressBar";
 
 import { AccessibilityProvider } from "./contexts/AccessibilityContext";
 import { LanguageProvider } from "./contexts/LanguageContext";
+import { Analytics } from '@vercel/analytics/react';
 import { AccessibilityToolbar } from "./components/common/AccessibilityToolbar";
 import { getSavedTheme, applyTheme, initThemeListener } from "./utils/themeUtils";
 
@@ -1073,6 +1074,7 @@ export default function App() {
         <BrowserRouter>
           <MainAppContent />
           <AccessibilityToolbar />
+          <Analytics />
         </BrowserRouter>
       </AccessibilityProvider>
     </LanguageProvider>
