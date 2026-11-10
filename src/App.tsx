@@ -1,5 +1,6 @@
 import React, { Suspense, lazy, useEffect } from "react";
 import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
+import { Analytics } from "@vercel/analytics/react";
 import { OfflineManager } from "./components/OfflineManager";
 import { PushNotificationListener } from "./components/PushNotificationListener";
 import { CallModal } from "./components/call/CallModal";
@@ -1073,6 +1074,7 @@ export default function App() {
         <BrowserRouter>
           <MainAppContent />
           <AccessibilityToolbar />
+          <Analytics />
         </BrowserRouter>
       </AccessibilityProvider>
     </LanguageProvider>
