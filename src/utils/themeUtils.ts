@@ -1,12 +1,12 @@
 export type ThemeMode = "system" | "light" | "dark";
 
 export const getSavedTheme = (): ThemeMode => {
-  if (typeof localStorage === "undefined") return "system";
+  if (typeof localStorage === "undefined") return "light";
   const saved = localStorage.getItem("app_theme") as ThemeMode;
   if (saved === "dark" || saved === "light" || saved === "system") {
     return saved;
   }
-  return "system"; // Default to system
+  return "light"; // Default to light theme
 };
 
 export const applyTheme = (mode: ThemeMode) => {
