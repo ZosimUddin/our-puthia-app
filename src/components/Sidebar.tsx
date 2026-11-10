@@ -104,7 +104,8 @@ export function Sidebar({
     return drawerItems
       .filter(item => item.enabled)
       .filter(item => item.id !== 'dashboard' && item.path !== '/' && item.label !== 'হোম')
-      .filter(item => item.id !== 'download' && item.path !== '/download');
+      .filter(item => item.id !== 'download' && item.path !== '/download')
+      .filter(item => item.id !== 'football' && item.id !== 'guide' && item.path !== '/football' && item.path !== '/guide');
   }, [drawerItems]);
 
   const filteredMenuItems = useMemo(() => {

@@ -135,6 +135,7 @@ export const SiteContentService = {
         if (Array.isArray(parsed) && parsed.length > 0) {
           return parsed
             .filter((item: CitizenDrawerMenuItem) => item.id !== 'dashboard' && item.path !== '/' && item.label !== 'হোম')
+            .filter((item: CitizenDrawerMenuItem) => item.id !== 'football' && item.id !== 'guide' && item.path !== '/football' && item.path !== '/guide')
             .sort((a, b) => a.order - b.order);
         }
       }
