@@ -488,10 +488,55 @@ service cloud.firestore {
     }
 
     match /complaints/{id} {
-      allow read: if true;
-      allow create: if isSignedIn();
-      allow update: if isStaff() || (isSignedIn() && isDocOwner() && request.resource.data.status == resource.data.status);
+      allow read: if isStaff() || (isSignedIn() && (resource == null || resource.data.get('userId', '') == request.auth.uid || isDocOwner()));
+      allow create: if isSignedIn() && (
+        incoming().keys().hasAll(['title', 'complainantName', 'description', 'status', 'createdAt']) &&
+        incoming().keys().hasOnly([
+          'id', 'title', 'complainantName', 'complainantPhone', 'category', 'unionName',
+          'description', 'status', 'createdAt', '_syncedFromOffline', '_offlineQueuedAt', 'userId'
+        ]) &&
+        incoming().title is string && incoming().title.size() <= 300 &&
+        incoming().description is string && incoming().description.size() <= 5000 &&
+        (!('userId' in incoming()) || incoming().userId == request.auth.uid)
+      );
+      allow update: if isStaff() || (isSignedIn() && isDocOwner() && incoming().status == existing().status);
       allow delete: if isStaff() || isDocOwner();
+    }
+
+    match /feedbacks/{id} {
+      allow read: if isStaff();
+      allow create: if isSignedIn() && (
+        incoming().keys().hasAll(['name', 'rating', 'message', 'createdAt']) &&
+        incoming().keys().hasOnly([
+          'id', 'name', 'phone', 'rating', 'message',
+          'createdAt', '_syncedFromOffline', '_offlineQueuedAt', 'userId'
+        ]) &&
+        incoming().rating is number && incoming().rating >= 1 && incoming().rating <= 5 &&
+        incoming().message is string && incoming().message.size() <= 3000 &&
+        (!('userId' in incoming()) || incoming().userId == request.auth.uid)
+      );
+      allow update, delete: if isStaff();
+    }
+
+    match /corrections/{id} {
+      allow read: if isStaff() || (isSignedIn() && (resource == null || resource.data.get('userId', '') == request.auth.uid));
+      allow create: if isSignedIn() && (
+        incoming().keys().hasAll([
+          'targetItemId', 'serviceId', 'reasonId', 'correctionDetails',
+          'status', 'userId', 'createdAt'
+        ]) &&
+        incoming().keys().hasOnly([
+          'id', 'targetItemId', 'targetTitle', 'serviceId', 'serviceTitle',
+          'targetCollection', 'reasonId', 'reasonLabel', 'correctionDetails',
+          'correctPhone', 'correctAddress', 'sourceProof', 'userContact',
+          'status', 'userId', 'userName', 'userEmail', 'createdAt',
+          'timestamp', '_syncedFromOffline', '_offlineQueuedAt'
+        ]) &&
+        incoming().status == 'pending' &&
+        incoming().userId == request.auth.uid &&
+        incoming().correctionDetails is string && incoming().correctionDetails.size() <= 5000
+      );
+      allow update, delete: if isStaff();
     }
 
     match /blood_donations/{id} {

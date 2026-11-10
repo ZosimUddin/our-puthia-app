@@ -2,7 +2,7 @@
 
 import { precacheAndRoute, cleanupOutdatedCaches, createHandlerBoundToURL } from 'workbox-precaching';
 import { registerRoute, NavigationRoute } from 'workbox-routing';
-import { CacheFirst, StaleWhileRevalidate } from 'workbox-strategies';
+import { CacheFirst, StaleWhileRevalidate, NetworkOnly } from 'workbox-strategies';
 import { ExpirationPlugin } from 'workbox-expiration';
 import { CacheableResponsePlugin } from 'workbox-cacheable-response';
 
@@ -42,24 +42,73 @@ registerRoute(
   })
 );
 
-// 4. Runtime Caching for Scripts & Styles (StaleWhileRevalidate)
+// Helper regex for Admin, Management, and Moderator assets (case-insensitive)
+const ADMIN_ASSET_REGEX = /\/(?:[a-zA-Z0-9_-]*(?:admin|management|moderator)[a-zA-Z0-9_-]*)\.(?:js|css)$/i;
+
+// Helper to strictly validate allowed Unsplash image hostnames
+function isAllowedUnsplashHost(hostname: string): boolean {
+  return hostname === 'images.unsplash.com' || /^([a-zA-Z0-9_-]+\.)?unsplash\.com$/.test(hostname);
+}
+
+// 4. Admin, Management & Moderator Assets (Strict NetworkOnly - Zero local caching of administrative code)
+// Registered FIRST so Workbox first-match intercepts all admin/management assets before general script caching.
 registerRoute(
-  ({ request }) => request.destination === 'script' || request.destination === 'style',
+  ({ url, request }) =>
+    url.origin === self.location.origin &&
+    (request.destination === 'script' || request.destination === 'style' || /\.(?:js|css)$/i.test(url.pathname)) &&
+    ADMIN_ASSET_REGEX.test(url.pathname),
+  new NetworkOnly()
+);
+
+// 5. On-demand Heavy Vendor Chunks (PDF tools, Maps, Charts, Lottie)
+// Registered ahead of general routes so heavy libraries use their dedicated strict cache budget.
+registerRoute(
+  ({ url, request }) =>
+    url.origin === self.location.origin &&
+    (request.destination === 'script' || request.destination === 'style' || /\.(?:js|css)$/i.test(url.pathname)) &&
+    (url.pathname.includes('vendor-pdf-tools') ||
+     url.pathname.includes('vendor-maps') ||
+     url.pathname.includes('vendor-charts') ||
+     url.pathname.includes('vendor-lottie') ||
+     url.pathname.includes('jspdf') ||
+     url.pathname.includes('html2canvas') ||
+     url.pathname.includes('canvg') ||
+     url.pathname.includes('pdf-lib')),
   new StaleWhileRevalidate({
-    cacheName: 'static-resources',
+    cacheName: 'heavy-vendor-cache',
     plugins: [
-      new ExpirationPlugin({ maxEntries: 60, maxAgeSeconds: 60 * 60 * 24 * 30 })
+      new ExpirationPlugin({ maxEntries: 15, maxAgeSeconds: 60 * 60 * 24 * 14 }),
+      new CacheableResponsePlugin({ statuses: [0, 200] })
     ]
   })
 );
 
-// 5. Runtime Caching for Images
+// 6. Runtime Caching for Local Public Route Scripts & Styles (StaleWhileRevalidate)
 registerRoute(
-  ({ request }) => request.destination === 'image',
+  ({ url, request }) =>
+    url.origin === self.location.origin &&
+    (request.destination === 'script' || request.destination === 'style' || /\.(?:js|css)$/i.test(url.pathname)) &&
+    !url.pathname.includes('/api/') &&
+    !ADMIN_ASSET_REGEX.test(url.pathname),
+  new StaleWhileRevalidate({
+    cacheName: 'app-dynamic-routes',
+    plugins: [
+      new ExpirationPlugin({ maxEntries: 100, maxAgeSeconds: 60 * 60 * 24 * 30 }),
+      new CacheableResponsePlugin({ statuses: [0, 200] })
+    ]
+  })
+);
+
+// 7. Runtime Caching for Images (Same-origin or strict Unsplash domain allowlist)
+registerRoute(
+  ({ url, request }) =>
+    request.destination === 'image' &&
+    (url.origin === self.location.origin || isAllowedUnsplashHost(url.hostname)),
   new StaleWhileRevalidate({
     cacheName: 'images-cache',
     plugins: [
-      new ExpirationPlugin({ maxEntries: 50, maxAgeSeconds: 60 * 60 * 24 * 30 })
+      new ExpirationPlugin({ maxEntries: 60, maxAgeSeconds: 60 * 60 * 24 * 14 }),
+      new CacheableResponsePlugin({ statuses: [0, 200] })
     ]
   })
 );
@@ -184,6 +233,42 @@ try {
 }
 
 // 7. Notification Click Handler & Deep Linking
+export function getSafeNotificationDestination(rawUrl: unknown, baseOrigin: string): string {
+  const fallbackUrl = new URL('/', baseOrigin).href;
+
+  if (typeof rawUrl !== 'string') {
+    return fallbackUrl;
+  }
+
+  const trimmed = rawUrl.trim();
+  if (!trimmed) {
+    return fallbackUrl;
+  }
+
+  try {
+    const parsed = new URL(trimmed, baseOrigin);
+
+    // 1. Enforce strict HTTP or HTTPS protocol only
+    if (parsed.protocol !== 'http:' && parsed.protocol !== 'https:') {
+      return fallbackUrl;
+    }
+
+    // 2. Reject credentials embedded in URL (e.g. https://user:pass@domain/)
+    if (parsed.username || parsed.password) {
+      return fallbackUrl;
+    }
+
+    // 3. Strict Same-Origin Check: Origin must exactly match baseOrigin
+    if (parsed.origin !== baseOrigin) {
+      return fallbackUrl;
+    }
+
+    return parsed.href;
+  } catch {
+    return fallbackUrl;
+  }
+}
+
 self.addEventListener('notificationclick', (event: any) => {
   event.notification.close();
   const notificationData = event.notification.data || {};
@@ -195,7 +280,7 @@ self.addEventListener('notificationclick', (event: any) => {
     rawUrl = notificationData.url || '/notice';
   }
 
-  const fullUrl = new URL(rawUrl, self.location.origin).href;
+  const fullUrl = getSafeNotificationDestination(rawUrl, self.location.origin);
 
   event.waitUntil(
     self.clients.matchAll({ type: 'window', includeUncontrolled: true }).then(async (clientList: any[]) => {
@@ -238,11 +323,42 @@ self.addEventListener('notificationclick', (event: any) => {
 
 // 8. Background Sync Handler (Graceful offline retry)
 self.addEventListener('sync', (event: any) => {
-  if (event.tag === 'sync-submissions') {
+  if (event.tag === 'sync-submissions' || event.tag === 'puthia-sync-submissions') {
     event.waitUntil(
-      Promise.resolve().then(() => {
-        console.log('[Unified SW] PWA Background Sync: sync-submissions triggered.');
-      })
+      (async () => {
+        console.log('[Unified SW] PWA Background Sync triggered for tag:', event.tag);
+
+        // Broadcast to all active window clients
+        try {
+          const clients = await self.clients.matchAll({ type: 'window', includeUncontrolled: true });
+          for (const client of clients) {
+            client.postMessage({
+              type: 'DRAIN_OFFLINE_QUEUE',
+              source: 'service-worker-sync',
+              tag: event.tag,
+              timestamp: Date.now()
+            });
+          }
+        } catch (clientErr) {
+          console.warn('[Unified SW] Background sync client notify warning:', clientErr);
+        }
+
+        // Broadcast over BroadcastChannel for cross-tab coordination
+        try {
+          if (typeof BroadcastChannel !== 'undefined') {
+            const channel = new BroadcastChannel('puthia_sync_channel');
+            channel.postMessage({
+              type: 'DRAIN_OFFLINE_QUEUE',
+              source: 'service-worker-sync',
+              tag: event.tag,
+              timestamp: Date.now()
+            });
+            channel.close();
+          }
+        } catch (bcErr) {
+          console.warn('[Unified SW] BroadcastChannel sync notify warning:', bcErr);
+        }
+      })()
     );
   }
 });

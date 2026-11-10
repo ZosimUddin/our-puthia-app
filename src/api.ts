@@ -1073,9 +1073,20 @@ export const getComplaints = async (): Promise<Complaint[]> => {
   } catch (e) { return []; }
 };
 
-export const addComplaint = async (complaint: Omit<Complaint, 'id'>) => {
-  const id = doc(collection(db, 'complaints')).id;
-  await setDoc(doc(db, 'complaints', id), { id, ...complaint });
+export const addComplaint = async (complaint: Record<string, any>, customId?: string) => {
+  const id = customId || doc(collection(db, 'complaints')).id;
+  const docRef = doc(db, 'complaints', id);
+  if (customId) {
+    try {
+      const snap = await getDoc(docRef);
+      if (snap.exists()) {
+        return id; // Idempotent success: document already saved on server
+      }
+    } catch (_) {
+      // Proceed to setDoc if getDoc fails or doc does not exist
+    }
+  }
+  await setDoc(docRef, { id, ...complaint });
   return id;
 };
 
@@ -1096,9 +1107,37 @@ export const getFeedbacks = async (): Promise<Feedback[]> => {
   } catch (e) { return []; }
 };
 
-export const addFeedback = async (feedback: Omit<Feedback, 'id'>) => {
-  const id = doc(collection(db, 'feedbacks')).id;
-  await setDoc(doc(db, 'feedbacks', id), { id, ...feedback });
+export const addFeedback = async (feedback: Record<string, any>, customId?: string) => {
+  const id = customId || doc(collection(db, 'feedbacks')).id;
+  const docRef = doc(db, 'feedbacks', id);
+  if (customId) {
+    try {
+      const snap = await getDoc(docRef);
+      if (snap.exists()) {
+        return id; // Idempotent success
+      }
+    } catch (_) {
+      // Proceed to setDoc
+    }
+  }
+  await setDoc(docRef, { id, ...feedback });
+  return id;
+};
+
+export const addCorrection = async (correction: Record<string, any>, customId?: string) => {
+  const id = customId || doc(collection(db, 'corrections')).id;
+  const docRef = doc(db, 'corrections', id);
+  if (customId) {
+    try {
+      const snap = await getDoc(docRef);
+      if (snap.exists()) {
+        return id; // Idempotent success
+      }
+    } catch (_) {
+      // Proceed to setDoc
+    }
+  }
+  await setDoc(docRef, { id, ...correction });
   return id;
 };
 

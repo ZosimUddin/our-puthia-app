@@ -2,12 +2,14 @@ import React, { useState, useRef } from 'react';
 import { motion, AnimatePresence } from 'motion/react';
 import {
   X, CheckCircle2, Send, AlertCircle, Edit3, Phone, MapPin,
-  Clock, Building2, Sparkles, Award, ArrowLeft, ArrowRight, Eye
+  Clock, Building2, Sparkles, Award, ArrowLeft, ArrowRight, Eye, CloudOff
 } from 'lucide-react';
 import { collection, addDoc, serverTimestamp } from 'firebase/firestore';
 import { db } from '../../../firebase';
 import { useAuth } from '../../../contexts/AuthContext';
 import { ServiceConfig } from '../../../config/servicesConfig';
+import { indexedDbQueueService } from '../../../services/indexedDbQueueService';
+import { OfflineQueueStatusBanner } from '../../common/OfflineQueueStatusBanner';
 
 export interface CorrectionTarget {
   id?: string;
@@ -54,6 +56,7 @@ export const SuggestCorrectionModal: React.FC<SuggestCorrectionModalProps> = ({
   const [userContact, setUserContact] = useState<string>(userProfile?.phone || '');
 
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [isOfflineQueued, setIsOfflineQueued] = useState(false);
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
 
   if (!isOpen || !user) return null;
@@ -79,40 +82,68 @@ export const SuggestCorrectionModal: React.FC<SuggestCorrectionModalProps> = ({
     setIsSubmitting(true);
     setErrorMessage(null);
 
+    const isDeviceOnline = typeof navigator !== 'undefined' ? navigator.onLine : true;
+    const selectedReasonObj = CORRECTION_REASONS.find((r) => r.id === reason);
+
+    const payload = {
+      targetItemId: target.id || 'general',
+      targetTitle: target.title || 'সাধারণ তথ্য',
+      serviceId: target.serviceId,
+      serviceTitle: target.serviceTitle,
+      targetCollection: target.collectionName,
+      reasonId: reason,
+      reasonLabel: selectedReasonObj?.label || reason,
+      correctionDetails: correctionDetails.trim(),
+      correctPhone: correctPhone.trim(),
+      correctAddress: correctAddress.trim(),
+      sourceProof: sourceProof.trim(),
+      userContact: userContact.trim(),
+      status: 'pending', // 🟡 যাচাইাধীন
+      userId: user?.uid || '',
+      userName: userProfile?.name || user?.displayName || 'সচেতন নাগরিক',
+      userEmail: user?.email || '',
+      createdAt: new Date().toISOString(),
+      timestamp: new Date().toISOString(),
+    };
+
+    if (!isDeviceOnline) {
+      try {
+        await indexedDbQueueService.enqueue('correction', 'corrections', payload, {
+          requiresAuth: true,
+          isAnonymous: false
+        });
+        setIsOfflineQueued(true);
+        setStep('success');
+      } catch (err: any) {
+        setErrorMessage(err?.message || 'অফলাইনে সংশোধন প্রস্তাব সংরক্ষণ করা যায়নি।');
+        setStep('form');
+      } finally {
+        setIsSubmitting(false);
+      }
+      return;
+    }
+
     try {
-      const selectedReasonObj = CORRECTION_REASONS.find((r) => r.id === reason);
-
-      const payload = {
-        targetItemId: target.id || 'general',
-        targetTitle: target.title || 'সাধারণ তথ্য',
-        serviceId: target.serviceId,
-        serviceTitle: target.serviceTitle,
-        targetCollection: target.collectionName,
-        reasonId: reason,
-        reasonLabel: selectedReasonObj?.label || reason,
-        correctionDetails: correctionDetails.trim(),
-        correctPhone: correctPhone.trim(),
-        correctAddress: correctAddress.trim(),
-        sourceProof: sourceProof.trim(),
-        userContact: userContact.trim(),
-        status: 'pending', // 🟡 যাচাইাধীন
-        userId: user?.uid || 'anonymous',
-        userName: userProfile?.name || user?.displayName || 'সচেতন নাগরিক',
-        userEmail: user?.email || '',
-        createdAt: new Date().toISOString(),
-        timestamp: serverTimestamp(),
-      };
-
-      await addDoc(collection(db, 'corrections'), payload);
-
+      await addDoc(collection(db, 'corrections'), { ...payload, timestamp: serverTimestamp() });
+      setIsOfflineQueued(false);
       setStep('success');
       setTimeout(() => {
         if (onSuccess) onSuccess();
       }, 2500);
     } catch (err: any) {
-      console.error('Error submitting correction:', err);
-      setErrorMessage('সংশোধন প্রস্তাব জমা দিতে সমস্যা হয়েছে। অনুগ্রহ করে আবার চেষ্টা করুন।');
-      setStep('form');
+      console.warn('[SuggestCorrectionModal] Online submit failed, falling back to offline queue:', err);
+      try {
+        await indexedDbQueueService.enqueue('correction', 'corrections', payload, {
+          requiresAuth: true,
+          isAnonymous: false
+        });
+        setIsOfflineQueued(true);
+        setStep('success');
+      } catch (fallbackErr: any) {
+        console.error('Error submitting correction:', fallbackErr);
+        setErrorMessage('সংশোধন প্রস্তাব জমা দিতে সমস্যা হয়েছে। অনুগ্রহ করে আবার চেষ্টা করুন।');
+        setStep('form');
+      }
     } finally {
       setIsSubmitting(false);
     }
@@ -202,6 +233,8 @@ export const SuggestCorrectionModal: React.FC<SuggestCorrectionModalProps> = ({
             {/* STEP 1: FORM INPUT */}
             {step === 'form' && (
               <form id="correction-form" onSubmit={handleValidateToPreview} className="space-y-4">
+                <OfflineQueueStatusBanner typeFilter="correction" />
+
                 {/* Reward Callout */}
                 <div className="p-3 bg-emerald-50 border border-emerald-200/80 rounded-2xl flex items-start gap-2.5">
                   <div className="p-1.5 bg-emerald-600 text-white rounded-xl shrink-0 mt-0.5">
@@ -400,26 +433,48 @@ export const SuggestCorrectionModal: React.FC<SuggestCorrectionModalProps> = ({
             {/* STEP 3: SUCCESS STATE */}
             {step === 'success' && (
               <div className="p-6 text-center space-y-4 flex flex-col items-center justify-center my-auto">
-                <div className="w-16 h-16 rounded-full bg-emerald-100 text-emerald-700 flex items-center justify-center mx-auto shadow-inner">
-                  <CheckCircle2 size={36} />
-                </div>
-                <div className="space-y-1">
-                  <h3 className="text-lg font-black text-slate-900">
-                    সংশোধন প্রস্তাব জমা সম্পন্ন হয়েছে!
-                  </h3>
-                  <div className="inline-flex items-center gap-1 bg-emerald-50 text-[#006a4e] text-xs font-black px-3 py-1 rounded-full border border-emerald-200">
-                    <span>🟡 বর্তমান স্ট্যাটাস: যাচাইাধীন</span>
-                  </div>
-                </div>
+                {isOfflineQueued ? (
+                  <>
+                    <div className="w-16 h-16 rounded-full bg-amber-100 text-amber-700 flex items-center justify-center mx-auto shadow-inner">
+                      <CloudOff size={36} />
+                    </div>
+                    <div className="space-y-1">
+                      <h3 className="text-lg font-black text-slate-900">
+                        সংশোধন প্রস্তাব অফলাইনে সংরক্ষিত হয়েছে!
+                      </h3>
+                      <div className="inline-flex items-center gap-1 bg-amber-50 text-amber-800 text-xs font-black px-3 py-1 rounded-full border border-amber-200">
+                        <span>🟡 বর্তমান স্ট্যাটাস: অফলাইন কিউতে অপেক্ষমাণ</span>
+                      </div>
+                    </div>
 
-                <p className="text-xs text-slate-600 max-w-sm mx-auto leading-relaxed">
-                  ধন্যবাদ আপনার অবদানের জন্য! আমাদের টিম তথ্যটি যাচাই করবে। অনুমোদন হওয়া মাত্রই মূল পেজের তথ্য আপডেট হবে এবং আপনার প্রোফাইলে <strong>+৫ ইস্টার</strong> জমা হবে।
-                </p>
+                    <p className="text-xs text-slate-600 max-w-sm mx-auto leading-relaxed">
+                      ইন্টারনেট সংযোগ না থাকায় আপনার সংশোধন প্রস্তাবটি স্থানীয় ডিভাইসে সুরক্ষিতভাবে সংরক্ষিত আছে। ইন্টারনেট ফিরে এলে স্বয়ংক্রিয়ভাবে জমা হবে এবং যাচাই শেষে আপনার প্রোফাইলে <strong>+৫ ইস্টার</strong> যুক্ত হবে।
+                    </p>
+                  </>
+                ) : (
+                  <>
+                    <div className="w-16 h-16 rounded-full bg-emerald-100 text-emerald-700 flex items-center justify-center mx-auto shadow-inner">
+                      <CheckCircle2 size={36} />
+                    </div>
+                    <div className="space-y-1">
+                      <h3 className="text-lg font-black text-slate-900">
+                        সংশোধন প্রস্তাব জমা সম্পন্ন হয়েছে!
+                      </h3>
+                      <div className="inline-flex items-center gap-1 bg-emerald-50 text-[#006a4e] text-xs font-black px-3 py-1 rounded-full border border-emerald-200">
+                        <span>🟡 বর্তমান স্ট্যাটাস: যাচাইাধীন</span>
+                      </div>
+                    </div>
 
-                <div className="p-3 bg-emerald-50 rounded-2xl border border-emerald-200 text-emerald-900 text-xs font-black flex items-center justify-center gap-2">
-                  <Sparkles size={16} className="text-emerald-600" />
-                  <span>তথ্য অনুমোদনে পাবেন +৫ ইস্টার!</span>
-                </div>
+                    <p className="text-xs text-slate-600 max-w-sm mx-auto leading-relaxed">
+                      ধন্যবাদ আপনার অবদানের জন্য! আমাদের টিম তথ্যটি যাচাই করবে। অনুমোদন হওয়া মাত্রই মূল পেজের তথ্য আপডেট হবে এবং আপনার প্রোফাইলে <strong>+৫ ইস্টার</strong> জমা হবে।
+                    </p>
+
+                    <div className="p-3 bg-emerald-50 rounded-2xl border border-emerald-200 text-emerald-900 text-xs font-black flex items-center justify-center gap-2">
+                      <Sparkles size={16} className="text-emerald-600" />
+                      <span>তথ্য অনুমোদনে পাবেন +৫ ইস্টার!</span>
+                    </div>
+                  </>
+                )}
 
                 <button
                   type="button"
